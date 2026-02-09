@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -16,6 +16,20 @@
 
   <ItemGroup>
     <Folder Include="Classes\" />
+    <Folder Include="Controllers\NewFolder\" />
+    <Folder Include="Repositories\Login\" />
+    <Folder Include="wwwroot\PageAssets\css\master\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\ResCdn\cdn\webfonts\fa-brands-400.ttf" />
+    <None Include="wwwroot\ResCdn\cdn\webfonts\fa-brands-400.woff2" />
+    <None Include="wwwroot\ResCdn\cdn\webfonts\fa-regular-400.ttf" />
+    <None Include="wwwroot\ResCdn\cdn\webfonts\fa-regular-400.woff2" />
+    <None Include="wwwroot\ResCdn\cdn\webfonts\fa-solid-900.ttf" />
+    <None Include="wwwroot\ResCdn\cdn\webfonts\fa-solid-900.woff2" />
+    <None Include="wwwroot\ResCdn\cdn\webfonts\fa-v4compatibility.ttf" />
+    <None Include="wwwroot\ResCdn\cdn\webfonts\fa-v4compatibility.woff2" />
   </ItemGroup>
 
   <ItemGroup>
