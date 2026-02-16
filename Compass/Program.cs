@@ -3,6 +3,12 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using wfms_ddl;
 
 var builder = WebApplication.CreateBuilder(args);
+// Force camelCase JSON
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    });
 
 // Add services to the container.
 
@@ -37,6 +43,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 var app = builder.Build();
 app.UseStaticFiles();
 app.UseRouting();
+// Rotative Pdv view
+Rotativa.AspNetCore.RotativaConfiguration.Setup(
+    builder.Environment.WebRootPath,
+    "Rotativa"
+);
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

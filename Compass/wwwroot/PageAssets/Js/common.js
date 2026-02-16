@@ -11,12 +11,12 @@
     return encrypted.toString();
 }
 
-$('.numericOnly').on('input', function () {
+$('.onlyNumeric').on('input', function () {
     this.value = this.value.replace(/[^0-9]/g, '');
 });
 
 // Decimal only: digits and one dot, max 2 decimals
-$('.decimalOnly').on('input', function () {
+$('.onlyDecimal').on('input', function () {
     let val = this.value;
 
     // Remove invalid chars (anything except digits and dot)

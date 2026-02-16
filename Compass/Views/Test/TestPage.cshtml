@@ -1,0 +1,312 @@
+﻿@using System.Security.Claims
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    var roleId = User.FindFirst("RoleId")?.Value;
+    var userId = User.FindFirst("UserId")?.Value;
+    var deptId = User.FindFirst("DeptId")?.Value;
+}
+@{
+    Layout = "~/Views/Shared/_TestLayout.cshtml";
+}
+
+<div class="container ">
+    <div id="modalLoader1" class="modal-loader modalLoader">
+        <div class="spinner"></div>
+        <p class="loading-text">Please wait...</p>
+    </div>
+    <div class="filter-panel mt-5 div-coral-base">
+        <div class="row">
+            <div class="col-md-8"></div>
+            <div class="col-md-4">
+                <button type="button" class="btn  btn-coral txt-white" data-bs-toggle="modal" data-bs-target="#myModal">
+                    Open modal
+                </button>
+                <button type="button" class="btn  btn-coral txt-white" data-bs-toggle="modal" data-bs-target="#myModalTab">
+                    Open tab modal
+                </button>
+
+            </div>
+        </div>
+    </div>
+</div>
+@section Modals {
+    <!--Model with content tab-->
+
+    <div class="modal fade" id="myModalTab">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header bg-ld">
+                    <h5 class="modal-title">Product Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body">
+
+                    <!-- Tabs Nav -->
+                    <ul class="nav nav-tabs" id="productTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#general"
+                                    type="button">
+                                General
+                            </button>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#details"
+                                    type="button">
+                                Details
+                            </button>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#attachment"
+                                    type="button">
+                                Attachment
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Tabs Content -->
+                    <div class="tab-content mt-3">
+
+                        <!-- General Tab -->
+                        <div class="tab-pane fade show active" id="general">
+                            <div class="mb-3">
+                                <label class="form-label">Product Name</label>
+                                <input type="text" class="form-control" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Category</label>
+                                <select class="form-select">
+                                    <option>Select Category</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Details Tab -->
+                        <div class="tab-pane fade" id="details">
+                            <div class="mb-3">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-control"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Attachment Tab -->
+                        <div class="tab-pane fade" id="attachment">
+                            <div class="mb-3">
+                                <label class="form-label">Upload File</label>
+                                <input type="file" id="Attachement" class="form-control">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary">Save</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- The Modal -->
+    <div class="modal modal-md" id="myModal">
+        <div class="modal-dialog ">
+            <div class="modal-content position-relative">
+                <!-- 🔥 Loader Overlay -->
+                <div id="" class="modal-loader modalLoader">
+                    <div class="spinner"></div>
+                    <p class="loading-text">Please wait...</p>
+                </div>
+                <!-- Modal Header -->
+                <div class="modal-header  bg-ld ">
+                    <h4 class="modal-title txt-white" id="myModalLabel">Modal Heading</h4>
+                    <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div id="#toast-container"></div>
+                    <div class="form-group row">
+                        <div class="col-md-6 ">
+                            <label class="form-label mb-0">@roleId<span class="text-danger">*</span></label>
+                            <input type="text" id="field1" class="form-control txtbx mt-0 cleartxt" placeholder="Value Field 1" />
+                            <span class="error"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Field 2<span class="text-danger">*</span></label>
+                            <input type="text" id="field2" class="form-control txtbx cleartxt" placeholder="field 2" />
+                            <span class="error">trst</span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Field 1<span class="text-danger">*</span></label>
+                            <input type="text" id="field1" class="form-control txtbx cleartxt" placeholder="Value Field 1" />
+                            <span class="error"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Field 2<span class="text-danger">*</span></label>
+                            <div class="input-group mb-3">
+                                <input type="file" class="form-control" id="inputGroupFile02">
+                                <label class="input-group-text" for="inputGroupFile02">Upload</label>
+                            </div>
+
+                            <span class="error">trst</span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-labelo">Select 1<span class="text-danger">*</span></label>
+                            <select class="form-select form-select-sm search_ddl select2" aria-label=".form-select-sm">
+                                <option selected>Open this select menu</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                            </select>
+                            <span class="error"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Radio Button<span class="text-danger">*</span></label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                                <label class="form-check-label" for="flexRadioDefault1">
+                                    Default radio
+                                </label>
+                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                                <label class="form-check-label" for="flexRadioDefault2">
+                                    Default checked radio
+                                </label>
+                            </div>
+
+                            <span class="error">trst</span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+                                <label for="floatingPassword">Password</label>
+                            </div>
+                            <span class="error"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
+                                <label for="floatingTextarea">Comments</label>
+                            </div>
+                            <span class="error">trst</span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Floating Select<span class="text-danger">*</span></label>
+                            <div class="form-floating">
+                                <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+                                    <option selected>Open this select menu</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                                <label for="floatingSelect">Works with selects</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Grid Devision<span class="text-danger">*</span></label>
+                            <div class="row g-2">
+                                <div class="col-md">
+                                    <div class="form-floating">
+                                        <input type="email" class="form-control" id="floatingInputGrid" placeholder="name@example.com" value="mdo@example.com">
+                                        <label for="floatingInputGrid">Email address</label>
+                                    </div>
+                                </div>
+                                <div class="col-md">
+                                    <div class="form-floating">
+                                        <select class="form-select search_ddl select2" id="floatingSelectGrid">
+                                            <option value="">Select option</option>
+                                            <option value="1">One</option>
+                                            <option value="2">Two</option>
+                                            <option value="3">Three</option>
+                                            <option value="4">One1</option>
+                                            <option value="5">Two 6 </option>
+                                            <option value="6">Three 6</option>
+                                            <option value="7">One 7</option>
+                                            <option value="8">Two 9</option>
+                                            <option value="9">Three 9</option>
+                                        </select>
+                                        <label for="floatingSelectGrid"> selects</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="error">trst</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer  bg-ld">
+                    <div class="me-auto">
+                        <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
+                    </div>
+                    <div class="flex-grow-1 text-center modelalert text-danger"></div>
+                    <button type="button" class="btn btnModel btnModalSubmit">Submit</button>
+                    <button type="button" data-bs-dismiss="modal" class="btn btnModel">Close</button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="container mt-5">
+        <h2 class="mb-4">User List</h2>
+
+        <table id="myTable" class="table orangeTh table-striped table-hover table-bordered">
+            <thead class="bg-d">
+                <tr>
+                    <th>Sr.No</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Role</th>
+
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot class="tfoot bg-primary">
+                <tr>
+                    <td>3</td>
+                    <td>Mike Brown</td>
+                    <td>mike@example.com</td>
+                    <td>Editor</td>
+                    <td>Editor</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+}
+
+
+@section Scripts {
+    <script src="~/pageAssets/js/master/test.js" asp-append-version="true"></script>
+}
