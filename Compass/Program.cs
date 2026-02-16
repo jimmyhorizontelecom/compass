@@ -1,8 +1,15 @@
 using Compass.Repositories;
+using Compass.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using wfms_ddl;
 
 var builder = WebApplication.CreateBuilder(args);
+// Force camelCase JSON
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    });
 
 // Add services to the container.
 
@@ -10,8 +17,12 @@ var builder = WebApplication.CreateBuilder(args);
 var authExpiryMinutes = builder.Configuration.GetValue<int>("AppSettings:AuthExpiryMinutes");
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddControllersWithViews();
+// All Repository
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-
+builder.Services.AddScoped<IMainCategoryRepository, MainCategoryRepository>();
+builder.Services.AddScoped<IMainCategoryService, MainCategoryService>();
+builder.Services.AddScoped<IHardwareDropdownRepository, HardwareDropdownRepository>();
+builder.Services.AddScoped<IHardwareDropdownService, HardwareDropdownService>();
 builder.Services.AddScoped<ISqlDataAccess>(sp =>
     new SqlDataAccess(builder.Configuration.GetConnectionString("TestConnection")!));
 builder.Services.AddSession(options =>
@@ -37,6 +48,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 var app = builder.Build();
 app.UseStaticFiles();
 app.UseRouting();
+// Rotative Pdv view
+Rotativa.AspNetCore.RotativaConfiguration.Setup(
+    builder.Environment.WebRootPath,
+    "Rotativa"
+);
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

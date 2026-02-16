@@ -11,12 +11,12 @@
     return encrypted.toString();
 }
 
-$('.numericOnly').on('input', function () {
+$('.onlyNumeric').on('input', function () {
     this.value = this.value.replace(/[^0-9]/g, '');
 });
 
 // Decimal only: digits and one dot, max 2 decimals
-$('.decimalOnly').on('input', function () {
+$('.onlyDecimal').on('input', function () {
     let val = this.value;
 
     // Remove invalid chars (anything except digits and dot)
@@ -48,12 +48,12 @@ function isValidPassword(password) {
 $(".no-paste").on("copy paste cut", function (e) {
     e.preventDefault();
 });
-$('.search_ddl').select2({
-    dropdownParent: $('.modal'),
-    placeholder: "Select an option",
-    allowClear: true,
-    width: '100%' // make it fit the container
-});
+//$('.search_ddl').select2({
+//    dropdownParent: $('.modal'),
+//    placeholder: "Select an option",
+//    allowClear: true,
+//    width: '100%' // make it fit the container
+//});
 function GenerateEncriptId(_id, redirectUrl) {
     $.ajax({
         url: '/Home/GenerateEncriptId', // Replace with your actual endpoint

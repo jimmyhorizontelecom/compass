@@ -1,0 +1,91 @@
+﻿@{
+    ViewData["Title"] = "Main Category Dropdown";
+    // Layout = null;
+    Layout = "~/Views/Shared/_TestLayout.cshtml";
+}
+
+
+@* <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
+ *@
+<h2>Select Main Category</h2>
+<div class="row">
+<div  style="width:200px;">
+        <select id="mainCategoryDropdown" style="width: 300px;" class="search_ddl"></select>
+</div>
+</div>
+
+<h2>Select Department Name</h2>
+
+<select id="DepartmentDropdown" class="disable-me" style="width: 300px;"></select>
+
+<h2>Select Department Name</h2>
+
+<select id="ProductDropdown" class="disable-me" style="width: 300px;"></select>
+
+<script>
+    $(document).ready(function () {
+
+    bindDataToDdl("Dropdown","PMainCategory_ddl","mainCategoryDropdown","Select Main Category");
+    bindDataToDdl("Dropdown","MDepartment_ddl","DepartmentDropdown","Select Department");
+    bindDataToDdl("HardwareDropdown","HMainCategory_ddl","ProductDropdown"," Category");
+
+        // MDepartment_ddl
+        //  $('#DepartmentDropdown').select2({
+        //     placeholder: "Select Department",
+        //     allowClear: true,
+        //     ajax: {
+        //         url: '/Dropdown/MDepartment_ddl',
+        //         dataType: 'json',
+        //         delay: 250,
+        //         data: function (params) {
+        //             return {
+        //                 id: 0,
+        //                 searchTerm: params.term
+        //             };
+        //         },
+        //         processResults: function (data) {
+        //             return {
+        //                 results: $.map(data, function (item) {
+        //                     return {
+        //                         id: item.Id,
+        //                         text: item.Text
+        //                     };
+        //                 })
+        //             };
+        //         }
+        //     }
+        // });
+
+    }); 
+    // function bindDataToDdl(controllerName,methodName,ddlId,message)
+    // {//mainCategoryDropdown
+    //       $('#'+ddlId).select2({
+    //         placeholder: message,
+    //         allowClear: true,
+    //         ajax: {
+    //             url: `/${controllerName}/${methodName}`,
+    //             dataType: 'json',
+    //             delay: 250,
+    //             data: function (params) {
+    //                 return {
+    //                     id: 0,
+    //                     mainCatgId: 0,
+    //                     searchTerm: params.term
+    //                 };
+    //             },
+    //             processResults: function (data) {
+    //                 return {
+    //                     results: $.map(data, function (item) {
+    //                         return {
+    //                             id: item.Id,
+    //                             text: item.Text
+    //                         };
+    //                     })
+    //                 };
+    //             }
+    //         }
+    //     });
+    // }
+</script>
