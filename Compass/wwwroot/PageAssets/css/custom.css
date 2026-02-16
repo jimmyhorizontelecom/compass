@@ -1,4 +1,4 @@
-.error{
+﻿.error{
 	right: 0;
 	bottom: 2px;
 	font-size: 12px !important;
@@ -133,7 +133,7 @@ h3 .h3 {
 }
 /* Table header color */
 
-table.dataTable thead th {
+table.orangeTh thead th {
 	background-color: #FF6F61; /* Bootstrap primary */
 	color: #ffffff;
 	text-align: center;
@@ -168,6 +168,113 @@ table.dataTable thead th {
 	--bs-table-striped-bg: #fff3f1;
 	--bs-table-hover-bg: rgba(255, 111, 97, 0.12);
 }
+/* chekc box color*/
+.form-switch .form-check-input:checked {
+	background-color: #FF6F61;
+	border-color: #FF6F61;
+	box-shadow: 0 0 0 3px rgba(255, 111, 97, 0.25);
+}
+.form-switch .form-check-input:checked::before {
+	background-color: #ffffff;
+}
+/*Edit icon*/
+.edit-icon {
+	color: #FF6F61; /* coral */
+	cursor: pointer;
+	font-size: 1.1rem;
+	transition: all 0.2s ease;
+}
+
+	.edit-icon:hover {
+		color: #e85c50;
+		transform: scale(1.1);
+	}
+	/* active link nav tabel*/
+.nav-tabs .nav-link {
+	font-weight: 500;
+}
+
+	.nav-tabs .nav-link.active {
+		background-color: #FF6F61;
+		color: #fff;
+		border-color: #FF6F61;
+	}
+
+/* Modal Loader Overlay */
+.modal-loader {
+	position: absolute;
+	inset: 0;
+	background: rgba(255, 255, 255, 0.75);
+	backdrop-filter: blur(4px);
+	display: none;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	z-index: 999;
+	border-radius: 8px;
+}
+
+/* Animated Gradient Spinner */
+/* Modal Loader Overlay */
+.modal-loader {
+	position: absolute;
+	inset: 0;
+	background: rgba(255, 255, 255, 0.80);
+	backdrop-filter: blur(6px);
+	display: none;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	z-index: 999;
+	border-radius: 12px;
+	transition: all 0.3s ease-in-out;
+}
+
+/* 🔥 Attractive Coral Gradient Spinner */
+.spinner {
+	opacity:1;
+	width: 70px;
+	height: 70px;
+	border-radius: 50%;
+	background: conic-gradient( #FF6F61, #ff8a75, #ffb199, #ff6f61, #d94f45, #FF6F61 );
+	animation: spin 1s linear infinite;
+	position: relative;
+	/* Soft Glow Effect */
+	box-shadow: 0 0 25px rgba(255, 111, 97, 0.6);
+	/* Hollow Center */
+	mask: radial-gradient(farthest-side, transparent 60%, black 61%);
+}
+
+/* Smooth Rotation */
+@keyframes spin {
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+/* Loading Text */
+.loading-text {
+	margin-top: 18px;
+	font-weight: 600;
+	font-size: 15px;
+	color: #FF6F61;
+	letter-spacing: 0.5px;
+	animation: pulseText 1.5s infinite ease-in-out;
+}
+
+/* Text Pulse Animation */
+@keyframes pulseText {
+	0%, 100% {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 0.5;
+	}
+}
+
+
+/*filter panel*/
 .filter-panel {
 	padding: 20px;
 	background: #ffffff;
