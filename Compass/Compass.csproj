@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -8,14 +8,38 @@
 
   <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.105.0" />
+    <PackageReference Include="DinkToPdf" Version="1.0.8" />
     <PackageReference Include="ExcelDataReader" Version="3.8.0" />
     <PackageReference Include="ExcelDataReader.DataSet" Version="3.8.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="Rotativa.AspNetCore" Version="1.4.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Classes\" />
+    <Folder Include="Controllers\NewFolder\" />
+    <Folder Include="Models\Manpower\" />
+    <Folder Include="Models\Test\NewFolder\" />
+    <Folder Include="Report\ViewModels\NewFolder\" />
+    <Folder Include="Repositories\Login\" />
+    <Folder Include="wwwroot\Attachment\ProductCatg\" />
+    <Folder Include="wwwroot\js\common\NewFolder\" />
+    <Folder Include="wwwroot\testupload\" />
+    <Folder Include="wwwroot\PageAssets\css\master\" />
+    <Folder Include="wwwroot\PageAssets\Hardware\css\" />
+    <Folder Include="wwwroot\PageAssets\Manpower\css\" />
+    <Folder Include="wwwroot\PageAssets\Manpower\Js\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\ResCdn\cdn\webfonts\fa-brands-400.ttf" />
+    <None Include="wwwroot\ResCdn\cdn\webfonts\fa-brands-400.woff2" />
+    <None Include="wwwroot\ResCdn\cdn\webfonts\fa-regular-400.ttf" />
+    <None Include="wwwroot\ResCdn\cdn\webfonts\fa-regular-400.woff2" />
+    <None Include="wwwroot\ResCdn\cdn\webfonts\fa-solid-900.ttf" />
+    <None Include="wwwroot\ResCdn\cdn\webfonts\fa-solid-900.woff2" />
+    <None Include="wwwroot\ResCdn\cdn\webfonts\fa-v4compatibility.ttf" />
+    <None Include="wwwroot\ResCdn\cdn\webfonts\fa-v4compatibility.woff2" />
   </ItemGroup>
 
   <ItemGroup>

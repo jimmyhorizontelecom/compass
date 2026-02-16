@@ -1,0 +1,163 @@
+﻿
+body {
+    /*    overflow: hidden;*/
+    overflow-x: hidden;
+}
+
+
+.header {
+    background-color: #fefaf4;
+    /*    padding: 0.5rem 0; */
+    max-height: 0vh !important;
+}
+
+
+@media (min-width: 0px) {
+    .header {
+        max-height: 15vh !important;
+    }
+}
+
+
+@media (min-width: 1024px) {
+    .header {
+        max-height: 0vh !important;
+    }
+}
+
+@media (min-width: 1202px) {
+    .width {
+        width: 61.5% !important;
+    }
+}
+
+@media (min-width:1706px) {
+    .width {
+        width: 65.67% !important;
+    }
+
+    .col-lg-4 {
+        width: 34.33% !important;
+    }
+}
+
+.btn-outline-secondary {
+    --bs-btn-color: #808080;
+    --bs-btn-border-color: #DBDBDB;
+}
+
+
+#main {
+    /*    background-color: #cef6fe !important;*/
+    background-color: #cef6fe !important;
+    background-image: url('/assets/images/login/bg.jpg') !important;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+}
+
+
+
+.font {
+    color: blue;
+}
+
+.heading-font {
+    color: #0f1975;
+}
+
+.footer .font {
+    color: #362d2c;
+    margin: 0px;
+}
+
+.footer {
+    margin: 0px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+
+
+
+.login-card-custom {
+    background-color: #ffffff;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+    padding: 2.5rem;
+    max-width: 110% !important;
+}
+
+
+    .login-card-custom .heading-font {
+        text-align: left;
+        font-weight: 700;
+        color: #362d2c;
+        font-size: 1.73rem;
+        margin-bottom: 0.20rem;
+    }
+
+
+    .login-card-custom .subtitle {
+        text-align: left;
+        color: #151625;
+        margin-bottom: 1.5rem;
+        font-size: 1rem;
+    }
+
+
+    .login-card-custom .form-label {
+        font-size: 0.85rem;
+        font-weight: 400;
+        color: #151625;
+    }
+
+
+    .login-card-custom .form-control {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 0.9rem 1.2rem;
+        font-size: 0.9rem;
+    }
+
+        .login-card-custom .form-control:focus {
+            background-color: #fefaf4;
+            border-color: #a50a02;
+            box-shadow: none;
+        }
+
+
+    .login-card-custom .btn-primary {
+        background-color: #a50a02;
+        border: none;
+        border-radius: 8px;
+        padding: 0.9rem;
+        font-weight: 600;
+        margin-top: 0.8rem;
+    }
+
+
+    .login-card-custom a {
+        color: #0d6efd;
+        text-decoration: none;
+    }
+
+        .login-card-custom a:hover {
+            text-decoration: underline;
+        }
+
+.montserrat {
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    /*    font-weight: <weight>;*/
+    font-style: normal;
+}
+
+.link-text {
+    color: #af7813 !important;
+}
