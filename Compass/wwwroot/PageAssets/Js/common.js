@@ -48,12 +48,12 @@ function isValidPassword(password) {
 $(".no-paste").on("copy paste cut", function (e) {
     e.preventDefault();
 });
-$('.search_ddl').select2({
-    dropdownParent: $('.modal'),
-    placeholder: "Select an option",
-    allowClear: true,
-    width: '100%' // make it fit the container
-});
+//$('.search_ddl').select2({
+//    dropdownParent: $('.modal'),
+//    placeholder: "Select an option",
+//    allowClear: true,
+//    width: '100%' // make it fit the container
+//});
 function GenerateEncriptId(_id, redirectUrl) {
     $.ajax({
         url: '/Home/GenerateEncriptId', // Replace with your actual endpoint

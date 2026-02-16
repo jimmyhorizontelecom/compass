@@ -33,33 +33,36 @@ namespace Compass.Controllers
         {
             return View();
         }
-        #region Company
-        public IActionResult Company()
+        #region ProductCategory
+        public IActionResult HardwareProductCategory()
         {
             return View();
         }
         [HttpGet]
-        // get Record Company List
-        public async Task<IActionResult> GetCompanyRecord([FromQuery] TestFilterData filter)
-        {
+        public async Task<IActionResult> GetProductCatg([FromQuery] TestFilterData filter)
+        { 
             try
             {
                 // Access as object
                 int id = filter.FilterId1;
+                int MainCatgId = filter.FilterId2;
 
                 SortedList parameters = new SortedList();
                 parameters.Add("@Id", id);
-
-                var dt = await _cn.FillDataTableAsync("PiCompany_List", "", parameters);
+                parameters.Add("@MainCatgId", MainCatgId);
+             
+                var dt = await _cn.FillDataTableAsync("HardwareProductategory_List", "", parameters);
 
                 if (dt == null || dt.Rows.Count == 0)
-                    return Ok(new List<Company>());
+                    return Ok(new List<ProductModal>());
 
-                var list = dt.AsEnumerable().Select(row => new Company
+                var list = dt.AsEnumerable().Select(row => new ProductModal
                 {
-                    Id = Convert.ToInt32(row["Id"]),
-                    CompanyName = row["CompanyName"]?.ToString(),
-                    IsActive = row["IsActive"] != DBNull.Value ? row["IsActive"].ToString()[0] : 'N'
+                    Id = row["Id"] == DBNull.Value ? 0 : Convert.ToInt32(row["Id"]),
+                    MainCategory = row["MainCatgName"]?.ToString(),
+                    Title = row["Title"]?.ToString(),
+                    IsActive = row["IsActive"] == DBNull.Value? 'N': Convert.ToChar(row["IsActive"]),
+                    FileName = row["Attachement"] == DBNull.Value? null: row["Attachement"].ToString()
                 }).ToList();
 
                 return Ok(list);
@@ -74,50 +77,7 @@ namespace Compass.Controllers
                 });
             }
         }
-        [HttpPost]
-        //Multiple Record in json with out file
-        [HttpPost]
-        public IActionResult AddOrEditCompany(Company model)
-        { 
-            try
-            {
-                if (string.IsNullOrWhiteSpace(model.CompanyName) || string.IsNullOrWhiteSpace(model.CompanyName))
-                {
-                    return BadRequest(new { success = false, message = "Company Name are required." });
-                }
 
-                SortedList parameters = new SortedList();
-
-                parameters.Add("@Id", model.Id);
-                parameters.Add("@CompanyName", model.CompanyName);
-                parameters.Add("@Description", "");
-                parameters.Add("@IsActive", model.IsActive);
-
-                //var userId = User.FindFirst("UserId")?.Value;
-                //parameters.Add("@CreatedBy", userId);
-
-                var result = _cn.ExecuteNonQueryWMessage("PiCompany_AcceptUpdate", "", parameters);
-
-                return Ok(new { success = true, message = result.ToString() });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
-                {
-                    success = false,
-                    message = "Server error.",
-                    error = ex.Message
-                });
-            }
-        }
-      
-        #endregion
-
-        #region ProductCategory
-        public IActionResult HardwareProductCategory()
-        {
-            return View();
-        }
         [HttpPost]
         public async Task<IActionResult> AddOrEditProductSubCatg()
         {
@@ -127,6 +87,7 @@ namespace Compass.Controllers
                 var MainCatgId = Request.Form["MainCatgId"].ToString();
                 var Title = Request.Form["Title"].ToString();
                 var IsActive = Request.Form["IsActive"].ToString();
+                var UploadFolder=Request.Form["UploadFolder"].ToString();
 
                 // ✅ Get uploaded file
                 IFormFile attachmentFile = Request.Form.Files["Attachment"];
@@ -146,7 +107,7 @@ namespace Compass.Controllers
                     fileName = Guid.NewGuid() + Path.GetExtension(attachmentFile.FileName);
                     var filePath = Path.Combine(
                         Directory.GetCurrentDirectory(),
-                        "wwwroot/Attachment/ProductCatg",
+                        "wwwroot/Attachment/"+ "UploadFolder",
                         fileName
                     );
 
@@ -185,7 +146,7 @@ namespace Compass.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProductCatg(int Id, int MainCatgId)
+        public async Task<IActionResult> GetProductCatg1(int Id, int MainCatgId)
         {
             try
             {

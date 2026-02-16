@@ -1,4 +1,8 @@
-﻿.error{
+﻿/*//select 2*/
+.select2-container--open {
+	z-index: 9999 !important;
+}
+.error{
 	right: 0;
 	bottom: 2px;
 	font-size: 12px !important;

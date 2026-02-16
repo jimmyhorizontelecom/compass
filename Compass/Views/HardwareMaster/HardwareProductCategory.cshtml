@@ -2,19 +2,8 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-    Layout = null;
+    Layout = "~/Views/Shared/_TestLayout.cshtml";
 }
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="~/PageAssets/Js/master/Common.js" asp-append-version="true"></script>
-
-<!-- DataTables CSS -->
-<link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-
-<link rel="stylesheet" href="~/PageAssets/css/custom.css" asp-append-version="true" />
 
 <div class="container ">
     <div class="filter-panel mt-5 div-coral-base">
@@ -29,7 +18,7 @@
         </div>
     </div>
 </div>
-
+@section Modals {
 <!-- The Modal -->
 <div class="modal" id="myModal">
     <div class="modal-dialog">
@@ -42,12 +31,12 @@
             </div>
 
             <!-- Modal body -->
-            <div class="modal-body">
+            <div class="modal-body" id="myModal">
                 <div id="#toast-container"></div>
                 <div class="form-group row">
                     <div class="col-md-6 mb-3">
                         <label class="form-labelo">Categroy Name<span class="text-danger">*</span></label>
-                        <select id="ddlMcategory" class="form-select form-select-sm" aria-label=".form-select-sm">
+                            <select id="ddlMcategory" class="form-select search_ddl select2" aria-label=".form-select-sm">
                             <option selected value="0">select</option>
                         </select>
                         <span class="error"></span>
@@ -103,7 +92,7 @@
 <div class="container mt-5">
     <h4 class="mb-4">Product List</h4>
 
-    <table id="myTable" class="table table-striped table-hover table-bordered">
+        <table id="myTable" class="table orangeTh table-striped table-hover table-bordered">
         <thead class="bg-d">
             <tr>
                 <th>Sr.No</th>
@@ -121,17 +110,11 @@
         </tfoot>
     </table>
 </div>
-
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.7.0.min.js" asp-append-version="true"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" asp-append-version="true"></script>
-<!-- Bootstrap JS -->
-@* <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> *@
-
-<!-- DataTables JS -->
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js" asp-append-version="true"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js" asp-append-version="true"></script>
+}
 
 <!-- JsCommon -->
 @* <script src="~/PageAssets/js/master/Common.js" asp-append-version="true"></script> *@
-<script src="~/pageassets/hardware/js/hardwaremaster/hardwareproductcategory.js" asp-append-version="true"></script>
+@* <script src="~/pageassets/hardware/js/hardwaremaster/hardwareproductcategory.js" asp-append-version="true"></script> *@
+@section Scripts {
+    <script src="~/pageAssets/Hardware/Js/HardwareMaster/HardwareProductCategory.js" asp-append-version="true"></script>
+}

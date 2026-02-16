@@ -1,4 +1,5 @@
 using Compass.Repositories;
+using Compass.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using wfms_ddl;
 
@@ -16,8 +17,12 @@ builder.Services.AddControllers()
 var authExpiryMinutes = builder.Configuration.GetValue<int>("AppSettings:AuthExpiryMinutes");
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddControllersWithViews();
+// All Repository
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-
+builder.Services.AddScoped<IMainCategoryRepository, MainCategoryRepository>();
+builder.Services.AddScoped<IMainCategoryService, MainCategoryService>();
+builder.Services.AddScoped<IHardwareDropdownRepository, HardwareDropdownRepository>();
+builder.Services.AddScoped<IHardwareDropdownService, HardwareDropdownService>();
 builder.Services.AddScoped<ISqlDataAccess>(sp =>
     new SqlDataAccess(builder.Configuration.GetConnectionString("TestConnection")!));
 builder.Services.AddSession(options =>

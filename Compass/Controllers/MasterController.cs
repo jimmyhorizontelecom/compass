@@ -80,7 +80,7 @@ namespace Compass.Controllers
             return View();
         }
         
-        [HttpPost]
+        [HttpPost("AddEdit")]
         public IActionResult AddOrEditRecord(TestModel test)
         {
             try

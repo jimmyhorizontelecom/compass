@@ -1,7 +1,4 @@
-﻿function Test()
-{
-    alert('dfdf');
-}
+﻿
 function showModalLoader() {
     $(".modalLoader").css("display", "flex");
 }
@@ -76,8 +73,78 @@ function resetModal() {
     $("#ModalProgress").hide();
     hideModalLoader();
 }
+//enabled  input
+function enabledInput()
+{
+    document.querySelectorAll('.disable-me').forEach(function (el) {
+        el.disabled = false;
+    });
+}
+//disabled input
+function enabledInput() {
+    document.querySelectorAll('.disable-me').forEach(function (el) {
+        el.disabled = true;
+    });
+}
+//Bind data to ddl
+function modalSelect2(ModalId, message) {
+    var ModalById = document.getElementById(ModalId);
+    alert(ModalId);
+    $(ModalById).on('shown.bs.modal', function () {
+        $('.search_ddl').select2({
+            dropdownParent: $(ModalById),
+            placeholder: message,
+            allowClear: true,
+            width: '100%'
+        });
+    });
+}
+function bindDataToDdl(controllerName, methodName, modalId, message) {//mainCategoryDropdown
+    var ModalById = document.getElementById(modalId);
+    $('#myModal').on('shown.bs.modal', function () {
 
+        if (!$('#ddlMcategory').hasClass("select2-hidden-accessible")) {
 
+            $("#ddlMcategory").select2({
+                dropdownParent: $(ModalById),
+                placeholder: message,
+                allowClear: true,
+                ajax: {
+                    url: `/${controllerName}/${methodName}`,
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            id: 0,
+                            mainCatgId: 0,
+                            searchTerm: params.term
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: $.map(data, function (item) {
+                                return {
+                                    id: item.Id,
+                                    text: item.Text
+                                };
+                            })
+                        };
+                    }
+                }
+            });
+            //$('#ddlMcategory').select2({
+            //    dropdownParent: $('#myModal'),
+            //    placeholder: "Select Main Category",
+            //    allowClear: true,
+            //    width: '100%'
+            //});
+
+        }
+
+    });
+
+    
+}
 function encryptPassword(password) {
     var key = CryptoJS.enc.Utf8.parse('1234567890123456'); // 16-byte key
     var iv = CryptoJS.enc.Utf8.parse('1234567890123456');  // 16-byte IV
@@ -143,6 +210,7 @@ $('.decimalOnly').on('input', function () {
 //    allowClear: true,
 //    width: '100%' // make it fit the container
 //});
+
 ////function GenerateEncriptId(_id, redirectUrl) {
 ////    $.ajax({
 ////        url: '/Home/GenerateEncriptId', // Replace with your actual endpoint
@@ -218,3 +286,49 @@ document.addEventListener("DOMContentLoaded", function () {
 //function clearLayoutState() {
 //    localStorage.removeItem("currentHeader");
 //}
+function fileSizeValidation(fileUploadId,maxSizeFileMB)
+{
+    var fileId = document.getElementById(fileUploadId);
+
+    const maxSize = maxSizeFileMB* ( 1024 * 1024); // 2MB
+    const file = fileId.files[0];
+    
+
+        if (file) {
+            if (file.size > maxSize) {
+                alert("File size must be less than 2MB");
+                this.value = ""; // Clear selected file
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+    
+}
+//
+function fileExtensionValidation(fileUploadId, allowedExtensions ) {
+    //let allowedExtensions = ["jpg", "jpeg", "png", "pdf"];
+    //extension validation   
+    var fileId = document.getElementById(fileUploadId);    
+    const file = fileId.files[0];
+    let files = file.files;
+    $.each(files, function (key, file) {
+
+        let extension = file.name.split('.').pop().toLowerCase();
+        var result = allowedExtensions.join(",");
+        if (!allowedExtensions.includes(extension)) {
+            toastr.error("Only " + result +" files are allowed");
+            return false; // stop loop
+        }
+
+    });
+
+}
+//
+//
+function getNewFileName(file,prefix) {
+    let extension = file.name.split('.').pop();
+    let newFileName = prefix + "_" + Date.now() + "_" + key + "." + extension;
+    return newFileName;
+}
