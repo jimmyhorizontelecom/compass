@@ -1,49 +1,106 @@
-﻿<!DOCTYPE html>
+﻿﻿@{
+    var currentUrl = Context.Request.Path.ToString().ToLower();
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Compass</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <title>@ViewData["Title"] - WFMS_ERP</title>
+    @*     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Compass.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/WFMS_ERP.styles.css" asp-append-version="true" /> *@
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/WFMS_ERP.styles.css" asp-append-version="true" />
+    <link href="~/cdn/css/bootstrap5.3.3.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/cdn/css/datatables1.13.8.bootstrap5.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/cdn/css/all.min.css" rel="stylesheet" asp-append-version="true" />
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+    <!-- ====================== CSS ====================== -->
+    <!-- Core Frameworks -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <!-- Plugins -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.10.0/dist/css/bootstrap-datepicker.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css"
+          rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- Custom Styles -->
+    <link href="~/PageAssets/css/dashboard.css" rel="stylesheet" />
+    <!-- SweetAlert2 CSS -->
+
+    <script>
+        window.pageTitleFromServer = "@(ViewBag.PageTitle ?? "")";
+    </script>
+
+    <!-- ====================== JS ====================== -->
+    <!-- Core Libraries -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- UI Plugins -->
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.10.0/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <!-- DataTables -->
+    <script src="~ResCdn/cdn/js/jquery.datatables1.13.8.min.js" asp-append-version="true"></script>
+    <script src="~ResCdn/cdn/js/datatables1.13.8.bootstrap5.min.js" asp-append-version="true"></script>
+
+    <!-- Enhancement Plugins -->
+    <!-- Bootstrap Multiselect Plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+
+    <!-- Charts -->
+    <script src="~/cdn/js/chart.js@4.4.1min.js" asp-append-version="true"></script>
+
+    <!-- Custom Scripts (Always last) -->
+    <script src="~/script/common.js"></script>
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Compass</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
+<body class="d-flex flex-column vh-100">
+
+    <div class="row">
+        <nav class="navbar header">
+            <div class="container-fluid ms-md-5 d-flex justify-content-sm-center justify-content-lg-start justify-content-md-center justify-content-center">
+                <a class="navbar-brand" href="#">
+                    <img src="~/assets/images/login/newlogo.png"
+                         alt="HPSEDC Logo"
+                         class="img-fluid"
+                         style="max-height: 100px;">
+                </a>
             </div>
         </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+    </div>
+    @*<div id="main" class="flex-grow-1 d-flex align-items-center justify-content-center justify-content-lg-end">*@
+    <div id="main" class="flex-grow-1 d-flex align-items-center ">
+        <header>
+        </header>
+        <main class="flex-grow-1">
             @RenderBody()
         </main>
     </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - Compass - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="bg-white pt-1 footer">
+        <div class="row d-flex g-0 justify-content-center">
+            <div class="col-md-12  text-center">
+                <p class="font montserrat">Copyright &copy; @DateTime.Now.Year Himachal Pradesh State Electronics Development Corporation Ltd.(HPSEDC).      All Rights Reserved</p>
+            </div>
+            
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <script src="~/PageAssets/Js/common.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
-</html>

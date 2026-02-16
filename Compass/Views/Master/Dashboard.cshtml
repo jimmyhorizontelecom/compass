@@ -1,0 +1,29 @@
+﻿@using System.Data
+@{
+    ViewBag.Title = "DashBoard";
+}
+
+
+<link href="~/PageAssets/css/dashboard.css" rel="stylesheet" />
+
+
+<div class="dashboard-grid">
+    @foreach (DataRow dr in Model.Rows)
+    {
+        var iconSrc = dr["Icon"].ToString();
+        var moduleId = dr["ModuleId"].ToString();
+        var moduleName = dr["ModuleName"].ToString();
+        var link = dr["link"].ToString();
+
+        <div class="card-bdy">
+            <div onclick="openModuleOrSubmenu('@moduleId','@link','@moduleName')" class="dashboard-card">
+                <div class="card-icon-wrapper">
+                    <img src="~/DashboardLogo/@iconSrc" class="card-icon" />
+                </div>
+                <h4 class="card-title">@moduleName</h4>
+            </div>
+        </div>
+    }
+</div>
+
+<script src="~/PageAssets/Js/dashboard.js"></script>

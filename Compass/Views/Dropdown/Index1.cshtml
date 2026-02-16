@@ -1,0 +1,45 @@
+﻿@{
+    ViewData["Title"] = "Main Category Dropdown";
+   // Layout = null;
+}
+
+@* <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
+ *@
+<h2>Select Main Category</h2>
+
+<select id="mainCategoryDropdown" style="width: 300px;"></select>
+
+<script>
+    $(document).ready(function () {
+
+        $('#mainCategoryDropdown').select2({
+            placeholder: "Select Main Category",
+            allowClear: true,
+            ajax: {
+                url: '/Dropdown/PMainCategory_ddl',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        id: 0,
+                        mainCatgId: 0,
+                        searchTerm: params.term
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: $.map(data, function (item) {
+                            return {
+                                id: item.id,
+                                text: item.name
+                            };
+                        })
+                    };
+                }
+            }
+        });
+
+    });
+</script>
