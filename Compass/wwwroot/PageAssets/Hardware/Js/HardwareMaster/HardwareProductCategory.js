@@ -15,7 +15,7 @@ $(document).ready(function () {
     alert('dfdf');
     recordlist();
     //modalSelect2('myModal', 'Catg');
-    bindDataToDdl("HardwareDropdown", "HMainCategory_ddl", "myModal", " Category");
+    bindDataToDdl("HardwareDropdown", "HMainCategory_ddl", "myModal","ddlMcategory", " Category");
 });
 
 //Get Record for A table 

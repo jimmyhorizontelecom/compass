@@ -99,13 +99,15 @@ function modalSelect2(ModalId, message) {
         });
     });
 }
-function bindDataToDdl(controllerName, methodName, modalId, message) {//mainCategoryDropdown
+function bindDataToDdl(controllerName, methodName, modalId,dropDownId, message) {//mainCategoryDropdown
     var ModalById = document.getElementById(modalId);
-    $('#myModal').on('shown.bs.modal', function () {
+    var dropDownById = document.getElementById(dropDownId);
+    alert('enter1');
+    $(ModalById).on('shown.bs.modal', function () {
+        alert('enter2');
+        //if (!$('#ddlMcategory').hasClass("select2-hidden-accessible")) {
 
-        if (!$('#ddlMcategory').hasClass("select2-hidden-accessible")) {
-
-            $("#ddlMcategory").select2({
+        $(dropDownById).select2({
                 dropdownParent: $(ModalById),
                 placeholder: message,
                 allowClear: true,
@@ -139,7 +141,7 @@ function bindDataToDdl(controllerName, methodName, modalId, message) {//mainCate
             //    width: '100%'
             //});
 
-        }
+        //}
 
     });
 
