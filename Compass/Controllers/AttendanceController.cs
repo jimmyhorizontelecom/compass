@@ -8,5 +8,13 @@ namespace Compass.Controllers
         {
             return View();
         }
+
+        #region DeptAttendance
+        public IActionResult DeptAttendance()
+        {
+            return View();
+        }
+
+        #endregion
     }
 }
