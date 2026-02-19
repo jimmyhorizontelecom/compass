@@ -29,7 +29,6 @@
     <Folder Include="wwwroot\PageAssets\css\master\" />
     <Folder Include="wwwroot\PageAssets\Hardware\css\" />
     <Folder Include="wwwroot\PageAssets\Manpower\css\" />
-    <Folder Include="wwwroot\PageAssets\Manpower\Js\" />
   </ItemGroup>
 
   <ItemGroup>

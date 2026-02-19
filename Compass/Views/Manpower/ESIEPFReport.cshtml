@@ -1,0 +1,89 @@
+﻿@using System.Security.Claims
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@* @{
+    var roleId = User.FindFirst("RoleId")?.Value;
+    var userId = User.FindFirst("UserId")?.Value;
+    var deptId = User.FindFirst("DeptId")?.Value;
+} *@
+@{
+    Layout = "~/Views/Shared/_TestLayout.cshtml";
+}
+
+<div class="container ">
+    <div id="modalLoader1" class="modal-loader modalLoader">
+        <div class="spinner"></div>
+        <p class="loading-text">Please wait...</p>
+    </div>
+    <h4>ESI EPF Report </h4>
+    <div class="filter-panel mt-5 div-coral-base">
+
+        <div class="form-group row">
+            <div class="col-md-3 row align-items-center">
+                <label class="form-labelo">Month Year <span class="text-danger">*</span></label>
+                <select id="ddlMonthYear" class="form-select form-select-sm search_ddl select2" aria-label=".form-select-sm">
+                    <option selected value="0"> -- Select --</option>
+                </select>
+            </div>
+            <div class="col-md-3 mb-0">
+                <label class="form-labelo">Agency Name<span class="text-danger">*</span></label>
+                <select id="ddlAgencyName" class="form-select form-select-sm search_ddl select2" aria-label=".form-select-sm">
+                    <option selected value="0"> -- Select --</option>
+                </select>
+                <span class="error"></span>
+            </div>
+            <div class="col-md-3 mb-0">
+                <label class="form-labelo">Challan For <span class="text-danger">*</span></label>
+                <select id="ddlChallanType" class="form-select form-select-sm search_ddl select2" aria-label=".form-select-sm">
+                    <option selected value="0"> -- Select --</option>
+                </select>
+                <span class="error"></span>
+            </div>
+            <div class="col-md-3 mb-0">
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="container mt-5">
+    @* <h2 class="mb-4">User List</h2> *@
+    <div class="filter-panel mt-5 div-coral-base">
+        <table id="myTable" class="table orangeTh table-striped table-hover table-bordered">
+            <thead class="bg-d">
+                <tr>
+                    <th>Sr.No</th>
+                    <th>Agency Bill No.</th>
+                    <th>Agency Name</th>
+                    <th>Bill for Month </th>
+                    <th>Challan No. </th>
+                    <th>Challan Type  </th>
+                    <th>No. of HPSEDC Resources</th>
+                    <th>No. of Resources on Invoice</th>
+
+
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot class="tfoot bg-primary">
+                <tr>
+                    @* <td>3</td>
+                    <td>Mike Brown</td>
+                    <td>mike@example.com</td>
+                    <td>Editor</td>
+                    <td>Editor</td> *@
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+}
+
+
+@section Scripts {
+    <script src="~/PageAssets/Manpower/Js/depositchallanesiepf1.js" asp-append-version="true"></script>
+}
