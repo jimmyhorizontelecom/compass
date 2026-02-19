@@ -30,6 +30,16 @@ namespace Compass.Controllers
             return Ok(result);
         }
 
+        //Billing Address
+        [HttpGet]
+        public async Task<IActionResult> MBillingAddress_ddl(
+                int Id = 0,
+                int mainCatgId = 0,
+                string searchTerm = "")
+        {
+            var result = await _service.GetBillingAddressDropdownAsync(Id, searchTerm);
+            return Ok(result);
+        }
 
         public IActionResult Index()
         {

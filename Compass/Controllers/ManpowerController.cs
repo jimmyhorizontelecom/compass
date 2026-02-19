@@ -1,10 +1,38 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ClosedXML.Excel;
+using Compass.Classes;
+using Compass.Models.Filter;
+using Compass.Models.Hardware;
+using Compass.Models.Manpower;
+using Compass.Models.Test;
+using DocumentFormat.OpenXml.Office2010.Excel;
+using DocumentFormat.OpenXml.Wordprocessing;
+using ExcelDataReader;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json;
+using System.Collections;
+using System.Data;
+using System.Net.Mail;
+using System.Text;
+using System.Text.Json;
+using wfms_ddl;
 
 namespace Compass.Controllers
 {
     public class ManpowerController : Controller
     {
-        public IActionResult Index()
+        public class HardwareMasterController : Controller
+        {
+            private readonly ISqlDataAccess _cn;
+            private readonly IMemoryCache _cache;
+            public HardwareMasterController(ISqlDataAccess db, IMemoryCache cache)
+            {
+                _cn = db;
+                _cache = cache;
+            }
+        }
+            public IActionResult Index()
         {
             return View();
         }
@@ -15,116 +43,11 @@ namespace Compass.Controllers
             return View();
         }
 
-        // Get Record list
-
-        //[HttpGet]
-        //public async Task<IActionResult> GetRecord([FromQuery] WO_Filter filter)
-        //{
-        //    try
-        //    {
-        //        // Access as object
-
-        //        SortedList parameters = new SortedList();
-        //        parameters.Add("@AgencyId", filter.AgencyId);
-        //        parameters.Add("@DeptId", filter.DeptId);
-        //        parameters.Add("@WorkOrderId", filter.WorkOrderAgencyId);
-        //        parameters.Add("@CreatedBy", filter.CreatedBy);
-        //        parameters.Add("@RoleId", filter.UserRole);
-
-
-
-
-        //        var dt = await _cn.FillDataTableAsync("TallyAgencyDeptWorkOrder_List1", "", parameters);
-
-        //        if (dt == null || dt.Rows.Count == 0)
-        //            return Ok(new List<TestModel>());
-
-        //        var list = dt.AsEnumerable().Select(row => new WorkOrder
-
-
-        //        {
-        //            WorkOrderAgencyId = Convert.ToInt32(row["WorkOrderAgencyId"]),
-        //            AgencyId = Convert.ToInt32(row["AgencyId"]?.ToString()),
-        //            DeptId = Convert.ToInt32(row["DeptId"]?.ToString()),
-        //            DepartmentName = (row["DepartmentName"]?.ToString()),
-        //            WorkOrderNo = (row["WorkOrderId"]?.ToString()),
-        //            BillingAddress = (row["BillingAddress"]?.ToString()),
-        //            NoDeployedRes = Convert.ToInt32(row["NoDeployedRes"]?.ToString()),
-        //            //BillAddressEmail = (row["BillAddressEmail"]?.ToString()),
-        //            //IsActive = row["IsActive"] != DBNull.Value? row["IsActive"].ToString()[0]: 'N', 
-        //            IsResourceUploaded = row["IsResourceUploaded"] != DBNull.Value ? row["IsResourceUploaded"].ToString()[0] : 'N',
-        //            //NoOfUploadedResource = Convert.ToInt32(row["NoOfUploadedResource"]?.ToString()),
-        //        }).ToList();
-
-        //        return Ok(list);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, new
-        //        {
-        //            success = false,
-        //            message = "Server error.",
-        //            error = ex.Message
-        //        });
-        //    }
-        //}
-
-        //[HttpPost]
-        //public IActionResult AddOrEditRecord(WorkOrder test)
-        //{
-        //    try
-        //    {
-        //        if (string.IsNullOrWhiteSpace(test.WorkOrderNo) ||
-        //            string.IsNullOrWhiteSpace(test.BillAddressEmail)
-        //            )
-        //        {
-        //            return BadRequest(new
-        //            {
-        //                success = false,
-        //                message = "WorkOrderNo and BillAddressEmail are required."
-        //            });
-        //        }
-
-        //        SortedList parameters = new SortedList();
-        //        parameters.Add("@WorkOrderAgencyId", test.WorkOrderAgencyId);
-        //        parameters.Add("@AgencyId", test.AgencyId);
-        //        parameters.Add("@DeptId", test.DeptId);
-        //        parameters.Add("@WorkOrderId", test.WorkOrderNo);
-        //        parameters.Add("@BillingId", test.BillingId);
-        //        parameters.Add("@BillingAddress", test.BillingAddress);
-        //        parameters.Add("@NoDeployedRes", test.NoDeployedRes);
-        //        parameters.Add("@BillAddressEmail", test.BillAddressEmail);
-
-        //        var userId = User.FindFirst("UserId")?.Value;
-        //        parameters.Add("@CreatedBy", userId);
-
-        //        var result = _cn.ExecuteNonQueryWMessage(
-        //            "TallyAgencyWorkOrder_AcceptUpdate",
-        //            "",
-        //            parameters
-        //        );
-
-        //        return Ok(new
-        //        {
-        //            success = true,
-        //            message = result.ToString()
-        //        });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, new
-        //        {
-        //            success = false,
-        //            message = "Server error.",
-        //            error = ex.Message
-        //        });
-        //    }
-        //}
-
+        
         #endregion
 
 
-       
+
 
 
         #region ESIEPF Report

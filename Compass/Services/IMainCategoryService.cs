@@ -6,6 +6,7 @@ namespace Compass.Services
     {
         Task<List<DropdownDto>> GetMainCategoryDropdownAsync(int id, int mainCatgId, string searchTerm);
         Task<List<DropdownDto>> GetDepartmentDropdownAsync(int deptId, string searchTerm);
+        Task<List<DropdownDto>> GetBillingAddressDropdownAsync(int deptId, string searchTerm);
     }
 
 }

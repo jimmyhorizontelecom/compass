@@ -67,7 +67,7 @@ namespace Compass.Repositories
             return result;
         }
 
-        
+        // Get Department Dropdwon
         public async Task<List<DropdownDto>> GetDepartmentDropdownAsync(
             int deptId,
             string searchTerm)
@@ -87,5 +87,27 @@ namespace Compass.Repositories
             var result = CommonNew.ToList<DropdownDto>(dt);
             return result;
         }
+
+        // Get Billing Address Dropdown
+        public async Task<List<DropdownDto>> GetBillingAddressDropdownAsync(
+           int deptId,
+           string searchTerm)
+        {
+
+            SortedList parameters = new SortedList();
+            parameters.Add("@DeptId", deptId);
+            parameters.Add("@SearchTerm", string.IsNullOrEmpty(searchTerm) ? DBNull.Value : searchTerm);
+            var dt = await _cn.FillDataTableAsync(
+                    "TallyBillingAddress_cdll",
+                    "",
+                    parameters
+                );
+            if (dt == null || dt.Rows.Count == 0)
+                return new List<DropdownDto>();
+
+            var result = CommonNew.ToList<DropdownDto>(dt);
+            return result;
+        }
+
     }
 }
