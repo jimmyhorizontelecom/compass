@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <Folder Include="Controllers\NewFolder\" />
-    <Folder Include="Models\Manpower\" />
     <Folder Include="Models\Test\NewFolder\" />
     <Folder Include="Report\ViewModels\NewFolder\" />
     <Folder Include="Repositories\Login\" />
