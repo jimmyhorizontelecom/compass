@@ -1,14 +1,17 @@
 ﻿//using ClosedXML.Excel;
 //using ExcelDataReader;
 using Compass.Classes;
+using Compass.Models;
 using Compass.Models.Dropdown;
 using Compass.Models.Filter;
 using Compass.Models.Test;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
+
 
 //using Newtonsoft.Json;
 using System.Collections;
@@ -108,6 +111,29 @@ namespace Compass.Repositories
             var result = CommonNew.ToList<DropdownDto>(dt);
             return result;
         }
+
+        // Get Agency Dropdown
+        public async Task<List<DropdownDto>> GetAgencyDropdownAsync(
+           int deptId,
+           string searchTerm)
+        {
+
+            SortedList parameters = new SortedList();
+            parameters.Add("@AgencyId", deptId);
+            parameters.Add("@SearchTerm", string.IsNullOrEmpty(searchTerm) ? DBNull.Value : searchTerm);
+            var dt = await _cn.FillDataTableAsync(
+                    "TallyAgency_Cddl",
+                    "",
+                    parameters
+                );
+            if (dt == null || dt.Rows.Count == 0)
+                return new List<DropdownDto>();
+
+            var result = CommonNew.ToList<DropdownDto>(dt);
+            return result;
+        }
+
+
 
     }
 }

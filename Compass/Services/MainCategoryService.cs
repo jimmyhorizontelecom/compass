@@ -27,7 +27,7 @@ namespace Compass.Services
             return await _repository.GetDepartmentDropdownAsync(deptId, searchTerm);
         }
 
-        //Get Billin Address
+        //Get Billing Address
 
         public async Task<List<DropdownDto>> GetBillingAddressDropdownAsync(
             int deptId,
@@ -35,6 +35,17 @@ namespace Compass.Services
         {
             return await _repository.GetBillingAddressDropdownAsync(deptId, searchTerm);
         }
+
+        //Get Agency ddl
+
+        public async Task<List<DropdownDto>> GetAgencyDropdownAsync(
+            int deptId,
+            string searchTerm)
+        {
+            return await _repository.GetAgencyDropdownAsync(deptId, searchTerm);
+        }
+
+
 
 
     }
