@@ -51,14 +51,14 @@
                 <div class="modal-body">
                     <div id="#toast-container"></div>
                     <div class="form-group row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-6 mb-0">
                             <label class="form-labelo">Agency<span class="text-danger">*</span></label>
                             <select id="ddlAgencyName" class="form-select search_ddl select2" aria-label=".form-select-sm">
                             <option selected value="0">Select</option>
                         </select>
                         <span class="error"></span>
                     </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-6 mb-0">
                             <label class="form-labelo">Department<span class="text-danger">*</span></label>
                             <select id="ddlDeptName" class="form-select search_ddl select2" aria-label=".form-select-sm">
                                 <option selected value="0">Select</option>
@@ -90,7 +90,7 @@
                         <div class="col-md-12 mb-0">
                             <label class="form-labelo">Billing Address<span class="text-danger">*</span></label>
                             <select id="ddlBillingAddress" class="form-select search_ddl select2" aria-label=".form-select-sm">
-                                <option selected> Select </option>
+                                <option selected value="0">Select</option>
                             </select>
                             <span class="error"></span>
                         </div>
@@ -111,6 +111,7 @@
             </div>
         </div>
     </div>
+ 
     <div class="container mt-5">
         @* <h2 class="mb-4">User List</h2> *@
 
@@ -118,6 +119,7 @@
             <thead class="bg-d">
                 <tr>
                     <th>Sr.No</th>
+                    <th>Agency Name</th>
                     <th>Department Name</th>
                     <th>Work Order No.</th>
                     <th>Billing Address</th>

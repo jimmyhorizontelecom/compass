@@ -1,5 +1,4 @@
-﻿
-var Id = 0;
+﻿var Id = 0;
 //common
 toastr.options = {
     closeButton: true,
@@ -8,57 +7,18 @@ toastr.options = {
     timeOut: "3000"
 };
 
-
 //ready
-
 $(document).ready(function () {
     resetModal();
-    //alert('dfdf');
     recordlist();
-    //modalSelect2('myModal', 'Catg');
-    //alert('Dropdown Binidng starts');
-    bindDataToDdl("Dropdown", "MAgency_ddl", "myModal", "ddlAgencyName", " Agency Name");
-    bindDataToDdl("Dropdown", "MDepartment_ddl", "myModal", "ddlDeptName", " Department Name");
-    //bindDataToDdl("Dropdown", "MBillingAddress_ddl", "myModal", "ddlBillingAddress", " Billing Address");
-    bindDependentDataToDdl("Dropdown", "MBillingAddress_ddl", null,//❗ With/Without modal
-        "ddlDeptName", "ddlBillingAddress", "Select Billing Address");
+    //Parent Dropdown
+    bindDataToDdl("Dropdown", "MDepartment_ddl", "", "ddlDeptName", " Department Name");
+    bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyName", " Agency Name");   
+    // Dependent Dropdown
+    bindDependentDataToDdl("Dropdown","MBillingAddress_ddl",null,// ❗ no modal
+            "ddlDeptName","ddlBillingAddress","Select Billing Address");
+   
 });
-
-
-// To get Billing Address ddl on change Department ddl
-//$('#ddlDeptName').on('change', function () {
-
-//    var deptId = $(this).val();
-//    $('#ddlBillingAddress').val(null).trigger('change');
-
-//    $('#ddlBillingAddress').select2({
-//        dropdownParent: $('#myModal'),
-//        placeholder: "Select Billing Address",
-//        allowClear: true,
-//        ajax: {
-//            url: '/Dropdown/MBillingAddress_ddl',
-//            dataType: 'json',
-//            delay: 250,
-//            data: function (params) {
-//                return {
-//                    DeptId: 0,
-//                    mainCatgId: deptId,
-//                    searchTerm: params.term
-//                };
-//            },
-//            processResults: function (data) {
-//                return {
-//                    results: $.map(data, function (item) {
-//                        return {
-//                            id: item.Id,
-//                            text: item.Text
-//                        };
-//                    })
-//                };
-//            }
-//        }
-//    });
-//});
 
 //Get Record for A table 
 async function recordlist() {
@@ -74,7 +34,7 @@ async function recordlist() {
 
     try {
 
-        let records = await getRecords('Manpower', 'GetDeptMasterRecord', filterData, '#myTable', 'N');
+        let records = await getRecords('Manpower', 'GetDeptAttendanceRecord', filterData, '#myTable', 'N');
         bindDatatable(records, '#myTable');
     }
     catch (error) {
@@ -100,19 +60,55 @@ function bindDatatable(records, tableId) {
                 data-id="${value.Id}"
                 <td>${value.Id}</td>
                 <td>${SrNo}</td>
-                <td>${value.AgencyName}</td>
                 <td>${value.DepartmentName}</td>
-                <td>${value.WorkOrderId}</td>
+                <td>${value.agencyName}</td>
                 <td>${value.BillingAddress}</td>
                 <td>${value.NoDeployedRes}</td>
+                <td>${value.NoDeployedRes}</td>
                 <td>${value.IsResourceUploaded}</td>
-                <td>${value.NoOfUploadedResource}</td>
+                
                  <td class="text-center">
                     <span data-id="${value.DeptId}" >
                        <i class="bi bi-pencil-square edit-test edit-icon"></i>
                     </span>
                 </td>
-            </tr>
+                 <td class="text-center">
+                    <span data-id="${value.DeptId}" >
+                       <i class="bi bi-pencil-square edit-test edit-icon"></i>
+                    </span>
+                </td>
+                 <td class="text-center">
+                    <span data-id="${value.DeptId}" >
+                       <i class="bi bi-pencil-square edit-test edit-icon"></i>
+                    </span>
+                </td>
+                 <td class="text-center">
+                    <span data-id="${value.DeptId}" >
+                       <i class="bi bi-pencil-square edit-test edit-icon"></i>
+                    </span>
+                </td>
+                 
+                 <td class="text-center">
+                    <span data-id="${value.DeptId}" >
+                       <i class="bi bi-pencil-square edit-test edit-icon"></i>
+                    </span>
+                </td>
+                 <td class="text-center">
+                    <span data-id="${value.DeptId}" >
+                       <i class="bi bi-pencil-square edit-test edit-icon"></i>
+                    </span>
+                </td>
+                 <td class="text-center">
+                    <span data-id="${value.DeptId}" >
+                       <i class="bi bi-pencil-square edit-test edit-icon"></i>
+                    </span>
+                </td>
+                 <td class="text-center">
+                    <span data-id="${value.DeptId}" >
+                       <i class="bi bi-pencil-square edit-test edit-icon"></i>
+                    </span>
+                </td>
+                 
         `);
     });
 
@@ -127,24 +123,29 @@ function bindDatatable(records, tableId) {
     //hideModalLoader();
 }
 
-// Submi record when Click on btn
+// Submit record when Click on btn
 $(".btnModalSubmit").on("click", function () {
     SubmitRecord();
 });
-
+// Submit records
 async function SubmitRecord() {
     let isValid = true;
-    let agencyName = $("#ddlAgencyName").val();
+    let monthYear = $("#ddlMonthYear").val();
     let deptName = $("#ddlDeptName").val();
-    let workOrderNo = $("#txtworkOrderNo").val().trim();
-    let noOfResources = $("#txtnoOfResources").val().trim();
-    let deptEmailId = $("#txtdeptEmailId").val().trim();
+    let agencyName = $("#ddlAgencyName").val();
+    let workOrderNo = $("#ddlWorkOrder").val();
     let billingAddress = $("#ddlBillingAddress").val();
-    let billingId = 0;
-
+    let noOfResources = $("#txtNoOfResources").val().trim();
+    let presentResources = $("#txtPresentResource").val().trim();
+    
     $(".error").text("");
     $(".is-invalid").removeClass("is-invalid");
 
+    if (monthYear === "0") {
+        $("#ddlMonthYear").addClass("is-invalid");
+        $("#ddlMonthYear").siblings(".error").text("Month & Year required");
+        isValid = false;
+    }
     if (agencyName === "0") {
         $("#ddlAgencyName").addClass("is-invalid");
         $("#ddlAgencyName").siblings(".error").text("Agency Name is required.");
@@ -166,35 +167,36 @@ async function SubmitRecord() {
         $("#txtnoOfResources").siblings(".error").text("No Of Resources required.");
         isValid = false;
     }
-    if (deptEmailId === "") {
-        $("#txtdeptEmailId").addClass("is-invalid");
-        $("#txtdeptEmailId").siblings(".error").text("Dept. Email Id required.");
+    if (presentResources === "") {
+        $("#txtPresentResource").addClass("is-invalid");
+        $("#txtPresentResource").siblings(".error").text("No Of Resources required.");
         isValid = false;
     }
+    
     if (billingAddress === "0" || billingAddress === null) {
         $("#ddlBillingAddress").addClass("is-invalid");
         $("#ddlBillingAddress").siblings(".error").text("Billing Address required.");
         isValid = false;
     }
-    
+
     if (!isValid) return;
     // Prepare data
     var formData = new FormData();
-    formData.append("WorkOrderAgencyId", Id);
-    formData.append("AgencyId", agencyName);
-    formData.append("DeptId", deptName);
+    formData.append("MonthYear", monthYear);
+    formData.append("DeptId", deptName );
+    formData.append("AgencyId", agencyName );
     formData.append("WorkOrderNo", workOrderNo);
-    formData.append("BillingId", 0);
-    formData.append("BillingAddress", billingAddress);
+    formData.append("BillingId",0 );
+    formData.append("BillingAddress", billingAddress );
     formData.append("NoDeployedRes", noOfResources);
-    formData.append("BillAddressEmail", deptEmailId);
+    formData.append("PresentResource", presentResources);
 
     try {
         //$("#ModalProgress").show();
-        let res = await acceptUpdate("Manpower", "AddOrEditRecord", formData);
+        let res = await acceptUpdate("Manpower", "DeptAttendanceAddOrEditRecord1", formData);
         if (res.success) {
 
-            recordlist();
+            //recordlist();
             resetModal();
             Id = 0;
             $('.modelalert').text(res.message);
@@ -207,4 +209,6 @@ async function SubmitRecord() {
     }
 
 }
+
+
 

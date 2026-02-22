@@ -133,6 +133,48 @@ namespace Compass.Repositories
             return result;
         }
 
+        // Get Agency Dropdown
+        public async Task<List<DropdownDto>> GetWorkOredrDropdownAsync(
+           int deptId,
+           string searchTerm)
+        {
+
+            SortedList parameters = new SortedList();
+            parameters.Add("@AgencyId", deptId);
+            parameters.Add("@SearchTerm", string.IsNullOrEmpty(searchTerm) ? DBNull.Value : searchTerm);
+            var dt = await _cn.FillDataTableAsync(
+                    "TallyAgency_Cddl",
+                    "",
+                    parameters
+                );
+            if (dt == null || dt.Rows.Count == 0)
+                return new List<DropdownDto>();
+
+            var result = CommonNew.ToList<DropdownDto>(dt);
+            return result;
+        }
+
+        // Get Month Year ddl
+        // Get Agency Dropdown
+        public async Task<List<DropdownDto>> GetMonthYearDropdownAsync(
+           int deptId,
+           string searchTerm)
+        {
+
+            SortedList parameters = new SortedList();
+            parameters.Add("@AgencyId", deptId);
+            parameters.Add("@SearchTerm", string.IsNullOrEmpty(searchTerm) ? DBNull.Value : searchTerm);
+            var dt = await _cn.FillDataTableAsync(
+                    "TallyAgency_Cddl",
+                    "",
+                    parameters
+                );
+            if (dt == null || dt.Rows.Count == 0)
+                return new List<DropdownDto>();
+
+            var result = CommonNew.ToList<DropdownDto>(dt);
+            return result;
+        }
 
 
     }

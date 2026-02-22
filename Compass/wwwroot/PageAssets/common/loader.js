@@ -99,18 +99,141 @@ function modalSelect2(ModalId, message) {
         });
     });
 }
-function bindDataToDdl(controllerName, methodName, modalId,dropDownId, message) {//mainCategoryDropdown
-    var ModalById = document.getElementById(modalId);
+//function bindDataToDdl(controllerName, methodName, modalId,dropDownId, message) {//mainCategoryDropdown
+//    var ModalById = document.getElementById(modalId);
+//    var dropDownById = document.getElementById(dropDownId);
+//    alert('enter1');
+//    $(ModalById).on('shown.bs.modal', function () {
+//        alert('enter2');
+//        //if (!$('#ddlMcategory').hasClass("select2-hidden-accessible")) {
+
+//        $(dropDownById).select2({
+//                dropdownParent: $(ModalById),
+//                placeholder: message,
+//                allowClear: true,
+//                ajax: {
+//                    url: `/${controllerName}/${methodName}`,
+//                    dataType: 'json',
+//                    delay: 250,
+//                    data: function (params) {
+//                        return {
+//                            id: 0,
+//                            mainCatgId: 0,
+//                            searchTerm: params.term
+//                        };
+//                    },
+//                    processResults: function (data) {
+//                        return {
+//                            results: $.map(data, function (item) {
+//                                return {
+//                                    id: item.Id,
+//                                    text: item.Text
+//                                };
+//                            })
+//                        };
+//                    }
+//                }
+//            });
+//            //$('#ddlMcategory').select2({
+//            //    dropdownParent: $('#myModal'),
+//            //    placeholder: "Select Main Category",
+//            //    allowClear: true,
+//            //    width: '100%'
+//            //});
+
+//        //}
+
+//    });
+   
+//}
+
+//// without model ddl calling
+//function withoutModelBindDataToDdl(controller, action, modalId, ddlId, placeholder) {
+
+//    let selector = "";
+
+//    if (modalId && modalId !== "") {
+//        selector = '#' + modalId + ' #' + ddlId;
+//    } else {
+//        selector = '#' + ddlId;
+//    }
+
+//    $(selector).select2({
+//        placeholder: "Select " + placeholder,
+//        allowClear: true,
+//        ajax: {
+//            url: '/' + controller + '/' + action,
+//            dataType: 'json',
+//            delay: 250,
+//            data: function (params) {
+//                return {
+//                    id: 0,
+//                    mainCatgId: 0,
+//                    searchTerm: params.term
+//                };
+//            },
+//            processResults: function (data) {
+//                return {
+//                    results: $.map(data, function (item) {
+//                        return {
+//                            id: item.Id,
+//                            text: item.Text
+//                        };
+//                    })
+//                };
+//            }
+//        }
+//    });
+//}
+
+//both parent drop down with or without model
+function bindDataToDdl(controllerName, methodName, modalId, dropDownId, message) {
+
     var dropDownById = document.getElementById(dropDownId);
-    alert('enter1');
-    $(ModalById).on('shown.bs.modal', function () {
-        alert('enter2');
-        //if (!$('#ddlMcategory').hasClass("select2-hidden-accessible")) {
+
+    // ✅ Agar modalId null ya empty hai
+    if (!modalId) {
 
         $(dropDownById).select2({
+            placeholder: message,
+            allowClear: true,
+            width: '100%',
+            ajax: {
+                url: `/${controllerName}/${methodName}`,
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        id: 0,
+                        mainCatgId: 0,
+                        searchTerm: params.term
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: $.map(data, function (item) {
+                            return {
+                                id: item.Id,
+                                text: item.Text
+                            };
+                        })
+                    };
+                }
+            }
+        });
+
+    }
+    else {
+        // ✅ Agar modal exist karta hai
+        var ModalById = document.getElementById(modalId);
+
+        $(ModalById).on('shown.bs.modal', function () {
+
+            $(dropDownById).select2({
                 dropdownParent: $(ModalById),
                 placeholder: message,
                 allowClear: true,
+                width: '100%',
                 ajax: {
                     url: `/${controllerName}/${methodName}`,
                     dataType: 'json',
@@ -134,19 +257,78 @@ function bindDataToDdl(controllerName, methodName, modalId,dropDownId, message) 
                     }
                 }
             });
-            //$('#ddlMcategory').select2({
-            //    dropdownParent: $('#myModal'),
-            //    placeholder: "Select Main Category",
-            //    allowClear: true,
-            //    width: '100%'
-            //});
 
-        //}
+        });
+    }
+}
+
+// both child drop down with or without model
+function bindDependentDataToDdl(controller, action, modalId,
+    parentId, childId, placeholder) {
+
+    var parent = $('#' + parentId);
+    var child = $('#' + childId);
+
+    // Page load par child disable
+    child.prop('disabled', true);
+
+    parent.on('change', function () {
+
+        var parentValue = $(this).val();
+
+        // Clear previous value
+        child.val(null).trigger('change');
+
+        if (!parentValue || parentValue == "0") {
+            child.prop('disabled', true);
+            return;
+        }
+
+        child.prop('disabled', false);
+
+        // Destroy previous Select2 if exists
+        if (child.hasClass("select2-hidden-accessible")) {
+            child.select2('destroy');
+        }
+
+        var options = {
+            placeholder: placeholder,
+            allowClear: true,
+            width: '100%',
+            ajax: {
+                url: '/' + controller + '/' + action,
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        id: 0,
+                        mainCatgId: parentValue,
+                        searchTerm: params.term
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: $.map(data, function (item) {
+                            return {
+                                id: item.Id,
+                                text: item.Text
+                            };
+                        })
+                    };
+                }
+            }
+        };
+
+        // If inside modal
+        if (modalId) {
+            options.dropdownParent = $('#' + modalId);
+        }
+
+        child.select2(options);
 
     });
-
-    
 }
+
 function encryptPassword(password) {
     var key = CryptoJS.enc.Utf8.parse('1234567890123456'); // 16-byte key
     var iv = CryptoJS.enc.Utf8.parse('1234567890123456');  // 16-byte IV

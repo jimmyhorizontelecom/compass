@@ -1,0 +1,181 @@
+﻿@using System.Security.Claims
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    var roleId = User.FindFirst("RoleId")?.Value;
+    var userId = User.FindFirst("UserId")?.Value;
+    var deptId = User.FindFirst("DeptId")?.Value;
+}
+@{
+    Layout = "~/Views/Shared/_TestLayout.cshtml";
+}
+<div class="container ">
+    <div id="modalLoader1" class="modal-loader modalLoader">
+        <div class="spinner"></div>
+        <p class="loading-text">Please wait...</p>
+    </div>
+    <h4>Department Attendnace </h4>
+</div>
+
+<div class="container">
+    <div id="modalLoader1" class="modal-loader modalLoader">
+        <div class="spinner"></div>
+        <p class="loading-text">Please wait...</p>
+    </div>
+    
+    <div class="filter-panel mt-5 div-coral-base">
+        
+        <div class="form-group row">
+            <div class="col-md-3 ">
+                <label class="form-labelo">Month Year <span class="text-danger">*</span></label>
+                <select id="ddlMonthYear" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                    <option selected value="0"> -- Select --</option>
+                </select>
+                <span class="error"></span>
+            </div>
+
+            <div class="col-md-3 mb-0">
+                 <label class="form-labelo">Department Name<span class="text-danger">*</span></label>
+                <select id="ddlDeptName" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                    <option selected value="0"> -- Select --</option>
+                </select>
+                <span class="error"></span>
+            </div>
+            <div class="col-md-3 mb-0">
+                <label class="form-labelo">Agency<span class="text-danger">*</span></label>
+                <select id="ddlAgencyName" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                    <option selected value="0">Select</option>
+                </select>
+                <span class="error"></span>
+            </div>
+            <div class="col-md-3 mb-0">
+                <label class="form-labelo">Work Order No<span class="text-danger">*</span></label>
+                <select id="ddlWorkOrder" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                    <option selected value="0"> -- Select --</option>
+                </select>
+                <span class="error"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-6 mb-0 ">
+                <label class="form-labelo">Billing Address <span class="text-danger">*</span></label>
+                <select id="ddlBillingAddress" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                    <option selected value="0"> -- Select --</option>
+                </select>
+                <span class="error"></span>
+            </div>
+            <div class="col-md-3 mb-0">
+                <label class="form-label">No of Resources<span class="text-danger">*</span></label>
+                <input type="text" id="txtNoOfResources" class="form-control txtbx cleartxt" placeholder="No Of Resources" />
+                <span class="error"></span>
+            </div>
+            <div class="col-md-3 mb-0">
+                <label class="form-label">Present Resource<span class="text-danger">*</span></label>
+                <input type="text" id="txtPresentResource" class="form-control txtbx cleartxt" placeholder="No Of Resources" />
+                <span class="error"></span>
+            </div>
+            
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3 mb-0">
+                <label class="form-label">Upload Attendance File<span class="text-danger">*</span></label>
+                <div class="input-group mb-0">
+                    <input type="file" class="form-control" id="inputGroupFile02">
+                   @*  <label class="input-group-text" for="inputGroupFile02">Upload</label> *@
+                </div>
+                <span class="error">Only PDF File (Max Size: 5 MB)</span>
+            </div>
+
+            <div class="col-md-3 mb-0">
+                <label class="form-label">Upload Annexure File (5%)<span class="text-danger">*</span></label>
+                <div class="input-group mb-0">
+                    <input type="file" class="form-control" id="inputGroupFile02">
+                    @*  <label class="input-group-text" for="inputGroupFile02">Upload</label> *@
+                </div>
+                <span class="error">Only PDF File (Max Size: 5 MB)</span>
+            </div>
+
+            <div class="col-md-3 mb-0">
+                <label class="form-label">Upload Agency (Bill+Annexure 2.5%)<span class="text-danger">*</span></label>
+                <div class="input-group mb-0">
+                    <input type="file" class="form-control" id="inputGroupFile02">
+                    @*  <label class="input-group-text" for="inputGroupFile02">Upload</label> *@
+                </div>
+                <span class="error">Only PDF File (Max Size: 5 MB)</span>
+            </div>
+            <div class="col-md-3 mb-0">
+                <button type="button" class="btn  btn-coral txt-white" data-bs-toggle="modal" data-bs-target="#myModal">
+                    Submit
+                </button>
+                
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+    <div class="container mt-5">
+        @* <h2 class="mb-4">User List</h2> *@
+    <div class="filter-panel mt-5 div-coral-base">
+        
+        <div class="row align-items-center">
+                <div class="col-sm-1"  >
+                    <label class="form-labelo">Month Year @* <span class="text-danger">*</span> *@</label>
+                </div>
+            <div class="col-sm-1">
+                    <select id="ddlMonth" class="form-select form-select-sm search_ddl select2 " aria-label=".form-select-sm" >
+                        <option selected value="0">Select</option>
+                    </select>
+                </div>
+            <div class="col-md-1">
+                    <select id="ddlYear" class="form-select form-select-sm search_ddl select2" aria-label=".form-select-sm">
+                        <option selected value="0"> Select </option>
+                    </select>     
+            </div>
+      </div>
+        <div class="table-responsive">
+        <table id="myTable" class="table orangeTh table-striped table-hover table-bordered">
+            <thead class="bg-d">
+                <tr>
+                    <th>Sr.No</th>
+                    <th>Department Name</th>
+                    <th>Agency Name</th>
+                    <th>Work Order No.<br> Agency Bill No</th>
+                    <th>Total No. Of Reesources</th>
+                    <th>Present Reesources</th>
+                    <th>Month & Year</th>
+                    <th>View Attendance</th>
+                    <th>View Annexure</th>
+                    <th>View Bill</th>
+                    <th>Upload Annexure & Bill</th>
+                    <th>Delete Attendance</th>
+                    <th>Bill Verification Status</th>
+                    <th>Remarks</th>
+                    <th>Agency Invoice Entry</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot class="tfoot bg-primary">
+                <tr>
+                    @* <td>3</td>
+                    <td>Mike Brown</td>
+                    <td>mike@example.com</td>
+                    <td>Editor</td>
+                    <td>Editor</td> *@
+                </tr>
+            </tfoot>
+        </table>
+        </div>
+    </div>
+</div>
+}
+
+
+@section Scripts {
+    <script src="~/PageAssets/Manpower/Js/deptattendnace.js" asp-append-version="true"></script>
+}

@@ -45,6 +45,23 @@ namespace Compass.Services
             return await _repository.GetAgencyDropdownAsync(deptId, searchTerm);
         }
 
+        //Get Work Oreder ddl
+
+        public async Task<List<DropdownDto>> GetWorkOredrDropdownAsync(
+            int deptId,
+            string searchTerm)
+        {
+            return await _repository.GetWorkOredrDropdownAsync(deptId, searchTerm);
+        }
+
+        //Get Month Year ddl
+
+        public async Task<List<DropdownDto>> GetMonthYearDropdownAsync(
+            int deptId,
+            string searchTerm)
+        {
+            return await _repository.GetMonthYearDropdownAsync(deptId, searchTerm);
+        }
 
 
 

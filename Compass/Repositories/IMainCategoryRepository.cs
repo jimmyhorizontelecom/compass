@@ -11,8 +11,15 @@ namespace Compass.Repositories
         // Get Agency ddl
         Task<List<DropdownDto>> GetAgencyDropdownAsync(int deptId, string searchTerm);
 
-        
-        
-       
+        // Get Work Oreder ddl
+        Task<List<DropdownDto>> GetWorkOredrDropdownAsync(int deptId, string searchTerm);
+
+        // Get Month/Year ddl
+        Task<List<DropdownDto>> GetMonthYearDropdownAsync(int deptId, string searchTerm);
+
+
+
+
+
     }
 }
