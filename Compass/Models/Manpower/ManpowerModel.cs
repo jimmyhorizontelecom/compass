@@ -36,7 +36,7 @@ namespace Compass.Models.ManpowerModel
         public int WorkOrderNo { get; set; }
         public int UpladNoOfResource { get; set; }
         public int PresentResource { get; set; }
-        public IFormFile AttendanceFile { get; set; }   // File upload ke liye
+        public IFormFile AttendanceFile { get; set; }   // For File upload
         public IFormFile AnnexureFile { get; set; }
         public IFormFile AgencyBillFile { get; set; }
         public int CreatedBy { get; set; }
