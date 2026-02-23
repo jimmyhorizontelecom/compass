@@ -33,15 +33,13 @@ namespace Compass.Models.ManpowerModel
    {
         public int Id { get; set; }    
         public int MonthYear { get; set; }    
-        public int WorkOrderId { get; set; }
+        public int WorkOrderNo { get; set; }
         public int UpladNoOfResource { get; set; }
-        public string AttendanceCertificate { get; set; }
-        public string AnnexureFile { get; set; }
-        public string AgencyBillFile { get; set; }
-    public int CreatedBy { get; set; }
-
-
-
+        public int PresentResource { get; set; }
+        public IFormFile AttendanceFile { get; set; }   // File upload ke liye
+        public IFormFile AnnexureFile { get; set; }
+        public IFormFile AgencyBillFile { get; set; }
+        public int CreatedBy { get; set; }
 }
 
 

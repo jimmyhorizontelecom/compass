@@ -13,10 +13,7 @@ toastr.options = {
 
 $(document).ready(function () {
     resetModal();
-    //alert('dfdf');
     recordlist();
-    //modalSelect2('myModal', 'Catg');
-    //alert('Dropdown Binidng starts');
     bindDataToDdl("Dropdown", "MAgency_ddl", "myModal", "ddlAgencyName", " Agency Name");
     bindDataToDdl("Dropdown", "MDepartment_ddl", "myModal", "ddlDeptName", " Department Name");
     //bindDataToDdl("Dropdown", "MBillingAddress_ddl", "myModal", "ddlBillingAddress", " Billing Address");
@@ -24,41 +21,6 @@ $(document).ready(function () {
         "ddlDeptName", "ddlBillingAddress", "Select Billing Address");
 });
 
-
-// To get Billing Address ddl on change Department ddl
-//$('#ddlDeptName').on('change', function () {
-
-//    var deptId = $(this).val();
-//    $('#ddlBillingAddress').val(null).trigger('change');
-
-//    $('#ddlBillingAddress').select2({
-//        dropdownParent: $('#myModal'),
-//        placeholder: "Select Billing Address",
-//        allowClear: true,
-//        ajax: {
-//            url: '/Dropdown/MBillingAddress_ddl',
-//            dataType: 'json',
-//            delay: 250,
-//            data: function (params) {
-//                return {
-//                    DeptId: 0,
-//                    mainCatgId: deptId,
-//                    searchTerm: params.term
-//                };
-//            },
-//            processResults: function (data) {
-//                return {
-//                    results: $.map(data, function (item) {
-//                        return {
-//                            id: item.Id,
-//                            text: item.Text
-//                        };
-//                    })
-//                };
-//            }
-//        }
-//    });
-//});
 
 //Get Record for A table 
 async function recordlist() {

@@ -22,6 +22,7 @@
     <Folder Include="Models\Test\NewFolder\" />
     <Folder Include="Report\ViewModels\NewFolder\" />
     <Folder Include="Repositories\Login\" />
+    <Folder Include="wwwroot\Attachment\DeptAttendance\" />
     <Folder Include="wwwroot\Attachment\ProductCatg\" />
     <Folder Include="wwwroot\js\common\NewFolder\" />
     <Folder Include="wwwroot\testupload\" />

@@ -13,7 +13,12 @@ $(document).ready(function () {
     recordlist();
     //Parent Dropdown
     bindDataToDdl("Dropdown", "MDepartment_ddl", "", "ddlDeptName", " Department Name");
-    bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyName", " Agency Name");   
+    bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyName", " Agency Name"); 
+    //Sample ddl
+    bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlMonthYear", " Agency Name");   
+    bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlWorkOrder", " Agency Name");   
+
+
     // Dependent Dropdown
     bindDependentDataToDdl("Dropdown","MBillingAddress_ddl",null,// ❗ no modal
             "ddlDeptName","ddlBillingAddress","Select Billing Address");
@@ -24,9 +29,10 @@ $(document).ready(function () {
 async function recordlist() {
 
     var filterData = {
+        Id:0,
         AgencyId: 0,
-        DeptId: 56,
-        WorkOrderAgencyId: 0,
+        DeptId: 123,
+        MonthYear: '102025',
         CreatedBy: 0,
         UserRole: 39,
 
@@ -60,12 +66,12 @@ function bindDatatable(records, tableId) {
                 data-id="${value.Id}"
                 <td>${value.Id}</td>
                 <td>${SrNo}</td>
-                <td>${value.DepartmentName}</td>
-                <td>${value.agencyName}</td>
-                <td>${value.BillingAddress}</td>
-                <td>${value.NoDeployedRes}</td>
-                <td>${value.NoDeployedRes}</td>
-                <td>${value.IsResourceUploaded}</td>
+                <td>${value.departmentName}</td>
+                <td>${value.AgencyName}</td>
+                <td>${value.WorkOrderId} <br> ${value.PurhaseInvNO}</td>
+                <td>${value.DeployedResource}</td>
+                <td>${value.UpladNoOfResource}</td>
+                <td>${value.MonthYear}</td>
                 
                  <td class="text-center">
                     <span data-id="${value.DeptId}" >
@@ -137,7 +143,16 @@ async function SubmitRecord() {
     let billingAddress = $("#ddlBillingAddress").val();
     let noOfResources = $("#txtNoOfResources").val().trim();
     let presentResources = $("#txtPresentResource").val().trim();
-    
+
+    let Attendance = $("#inputAttendanceFileAttached").get(0);
+    let files_Attendance = Attendance.files;
+
+    let Annexure = $("#inputAnnexureFileAttached").get(0);
+    let files_Annexure = Annexure.files;
+
+    let GroupBill = $("#inputGroupBillFileAttached").get(0);
+    let files_GroupBill = GroupBill.files;
+
     $(".error").text("");
     $(".is-invalid").removeClass("is-invalid");
 
@@ -157,14 +172,14 @@ async function SubmitRecord() {
         isValid = false;
     }
 
-    if (workOrderNo === "") {
-        $("#txtworkOrderNo").addClass("is-invalid");
-        $("#txtworkOrderNo").siblings(".error").text("Work Order No required.");
+    if (workOrderNo === "0") {
+        $("#ddlWorkOrder").addClass("is-invalid");
+        $("#ddlWorkOrder").siblings(".error").text("Work Order No required.");
         isValid = false;
     }
     if (noOfResources === "") {
-        $("#txtnoOfResources").addClass("is-invalid");
-        $("#txtnoOfResources").siblings(".error").text("No Of Resources required.");
+        $("#txtNoOfResources").addClass("is-invalid");
+        $("#txtNoOfResources").siblings(".error").text("No Of Resources required.");
         isValid = false;
     }
     if (presentResources === "") {
@@ -178,26 +193,74 @@ async function SubmitRecord() {
         $("#ddlBillingAddress").siblings(".error").text("Billing Address required.");
         isValid = false;
     }
-
     if (!isValid) return;
+    //File validation
     // Prepare data
+    var fileSize = 1
+    var isValid1 = fileSizeValidation('inputAttendanceFileAttached', fileSize);
+
+    if (!isValid1) {
+        MsgBox('Message', "File Size should be <=" + fileSize + "MB", '');
+        return;
+    }
+    let allowedExtensions = ["pdf"];
+
+    isValid1 = fileExtensionValidation('inputAttendanceFileAttached', allowedExtensions)
+    if (!isValid1) {
+        MsgBox('Message', "File should be only " + allowedExtensions + '.');
+        return;
+    }
+    /*var newFileName = getNewFileName('inputAttendanceFileAttached', "Attendance")*/
+    //var formData = new FormData();
+    //alert(newFileName);
+    
+    //if (files_Attendance.length > 0) {
+    //    formData.append("attachmentFile1", files_Attendance[0], newFileName);  // EXACT match
+    //}
+
+    // Prepare data
+    //var formData = new FormData();
+    //formData.append("MonthYear", monthYear);
+    //formData.append("WorkOrderNo", workOrderNo);
+    //formData.append("UpladNoOfResource", noOfResources);
+    //if (files_Attendance.length > 0) {
+    //    formData.append("AttendanceFile", files_Attendance[0]);
+    //}
+
+    //if (files_Annexure.length > 0) {
+    //    formData.append("AnnexureFile", files_Annexure[0]);
+    //}
+
+    //if (files_GroupBill.length > 0) {
+    //    formData.append("AgencyBillFile", files_GroupBill[0]);
+    //}
+
     var formData = new FormData();
     formData.append("MonthYear", monthYear);
-    formData.append("DeptId", deptName );
-    formData.append("AgencyId", agencyName );
     formData.append("WorkOrderNo", workOrderNo);
-    formData.append("BillingId",0 );
-    formData.append("BillingAddress", billingAddress );
-    formData.append("NoDeployedRes", noOfResources);
+    formData.append("UpladNoOfResource", noOfResources);
     formData.append("PresentResource", presentResources);
+
+    if (files_Attendance.length > 0) {
+        formData.append("AttendanceFile", files_Attendance[0]);
+    }
+
+    if (files_Annexure.length > 0) {
+        formData.append("AnnexureFile", files_Annexure[0]);
+    }
+
+    if (files_GroupBill.length > 0) {
+        formData.append("AgencyBillFile", files_GroupBill[0]);
+    }
 
     try {
         //$("#ModalProgress").show();
-        let res = await acceptUpdate("Manpower", "DeptAttendanceAddOrEditRecord1", formData);
+        let res = await acceptUpdate("Manpower", "AddOrEdit_DeptAttendanceRecord", formData);
         if (res.success) {
 
-            //recordlist();
-            resetModal();
+            recordlist();
+            //resetModal();
+            resetFilterPanel();
             Id = 0;
             $('.modelalert').text(res.message);
             closeModal('myModal');
@@ -209,6 +272,26 @@ async function SubmitRecord() {
     }
 
 }
+
+//Edit Record From Table
+$(document).on('click', '.edit-test', async function () {
+
+    var row = $(this).closest('tr');
+    Id = row.data('id');
+
+    var isConfirmed = await DeleteEditBox('Edit Field', 'Do you want to edit Record?', 'question', Id);
+
+    if (isConfirmed) {
+        console.log('Edit');
+        // User clicked Yes
+        await loadRecordById(row);
+        openModal('myModal');
+        // $('#myModal').modal('show');
+    } else {
+        // User clicked Cancel
+        console.log('Edit cancelled');
+    }
+});
 
 
 

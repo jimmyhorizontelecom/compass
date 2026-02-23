@@ -81,7 +81,7 @@
             <div class="col-md-3 mb-0">
                 <label class="form-label">Upload Attendance File<span class="text-danger">*</span></label>
                 <div class="input-group mb-0">
-                    <input type="file" class="form-control" id="inputGroupFile02">
+                    <input type="file" class="form-control" id="inputAttendanceFileAttached">
                    @*  <label class="input-group-text" for="inputGroupFile02">Upload</label> *@
                 </div>
                 <span class="error">Only PDF File (Max Size: 5 MB)</span>
@@ -90,7 +90,7 @@
             <div class="col-md-3 mb-0">
                 <label class="form-label">Upload Annexure File (5%)<span class="text-danger">*</span></label>
                 <div class="input-group mb-0">
-                    <input type="file" class="form-control" id="inputGroupFile02">
+                    <input type="file" class="form-control" id="inputAnnexureFileAttached">
                     @*  <label class="input-group-text" for="inputGroupFile02">Upload</label> *@
                 </div>
                 <span class="error">Only PDF File (Max Size: 5 MB)</span>
@@ -99,16 +99,13 @@
             <div class="col-md-3 mb-0">
                 <label class="form-label">Upload Agency (Bill+Annexure 2.5%)<span class="text-danger">*</span></label>
                 <div class="input-group mb-0">
-                    <input type="file" class="form-control" id="inputGroupFile02">
+                    <input type="file" class="form-control" id="inputGroupBillFileAttached">
                     @*  <label class="input-group-text" for="inputGroupFile02">Upload</label> *@
                 </div>
                 <span class="error">Only PDF File (Max Size: 5 MB)</span>
             </div>
             <div class="col-md-3 mb-0">
-                <button type="button" class="btn  btn-coral txt-white" data-bs-toggle="modal" data-bs-target="#myModal">
-                    Submit
-                </button>
-                
+                <button type="button" class="btn btnModel btnModalSubmit">Submit</button>             
             </div>
 
         </div>
@@ -178,4 +175,5 @@
 
 @section Scripts {
     <script src="~/PageAssets/Manpower/Js/deptattendnace.js" asp-append-version="true"></script>
+
 }

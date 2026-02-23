@@ -37,6 +37,18 @@ namespace Compass.Models.ManpowerViewModel
 
     }
 
+    public class DeptAttendanceViewModel
+    {
+        public string AttendaceId { get; set; }
+        public string departmentName { get; set; }
+        public string AgencyName { get; set; }
+        public string WorkOrderId { get; set; }
+        public string PurhaseInvNO { get; set; }
+        public int DeployedResource { get; set; }
+        public int UpladNoOfResource { get; set; }
+        public int MonthYear { get; set; } 
+
+    }
 
 
 

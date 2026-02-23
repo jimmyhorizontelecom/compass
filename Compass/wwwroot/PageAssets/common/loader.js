@@ -73,6 +73,33 @@ function resetModal() {
     $("#ModalProgress").hide();
     hideModalLoader();
 }
+
+// reset filter pannel
+function resetFilterPanel() {
+
+    // 🔹 Reset all dropdowns (including Select2)
+    $(".filter-panel select").each(function () {
+        $(this).val("0").trigger("change");   // reset value
+    });
+
+    // 🔹 Clear textboxes (using existing class)
+    $(".cleartxt").val("");
+
+    // 🔹 Clear file inputs
+    $(".filter-panel input[type='file']").val("");
+
+    // 🔹 Clear error messages & remove validation class
+    $(".filter-panel .error").text("");
+    $(".filter-panel .is-invalid").removeClass("is-invalid");
+
+    // 🔹 Optional: Clear any alert message
+    $(".modelalert").text("");
+
+    // 🔹 Optional: Focus first dropdown
+    $("#ddlMonthYear").focus();
+}
+
+
 //enabled  input
 function enabledInput()
 {
@@ -491,15 +518,17 @@ function fileSizeValidation(fileUploadId,maxSizeFileMB)
     
 }
 //
-function fileExtensionValidation(fileUploadId, allowedExtensions ) {
+function fileExtensionValidation1(fileUploadId, allowedExtensions ) {
     //let allowedExtensions = ["jpg", "jpeg", "png", "pdf"];
     //extension validation   
     var fileId = document.getElementById(fileUploadId);    
     const file = fileId.files[0];
     let files = file.files;
+    
     $.each(files, function (key, file) {
 
         let extension = file.name.split('.').pop().toLowerCase();
+        alert(extension);
         var result = allowedExtensions.join(",");
         if (!allowedExtensions.includes(extension)) {
             toastr.error("Only " + result +" files are allowed");
@@ -509,10 +538,43 @@ function fileExtensionValidation(fileUploadId, allowedExtensions ) {
     });
 
 }
-//
-//
-function getNewFileName(file,prefix) {
-    let extension = file.name.split('.').pop();
-    let newFileName = prefix + "_" + Date.now() + "_" + key + "." + extension;
-    return newFileName;
+
+function fileExtensionValidation(fileUploadId, allowedExtensions) {
+
+    var fileInput = document.getElementById(fileUploadId);
+
+    // If input not found
+    if (!fileInput) {
+        console.error("File input not found: " + fileUploadId);
+        return false;
+    }
+
+    // If no file selected
+    if (!fileInput.files || fileInput.files.length === 0) {
+        return true; // nothing to validate
+    }
+
+    var file = fileInput.files[0];
+
+    // Extra safety check
+    if (!file || !file.name) {
+        return false;
+    }
+
+    var extension = file.name.split('.').pop().toLowerCase();
+
+    if (!allowedExtensions.includes(extension)) {
+        toastr.error("Only " + allowedExtensions.join(", ") + " files are allowed");
+        return false;
+    }
+
+    return true;
 }
+
+//
+//
+//function getNewFileName(file,prefix) {
+//    let extension = file.name.split('.').pop();
+//    let newFileName = prefix + "_" + Date.now() + "_" + key + "." + extension;
+//    return newFileName;
+//}
