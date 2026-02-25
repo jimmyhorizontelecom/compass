@@ -1,0 +1,270 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@{
+    // var roleId = User.FindFirst("RoleId")?.Value;
+    // var userId = User.FindFirst("UserId")?.Value;
+    // var deptId = User.FindFirst("DeptId")?.Value;
+}
+@{
+    Layout = "~/Views/Shared/_TestLayout.cshtml";
+}
+
+<div class="container ">
+    <div id="modalLoader1" class="modal-loader modalLoader">
+        <div class="spinner"></div>
+        <p class="loading-text">Please wait...</p>
+    </div>
+    <h4>Purchase Bill Verification </h4>
+    </div>
+    <div class="container-fluid">
+      <div id="modalLoader1" class="modal-loader modalLoader">
+        <div class="spinner"></div>
+        <p class="loading-text">Please wait...</p>
+      </div>
+
+    <div class="filter-panel mt-5 div-coral-base">
+        <div class="form-group row">
+            <div class="col-md-3 ">
+                <label class="form-label"> Month & Year</label>
+                <input type="text" id="monthYearPicker" class="form-control" placeholder="MM/YYYY">
+                <span class="error"></span>
+            </div>
+            <div class="col-md-3 mb-0">
+                <label class="form-labelo">Agency<span class="text-danger">*</span></label>
+                <select id="ddlAgencyName" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                    <option selected value="0">--Select--</option>
+                </select>
+                <span class="error"></span>
+            </div>
+            <div class="col-md-3 mb-0">
+                <label class="form-labelo">Department Name<span class="text-danger">*</span></label>
+                <select id="ddlDeptName" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                    <option selected value="0"> -- Select --</option>
+                </select>
+                <span class="error"></span>
+            </div>
+            
+            <div class="col-md-3 mb-0">
+                <label class="form-labelo">Bill Status<span class="text-danger">*</span></label>
+                <select id="ddlBillStatu" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                    <option selected value="0"> -- Select --</option>
+                </select>
+                <span class="error"></span>
+            </div>
+        </div>
+    </div>
+       
+    <div class="container-fluid mt-5">
+        @* <h2 class="mb-4">User List</h2> *@
+        <div class="filter-panel mt-5 div-coral-base">         
+                <table id="myTable" class="table orangeTh table-striped table-hover table-bordered">
+                    <thead class="bg-d">
+                        <tr>
+                            <th>Sr.No</th>
+                            <th>Department Name</th>
+                            <th>Agency Name <br> Agency Bill No</th>
+                            <th>Attendance</th>
+                            <th>Annexure</th>
+                            <th>Invoice</th>
+                            <th>Bill Date <br> Bill Month <br> Agency Bill Entry Date</th>
+                            <th>Agency Bill Verification</th>
+                            <th>Verification Status</th>
+                            <th>HPSEDE Bill </th>
+                            <th>EInvoice</th>
+                            <th>Print</th>
+                            <th>Cancel Sale Bill</th>                        
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                    <tfoot class="tfoot bg-primary">
+                        <tr>
+                            @* <td>3</td>
+                    <td>Mike Brown</td>
+                    <td>mike@example.com</td>
+                    <td>Editor</td>
+                    <td>Editor</td> *@
+                        </tr>
+                    </tfoot>
+                </table>
+        </div>
+    </div>
+</div>
+
+<!--Add Sale bill Details Modal-->
+@section Modals {
+    <!-- The Modal -->
+    <!-- Purchase Bill Details Entry-->>
+    <div class="modal modal-lg" id="myModal_AddSaleBillDetail">
+        <div class="modal-dialog ">
+            <div class="modal-content position-relative">
+                <!-- 🔥 Loader Overlay -->
+                <div id="" class="modal-loader modalLoader">
+                    <div class="spinner"></div>
+                    <p class="loading-text">Please wait...</p>
+                </div>
+                <!-- Modal Header -->
+                <div class="modal-header  bg-ld ">
+                    <h4 class="modal-title txt-white" id="myModalLabel">Add Sale Bill Details</h4>
+                    <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div id="#toast-container"></div>
+                    <div class="filter-panel mt-5 div-coral-base">
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label class="form-label">Work Order No. <span class="text-danger">*</span></label>
+                                <input type="text" id="txtEntryWorkOrderNo" class="form-control" placeholder="Work Order No">
+                                <span class="error"></span>
+                            </div>
+
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Purchase Bill No.<span class="text-danger">*</span></label>
+                                <input type="text" id="txtPurchaseBillNo" class="form-control" placeholder="Purchase Bill No" readonly>
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Sale Bill Date<span class="text-danger">*</span></label>
+                                <input type="date" id="dateSaleBill" class="form-control" >
+                                <span class="error"></span>
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Sale Bill No <span class="text-danger">*</span></label>
+                                <input type="text" id="txtSaleBillNo" class="form-control" placeholder="Sale Bill No" readonly>
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Agency <span class="text-danger">*</span></label>
+                                <input type="text" id="txtAgencyName" class="form-control" placeholder="Agency Name" readonly>
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Department <span class="text-danger">*</span></label>
+                                <input type="text" id="txtDeptName" class="form-control" placeholder="Department Name" readonly>
+                                <span class="error"></span>
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-8 mb-0">
+                                <label class="form-labelo">Department Full Name with Billing Address <span class="text-danger">*</span></label>
+                                <textarea id="txtEntryDepBillingAddress" class="form-control" placeholder="No. of Resource"></textarea>
+                                <input type="text" id="" class="form-control" placeholder="No. of Resource">
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Bill for Month</label>
+                                <input type="text" id="monthYearPicker" class="form-control" placeholder="MM/YYYY">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Pin Code <span class="text-danger">*</span></label>
+                                <input type="number" id="numPinCode" class="form-control" placeholder="Pin Code">
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">GST No. <span class="text-danger">*</span></label>
+                                <input type="text" id="txtGstNo" class="form-control" placeholder="GST No">
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">HSN Code <span class="text-danger">*</span></label>
+                                <input type="text" id="txtHsnCode" class="form-control" placeholder="HSN Code">
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-6 mb-0">
+                                <label class="form-labelo">Discription <span class="text-danger">*</span></label>
+                                <input type="text" id="txtDiscription" class="form-control" placeholder="Discription">
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-6 mb-0">
+                                <label class="form-labelo">Narration <span class="text-danger">*</span></label>
+                                <input type="text" id="txtNarration" class="form-control" placeholder="Narration">
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-panel mt-5 div-coral-base">
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label class="form-label">Basic Bill Amount <span class="text-danger">*</span></label>
+                                <input type="number" id="numBasicAmount" class="form-control" placeholder="Agency Bill">
+                                <span class="error"></span>
+                            </div>
+
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo"> Admin Charge (2.5%) <span class="text-danger">*</span></label>
+                                <input type="number" id="numEntryAdminCharge" class="form-control" placeholder="Agency Bill">
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Livery Charge <span class="text-danger">*</span></label>
+                                <input type="number" id="numEntryLiveryCharge" class="form-control" placeholder="0">
+                                <span class="error"></span>
+                            </div>
+
+                        </div>
+                        
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label class="form-label">Output CGST (9%) <span class="text-danger">*</span></label>
+                                <input type="number" id="numOutputCgst" class="form-control" placeholder="CGST" readonly>
+                                <span class="error"></span>
+                            </div>
+
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo"> Output SGST (9%) <span class="text-danger">*</span></label>
+                                <input type="number" id="numOutputSgst" class="form-control" placeholder="SGST" readonly>
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Total Amount <span class="text-danger">*</span></label>
+                                <input type="number" id="numTotalAmount" class="form-control" placeholder="Total Amount" readonly>
+                                <span class="error"></span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer  bg-ld">
+                    <div class="me-auto">
+                        <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
+                    </div>
+                    <div class="flex-grow-1 text-center modelalert text-danger"></div>
+                    <button type="button" class="btn btnModel btnModalSubmit">Submit</button>
+                    <button type="button" data-bs-dismiss="modal" class="btn btnModel">Close</button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+}
+
+
+
+@section Scripts {
+    <script src="~/pageassets/manpowerinvoice/js/purchasebillverification.js"></script>
+
+}
+
+
+
+

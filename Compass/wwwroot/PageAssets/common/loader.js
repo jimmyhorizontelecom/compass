@@ -578,3 +578,9 @@ function fileExtensionValidation(fileUploadId, allowedExtensions) {
 //    let newFileName = prefix + "_" + Date.now() + "_" + key + "." + extension;
 //    return newFileName;
 //}
+
+// Open upload file on new tab
+function openFile(fileName, fileType) {
+    let url = `/Manpower/ViewDeptAttendanceFile?fileName=${fileName}&fileType=${fileType}`;
+    window.open(url, '_blank');
+}

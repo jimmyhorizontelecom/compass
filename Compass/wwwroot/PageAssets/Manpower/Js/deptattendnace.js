@@ -11,11 +11,15 @@ toastr.options = {
 $(document).ready(function () {
     resetModal();
     recordlist();
+
+    //DateInitilised("datePicker", "d/m/Y");
+    //MonthYearInitilised("monthYear", "");
+    //MonthYearInitilised("monthYearPicker", "");
     //Parent Dropdown
     bindDataToDdl("Dropdown", "MDepartment_ddl", "", "ddlDeptName", " Department Name");
     bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyName", " Agency Name"); 
     //Sample ddl
-    bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlMonthYear", " Agency Name");   
+    //bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlMonthYear", " Agency Name");   
     bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlWorkOrder", " Agency Name");   
 
 
@@ -73,9 +77,11 @@ function bindDatatable(records, tableId) {
                 <td>${value.UpladNoOfResource}</td>
                 <td>${value.MonthYear}</td>
                 
-                 <td class="text-center">
+              <td class="text-center">
                     <span data-id="${value.DeptId}" >
-                       <i class="bi bi-pencil-square edit-test edit-icon"></i>
+                       <i  class="bi bi-pencil-square edit-test edit-icon">
+                       <a href="/Attachment/DeptAttendance/Attendance/${value.AttendanceCertificate}" target="_blank">Attendance</a>
+                       </i>
                     </span>
                 </td>
                  <td class="text-center">
@@ -111,7 +117,7 @@ function bindDatatable(records, tableId) {
                 </td>
                  <td class="text-center">
                     <span data-id="${value.DeptId}" >
-                       <i class="bi bi-pencil-square edit-test edit-icon"></i>
+                       <i class="bi bi-pencil-square edit-AgencyInvoiceEntry edit-icon"></i>
                     </span>
                 </td>
                  
@@ -195,7 +201,6 @@ async function SubmitRecord() {
     }
     if (!isValid) return;
     //File validation
-    // Prepare data
     var fileSize = 1
     var isValid1 = fileSizeValidation('inputAttendanceFileAttached', fileSize);
 
@@ -210,30 +215,6 @@ async function SubmitRecord() {
         MsgBox('Message', "File should be only " + allowedExtensions + '.');
         return;
     }
-    /*var newFileName = getNewFileName('inputAttendanceFileAttached', "Attendance")*/
-    //var formData = new FormData();
-    //alert(newFileName);
-    
-    //if (files_Attendance.length > 0) {
-    //    formData.append("attachmentFile1", files_Attendance[0], newFileName);  // EXACT match
-    //}
-
-    // Prepare data
-    //var formData = new FormData();
-    //formData.append("MonthYear", monthYear);
-    //formData.append("WorkOrderNo", workOrderNo);
-    //formData.append("UpladNoOfResource", noOfResources);
-    //if (files_Attendance.length > 0) {
-    //    formData.append("AttendanceFile", files_Attendance[0]);
-    //}
-
-    //if (files_Annexure.length > 0) {
-    //    formData.append("AnnexureFile", files_Annexure[0]);
-    //}
-
-    //if (files_GroupBill.length > 0) {
-    //    formData.append("AgencyBillFile", files_GroupBill[0]);
-    //}
 
     var formData = new FormData();
     formData.append("MonthYear", monthYear);
@@ -274,7 +255,7 @@ async function SubmitRecord() {
 }
 
 //Edit Record From Table
-$(document).on('click', '.edit-test', async function () {
+$(document).on('click', '.edit-AgencyInvoiceEntry', async function () {
 
     var row = $(this).closest('tr');
     Id = row.data('id');
@@ -285,13 +266,41 @@ $(document).on('click', '.edit-test', async function () {
         console.log('Edit');
         // User clicked Yes
         await loadRecordById(row);
-        openModal('myModal');
+        openModal('myModal_AgencyInvoiceEntry');
         // $('#myModal').modal('show');
     } else {
         // User clicked Cancel
         console.log('Edit cancelled');
     }
 });
+// get Record to fill
+async function loadRecordById(row) {
 
+    var filterData = {
+        Id: row.data('id'),
+        AgencyId: 0,
+        DeptId: 123,
+        MonthYear: '102025',
+        CreatedBy: 0,
+        UserRole: 39,
+    };
+
+    try {
+
+        let records = await getRecords('Manpower', 'GetDeptAttendanceRecord', filterData, '#myTable', 'N');
+
+        if (records && records.length > 0) {
+
+            let data = records[0];
+            Id = data.Id;
+            $("#field1").val(data.Field1);
+            $("#field2").val(data.Field2);
+            //$('#myModal').modal('show');
+        }
+    }
+    catch (error) {
+        console.error("Error loading record:", error);
+    }
+}
 
 

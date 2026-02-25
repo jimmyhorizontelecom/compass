@@ -285,35 +285,7 @@ namespace Compass.Controllers
 
                 var userId = User.FindFirst("UserId")?.Value;
 
-
-                //if (string.IsNullOrWhiteSpace(Title))
-                //{
-                //    return BadRequest(new
-                //    {
-                //        success = false,
-                //        message = "Product Name is required."
-                //    });
-                //}
-
-                //Attendance File 
-                //string fileName1= "";
-                //if (attachmentFile1 != null && attachmentFile1.Length > 0)
-                //{
-                //    fileName1 = Guid.NewGuid() + Path.GetExtension(attachmentFile1.FileName);
-                //    var filePath = Path.Combine(
-                //        Directory.GetCurrentDirectory(),
-                //        "wwwroot/Attachment/DeptAttendance",
-                //        //attachmentFile1.FileName
-                //        fileName1
-                //    );
-
-                //    using (var stream = new FileStream(filePath, FileMode.Create))
-                //    {
-                //        await attachmentFile1.CopyToAsync(stream);
-                //    }
-                //}
-
-                string fileName1 = "";
+                string AttendanceCertificate = "";
                 if (attachmentFile1 != null && attachmentFile1.Length > 0)
                 {
                     string folderPath = Path.Combine(
@@ -326,9 +298,9 @@ namespace Compass.Controllers
 
                     string extension = Path.GetExtension(attachmentFile1.FileName);
 
-                    fileName1 = $"Attendance_{DateTime.Now:yyyyMMdd}_{Guid.NewGuid()}{extension}";
+                    AttendanceCertificate = $"Attendance_{DateTime.Now:yyyyMMdd}_{Guid.NewGuid()}{extension}";
 
-                    string filePath = Path.Combine(folderPath, fileName1);
+                    string filePath = Path.Combine(folderPath, AttendanceCertificate);
 
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
@@ -336,24 +308,7 @@ namespace Compass.Controllers
                     }
                 }
 
-                //Annexxure File 
-                //string fileName2 = "";
-                //if (attachmentFile2 != null && attachmentFile2.Length > 0)
-                //{
-                //    fileName2 = Guid.NewGuid() + Path.GetExtension(attachmentFile2.FileName);
-                //    var filePath = Path.Combine(
-                //        Directory.GetCurrentDirectory(),
-                //        "wwwroot/Attachment/DeptAttendance",
-                //        //attachmentFile2.FileName
-                //        fileName2
-                //    );
-
-                //    using (var stream = new FileStream(filePath, FileMode.Create))
-                //    {
-                //        await attachmentFile2.CopyToAsync(stream);
-                //    }
-                //}
-                string fileName2 = "";
+                string AnnexureFile = "";
                 if (attachmentFile2 != null && attachmentFile2.Length > 0)
                 {
                     string folderPath = Path.Combine(
@@ -366,9 +321,9 @@ namespace Compass.Controllers
 
                     string extension = Path.GetExtension(attachmentFile2.FileName);
 
-                    fileName2 = $"Annexure_{DateTime.Now:yyyyMMdd}_{Guid.NewGuid()}{extension}";
+                    AnnexureFile = $"Annexure_{DateTime.Now:yyyyMMdd}_{Guid.NewGuid()}{extension}";
 
-                    string filePath = Path.Combine(folderPath, fileName2);
+                    string filePath = Path.Combine(folderPath, AnnexureFile);
 
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
@@ -376,24 +331,7 @@ namespace Compass.Controllers
                     }
                 }
 
-                //Annexxure Group Bill File 
-                //string fileName3 = "";
-                //if (attachmentFile3 != null && attachmentFile3.Length > 0)
-                //{
-                //    fileName3 = Guid.NewGuid() + Path.GetExtension(attachmentFile3.FileName);
-                //    var filePath = Path.Combine(
-                //        Directory.GetCurrentDirectory(),
-                //        "wwwroot/Attachment/DeptAttendance",
-                //        //attachmentFile3.FileName
-                //        fileName3
-                //    );
-
-                //    using (var stream = new FileStream(filePath, FileMode.Create))
-                //    {
-                //        await attachmentFile3.CopyToAsync(stream);
-                //    }
-                //}
-                string fileName3 = "";
+                string AgencyBillFile = "";
                 if (attachmentFile3 != null && attachmentFile3.Length > 0)
                 {
                     string folderPath = Path.Combine(
@@ -406,24 +344,26 @@ namespace Compass.Controllers
 
                     string extension = Path.GetExtension(attachmentFile3.FileName);
 
-                    fileName3 = $"AgencyBill_{DateTime.Now:yyyyMMdd}_{Guid.NewGuid()}{extension}";
+                    AgencyBillFile = $"AgencyBill_{DateTime.Now:yyyyMMdd}_{Guid.NewGuid()}{extension}";
 
-                    string filePath = Path.Combine(folderPath, fileName3);
+                    string filePath = Path.Combine(folderPath, AgencyBillFile);
 
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await attachmentFile3.CopyToAsync(stream);
                     }
                 }
+                             
+                
                 SortedList parameters = new SortedList
                     {
                     { "@Id", Id },
                     { "@MonthYear", MonthYear },
                     { "@WorkOrderId", WorkOrderNo },
                     { "@UpladNoOfResource", UpladNoOfResource },
-                    { "@AttendanceCertificate", fileName1 }, // save filename
-                    { "@AnnexureFile", fileName2 }, // save filename
-                    { "@AgencyBillFile", fileName3}, // save filename
+                    { "@AttendanceCertificate", AttendanceCertificate }, // save filename
+                    { "@AnnexureFile", AnnexureFile }, // save filename
+                    { "@AgencyBillFile", AgencyBillFile}, // save filename
                     { "@createdby", userId }
                 };
 
@@ -445,6 +385,8 @@ namespace Compass.Controllers
                 });
             }
         }
+
+        
         #endregion
 
 
