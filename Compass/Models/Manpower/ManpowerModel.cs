@@ -32,7 +32,7 @@ namespace Compass.Models.ManpowerModel
     public class DeptAttendanceModel
    {
         public int Id { get; set; }    
-        public int MonthYear { get; set; }    
+        public string MonthYear { get; set; }    
         public int WorkOrderNo { get; set; }
         public int UpladNoOfResource { get; set; }
         public int PresentResource { get; set; }

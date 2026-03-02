@@ -1,30 +1,4 @@
-﻿// Month Year Picker 
-function initializeMonthYearPickerByClass(className) {
-
-    $('.' + className).each(function () {
-
-        // Prevent re-initialization
-        if (!$(this).data('datepicker')) {
-
-            $(this).datepicker({
-                format: "mmyyyy",      // Final value → 032026
-                startView: "months",   // Open month view first
-                minViewMode: "months", // Only month selectable
-                autoclose: true,
-                todayHighlight: true
-            });
-
-            // Default current month set (mmyyyy)
-            let today = new Date();
-            let month = ("0" + (today.getMonth() + 1)).slice(-2);
-            let year = today.getFullYear();
-
-            $(this).datepicker('update', month + year);
-        }
-
-    });
-}
-
+﻿
 function showModalLoader() {
     $(".modalLoader").css("display", "flex");
 }
@@ -84,83 +58,48 @@ function MsgBox(title,msg,icon,id) {
         }
     });
 }
-//function resetModal() {
-//    // Clear ddl values
-//    $(".select2").val(null).trigger("change");
-//    // Clear input values
-//    $(".cleartxt").val("");
+function resetModal() {
+    // Clear input values
+    $(".cleartxt").val("");
 
-//    // Clear error spans & remove red borders
-//    $(".error").text("");
-//    $(".is-invalid").removeClass("is-invalid");
+    // Clear error spans & remove red borders
+    $(".error").text("");
+    $(".is-invalid").removeClass("is-invalid");    
 
-//    // Clear global alert
-//    $(".modelalert").text("");
+    // Clear global alert
+    $(".modelalert").text("");
 
-//    // Hide loader
-//    $("#ModalProgress").hide();
-//    hideModalLoader();
-//}
+    // Hide loader
+    $("#ModalProgress").hide();
+    hideModalLoader();
+}
 
 // reset filter pannel
-//function resetFilterPanel() {
+function resetFilterPanel() {
 
-//    // 🔹 Reset all dropdowns (including Select2)
-//    $(".filter-panel select").each(function () {
-//        $(this).val("0").trigger("change");   // reset value
-//    });
-
-//    // 🔹 Clear textboxes (using existing class)
-//    $(".cleartxt").val("");
-
-//    // 🔹 Clear file inputs
-//    $(".filter-panel input[type='file']").val("");
-
-//    // 🔹 Clear error messages & remove validation class
-//    $(".filter-panel .error").text("");
-//    $(".filter-panel .is-invalid").removeClass("is-invalid");
-
-//    // 🔹 Optional: Clear any alert message
-//    $(".modelalert").text("");
-
-//    // 🔹 Optional: Focus first dropdown
-//    $("#ddlMonthYear").focus();
-//}
-
-//Clear all input records in Modal and Pannel
-function resetModal() {
-
-    // 🔹 Modal + Filter Panel ko ek saath target karo
-    let $container = $("#myModal, .filter-panel");
-
-    // 🔹 Reset all dropdowns
-    $container.find("select").each(function () {
-        $(this).val("0").trigger("change");
+    // 🔹 Reset all dropdowns (including Select2)
+    $(".filter-panel select").each(function () {
+        $(this).val("0").trigger("change");   // reset value
     });
 
-    // 🔹 Reset Select2 properly
-    $container.find(".select2").val(null).trigger("change");
-
-    // 🔹 Clear textboxes
-    $container.find("input[type='text'], input[type='number'], textarea")
-        .val("");
+    // 🔹 Clear textboxes (using existing class)
+    $(".cleartxt").val("");
 
     // 🔹 Clear file inputs
-    $container.find("input[type='file']").val("");
+    $(".filter-panel input[type='file']").val("");
 
-    // 🔹 Clear validation
-    $container.find(".error").text("");
-    $container.find(".is-invalid").removeClass("is-invalid");
+    // 🔹 Clear error messages & remove validation class
+    $(".filter-panel .error").text("");
+    $(".filter-panel .is-invalid").removeClass("is-invalid");
 
-    // 🔹 Clear alert messages
-    $container.find(".modelalert").text("");
+    // 🔹 Optional: Clear any alert message
+    $(".modelalert").text("");
 
-    // 🔹 Hide loader
-    $("#ModalProgress").hide();
-    if (typeof hideModalLoader === "function") {
-        hideModalLoader();
-    }
+    // 🔹 Optional: Focus first dropdown
+    $("#ddlMonthYear").focus();
 }
+
+
 //enabled  input
 function enabledInput()
 {

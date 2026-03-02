@@ -59,8 +59,8 @@ function bindDatatable(records, tableId) {
 
         tbody.append(`
             <tr 
-                data-id="${value.Id}"
-                <td>${value.Id}</td>
+                data-id="${value.Id}">
+                
                 <td>${SrNo}</td>
                 <td>${value.AgencyName}</td>
                 <td>${value.DepartmentName}</td>
@@ -70,7 +70,7 @@ function bindDatatable(records, tableId) {
                 <td>${value.IsResourceUploaded}</td>
                 <td>${value.NoOfUploadedResource}</td>
                  <td class="text-center">
-                    <span data-id="${value.DeptId}" >
+                    <span data-id="${value.Id}" >
                        <i class="bi bi-pencil-square edit-test edit-icon"></i>
                     </span>
                 </td>

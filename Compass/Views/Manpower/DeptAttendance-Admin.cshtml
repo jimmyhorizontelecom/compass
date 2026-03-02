@@ -28,9 +28,9 @@
         
         <div class="form-group row">
             
-            <div class="col-md-3 mb-0">
+            <div class="col-md-3">
                 <label class="form-label">Select Month & Year</label>
-                <input type="text" id="monthYear" name="MonthYear" class="form-control monthYearPicker" maxlength="6" placeholder="MMYYYY">
+                <input type="text" id="ddlMonthYear" class="form-control monthYearInput" maxlength="6" placeholder="MMyyyy (e.g. 102025)" />
                 <span class="error"></span>
             </div>
             <div class="col-md-3 mb-0">
@@ -119,7 +119,7 @@
         <div class="row align-items-center">
                 <div class="col-md-3"  >            
                 <label class="form-label">Select Month & Year</label>
-                <input type="text" name="MonthYear" class="form-control monthYearPicker" maxlength="6" placeholder="MMYYYY">
+                <input type="text" id="monthYearPicker" class="form-control" placeholder="MM/YYYY">
             </div>
       </div>
         <div class="table-responsive">
@@ -161,7 +161,7 @@
 </div>
 
 
-@* @section Modals {
+@section Modals {
     <!-- The Modal -->
     <!-- Purchase Bill Details Entry-->>
     <div class="modal modal-lg" id="myModal_AgencyInvoiceEntry">
@@ -183,19 +183,16 @@
                     <div id="#toast-container"></div>
                     <div class="filter-panel mt-5 div-coral-base">
                     <div class="form-group row">
-                        <div class="col-md-4 mb-0">
-                                <label class="form-labelo">Agency Bill Date<span class="text-danger">*</span></label>
-                                <select id="ddlPurchaseBillDate" class="form-select search_ddl select2" aria-label=".form-select-sm">
-                                    <option selected value="0">--Select--</option>
-                                </select>
-                                <span class="error"></span>
+                        <div class="col-md-4">
+                            <label class="form-label">Agency bill Date <span class="text-danger">*</span></label>
+                            <input type="date" id="datePurchaseBillDate" class="form-control" placeholder="MM/YYYY">
+                            <span class="error"></span>
                         </div>
+
                         <div class="col-md-4 mb-0">
-                                <label class="form-labelo">Work Order No.<span class="text-danger">*</span></label>
-                                <select id="ddlWorkOrderNo1" class="form-select search_ddl select2" aria-label=".form-select-sm">
-                                    <option selected value="0">--Select--</option>
-                                </select>
-                                <span class="error"></span>
+                            <label class="form-labelo">Work Order No.<span class="text-danger">*</span></label>
+                            <input type="text" id="txtWorkOrderNo" class="form-control" placeholder="Work Order No" readonly>
+                            <span class="error"></span>
                         </div>
                         <div class="col-md-4 mb-0">
                             <label class="form-labelo">Agency Bill No.<span class="text-danger">*</span></label>
@@ -205,23 +202,16 @@
                         
                     </div>
                     <div class="form-group row">
-                        
-                            <div class="col-md-4 mb-0">
-                                <label class="form-labelo">Agency<span class="text-danger">*</span></label>
-                                <select id="ddlAgencyName1" class="form-select search_ddl select2" aria-label=".form-select-sm">
-                                    <option selected value="0">--Select--</option>
-                                </select>
-                                <span class="error"></span>
-                            </div>
-                        
-                            <div class="col-md-4 mb-0">
-                                <label class="form-labelo">Department<span class="text-danger">*</span></label>
-                                <select id="ddlDeptName1" class="form-select search_ddl select2" aria-label=".form-select-sm">
-                                    <option selected value="0">--Select--</option>
-                                </select>
-                                <span class="error"></span>
-                            </div>
-
+                        <div class="col-md-4 mb-0">
+                            <label class="form-labelo">Agency <span class="text-danger">*</span></label>
+                            <input type="text" id="txtAgencyName" class="form-control" placeholder="Agency Name" readonly>
+                            <span class="error"></span>
+                        </div>
+                        <div class="col-md-4 mb-0">
+                            <label class="form-labelo">Department <span class="text-danger">*</span></label>
+                            <input type="text" id="txtDeptName" class="form-control" placeholder="Department Name" readonly>
+                            <span class="error"></span>
+                        </div>
                         <div class="col-md-4 mb-0">
                             <label class="form-labelo">No. of Resource <span class="text-danger">*</span></label>
                             <input type="text" id="txtNoOfResource" class="form-control" placeholder="No. of Resource" readonly>
@@ -324,7 +314,7 @@
         </div>
     </div>
 
-    } *@
+    }
 
 
 

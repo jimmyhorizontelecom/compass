@@ -1,5 +1,5 @@
 ﻿﻿@{
-var currentUrl = Context.Request.Path.ToString().ToLower();
+    var currentUrl = Context.Request.Path.ToString().ToLower();
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -97,11 +97,10 @@ var currentUrl = Context.Request.Path.ToString().ToLower();
             <div class="col-md-12  text-center">
                 <p class="font montserrat">Copyright &copy; @DateTime.Now.Year Himachal Pradesh State Electronics Development Corporation Ltd.(HPSEDC).      All Rights Reserved</p>
             </div>
-
+            
         </div>
     </footer>
-
+    
     <script src="~/PageAssets/Js/common.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
-</html>

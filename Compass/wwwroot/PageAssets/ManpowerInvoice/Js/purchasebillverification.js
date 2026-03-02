@@ -127,7 +127,7 @@ function bindDatatable(records, tableId) {
 }
 
 
-//Edit Record From Table on Sale Bill Details
+//Edit Record From Table on Sale Bill Details on Click HPSEDC Bill
 $(document).on('click', '.edit-AddSaleBillDetails', async function () {
 
     var row = $(this).closest('tr');
