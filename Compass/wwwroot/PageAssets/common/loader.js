@@ -15,15 +15,32 @@ function initializeMonthYearPickerByClass(className) {
             });
 
             // Default current month set (mmyyyy)
-            let today = new Date();
-            let month = ("0" + (today.getMonth() + 1)).slice(-2);
-            let year = today.getFullYear();
+            //let today = new Date();
+            //let month = ("0" + (today.getMonth() + 1)).slice(-2);
+            //let year = today.getFullYear();
 
-            $(this).datepicker('update', month + year);
+            //$(this).datepicker('update', month + year);
         }
 
     });
 }
+
+// Initialize only when clicked
+$(document).on('focus', '.monthYearPicker', function () {
+
+    if (!$(this).data('datepicker')) {
+
+        $(this).datepicker({
+            format: "mmyyyy",
+            startView: "months",
+            minViewMode: "months",
+            autoclose: true,
+            todayHighlight: true
+        });
+
+        $(this).datepicker('show'); // Open immediately on focus
+    }
+});
 
 function showModalLoader() {
     $(".modalLoader").css("display", "flex");
@@ -378,6 +395,7 @@ function bindDependentDataToDdl(controller, action, modalId,
         if (child.hasClass("select2-hidden-accessible")) {
             child.select2('destroy');
         }
+
 
         var options = {
             placeholder: placeholder,
