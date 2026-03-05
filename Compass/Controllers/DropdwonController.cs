@@ -60,6 +60,29 @@ namespace Compass.Controllers
             return Ok(result);
         }
 
+        //Get Work Order ddl
+        [HttpGet]
+        public async Task<IActionResult> MWorkOrder_ddl(
+            int Id,
+            int ParentId1 = 0,
+            int ParentId2=0,
+            int ParentId3=0,
+           
+            string searchTerm = ""
+            )
+        {
+            //var userId = User.FindFirst("UserId")?.Value;
+            //var roleId = User.FindFirst("RoleId")?.Value;
+            int userId = 0;
+            int roleId = 0;
+
+            int.TryParse(User.FindFirst("UserId")?.Value, out userId);
+            int.TryParse(User.FindFirst("RoleId")?.Value, out roleId);
+
+            var result = await _service.GetWorkOredrDropdownAsync(Id, ParentId1, ParentId2, ParentId3,  userId, roleId, searchTerm);
+            return Ok(result);
+        }
+
 
         public IActionResult Index()
         {

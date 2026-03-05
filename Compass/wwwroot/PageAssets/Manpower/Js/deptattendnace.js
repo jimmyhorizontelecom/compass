@@ -18,17 +18,19 @@ $(document).ready(function () {
     bindDataToDdl("Dropdown", "MDepartment_ddl", "", "ddlDeptName", "Select Department Name");
     bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyName", "Select Agency Name"); 
       
-    bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlWorkOrder", " Select Work Order");   
+   // bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlWorkOrder", " Select Work Order");   
 
 
     // Dependent Dropdown Billing Address on Department
     bindDependentDataToDdl("Dropdown","MBillingAddress_ddl",null,// ❗ no modal
         "ddlDeptName", "ddlBillingAddress", "Select Billing Address");
     // Dependent Dropdown Work Order on Agency 
-    //bindDependentDataToDdl("Dropdown","MWorkOrder_ddl",null,// ❗ no modal
-    //    "ddlAgencyName", "ddlWorkOrder", "Select Work Order No");
+    bindDependentDataToDdl("Dropdown","MWorkOrder_ddl",null,// ❗ no modal
+        "ddlAgencyName", "ddlWorkOrder", "Select Work Order No");
 
-
+    bindDependentDataToDdlToParent("Dropdown", "MWorkOrder_ddl", null,// ❗ no modal
+        "ddlDeptName", "ddlAgencyName", null , "ddlWorkOrder","Select Work Order ");
+     
 
     $(document).on('changeDate change', '.monthYearPicker', function () {
 

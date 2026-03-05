@@ -48,22 +48,18 @@ namespace Compass.Services
         //Get Work Oreder ddl
 
         public async Task<List<DropdownDto>> GetWorkOredrDropdownAsync(
-            int deptId,
+            int Id, 
+            int ParentId1, 
+            int ParentId2, 
+            int ParentId3,
+            int userId, 
+            int roleId,
             string searchTerm)
         {
-            return await _repository.GetWorkOredrDropdownAsync(deptId, searchTerm);
+            return await _repository.GetWorkOredrDropdownAsync( Id, ParentId1, ParentId2, ParentId3, userId,  roleId, searchTerm);
         }
 
-        //Get Month Year ddl
+       
 
-        public async Task<List<DropdownDto>> GetMonthYearDropdownAsync(
-            int deptId,
-            string searchTerm)
-        {
-            return await _repository.GetMonthYearDropdownAsync(deptId, searchTerm);
-        }
-
-
-
-    }
+            }
 }

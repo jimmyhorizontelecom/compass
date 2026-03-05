@@ -435,6 +435,223 @@ function bindDependentDataToDdl(controller, action, modalId,
     });
 }
 
+// both child drop down with or without model work on one child and two parent
+function bindDependentDataToDdlToParent1(controller, action, modalId,
+    parentId1, parentId2, parentId3, childId, placeholder) {
+
+    var parent1 = $('#' + parentId1);
+    var parent2 = $('#' + parentId2);
+    var parent3 = $('#' + parentId3);
+    var child = $('#' + childId);
+
+    // Bind change to BOTH parents
+    parent1.add(parent2).add(parent3).on('change', function () {
+
+        var parentValue1 = parent1.val();
+        var parentValue2 = parent2.val();
+        var parentValue3 = parent3.val();
+
+        // Clear previous value
+        child.val(null).trigger('change');
+
+        // If any parent is not selected
+        if (!parentValue1 || parentValue1 == "0" ||
+            !parentValue2 || parentValue2 == "0" || !parentValue3 || parentValue3 == "0") {
+
+            child.prop('disabled', true);
+            return;
+        }
+
+        child.prop('disabled', false);
+
+        // Destroy previous Select2 if exists
+        if (child.hasClass("select2-hidden-accessible")) {
+            child.select2('destroy');
+        }
+
+        var options = {
+            placeholder: placeholder,
+            allowClear: true,
+            width: '100%',
+            ajax: {
+                url: '/' + controller + '/' + action,
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        id: child,
+                        ParentId1: parentValue1,
+                        ParentId2: parentValue2,
+                        ParentId3: parentValue3,
+                        searchTerm: params.term
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: $.map(data, function (item) {
+                            return {
+                                id: item.Id,
+                                text: item.Text
+                            };
+                        })
+                    };
+                }
+            }
+        };
+
+        if (modalId) {
+            options.dropdownParent = $('#' + modalId);
+        }
+
+        child.select2(options);
+
+    });
+}
+// both child drop down with or without model work on one child and two parent
+function bindDependentDataToDdlToParent2(controller, action, modalId,
+    parentId1, parentId2, parentId3, childId, placeholder) {
+
+    var parent1 = $('#' + parentId1);
+    var parent2 = $('#' + parentId2);
+    var parent3 = $('#' + parentId3);
+    var child = $('#' + childId);
+
+    // Bind change to BOTH parents
+    parent1.add(parent2).add(parent3).on('change', function () {
+
+        var parentValue1 = parent1.val();
+        var parentValue2 = parent2.val();
+        var parentValue3 = parent3.val();
+
+        // Clear previous value
+        child.val(null).trigger('change');
+        //alert(parentValue1);
+        // If any parent is not selected
+        if (!parentValue1 || parentValue1 == "0" ||
+            !parentValue2 || parentValue2 == "0" ||
+            !parentValue3 || parentValue3 == "0") {
+           
+            //child.prop('disabled', true);
+            return;
+        }
+        /*alert(parentValue1);*/
+        child.prop('disabled', false);
+
+        // Destroy previous Select2 if exists
+        if (child.hasClass("select2-hidden-accessible")) {
+            child.select2('destroy');
+        }
+
+        var options = {
+            placeholder: placeholder,
+            allowClear: true,
+            width: '100%',
+            ajax: {
+                url: '/' + controller + '/' + action,
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                   
+                    return {
+                        id: 0,
+                        ParentId1: parentValue1,
+                        ParentId2: parentValue2,
+                        ParentId3: parentValue3,
+                        searchTerm: params.term
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: $.map(data, function (item) {
+                            return {
+                                id: item.Id,
+                                text: item.Text
+                            };
+                        })
+                    };
+                }
+            }
+        };
+
+        if (modalId) {
+            options.dropdownParent = $('#' + modalId);
+        }
+
+        child.select2(options);
+
+    });
+}
+function bindDependentDataToDdlToParent(controller, action, modalId,
+    parentId1, parentId2, parentId3, childId, placeholder) {
+
+    var parents = [];
+
+    if (parentId1) parents.push($('#' + parentId1));
+    if (parentId2) parents.push($('#' + parentId2));
+    if (parentId3) parents.push($('#' + parentId3));
+
+    var child = $('#' + childId);
+
+    // Bind change to all existing parents
+    if (parents.length === 0) return;
+
+    $(parents).each(function () {
+        $(this).on('change', function () {
+
+            var parentValues = parents.map(p => p.val());
+
+            // Clear previous value
+            child.val(null).trigger('change');
+
+            // If any required parent is not selected
+            if (parentValues.some(v => !v || v == "0")) {
+                child.prop('disabled', true);
+                return;
+            }
+
+            child.prop('disabled', false);
+
+            // Destroy previous Select2 if exists
+            if (child.hasClass("select2-hidden-accessible")) {
+                child.select2('destroy');
+            }
+
+            var options = {
+                placeholder: placeholder,
+                allowClear: true,
+                width: '100%',
+                ajax: {
+                    url: '/' + controller + '/' + action,
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            id: 0,
+                            ParentId1: parentValues[0] || 0,
+                            ParentId2: parentValues[1] || 0,
+                            ParentId3: parentValues[2] || 0,
+                            searchTerm: params.term
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: $.map(data, function (item) {
+                                return { id: item.Id, text: item.Text };
+                            })
+                        };
+                    }
+                }
+            };
+
+            if (modalId) {
+                options.dropdownParent = $('#' + modalId);
+            }
+
+            child.select2(options);
+
+        });
+    });
+}
 function encryptPassword(password) {
     var key = CryptoJS.enc.Utf8.parse('1234567890123456'); // 16-byte key
     var iv = CryptoJS.enc.Utf8.parse('1234567890123456');  // 16-byte IV

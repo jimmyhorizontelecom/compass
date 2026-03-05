@@ -15,10 +15,9 @@ namespace Compass.Services
         Task<List<DropdownDto>> GetAgencyDropdownAsync(int deptId, string searchTerm);
 
         // Get Work Order ddl
-        Task<List<DropdownDto>> GetWorkOredrDropdownAsync(int deptId, string searchTerm);
+        Task<List<DropdownDto>> GetWorkOredrDropdownAsync(int Id, int ParentId1, int ParentId2, int ParentId3, int userId, int roleId, string searchTerm);
 
-        // Get Month Year ddl
-        Task<List<DropdownDto>> GetMonthYearDropdownAsync(int deptId, string searchTerm);
+        
 
     }
 

@@ -135,15 +135,33 @@ namespace Compass.Repositories
 
         // Get Agency Dropdown
         public async Task<List<DropdownDto>> GetWorkOredrDropdownAsync(
-           int deptId,
-           string searchTerm)
+            int Id, 
+            int ParentId1,
+            int ParentId2,
+            int ParentId3,
+            int userId,
+            int roleId,
+            string searchTerm)
         {
 
             SortedList parameters = new SortedList();
-            parameters.Add("@AgencyId", deptId);
-            parameters.Add("@SearchTerm", string.IsNullOrEmpty(searchTerm) ? DBNull.Value : searchTerm);
+            parameters.Add("@DeptId", ParentId1);
+            if (roleId == 57)
+            {
+                parameters.Add("@AgencyId", ParentId2);
+            }
+            else
+            {
+                parameters.Add("@AgencyId", userId);
+            }
+
+            parameters.Add("@WorkOrderAgencyId", ParentId3);
+            parameters.Add("@UserId", userId);
+            parameters.Add("@RoleId", roleId);
+            parameters.Add("@SearchTerm", searchTerm);
+            //parameters.Add("@SearchTerm", string.IsNullOrEmpty(searchTerm) ? DBNull.Value : searchTerm);
             var dt = await _cn.FillDataTableAsync(
-                    "TallyAgency_Cddl",
+                    "TallyAgencyWorkOrder_ddlC",
                     "",
                     parameters
                 );
@@ -154,28 +172,7 @@ namespace Compass.Repositories
             return result;
         }
 
-        // Get Month Year ddl
-        // Get Agency Dropdown
-        public async Task<List<DropdownDto>> GetMonthYearDropdownAsync(
-           int deptId,
-           string searchTerm)
-        {
-
-            SortedList parameters = new SortedList();
-            parameters.Add("@AgencyId", deptId);
-            parameters.Add("@SearchTerm", string.IsNullOrEmpty(searchTerm) ? DBNull.Value : searchTerm);
-            var dt = await _cn.FillDataTableAsync(
-                    "TallyAgency_Cddl",
-                    "",
-                    parameters
-                );
-            if (dt == null || dt.Rows.Count == 0)
-                return new List<DropdownDto>();
-
-            var result = CommonNew.ToList<DropdownDto>(dt);
-            return result;
-        }
-
+      
 
     }
 }
