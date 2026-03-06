@@ -17,17 +17,11 @@ $(document).ready(function () {
     //Parent Dropdown
     bindDataToDdl("Dropdown", "MDepartment_ddl", "", "ddlDeptName", "Select Department Name");
     bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyName", "Select Agency Name"); 
-      
-   // bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlWorkOrder", " Select Work Order");   
-
-
+   
     // Dependent Dropdown Billing Address on Department
     bindDependentDataToDdl("Dropdown","MBillingAddress_ddl",null,// ❗ no modal
         "ddlDeptName", "ddlBillingAddress", "Select Billing Address");
     // Dependent Dropdown Work Order on Agency 
-    bindDependentDataToDdl("Dropdown","MWorkOrder_ddl",null,// ❗ no modal
-        "ddlAgencyName", "ddlWorkOrder", "Select Work Order No");
-
     bindDependentDataToDdlToParent("Dropdown", "MWorkOrder_ddl", null,// ❗ no modal
         "ddlDeptName", "ddlAgencyName", null , "ddlWorkOrder","Select Work Order ");
      
@@ -181,6 +175,7 @@ async function SubmitRecord() {
 
     $(".error").text("");
     $(".is-invalid").removeClass("is-invalid");
+  
 
  
     if (!monthYear) {
@@ -220,52 +215,80 @@ async function SubmitRecord() {
         $("#ddlBillingAddress").siblings(".error").text("Billing Address required.");
         isValid = false;
     }
+
+    // file validation
+    let fileSize = 5;
+    let allowedExtensions = ["pdf"];
+
+    // Attendance File Required
+    if (files_Attendance.length === 0) {
+        $("#inputAttendanceFileAttached").addClass("is-invalid");
+        $("#inputAttendanceFileAttached").siblings(".error").text("Attendance file required");
+        isValid = false;
+    }
+    else {
+
+        if (!fileSizeValidation('inputAttendanceFileAttached', fileSize)) {
+            isValid = false;
+        }
+
+        if (!fileExtensionValidation('inputAttendanceFileAttached', allowedExtensions)) {
+            isValid = false;
+        }
+    }
+
+
+    // Annexure File Required
+    if (files_Annexure.length === 0) {
+        $("#inputAnnexureFileAttached").addClass("is-invalid");
+        $("#inputAnnexureFileAttached").siblings(".error").text("Annexure file required");
+        isValid = false;
+    }
+    else {
+
+        if (!fileSizeValidation('inputAnnexureFileAttached', fileSize)) {
+            isValid = false;
+        }
+
+        if (!fileExtensionValidation('inputAnnexureFileAttached', allowedExtensions)) {
+            isValid = false;
+        }
+    }
+
+
+    // Group Bill File Required
+    if (files_GroupBill.length === 0) {
+        $("#inputGroupBillFileAttached").addClass("is-invalid");
+        $("#inputGroupBillFileAttached").siblings(".error").text("Group Bill file required");
+        isValid = false;
+    }
+    else {
+
+        if (!fileSizeValidation('inputGroupBillFileAttached', fileSize)) {
+            isValid = false;
+        }
+
+        if (!fileExtensionValidation('inputGroupBillFileAttached', allowedExtensions)) {
+            isValid = false;
+        }
+    }
+
     if (!isValid) return;
 
     //File validation
-    var fileSize = 1
-    let allowedExtensions = ["pdf"];
-    // Validation for Attendance File
-    var isValid1 = fileSizeValidation('inputAttendanceFileAttached', fileSize);
-
-    if (!isValid1) {
-        MsgBox('Message', "File Size should be <=" + fileSize + "MB", '');
-        return;
-    }
+   // var fileSize = 1
    // let allowedExtensions = ["pdf"];
+   // // Validation for Attendance File
+   // var isValid1 = fileSizeValidation('inputAttendanceFileAttached', fileSize);
 
-    isValid1 = fileExtensionValidation('inputAttendanceFileAttached', allowedExtensions)
-    if (!isValid1) {
-        MsgBox('Message', "File should be only " + allowedExtensions + '.');
-        return;
-    }
-
-   // // Validation for Annexure File
-   // var isValid2 = fileSizeValidation('inputAnnexureFileAttached', fileSize);
-
-   // if (!isValid2) {
+   // if (!isValid1) {
    //     MsgBox('Message', "File Size should be <=" + fileSize + "MB", '');
    //     return;
    // }
-   // //let allowedExtensions = ["pdf"];
+   //// let allowedExtensions = ["pdf"];
 
-   // isValid2 = fileExtensionValidation('inputAnnexureFileAttached', allowedExtensions)
-   // if (!isValid2) {
-   //     MsgBox('Message', "File should be only " + allowedExtensions + '.');
-   //     return;
-   // }
-
-   // // Validation for Group Bill
-   // var isValid3 = fileSizeValidation('inputGroupBillFileAttached', fileSize);
-
-   // if (!isValid3) {
-   //     MsgBox('Message', "File Size should be <=" + fileSize + "MB", '');
-   //     return;
-   // }
-   // //let allowedExtensions = ["pdf"];
-
-   // isValid3 = fileExtensionValidation('inputGroupBillFileAttached', allowedExtensions)
-   // if (!isValid3) {
+   // isValid1 = fileExtensionValidation('inputAttendanceFileAttached', allowedExtensions)
+   // if (!isValid1) {
    //     MsgBox('Message', "File should be only " + allowedExtensions + '.');
    //     return;
    // }
@@ -297,7 +320,7 @@ async function SubmitRecord() {
 
             recordlist();
             resetModal();
-            //resetFilterPanel();
+            
             Id = 0;
             $('.modelalert').text(res.message);
             closeModal('myModal');
@@ -310,117 +333,6 @@ async function SubmitRecord() {
 
 }
 
-
-
-//async function SubmitRecord() {
-
-//    try {
-
-//        let isValid = true;
-
-//        // ===== Get Values =====
-//        let monthYear = $(".monthYearPicker").val();
-//        let deptName = $("#ddlDeptName").val();
-//        let agencyName = $("#ddlAgencyName").val();
-//        let workOrderNo = $("#ddlWorkOrder").val();
-//        let billingAddress = $("#ddlBillingAddress").val();
-//        let noOfResources = $("#txtNoOfResources").val()?.trim();
-//        let presentResources = $("#txtPresentResource").val()?.trim();
-
-//        // ===== Clear Old Errors =====
-//        $(".error").text("");
-//        $(".is-invalid").removeClass("is-invalid");
-
-//        // ===== Validations =====
-
-//        if (!monthYear) {
-//            $(".monthYearPicker").addClass("is-invalid");
-//            isValid = false;
-//        }
-
-//        if (agencyName === "0" || !agencyName) {
-//            $("#ddlAgencyName").addClass("is-invalid");
-//            isValid = false;
-//        }
-
-//        if (deptName === "0" || !deptName) {
-//            $("#ddlDeptName").addClass("is-invalid");
-//            isValid = false;
-//        }
-
-//        if (workOrderNo === "0" || !workOrderNo) {
-//            $("#ddlWorkOrder").addClass("is-invalid");
-//            isValid = false;
-//        }
-
-//        if (!noOfResources) {
-//            $("#txtNoOfResources").addClass("is-invalid");
-//            isValid = false;
-//        }
-
-//        if (!presentResources) {
-//            $("#txtPresentResource").addClass("is-invalid");
-//            isValid = false;
-//        }
-
-//        if (billingAddress === "0" || !billingAddress) {
-//            $("#ddlBillingAddress").addClass("is-invalid");
-//            isValid = false;
-//        }
-
-//        if (!isValid) return;
-
-//        // ===== Format MonthYear (03-2026 → 032026) =====
-//        let finalMonthYear = monthYear.replace("-", "");
-
-//        // ===== File Handling =====
-//        let Attendance = $("#inputAttendanceFileAttached").get(0);
-//        let Annexure = $("#inputAnnexureFileAttached").get(0);
-//        let GroupBill = $("#inputGroupBillFileAttached").get(0);
-
-//        let formData = new FormData();
-
-//        formData.append("MonthYear", finalMonthYear);
-//        formData.append("WorkOrderNo", workOrderNo);
-//        formData.append("UpladNoOfResource", noOfResources);
-//        formData.append("PresentResource", presentResources);
-
-//        if (Attendance?.files.length > 0) {
-//            formData.append("AttendanceFile", Attendance.files[0]);
-//        }
-
-//        if (Annexure?.files.length > 0) {
-//            formData.append("AnnexureFile", Annexure.files[0]);
-//        }
-
-//        if (GroupBill?.files.length > 0) {
-//            formData.append("AgencyBillFile", GroupBill.files[0]);
-//        }
-
-//        // ===== Call API =====
-//        let res = await acceptUpdate("Manpower", "AddOrEdit_DeptAttendanceRecord", formData);
-
-//        if (res && res.success) {
-
-//            recordlist();
-//            resetModal();
-//            //resetFilterPanel();
-//            closeModal('myModal');
-
-//            MsgBox('Message', res.message, '');
-
-//        } else {
-//            MsgBox('Message', res?.message || "Something went wrong", '');
-//        }
-
-//    }
-//    catch (error) {
-//        console.error("Submit Error:", error);
-//        MsgBox('Message', "Unexpected error occurred", '');
-//    }
-//}
-
-//Edit Record From Table
 $(document).on('click', '.edit-AgencyInvoiceEntry', async function () {
 
     var row = $(this).closest('tr');

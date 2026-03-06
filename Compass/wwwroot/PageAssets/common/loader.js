@@ -435,152 +435,6 @@ function bindDependentDataToDdl(controller, action, modalId,
     });
 }
 
-// both child drop down with or without model work on one child and two parent
-function bindDependentDataToDdlToParent1(controller, action, modalId,
-    parentId1, parentId2, parentId3, childId, placeholder) {
-
-    var parent1 = $('#' + parentId1);
-    var parent2 = $('#' + parentId2);
-    var parent3 = $('#' + parentId3);
-    var child = $('#' + childId);
-
-    // Bind change to BOTH parents
-    parent1.add(parent2).add(parent3).on('change', function () {
-
-        var parentValue1 = parent1.val();
-        var parentValue2 = parent2.val();
-        var parentValue3 = parent3.val();
-
-        // Clear previous value
-        child.val(null).trigger('change');
-
-        // If any parent is not selected
-        if (!parentValue1 || parentValue1 == "0" ||
-            !parentValue2 || parentValue2 == "0" || !parentValue3 || parentValue3 == "0") {
-
-            child.prop('disabled', true);
-            return;
-        }
-
-        child.prop('disabled', false);
-
-        // Destroy previous Select2 if exists
-        if (child.hasClass("select2-hidden-accessible")) {
-            child.select2('destroy');
-        }
-
-        var options = {
-            placeholder: placeholder,
-            allowClear: true,
-            width: '100%',
-            ajax: {
-                url: '/' + controller + '/' + action,
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        id: child,
-                        ParentId1: parentValue1,
-                        ParentId2: parentValue2,
-                        ParentId3: parentValue3,
-                        searchTerm: params.term
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        results: $.map(data, function (item) {
-                            return {
-                                id: item.Id,
-                                text: item.Text
-                            };
-                        })
-                    };
-                }
-            }
-        };
-
-        if (modalId) {
-            options.dropdownParent = $('#' + modalId);
-        }
-
-        child.select2(options);
-
-    });
-}
-// both child drop down with or without model work on one child and two parent
-function bindDependentDataToDdlToParent2(controller, action, modalId,
-    parentId1, parentId2, parentId3, childId, placeholder) {
-
-    var parent1 = $('#' + parentId1);
-    var parent2 = $('#' + parentId2);
-    var parent3 = $('#' + parentId3);
-    var child = $('#' + childId);
-
-    // Bind change to BOTH parents
-    parent1.add(parent2).add(parent3).on('change', function () {
-
-        var parentValue1 = parent1.val();
-        var parentValue2 = parent2.val();
-        var parentValue3 = parent3.val();
-
-        // Clear previous value
-        child.val(null).trigger('change');
-        //alert(parentValue1);
-        // If any parent is not selected
-        if (!parentValue1 || parentValue1 == "0" ||
-            !parentValue2 || parentValue2 == "0" ||
-            !parentValue3 || parentValue3 == "0") {
-           
-            //child.prop('disabled', true);
-            return;
-        }
-        /*alert(parentValue1);*/
-        child.prop('disabled', false);
-
-        // Destroy previous Select2 if exists
-        if (child.hasClass("select2-hidden-accessible")) {
-            child.select2('destroy');
-        }
-
-        var options = {
-            placeholder: placeholder,
-            allowClear: true,
-            width: '100%',
-            ajax: {
-                url: '/' + controller + '/' + action,
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                   
-                    return {
-                        id: 0,
-                        ParentId1: parentValue1,
-                        ParentId2: parentValue2,
-                        ParentId3: parentValue3,
-                        searchTerm: params.term
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        results: $.map(data, function (item) {
-                            return {
-                                id: item.Id,
-                                text: item.Text
-                            };
-                        })
-                    };
-                }
-            }
-        };
-
-        if (modalId) {
-            options.dropdownParent = $('#' + modalId);
-        }
-
-        child.select2(options);
-
-    });
-}
 function bindDependentDataToDdlToParent(controller, action, modalId,
     parentId1, parentId2, parentId3, childId, placeholder) {
 
@@ -793,74 +647,118 @@ document.addEventListener("DOMContentLoaded", function () {
 //function clearLayoutState() {
 //    localStorage.removeItem("currentHeader");
 //}
-function fileSizeValidation(fileUploadId,maxSizeFileMB)
-{
-    var fileId = document.getElementById(fileUploadId);
 
-    const maxSize = maxSizeFileMB* ( 1024 * 1024); // 2MB
-    const file = fileId.files[0];
+// Previous Code
+//function fileSizeValidation1(fileUploadId,maxSizeFileMB)
+//{
+//    var fileId = document.getElementById(fileUploadId);
+
+//    const maxSize = maxSizeFileMB* ( 1024 * 1024); // 2MB
+//    const file = fileId.files[0];
     
 
-        if (file) {
-            if (file.size > maxSize) {
-                alert("File size must be less than 2MB");
-                this.value = ""; // Clear selected file
-                return false;
-            }
-            else {
-                return true;
-            }
-        }
+//        if (file) {
+//            if (file.size > maxSize) {
+//                alert("File size must be less than 2MB");
+//                this.value = ""; // Clear selected file
+//                return false;
+//            }
+//            else {
+//                return true;
+//            }
+//        }
     
+//}
+//// Previous Code
+//function fileExtensionValidation1(fileUploadId, allowedExtensions ) {
+//    //let allowedExtensions = ["jpg", "jpeg", "png", "pdf"];
+//    //extension validation   
+//    var fileId = document.getElementById(fileUploadId);    
+//    const file = fileId.files[0];
+//    let files = file.files;
+    
+//    $.each(files, function (key, file) {
+
+//        let extension = file.name.split('.').pop().toLowerCase();
+//        alert(extension);
+//        var result = allowedExtensions.join(",");
+//        if (!allowedExtensions.includes(extension)) {
+//            toastr.error("Only " + result +" files are allowed");
+//            return false; // stop loop
+//        }
+
+//    });
+
+//}
+
+// Modified file size validation
+function fileSizeValidation1(fileUploadId, maxSizeFileMB) {
+
+    var fileInput = document.getElementById(fileUploadId);
+
+    if (!fileInput || fileInput.files.length === 0) {
+        return false;
+    }
+
+    const maxSize = maxSizeFileMB * (1024 * 1024);
+    const file = fileInput.files[0];
+
+    if (file.size > maxSize) {
+
+        $("#" + fileUploadId).addClass("is-invalid");
+        $("#" + fileUploadId).siblings(".error").text("File size must be <= " + maxSizeFileMB + " MB");
+
+        return false;
+    }
+
+    return true;
 }
-//
-function fileExtensionValidation1(fileUploadId, allowedExtensions ) {
-    //let allowedExtensions = ["jpg", "jpeg", "png", "pdf"];
-    //extension validation   
-    var fileId = document.getElementById(fileUploadId);    
-    const file = fileId.files[0];
-    let files = file.files;
-    
-    $.each(files, function (key, file) {
+function fileSizeValidation(fileUploadId, maxSizeFileMB) {
 
-        let extension = file.name.split('.').pop().toLowerCase();
-        alert(extension);
-        var result = allowedExtensions.join(",");
-        if (!allowedExtensions.includes(extension)) {
-            toastr.error("Only " + result +" files are allowed");
-            return false; // stop loop
-        }
+    var fileInput = document.getElementById(fileUploadId);
 
-    });
+    if (!fileInput || fileInput.files.length === 0) {
+        return false;
+    }
 
+    const maxSize = maxSizeFileMB * (1024 * 1024);
+    const file = fileInput.files[0];
+
+    if (file.size > maxSize) {
+
+        $("#" + fileUploadId).addClass("is-invalid");
+
+        $("#" + fileUploadId)
+            .closest(".col-md-3")
+            .find(".error")
+            .text("File size must be <= " + maxSizeFileMB + " MB");
+
+        return false;
+    }
+
+    return true;
 }
-
+// Modified file extension validation
 function fileExtensionValidation(fileUploadId, allowedExtensions) {
 
     var fileInput = document.getElementById(fileUploadId);
 
-    // If input not found
-    if (!fileInput) {
-        console.error("File input not found: " + fileUploadId);
+    if (!fileInput || fileInput.files.length === 0) {
         return false;
-    }
-
-    // If no file selected
-    if (!fileInput.files || fileInput.files.length === 0) {
-        return true; // nothing to validate
     }
 
     var file = fileInput.files[0];
-
-    // Extra safety check
-    if (!file || !file.name) {
-        return false;
-    }
-
     var extension = file.name.split('.').pop().toLowerCase();
 
     if (!allowedExtensions.includes(extension)) {
-        toastr.error("Only " + allowedExtensions.join(", ") + " files are allowed");
+
+        $("#" + fileUploadId).addClass("is-invalid");
+
+        $("#" + fileUploadId)
+            .closest(".col-md-3")
+            .find(".error")
+            .text("Only " + allowedExtensions.join(", ") + " file allowed");
+
         return false;
     }
 
@@ -875,8 +773,9 @@ function fileExtensionValidation(fileUploadId, allowedExtensions) {
 //    return newFileName;
 //}
 
-// Open upload file on new tab
+ //Open upload file on new tab
 function openFile(fileName, fileType) {
     let url = `/Manpower/ViewDeptAttendanceFile?fileName=${fileName}&fileType=${fileType}`;
     window.open(url, '_blank');
 }
+
