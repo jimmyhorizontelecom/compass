@@ -80,8 +80,7 @@ function bindDatatable(records, tableId) {
 
         tbody.append(`
             <tr 
-                data-id="${value.Id}"
-                <td>${value.Id}</td>
+                data-id="${value.Id}">
                 <td>${SrNo}</td>
                 <td>${value.departmentName}</td>
                 <td>${value.AgencyName}</td>
