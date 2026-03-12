@@ -109,7 +109,7 @@ function bindDatatable(records, tableId) {
                 </td>
                  <td class="text-center">
                     <span data-id="${value.Id}" >
-                       <i class="bi bi-pencil-square edit-test edit-icon"></i>
+                       <i class="bi bi-pencil-square edit-test edit-icon" style="cursor:pointer;font-size:25px;"></i>
                     </span>
                 </td>
                  
@@ -120,17 +120,17 @@ function bindDatatable(records, tableId) {
                    </td>
                  <td class="text-center">
                     <span data-id="${value.DeptId}" >
-                       <i class="bi bi-pencil-square edit-test edit-icon"></i>
+                       <i class="bi bi-pencil-square edit-test edit-icon" style="cursor:pointer;font-size:25px;"></i>
                     </span>
                 </td>
                  <td class="text-center">
                     <span data-id="${value.DeptId}" >
-                       <i class="bi bi-pencil-square edit-test edit-icon"></i>
+                       <i class="bi bi-pencil-square edit-test edit-icon" style="cursor:pointer;font-size:25px;"></i>
                     </span>
                 </td>
                  <td class="text-center">
                     <span data-id="${value.DeptId}" >
-                       <i class="bi bi-pencil-square edit-AgencyInvoiceEntry edit-icon"></i>
+                       <i class="bi bi-pencil-square edit-AgencyInvoiceEntry edit-icon" style="cursor:pointer;font-size:25px;"></i>
                     </span>
                 </td>
                  
@@ -356,41 +356,66 @@ $(document).on('click', '.view-file', function (e) {
 
 
 //Delete Records Message Box
-$(document).on('click', '.delete-Records', async function () {
 
-    //var row = $(this).closest('tr');
-    var row = $(this).closest('span');
-    Id = row.data('id');
+//$(document).on('click', '.delete-Records', async function () {
 
-    var isConfirmed = await DeleteEditBox('Delete Record', 'Do you want to Delete Record?', 'question', Id);
+//    //var row = $(this).closest('tr');
+//    var row = $(this).closest('span');
+//    Id = row.data('id');
 
-    if (isConfirmed) {
-        console.log('Edit');
-        // User clicked Yes
-        alert('Click on Yes');
-        await deleteAttendanceRecord(Id);
+//    var isConfirmed = await DeleteEditBox('Delete Record', 'Do you want to Delete Record?', 'question', Id);
 
-    } else {
-        // User clicked Cancel
-        console.log('Edit cancelled');
-        alert('Click on No');
-    }
-});
+//    if (isConfirmed) {
+//        console.log('Edit');
+//        // User clicked Yes
+//        alert('Click on Yes');
+//        await deleteAttendanceRecord(Id);
+
+//    } else {
+//        // User clicked Cancel
+//        console.log('Edit cancelled');
+//        alert('Click on No');
+//    }
+//});
 
 // Delete Records Functions
-async function deleteAttendanceRecord(Id, CancelRemarks = "Deleted by user") {
+
+// Delete Records Message Box
+$(document).on('click', '.delete-Records', async function () {
+    var row = $(this).closest('tr'); // get the table row
+    var recordId = row.data('id');
+
+    // Confirm deletion
+    var isConfirmed = await DeleteEditBox('Delete Record', 'Do you want to delete this record?', 'question', recordId);
+
+    if (isConfirmed) {
+        await deleteAttendanceRecord(recordId, row);
+    } else {
+        toastr.info("Delete cancelled");
+    }
+});
+// Delete Records Function
+async function deleteAttendanceRecord(Id, row) {
     try {
-        // Call your backend API to delete the record
         let data = {
             AttendaceId: Id,
-            CancelRemarks: CancelRemarks
+            CancelRemarks: "Deleted by user"
         };
 
         let res = await acceptUpdate("Manpower", "Delete_DeptAttendanceRecord", data);
 
         if (res.success) {
             toastr.success(res.message);
-            recordlist(); // Refresh the table
+
+            // Remove row from table
+            if (row) {
+                $(row).fadeOut(300, function () {
+                    $(this).remove();
+                });
+            }
+
+            // Optional: refresh table data
+             recordlist();
         } else {
             toastr.error(res.message || "Delete failed");
         }
@@ -399,6 +424,29 @@ async function deleteAttendanceRecord(Id, CancelRemarks = "Deleted by user") {
         toastr.error("Delete failed due to server error");
     }
 }
+
+
+//async function deleteAttendanceRecord(Id, CancelRemarks = "Deleted by user") {
+//    try {
+//        // Call your backend API to delete the record
+//        let data = {
+//            AttendaceId: Id,
+//            CancelRemarks: CancelRemarks
+//        };
+
+//        let res = await acceptUpdate("Manpower", "Delete_DeptAttendanceRecord", data);
+
+//        if (res.success) {
+//            toastr.success(res.message);
+//            recordlist(); // Refresh the table
+//        } else {
+//            toastr.error(res.message || "Delete failed");
+//        }
+//    } catch (err) {
+//        console.error("Delete error:", err);
+//        toastr.error("Delete failed due to server error");
+//    }
+//}
 
 
 
