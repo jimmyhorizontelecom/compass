@@ -191,7 +191,10 @@ namespace Compass.Controllers
                     PurhaseInvNO = (row["PurhaseInvNO"]?.ToString()),
                     DeployedResource = Convert.ToInt32(row["DeployedResource"]?.ToString()),
                     UpladNoOfResource = Convert.ToInt32(row["UpladNoOfResource"]?.ToString()),
-                    MonthYear = Convert.ToInt32(row["MonthYear"]?.ToString()),                  
+                    MonthYear = Convert.ToInt32(row["MonthYear"]?.ToString()),
+                    AttendanceCertificate = row["AttendanceCertificate"]?.ToString(),
+                    AnnexureFile = row["AnnexureFile"]?.ToString(),
+                    AgencyBillFile = row["UploadBill"]?.ToString(),
                 }).ToList();
 
                 return Ok(list);
@@ -386,7 +389,48 @@ namespace Compass.Controllers
             }
         }
 
+        // Delete Record 
+        [HttpPost]
+        public IActionResult Delete_DeptAttendanceRecord(int AttendaceId, string CancelRemarks = "")
+        {
+            try
+            {
+                var userId = User.FindFirst("UserId")?.Value;
+
+                SortedList parameters = new SortedList
+        {
+            { "@AttendaceId", AttendaceId },
+            { "@IsCancel", "Y" },
+            { "@CancelBy", userId },
+            { "@CancelRemarks", CancelRemarks ?? "" },
+            
+        };
+
+                var result = _cn.ExecuteNonQueryWMessage(
+                    "TallyAttendanceCancel_AcceptUpdate",
+                    "",
+                    parameters
+                );
+
+                return Ok(new
+                {
+                    success = true,
+                    message = result.ToString()
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
         
+
         #endregion
 
 

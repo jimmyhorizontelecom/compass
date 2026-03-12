@@ -77,7 +77,7 @@ function bindDatatable(records, tableId) {
 
     $.each(records, function (i, value) {
         let SrNo = i + 1;
-
+        console.log(value);
         tbody.append(`
             <tr 
                 data-id="${value.Id}">
@@ -89,34 +89,35 @@ function bindDatatable(records, tableId) {
                 <td>${value.UpladNoOfResource}</td>
                 <td>${value.MonthYear}</td>
                 
-              <td class="text-center">
-                    <span data-id="${value.DeptId}" >
-                       <i  class="bi bi-pencil-square edit-test edit-icon">
-                            <a href="/Attachment/DeptAttendance/Attendance/${value.AttendanceCertificate}" target="_blank">
-                       </i>
-                    </span>
+                <!-- Attendance File -->
+                <td class="text-center">
+                    <a href="javascript:void(0);" class="view-file" data-file="${value.AttendanceCertificate}" data-folder="Attendance" title="View Attendance">
+                         <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"></i>
+                    </a>
+                </td>
+                 <!-- Annexure File -->
+                <td class="text-center">
+                    <a href="javascript:void(0);" class="view-file" data-file="${value.AnnexureFile}" data-folder="Annexure" title="View Annexure">
+                        <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"></i>
+                    </a>
+                </td>
+                 <!-- Agency Bill File -->
+                <td class="text-center">
+                    <a href="javascript:void(0);" class="view-file" data-file="${value.AgencyBillFile}" data-folder="AgencyBill" title="View Agency Bill">
+                        <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"></i>
+                    </a>
                 </td>
                  <td class="text-center">
-                    <span data-id="${value.DeptId}" >
-                       <i class="bi bi-pencil-square edit-test edit-icon"></i>
-                    </span>
-                </td>
-                 <td class="text-center">
-                    <span data-id="${value.DeptId}" >
-                       <i class="bi bi-pencil-square edit-test edit-icon"></i>
-                    </span>
-                </td>
-                 <td class="text-center">
-                    <span data-id="${value.DeptId}" >
+                    <span data-id="${value.Id}" >
                        <i class="bi bi-pencil-square edit-test edit-icon"></i>
                     </span>
                 </td>
                  
-                 <td class="text-center">
-                    <span data-id="${value.DeptId}" >
-                       <i class="bi bi-pencil-square edit-test edit-icon"></i>
+                 <td class="text-center" >
+                    <span data-id="${value.Id}">
+                    <i class="bi bi-trash text-danger delete-Records" style="cursor:pointer;font-size:25px;"></i>
                     </span>
-                </td>
+                   </td>
                  <td class="text-center">
                     <span data-id="${value.DeptId}" >
                        <i class="bi bi-pencil-square edit-test edit-icon"></i>
@@ -238,39 +239,39 @@ async function SubmitRecord() {
 
 
     // Annexure File Required
-    if (files_Annexure.length === 0) {
-        $("#inputAnnexureFileAttached").addClass("is-invalid");
-        $("#inputAnnexureFileAttached").siblings(".error").text("Annexure file required");
-        isValid = false;
-    }
-    else {
+    //if (files_Annexure.length === 0) {
+    //    $("#inputAnnexureFileAttached").addClass("is-invalid");
+    //    $("#inputAnnexureFileAttached").siblings(".error").text("Annexure file required");
+    //    isValid = false;
+    //}
+    //else {
 
-        if (!fileSizeValidation('inputAnnexureFileAttached', fileSize)) {
-            isValid = false;
-        }
+    //    if (!fileSizeValidation('inputAnnexureFileAttached', fileSize)) {
+    //        isValid = false;
+    //    }
 
-        if (!fileExtensionValidation('inputAnnexureFileAttached', allowedExtensions)) {
-            isValid = false;
-        }
-    }
+    //    if (!fileExtensionValidation('inputAnnexureFileAttached', allowedExtensions)) {
+    //        isValid = false;
+    //    }
+    //}
 
 
     // Group Bill File Required
-    if (files_GroupBill.length === 0) {
-        $("#inputGroupBillFileAttached").addClass("is-invalid");
-        $("#inputGroupBillFileAttached").siblings(".error").text("Group Bill file required");
-        isValid = false;
-    }
-    else {
+    //if (files_GroupBill.length === 0) {
+    //    $("#inputGroupBillFileAttached").addClass("is-invalid");
+    //    $("#inputGroupBillFileAttached").siblings(".error").text("Group Bill file required");
+    //    isValid = false;
+    //}
+    //else {
 
-        if (!fileSizeValidation('inputGroupBillFileAttached', fileSize)) {
-            isValid = false;
-        }
+    //    if (!fileSizeValidation('inputGroupBillFileAttached', fileSize)) {
+    //        isValid = false;
+    //    }
 
-        if (!fileExtensionValidation('inputGroupBillFileAttached', allowedExtensions)) {
-            isValid = false;
-        }
-    }
+    //    if (!fileExtensionValidation('inputGroupBillFileAttached', allowedExtensions)) {
+    //        isValid = false;
+    //    }
+    //}
 
     if (!isValid) return;
 
@@ -332,6 +333,76 @@ async function SubmitRecord() {
 
 }
 
+// View Uploaded pdf file conditions 
+$(document).on('click', '.view-file', function (e) {
+    e.preventDefault(); // Prevent default <a> behavior
+
+    var fileName = $(this).data('file');
+    var folder = $(this).data('folder');
+
+    if (!fileName || fileName === 'undefined' || fileName === '') {
+        toastr.error('File not uploaded');
+        return;
+    }
+
+    // Construct URL
+    var url = `/Attachment/DeptAttendance/${folder}/${fileName}`;
+
+    // Open in new tab
+    window.open(url, '_blank');
+});
+
+
+
+
+//Delete Records Message Box
+$(document).on('click', '.delete-Records', async function () {
+
+    //var row = $(this).closest('tr');
+    var row = $(this).closest('span');
+    Id = row.data('id');
+
+    var isConfirmed = await DeleteEditBox('Delete Record', 'Do you want to Delete Record?', 'question', Id);
+
+    if (isConfirmed) {
+        console.log('Edit');
+        // User clicked Yes
+        alert('Click on Yes');
+        await deleteAttendanceRecord(Id);
+
+    } else {
+        // User clicked Cancel
+        console.log('Edit cancelled');
+        alert('Click on No');
+    }
+});
+
+// Delete Records Functions
+async function deleteAttendanceRecord(Id, CancelRemarks = "Deleted by user") {
+    try {
+        // Call your backend API to delete the record
+        let data = {
+            AttendaceId: Id,
+            CancelRemarks: CancelRemarks
+        };
+
+        let res = await acceptUpdate("Manpower", "Delete_DeptAttendanceRecord", data);
+
+        if (res.success) {
+            toastr.success(res.message);
+            recordlist(); // Refresh the table
+        } else {
+            toastr.error(res.message || "Delete failed");
+        }
+    } catch (err) {
+        console.error("Delete error:", err);
+        toastr.error("Delete failed due to server error");
+    }
+}
+
+
+
+// Edit Records
 $(document).on('click', '.edit-AgencyInvoiceEntry', async function () {
 
     var row = $(this).closest('tr');

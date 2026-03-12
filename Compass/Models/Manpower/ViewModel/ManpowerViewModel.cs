@@ -48,7 +48,10 @@ namespace Compass.Models.ManpowerViewModel
         public string PurhaseInvNO { get; set; }
         public int DeployedResource { get; set; }
         public int UpladNoOfResource { get; set; }
-        public int MonthYear { get; set; } 
+        public int MonthYear { get; set; }
+        public string AttendanceCertificate { get; set; }
+        public string AnnexureFile { get; set; }
+        public string AgencyBillFile { get; set; }
 
     }
 
