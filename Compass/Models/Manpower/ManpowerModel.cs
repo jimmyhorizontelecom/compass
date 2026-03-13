@@ -42,5 +42,11 @@ namespace Compass.Models.ManpowerModel
         public int CreatedBy { get; set; }
 }
 
+    public class DeleteAttendanceModel
+    {
+        public int Id { get; set; }
+        public string CancelRemarks { get; set; }
+    }
+
 
 }

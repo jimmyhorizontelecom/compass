@@ -490,7 +490,11 @@ function bindDependentDataToDdlToParent(controller, action, modalId,
                     processResults: function (data) {
                         return {
                             results: $.map(data, function (item) {
-                                return { id: item.Id, text: item.Text };
+                                return {
+                                    id: item.Id,
+                                    text: item.Text,
+                                    resource: item.DeployedResource // Add for fill No. of Resource
+                                };
                             })
                         };
                     }

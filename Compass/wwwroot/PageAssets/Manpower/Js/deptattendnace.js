@@ -77,7 +77,9 @@ function bindDatatable(records, tableId) {
 
     $.each(records, function (i, value) {
         let SrNo = i + 1;
-        console.log(value);
+        console.log("Full Row Object:", value);
+        console.log("Possible Id fields:", value.Id, value.AttendaceId, value.AttendanceId);
+        
         tbody.append(`
             <tr 
                 data-id="${value.Id}">
@@ -91,9 +93,11 @@ function bindDatatable(records, tableId) {
                 
                 <!-- Attendance File -->
                 <td class="text-center">
+                <span data-id="${value.Id}" >
                     <a href="javascript:void(0);" class="view-file" data-file="${value.AttendanceCertificate}" data-folder="Attendance" title="View Attendance">
                          <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"></i>
                     </a>
+                    </span>
                 </td>
                  <!-- Annexure File -->
                 <td class="text-center">
@@ -108,30 +112,30 @@ function bindDatatable(records, tableId) {
                     </a>
                 </td>
                  <td class="text-center">
-                    <span data-id="${value.Id}" >
+                   
                        <i class="bi bi-pencil-square edit-test edit-icon" style="cursor:pointer;font-size:25px;"></i>
-                    </span>
+                  
                 </td>
                  
                  <td class="text-center" >
-                    <span data-id="${value.Id}">
-                    <i class="bi bi-trash text-danger delete-Records" style="cursor:pointer;font-size:25px;"></i>
-                    </span>
-                   </td>
+                    <i class="bi bi-trash text-danger delete-Records"
+                    data-id="${value.Id}"
+                    style="cursor:pointer;font-size:25px;"></i> 
+                 </td>
                  <td class="text-center">
-                    <span data-id="${value.DeptId}" >
+                    
                        <i class="bi bi-pencil-square edit-test edit-icon" style="cursor:pointer;font-size:25px;"></i>
-                    </span>
+                   
                 </td>
                  <td class="text-center">
-                    <span data-id="${value.DeptId}" >
+                   
                        <i class="bi bi-pencil-square edit-test edit-icon" style="cursor:pointer;font-size:25px;"></i>
-                    </span>
+                   
                 </td>
                  <td class="text-center">
-                    <span data-id="${value.DeptId}" >
+                   
                        <i class="bi bi-pencil-square edit-AgencyInvoiceEntry edit-icon" style="cursor:pointer;font-size:25px;"></i>
-                    </span>
+                  
                 </td>
                  
         `);
@@ -238,40 +242,40 @@ async function SubmitRecord() {
     }
 
 
-    // Annexure File Required
-    //if (files_Annexure.length === 0) {
-    //    $("#inputAnnexureFileAttached").addClass("is-invalid");
-    //    $("#inputAnnexureFileAttached").siblings(".error").text("Annexure file required");
-    //    isValid = false;
-    //}
-    //else {
+     //Annexure File Required
+    if (files_Annexure.length === 0) {
+        $("#inputAnnexureFileAttached").addClass("is-invalid");
+        $("#inputAnnexureFileAttached").siblings(".error").text("Annexure file required");
+        isValid = false;
+    }
+    else {
 
-    //    if (!fileSizeValidation('inputAnnexureFileAttached', fileSize)) {
-    //        isValid = false;
-    //    }
+        if (!fileSizeValidation('inputAnnexureFileAttached', fileSize)) {
+            isValid = false;
+        }
 
-    //    if (!fileExtensionValidation('inputAnnexureFileAttached', allowedExtensions)) {
-    //        isValid = false;
-    //    }
-    //}
+        if (!fileExtensionValidation('inputAnnexureFileAttached', allowedExtensions)) {
+            isValid = false;
+        }
+    }
 
 
-    // Group Bill File Required
-    //if (files_GroupBill.length === 0) {
-    //    $("#inputGroupBillFileAttached").addClass("is-invalid");
-    //    $("#inputGroupBillFileAttached").siblings(".error").text("Group Bill file required");
-    //    isValid = false;
-    //}
-    //else {
+     //Group Bill File Required
+    if (files_GroupBill.length === 0) {
+        $("#inputGroupBillFileAttached").addClass("is-invalid");
+        $("#inputGroupBillFileAttached").siblings(".error").text("Group Bill file required");
+        isValid = false;
+    }
+    else {
 
-    //    if (!fileSizeValidation('inputGroupBillFileAttached', fileSize)) {
-    //        isValid = false;
-    //    }
+        if (!fileSizeValidation('inputGroupBillFileAttached', fileSize)) {
+            isValid = false;
+        }
 
-    //    if (!fileExtensionValidation('inputGroupBillFileAttached', allowedExtensions)) {
-    //        isValid = false;
-    //    }
-    //}
+        if (!fileExtensionValidation('inputGroupBillFileAttached', allowedExtensions)) {
+            isValid = false;
+        }
+    }
 
     if (!isValid) return;
 
@@ -352,101 +356,94 @@ $(document).on('click', '.view-file', function (e) {
     window.open(url, '_blank');
 });
 
-
-
-
-//Delete Records Message Box
-
-//$(document).on('click', '.delete-Records', async function () {
-
-//    //var row = $(this).closest('tr');
-//    var row = $(this).closest('span');
-//    Id = row.data('id');
-
-//    var isConfirmed = await DeleteEditBox('Delete Record', 'Do you want to Delete Record?', 'question', Id);
-
-//    if (isConfirmed) {
-//        console.log('Edit');
-//        // User clicked Yes
-//        alert('Click on Yes');
-//        await deleteAttendanceRecord(Id);
-
-//    } else {
-//        // User clicked Cancel
-//        console.log('Edit cancelled');
-//        alert('Click on No');
-//    }
-//});
-
-// Delete Records Functions
-
-// Delete Records Message Box
+// Click even on Delete Icon
 $(document).on('click', '.delete-Records', async function () {
-    var row = $(this).closest('tr'); // get the table row
-    var recordId = row.data('id');
 
-    // Confirm deletion
-    var isConfirmed = await DeleteEditBox('Delete Record', 'Do you want to delete this record?', 'question', recordId);
+    var recordId = $(this).data("id");
+
+    console.log("Delete Id:", recordId);
+
+    if (!recordId) {
+        toastr.error("Attendance Id not found");
+        return;
+    }
+
+    var isConfirmed = await DeleteEditBox("Delete Record", "Do you want to delete this record?", "question");
 
     if (isConfirmed) {
-        await deleteAttendanceRecord(recordId, row);
-    } else {
-        toastr.info("Delete cancelled");
+        await deleteAttendanceRecord(recordId);
     }
+
 });
 // Delete Records Function
-async function deleteAttendanceRecord(Id, row) {
-    try {
-        let data = {
-            AttendaceId: Id,
-            CancelRemarks: "Deleted by user"
-        };
+async function deleteAttendanceRecord(Id) {
 
-        let res = await acceptUpdate("Manpower", "Delete_DeptAttendanceRecord", data);
+    try {
+
+        let formData = new FormData();
+
+        formData.append("Id", Id);
+        formData.append("CancelRemarks", "Deleted by user");
+
+        console.log("Sending Delete Data:", Id);
+
+        let res = await acceptUpdate(
+            "Manpower",
+            "Delete_DeptAttendanceRecord",
+            formData
+        );
 
         if (res.success) {
+
             toastr.success(res.message);
 
-            // Remove row from table
-            if (row) {
-                $(row).fadeOut(300, function () {
-                    $(this).remove();
-                });
-            }
+            recordlist(); // reload table
 
-            // Optional: refresh table data
-             recordlist();
         } else {
+
             toastr.error(res.message || "Delete failed");
+
         }
+
     } catch (err) {
+
         console.error("Delete error:", err);
-        toastr.error("Delete failed due to server error");
+        toastr.error("Server error while deleting");
+
     }
+
 }
+// function to fill JNo. of Resources
+async function getResourceByWorkOrder(workOrderId) {
 
+    var filterData = {
+        WorkOrderId: workOrderId
+    };
 
-//async function deleteAttendanceRecord(Id, CancelRemarks = "Deleted by user") {
-//    try {
-//        // Call your backend API to delete the record
-//        let data = {
-//            AttendaceId: Id,
-//            CancelRemarks: CancelRemarks
-//        };
+    try {
 
-//        let res = await acceptUpdate("Manpower", "Delete_DeptAttendanceRecord", data);
+        let records = await getRecords('Manpower', 'GetResourceByWorkOrder', filterData, '', 'N');
 
-//        if (res.success) {
-//            toastr.success(res.message);
-//            recordlist(); // Refresh the table
-//        } else {
-//            toastr.error(res.message || "Delete failed");
-//        }
-//    } catch (err) {
-//        console.error("Delete error:", err);
-//        toastr.error("Delete failed due to server error");
-//    }
-//}
+        if (records && records.length > 0) {
+
+            let data = records[0];
+
+            // Fill No Of Resources
+            $("#txtNoOfResources").val(data.DeployedResource);
+
+        }
+        else {
+
+            $("#txtNoOfResources").val("");
+
+        }
+
+    }
+    catch (error) {
+        console.error("Error loading resources:", error);
+    }
+
+}
 
 
 

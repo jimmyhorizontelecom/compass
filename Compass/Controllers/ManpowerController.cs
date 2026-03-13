@@ -185,6 +185,7 @@ namespace Compass.Controllers
                 var list = dt.AsEnumerable().Select(row => new DeptAttendanceViewModel
 
                 {
+                    Id = row["AttendaceId"]?.ToString(),
                     departmentName = (row["departmentName"]?.ToString()),
                     AgencyName = (row["AgencyName"]?.ToString()),
                     WorkOrderId = (row["WorkOrderId"]?.ToString()),
@@ -390,20 +391,61 @@ namespace Compass.Controllers
         }
 
         // Delete Record 
+        //[HttpPost]
+        //public IActionResult Delete_DeptAttendanceRecord([FromBody] DeleteAttendanceModel model)
+        //{
+        //    Console.WriteLine("Delete Id Received: " + model.Id);
+        //    try
+        //    {
+        //        var userId = User.FindFirst("UserId")?.Value;
+
+        //        SortedList parameters = new SortedList
+        //{
+        //    { "@AttendaceId", model.Id },
+        //    { "@IsCancel", "Y" },
+        //    { "@CancelBy", userId },
+        //    { "@CancelRemarks", model.CancelRemarks ?? "" },
+
+        //};
+
+        //        var result = _cn.ExecuteNonQueryWMessage(
+        //            "TallyAttendanceCancel_AcceptUpdate",
+        //            "",
+        //            parameters
+        //        );
+
+        //        return Ok(new
+        //        {
+        //            success = true,
+        //            message = result.ToString()
+        //        });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, new
+        //        {
+        //            success = false,
+        //            message = "Server error.",
+        //            error = ex.Message
+        //        });
+        //    }
+        //}
+
         [HttpPost]
-        public IActionResult Delete_DeptAttendanceRecord(int AttendaceId, string CancelRemarks = "")
+        public IActionResult Delete_DeptAttendanceRecord([FromForm] DeleteAttendanceModel model)
         {
             try
             {
+                Console.WriteLine("Delete Id Received: " + model.Id);
+
                 var userId = User.FindFirst("UserId")?.Value;
 
                 SortedList parameters = new SortedList
         {
-            { "@AttendaceId", AttendaceId },
+            { "@AttendaceId", model.Id },
             { "@IsCancel", "Y" },
             { "@CancelBy", userId },
-            { "@CancelRemarks", CancelRemarks ?? "" },
-            
+            { "@CancelRemarks", model.CancelRemarks ?? "" }
         };
 
                 var result = _cn.ExecuteNonQueryWMessage(
@@ -423,13 +465,13 @@ namespace Compass.Controllers
                 return StatusCode(500, new
                 {
                     success = false,
-                    message = "Server error.",
+                    message = "Server error",
                     error = ex.Message
                 });
             }
         }
 
-        
+
 
         #endregion
 

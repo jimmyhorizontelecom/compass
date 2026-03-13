@@ -39,7 +39,7 @@ namespace Compass.Models.ManpowerViewModel
 
     public class DeptAttendanceViewModel
     {
-        public string AttendaceId { get; set; }
+        public string Id { get; set; }
         public int DeptId { get; set; }
         public string departmentName { get; set; }
         public int AgencyId { get; set; }
