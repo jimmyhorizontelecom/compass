@@ -112,9 +112,9 @@ function bindDatatable(records, tableId) {
                     </a>
                 </td>
                  <td class="text-center">
-                   
-                       <i class="bi bi-pencil-square edit-test edit-icon" style="cursor:pointer;font-size:25px;"></i>
-                  
+                    <i class="bi bi-pencil-square upload-Bill edit-icon"
+                        data-id="${value.Id}"
+                    style="cursor:pointer;font-size:25px;"></i>
                 </td>
                  
                  <td class="text-center" >
@@ -134,7 +134,9 @@ function bindDatatable(records, tableId) {
                 </td>
                  <td class="text-center">
                    
-                       <i class="bi bi-pencil-square edit-AgencyInvoiceEntry edit-icon" style="cursor:pointer;font-size:25px;"></i>
+                       <i class="bi bi-pencil-square edit-AgencyInvoice edit-icon"
+                       data-id="${value.Id}"
+                       style="cursor:pointer;font-size:25px;"></i>
                   
                 </td>
                  
@@ -356,7 +358,169 @@ $(document).on('click', '.view-file', function (e) {
     window.open(url, '_blank');
 });
 
-// Click even on Delete Icon
+// MsgBox on Click event on Upload Annexure & Bill 
+$(document).on('click', '.upload-Bill', async function () {
+
+    var recordId = $(this).data("id");
+   // alert(recordId);
+    console.log("Upload Bill Id:", recordId);
+
+    if (!recordId) {
+        toastr.error("Record Id not found");
+        return;
+    }
+
+    var isConfirmed = await DeleteEditBox('Upload File','Do you want to upload Annexure/Bill?','question');
+
+    if (isConfirmed) {
+        await loadRecordUploadFile(recordId);
+        openModal('myModal_UploadFile');
+        // Alternative if openModal not working
+        //$('#myModal_UploadFile').modal('show');
+
+    } else {
+
+        console.log('Upload cancelled');
+
+    }
+
+});
+// get Record to fill upload Annexure & Bill File
+async function loadRecordUploadFile(recordId) {
+    //alert('Load Record function')
+    var filterData = {
+        Id: recordId,
+        AgencyId: 0,
+        DeptId: 0,
+        MonthYear: 0,
+        CreatedBy: 0,
+        UserRole: 39,
+    };
+
+    try {
+
+        let records = await getRecords('Manpower', 'GetUploadAnnexureBillRecord', filterData, '', 'N');
+
+        if (records && records.length > 0) {
+
+            let data = records[0];
+            Id = data.Id;
+            $("#textMonthYearFill").val(data.MonthYear);
+            $("#txtDeptFill").val(data.departmentName);
+            $("#txtAgencyFill").val(data.AgencyName);
+            $("#textWorkOrderFill").val(data.WorkOrderId);
+            $("#txtNoResourcesFill").val(data.DeployedResource);
+            $("#txtPrsentResouceFill").val(data.UpladNoOfResource);
+            $("#textBillingAddFill").val(data.BillingAddress);
+            
+            alert('test');
+
+
+            //$('#myModal').modal('show');
+        }
+    }
+    catch (error) {
+        console.error("Error loading record:", error);
+    }
+}
+// Submit record when Click on btn
+$(".btnModalSubmit1").on("click", function () {
+    SubmitUploadFile();
+});
+
+// Submit records
+async function SubmitUploadFile() {
+    let isValid = true;
+    
+    let files_Annexure = $("#inputAnnexureFileAttached1")[0]?.files || [];
+    let files_GroupBill = $("#inputGroupBillFileAttached1")[0]?.files || [];
+
+    $(".error").text("");
+    $(".is-invalid").removeClass("is-invalid");
+
+    // file validation
+    let fileSize = 5;
+    let allowedExtensions = ["pdf"];
+
+    // Annexure File Required
+    if (files_Annexure.length === 0) {
+
+        $("#inputAnnexureFileAttached1").addClass("is-invalid");
+        $("#inputAnnexureFileAttached1").siblings(".error").text("Annexure file required");
+
+        isValid = false;
+
+    } else {
+
+        if (!fileSizeValidation('inputAnnexureFileAttached1', fileSize)) {
+            isValid = false;
+        }
+
+        if (!fileExtensionValidation('inputAnnexureFileAttached1', allowedExtensions)) {
+            isValid = false;
+        }
+
+    }
+
+    // Group Bill File Required
+    if (files_GroupBill.length === 0) {
+
+        $("#inputGroupBillFileAttached1").addClass("is-invalid");
+        $("#inputGroupBillFileAttached1").siblings(".error").text("Group Bill file required");
+
+        isValid = false;
+
+    } else {
+
+        if (!fileSizeValidation('inputGroupBillFileAttached1', fileSize)) {
+            isValid = false;
+        }
+
+        if (!fileExtensionValidation('inputGroupBillFileAttached1', allowedExtensions)) {
+            isValid = false;
+        }
+
+    }
+    if (!isValid) return;
+
+    var formData = new FormData();
+    //monthYear = $(".monthYearPicker").val(); // 03-2026
+    //let finalMonthYear = monthYear.replace("-", ""); // 032026
+    formData.append("Id", Id);
+    //formData.append("WorkOrderNo", workOrderNo);
+    //formData.append("UpladNoOfResource", noOfResources);
+    //formData.append("PresentResource", presentResources);
+
+    if (files_Annexure.length > 0) {
+        formData.append("AnnexureFile", files_Annexure[0]);
+    }
+
+    if (files_GroupBill.length > 0) {
+        formData.append("AgencyBillFile", files_GroupBill[0]);
+    }
+
+    try {
+        //$("#ModalProgress").show();
+        let res = await acceptUpdate("Manpower", "AddOrEdit_AnnexureBillRecord", formData);
+        if (res.success) {
+
+            recordlist();
+            resetModal();
+
+            Id = 0;
+            $('.modelalert').text(res.message);
+            closeModal('myModal');
+            MsgBox('Message', res.message, '');
+        }
+
+    } catch (err) {
+        $('.modelalert').text("Error: " + err);
+    }
+
+}
+
+
+// MsgBox on Click event on Delete Icon 
 $(document).on('click', '.delete-Records', async function () {
 
     var recordId = $(this).data("id");
@@ -387,11 +551,7 @@ async function deleteAttendanceRecord(Id) {
 
         console.log("Sending Delete Data:", Id);
 
-        let res = await acceptUpdate(
-            "Manpower",
-            "Delete_DeptAttendanceRecord",
-            formData
-        );
+        let res = await acceptUpdate("Manpower","Delete_DeptAttendanceRecord",formData);
 
         if (res.success) {
 
@@ -413,108 +573,62 @@ async function deleteAttendanceRecord(Id) {
     }
 
 }
-// function to fill JNo. of Resources
-async function getResourceByWorkOrder(workOrderId) {
 
-    var filterData = {
-        WorkOrderId: workOrderId
-    };
+$(document).on('click', '.edit-AgencyInvoice', async function () {
 
-    try {
+    var recordId = $(this).data("id");
+    // alert(recordId);
+    console.log("Edit Record Id:", recordId);
 
-        let records = await getRecords('Manpower', 'GetResourceByWorkOrder', filterData, '', 'N');
-
-        if (records && records.length > 0) {
-
-            let data = records[0];
-
-            // Fill No Of Resources
-            $("#txtNoOfResources").val(data.DeployedResource);
-
-        }
-        else {
-
-            $("#txtNoOfResources").val("");
-
-        }
-
-    }
-    catch (error) {
-        console.error("Error loading resources:", error);
+    if (!recordId) {
+        toastr.error("Record Id not found");
+        return;
     }
 
-}
-
-
-
-// Edit Records
-$(document).on('click', '.edit-AgencyInvoiceEntry', async function () {
-
-    var row = $(this).closest('tr');
-    Id = row.data('id');
-
-    var isConfirmed = await DeleteEditBox('Edit Field', 'Do you want to edit Record?', 'question', Id);
+    var isConfirmed = await DeleteEditBox('Edit Field', 'Do you want to edit Record?', 'question');
 
     if (isConfirmed) {
-        console.log('Edit');
-        // User clicked Yes
-        await loadRecordById(row);
-        openModal('myModal_AgencyInvoiceEntry');
-        // $('#myModal').modal('show');
+        await loadRecordUpdate(recordId);
+        openModal('myModal_AgencyInvoice');
+        // Alternative if openModal not working
+        //$('#myModal_UploadFile').modal('show');
+
     } else {
-        // User clicked Cancel
+
         console.log('Edit cancelled');
+
     }
+
 });
 // get Record to fill
-async function loadRecordById(row) {
-
+async function loadRecordUpdate(recordId) {
+    //alert('Load Record function')
     var filterData = {
-        Id: row.data('id'),
+        Id: recordId,
         AgencyId: 0,
-        DeptId: 123,
-        MonthYear: '102025',
+        DeptId: 0,
+        MonthYear: 0,
         CreatedBy: 0,
         UserRole: 39,
     };
 
     try {
 
-        let records = await getRecords('Manpower', 'GetDeptAttendanceRecord', filterData, '#myTable', 'N');
+        let records = await getRecords('Manpower', 'GetAgencyInvoiceRecord', filterData, '', 'N');
 
         if (records && records.length > 0) {
 
             let data = records[0];
             Id = data.Id;
-
-            $("#ddlPurchaseBillDate").val(data.MonthYear);
-            bindDataToDdl("Dropdown", "MAgency_ddl", "myModal_AgencyInvoiceEntry", "ddlPurchaseBillDate", " Month Year", /*data.AgencyId,*/ 0);
-            var option = new Option(data.MonthYear, data.MonthYear, true, true);
-            $('#ddlPurchaseBillDate').append(option).trigger('change');
-
-            bindDataToDdl("Dropdown", "MAgency_ddl", "myModal_AgencyInvoiceEntry", "ddlWorkOrderNo1", " Work Order No", data.AgencyId, 0);
-             option = new Option(data.WorkOrderId,/* data.WorkOrderId,*/ true, true);
-            $('#ddlWorkOrderNo1').append(option).trigger('change');
-
-            bindDataToDdl("Dropdown", "MAgency_ddl", "myModal_AgencyInvoiceEntry", "ddlAgencyName1", " Agency Name", data.AgencyId, 0);
-             option = new Option(data.AgencyName, data.AgencyId, true, true);
-            $('#ddlAgencyName1').append(option).trigger('change');
-            alert(data.AgencyName);
-
-            bindDataToDdl("Dropdown", "MDepartment_ddl", "myModal_AgencyInvoiceEntry", "ddlDeptName1", " Department Name", data.DeptId, 0);
-            option = new Option(data.departmentName, data.DeptId, true, true);
-            $('#ddlDeptName1').append(option).trigger('change');
-            alert(data.departmentName);
-
+            $("#ddlPurchaseBillDate1").val(data.MonthYear);
+            $("#txtWorkOrderNo1").val(data.WorkOrderId);
+            $("#txtAgencyBillNo1").val(data.AgencyName);
+            $("#txtAgencyName1").val(data.AgencyName);
+            $("#txtDeptName1").val(data.departmentName);
+            $("#txtNoResource1").val(data.UpladNoOfResource);
+            $("#txtDepBillingAdd1").val(data.BillingAddress);
+            $("#monthYearPicker").val(data.MonthYear);
             
-
-            //$("#txtWorkOrderNo").val(data.WorkOrderId);
-            //$("#txtAgencyBillNo").val(data.PurhaseInvNO);
-            //$("#txtAgencyName").val(data.AgencyName);
-            //$("#txtDeptName").val(data.departmentName);
-            alert('test');
-
-           
             //$('#myModal').modal('show');
         }
     }
@@ -522,5 +636,4 @@ async function loadRecordById(row) {
         console.error("Error loading record:", error);
     }
 }
-
 

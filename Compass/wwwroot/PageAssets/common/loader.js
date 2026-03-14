@@ -717,7 +717,7 @@ function fileSizeValidation1(fileUploadId, maxSizeFileMB) {
 
     return true;
 }
-function fileSizeValidation(fileUploadId, maxSizeFileMB) {
+function fileSizeValidation2(fileUploadId, maxSizeFileMB) {
 
     var fileInput = document.getElementById(fileUploadId);
 
@@ -742,8 +742,33 @@ function fileSizeValidation(fileUploadId, maxSizeFileMB) {
 
     return true;
 }
+function fileSizeValidation(fileUploadId, maxSizeFileMB) {
+
+    var fileInput = document.getElementById(fileUploadId);
+
+    if (!fileInput || fileInput.files.length === 0) {
+        return false;
+    }
+
+    const maxSize = maxSizeFileMB * (1024 * 1024);
+    const file = fileInput.files[0];
+
+    if (file.size > maxSize) {
+
+        $("#" + fileUploadId).addClass("is-invalid");
+
+        $("#" + fileUploadId)
+            .closest("[class*='col-']")
+            .find(".error")
+            .text("File size must be <= " + maxSizeFileMB + " MB");
+
+        return false;
+    }
+
+    return true;
+}
 // Modified file extension validation
-function fileExtensionValidation(fileUploadId, allowedExtensions) {
+function fileExtensionValidation2(fileUploadId, allowedExtensions) {
 
     var fileInput = document.getElementById(fileUploadId);
 
@@ -768,7 +793,31 @@ function fileExtensionValidation(fileUploadId, allowedExtensions) {
 
     return true;
 }
+function fileExtensionValidation(fileUploadId, allowedExtensions) {
 
+    var fileInput = document.getElementById(fileUploadId);
+
+    if (!fileInput || fileInput.files.length === 0) {
+        return false;
+    }
+
+    var file = fileInput.files[0];
+    var extension = file.name.split('.').pop().toLowerCase();
+
+    if (!allowedExtensions.includes(extension)) {
+
+        $("#" + fileUploadId).addClass("is-invalid");
+
+        $("#" + fileUploadId)
+            .closest("[class*='col-']")
+            .find(".error")
+            .text("Only " + allowedExtensions.join(", ") + " file allowed");
+
+        return false;
+    }
+
+    return true;
+}
 //
 //
 //function getNewFileName(file,prefix) {
