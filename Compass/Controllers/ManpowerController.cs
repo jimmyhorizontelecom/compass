@@ -212,61 +212,61 @@ namespace Compass.Controllers
         }
 
        // Submit data
-       [HttpPost]
-        public IActionResult AddOrEdit_DeptAttendanceRecord1(DeptAttendanceModel model)
-        {
-            try
-            {
-                //if (string.IsNullOrWhiteSpace(model.WorkOrderNo) ||
-                //    string.IsNullOrWhiteSpace(model.BillAddressEmail)
+       //[HttpPost]
+       // public IActionResult AddOrEdit_DeptAttendanceRecord1(DeptAttendanceModel model)
+       // {
+       //     try
+       //     {
+       //         //if (string.IsNullOrWhiteSpace(model.WorkOrderNo) ||
+       //         //    string.IsNullOrWhiteSpace(model.BillAddressEmail)
 
-                //    )
-                //{
-                //    return BadRequest(new
-                //    {
-                //        success = false,
-                //        message = "WorkOrderNo and BillAddressEmail are required."
-                //    });
-                //}
-
-
+       //         //    )
+       //         //{
+       //         //    return BadRequest(new
+       //         //    {
+       //         //        success = false,
+       //         //        message = "WorkOrderNo and BillAddressEmail are required."
+       //         //    });
+       //         //}
 
 
-                SortedList parameters = new SortedList();
-                parameters.Add("@Id", model.Id);
-                parameters.Add("@MonthYear", model.MonthYear);
-                parameters.Add("@WorkOrderId", model.WorkOrderNo);
-                parameters.Add("@UpladNoOfResource", model.UpladNoOfResource);
-                parameters.Add("@AttendanceCertificate", model.AttendanceFile);
-                parameters.Add("@AnnexureFile", model.AnnexureFile);
-                parameters.Add("@AgencyBillFile", model.AgencyBillFile);
+
+
+       //         SortedList parameters = new SortedList();
+       //         parameters.Add("@Id", model.Id);
+       //         parameters.Add("@MonthYear", model.MonthYear);
+       //         parameters.Add("@WorkOrderId", model.WorkOrderNo);
+       //         parameters.Add("@UpladNoOfResource", model.UpladNoOfResource);
+       //         parameters.Add("@AttendanceCertificate", model.AttendanceFile);
+       //         parameters.Add("@AnnexureFile", model.AnnexureFile);
+       //         parameters.Add("@AgencyBillFile", model.AgencyBillFile);
                 
 
-                var userId = User.FindFirst("UserId")?.Value;
-                parameters.Add("@CreatedBy", userId);
+       //         var userId = User.FindFirst("UserId")?.Value;
+       //         parameters.Add("@CreatedBy", userId);
 
-                var result = _cn.ExecuteNonQueryWMessage(
-                    "tblTallyAttendance_AcceptUpdate",
-                    "",
-                    parameters
-                );
+       //         var result = _cn.ExecuteNonQueryWMessage(
+       //             "tblTallyAttendance_AcceptUpdate",
+       //             "",
+       //             parameters
+       //         );
 
-                return Ok(new
-                {
-                    success = true,
-                    message = result.ToString()
-                });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
-                {
-                    success = false,
-                    message = "Server error.",
-                    error = ex.Message
-                });
-            }
-        }
+       //         return Ok(new
+       //         {
+       //             success = true,
+       //             message = result.ToString()
+       //         });
+       //     }
+       //     catch (Exception ex)
+       //     {
+       //         return StatusCode(500, new
+       //         {
+       //             success = false,
+       //             message = "Server error.",
+       //             error = ex.Message
+       //         });
+       //     }
+       // }
 
         [HttpPost]
         public async Task<IActionResult> AddOrEdit_DeptAttendanceRecord([FromForm] DeptAttendanceModel model)
@@ -389,48 +389,7 @@ namespace Compass.Controllers
                 });
             }
         }
-
-        // Delete Record 
-        //[HttpPost]
-        //public IActionResult Delete_DeptAttendanceRecord([FromBody] DeleteAttendanceModel model)
-        //{
-        //    Console.WriteLine("Delete Id Received: " + model.Id);
-        //    try
-        //    {
-        //        var userId = User.FindFirst("UserId")?.Value;
-
-        //        SortedList parameters = new SortedList
-        //{
-        //    { "@AttendaceId", model.Id },
-        //    { "@IsCancel", "Y" },
-        //    { "@CancelBy", userId },
-        //    { "@CancelRemarks", model.CancelRemarks ?? "" },
-
-        //};
-
-        //        var result = _cn.ExecuteNonQueryWMessage(
-        //            "TallyAttendanceCancel_AcceptUpdate",
-        //            "",
-        //            parameters
-        //        );
-
-        //        return Ok(new
-        //        {
-        //            success = true,
-        //            message = result.ToString()
-        //        });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, new
-        //        {
-        //            success = false,
-        //            message = "Server error.",
-        //            error = ex.Message
-        //        });
-        //    }
-        //}
-
+        // Delete Records from Table
         [HttpPost]
         public IActionResult Delete_DeptAttendanceRecord([FromForm] DeleteAttendanceModel model)
         {
@@ -471,6 +430,188 @@ namespace Compass.Controllers
             }
         }
 
+        // Get record Upload Annexure & agency File
+        [HttpGet]
+        public async Task<IActionResult> GetUploadAnnexureBillRecord([FromQuery] DeptAttendanceFilter filter)
+
+        {
+            try
+            {
+                // Access as object
+                SortedList parameters = new SortedList();
+                parameters.Add("@Id", filter.Id);
+                
+                var dt = await _cn.FillDataTableAsync("tblTallyAttendance_Get", "", parameters);
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<DeptAttendanceViewModel>());
+
+                var list = dt.AsEnumerable().Select(row => new DeptAttendanceViewModel
+
+                {
+                    Id = row["AttendaceId"]?.ToString(),
+                    MonthYear = Convert.ToInt32(row["MonthYear"]?.ToString()),
+                    departmentName = (row["departmentName"]?.ToString()),
+                    AgencyName = (row["AgencyName"]?.ToString()),
+                    WorkOrderId = (row["WorkOrderId"]?.ToString()),
+                    //PurhaseInvNO = (row["PurhaseInvNO"]?.ToString()),
+                    DeployedResource = Convert.ToInt32(row["DeployedResource"]?.ToString()),
+                    UpladNoOfResource = Convert.ToInt32(row["UpladNoOfResource"]?.ToString()),
+                    BillingAddress = (row["BillingAddress"]?.ToString()),
+                    //AttendanceCertificate = row["AttendanceCertificate"]?.ToString(),
+                    AnnexureFile = row["AnnexureFile"]?.ToString(),
+                    AgencyBillFile = row["UploadBill"]?.ToString(),
+                }).ToList();
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+        //Submit Annexure & Bill
+        [HttpPost]
+        public async Task<IActionResult> AddOrEdit_AnnexureBillRecord([FromForm] DeptAttendanceModel model)
+        {
+            try
+            {
+
+                var Id = model.Id;
+                
+                // ✅ Get uploaded file
+
+                IFormFile attachmentFile2 = model.AnnexureFile;
+                IFormFile attachmentFile3 = model.AgencyBillFile;
+
+                var userId = User.FindFirst("UserId")?.Value;
+
+               
+                string AnnexureFile = "";
+                if (attachmentFile2 != null && attachmentFile2.Length > 0)
+                {
+                    string folderPath = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot/Attachment/DeptAttendance/Annexure"
+                    );
+
+                    if (!Directory.Exists(folderPath))
+                        Directory.CreateDirectory(folderPath);
+
+                    string extension = Path.GetExtension(attachmentFile2.FileName);
+
+                    AnnexureFile = $"Annexure_{DateTime.Now:yyyyMMdd}_{Guid.NewGuid()}{extension}";
+
+                    string filePath = Path.Combine(folderPath, AnnexureFile);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await attachmentFile2.CopyToAsync(stream);
+                    }
+                }
+
+                string AgencyBillFile = "";
+                if (attachmentFile3 != null && attachmentFile3.Length > 0)
+                {
+                    string folderPath = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot/Attachment/DeptAttendance/AgencyBill"
+                    );
+
+                    if (!Directory.Exists(folderPath))
+                        Directory.CreateDirectory(folderPath);
+
+                    string extension = Path.GetExtension(attachmentFile3.FileName);
+
+                    AgencyBillFile = $"AgencyBill_{DateTime.Now:yyyyMMdd}_{Guid.NewGuid()}{extension}";
+
+                    string filePath = Path.Combine(folderPath, AgencyBillFile);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await attachmentFile3.CopyToAsync(stream);
+                    }
+                }
+
+
+                SortedList parameters = new SortedList
+                    {
+                    { "@Id", Id },
+                    { "@AnnexureFile", AnnexureFile }, // save filename
+                    { "@AgencyBillFile", AgencyBillFile}, // save filename
+                    { "@createdby", userId }
+                };
+
+                var result = _cn.ExecuteNonQueryWMessage(
+                    "tblTallyAnnexture_AcceptUpdate",
+                    "",
+                    parameters
+                );
+
+                return Ok(new { success = true, message = result.ToString() });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+        // Get record Upload Annexure & agency File
+        [HttpGet]
+        public async Task<IActionResult> GetAgencyInvoiceRecord([FromQuery] DeptAttendanceFilter filter)
+
+        {
+            try
+            {
+                // Access as object
+                SortedList parameters = new SortedList();
+                parameters.Add("@AttendaceId", filter.Id);
+
+                var dt = await _cn.FillDataTableAsync("tblTallyAttendanceDetails_Get", "", parameters);
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<DeptAttendanceViewModel>());
+
+                var list = dt.AsEnumerable().Select(row => new DeptAttendanceViewModel
+
+                {
+                    Id = row["AgencyId"]?.ToString(),
+                    MonthYear = Convert.ToInt32(row["MonthYear"]?.ToString()),
+                    departmentName = (row["departmentName"]?.ToString()),
+                    AgencyName = (row["AgencyName"]?.ToString()),
+                    WorkOrderId = (row["HpsedcWrokOrderNO"]?.ToString()),
+                    //PurhaseInvNO = (row["PurhaseInvNO"]?.ToString()),
+                    //DeployedResource = Convert.ToInt32(row["DeployedResource"]?.ToString()),
+                    UpladNoOfResource = Convert.ToInt32(row["UpladNoOfResource"]?.ToString()),
+                    BillingAddress = (row["BillingAddress"]?.ToString()),
+                    //AttendanceCertificate = row["AttendanceCertificate"]?.ToString(),
+                    //AnnexureFile = row["AnnexureFile"]?.ToString(),
+                    //AgencyBillFile = row["UploadBill"]?.ToString(),
+                }).ToList();
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
 
 
         #endregion
