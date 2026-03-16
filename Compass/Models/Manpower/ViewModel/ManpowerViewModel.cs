@@ -46,6 +46,7 @@ namespace Compass.Models.ManpowerViewModel
         public string AgencyName { get; set; }
         public string WorkOrderId { get; set; }
         public string PurhaseInvNO { get; set; }
+        public int BillingId { get; set; }
         public string BillingAddress { get; set; }
         public int DeployedResource { get; set; }
         public int UpladNoOfResource { get; set; }

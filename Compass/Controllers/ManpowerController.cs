@@ -588,12 +588,15 @@ namespace Compass.Controllers
                 {
                     Id = row["AgencyId"]?.ToString(),
                     MonthYear = Convert.ToInt32(row["MonthYear"]?.ToString()),
+                    DeptId = Convert.ToInt32(row["DeptId"]?.ToString()),
                     departmentName = (row["departmentName"]?.ToString()),
+                    AgencyId = Convert.ToInt32(row["AgencyId"]?.ToString()),
                     AgencyName = (row["AgencyName"]?.ToString()),
                     WorkOrderId = (row["HpsedcWrokOrderNO"]?.ToString()),
                     //PurhaseInvNO = (row["PurhaseInvNO"]?.ToString()),
                     //DeployedResource = Convert.ToInt32(row["DeployedResource"]?.ToString()),
                     UpladNoOfResource = Convert.ToInt32(row["UpladNoOfResource"]?.ToString()),
+                    BillingId = Convert.ToInt32(row["BillingId"]?.ToString()),
                     BillingAddress = (row["BillingAddress"]?.ToString()),
                     //AttendanceCertificate = row["AttendanceCertificate"]?.ToString(),
                     //AnnexureFile = row["AnnexureFile"]?.ToString(),
@@ -613,7 +616,81 @@ namespace Compass.Controllers
             }
         }
 
+        //Submit Purchase Invoice 
+        [HttpPost]
+        public async Task<IActionResult> AddOrEdit_PurchaseInvoiceRecord([FromForm] DeptPurchaseInvoiceModel model)
+        {
+            try
+            {
 
+                //var Id = model.Id;
+                var Id = model.Id;
+                var PurchaseBillDate = model.PurchaseBillDate;
+                var WorkOrderNo = model.WorkOrderNo;
+                var AgencyBillNo = model.AgencyBillNo;
+                var AgencyId = model.AgencyId;
+                var AgencyName = model.AgencyName;
+                var DeptId = model.DeptId;
+                var DeptName = model.DeptName;
+                var NoOfResources = model.NoOfResources;
+                var BillingId = model.BillingId;
+                var BillingAdd = model.BillingAdd;
+                var MonthYear = model.MonthYear;
+                var Description = model.Description;
+                var Narration = model.Narration;
+                var BasicBillAmt = model.BasicBillAmt;
+                var AdminCharge = model.AdminCharge;
+                var LiveryCharge = model.LiveryCharge;
+                var InputCgst = model.InputCgst;
+                var InputSgst = model.InputSgst;
+                var InputIgst = model.InputIgst;
+                var ToatlAmt = model.TotalAmt;
+
+                var userId = User.FindFirst("UserId")?.Value;
+
+                SortedList parameters = new SortedList
+                    {
+                    { "@AgencyBillId", 0 },
+                    { "@BillDate", PurchaseBillDate },
+                    { "@WorkOrderNo", WorkOrderNo },
+                    { "@NoOfResource", NoOfResources },
+                    { "@BillforMonth", MonthYear },
+                    { "@AttendanceId", Id },
+                    { "@Billno", AgencyBillNo },
+                    { "@AgencyId", AgencyId },
+                    { "@DeptId", DeptId },
+                    { "@BillingId", BillingId },
+                    { "@DepartmentAddress", BillingAdd },
+                    { "@Description", Description },
+                    { "@Narration", Narration },
+                    { "@AgencyBillAmt", BasicBillAmt },
+                    { "@AdminAmt", AdminCharge },
+                    { "@LibaryAmt", LiveryCharge },
+                    { "@cgstAmt", InputCgst },
+                    { "@SGSTAtm", InputSgst },
+                    { "@IGSTAmt", InputIgst },
+                    { "@TotalAmt", ToatlAmt },
+                    { "@createdby", userId }
+                };
+
+                var result = _cn.ExecuteNonQueryWMessage(
+                    "TallyAgencyBill_AcceptUpdate",
+                    "",
+                    parameters
+                );
+
+                return Ok(new { success = true, message = result.ToString() });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
         #endregion
 
 

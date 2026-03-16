@@ -96,13 +96,14 @@ $(".btnModalSubmit").on("click", function () {
 
 async function SubmitRecord() {
     let isValid = true;
-    let agencyName = $("#ddlAgencyName").val();
-    let deptName = $("#ddlDeptName").val();
+    let agencyId = $("#ddlAgencyName").val();
+    let deptId = $("#ddlDeptName").val();
     let workOrderNo = $("#txtworkOrderNo").val().trim();
     let noOfResources = $("#txtnoOfResources").val().trim();
     let deptEmailId = $("#txtdeptEmailId").val().trim();
-    let billingAddress = $("#ddlBillingAddress").val();
-    let billingId = 0;
+    //let billingAddress = $("#ddlBillingAddress").val();
+    let billingAddress = $("#ddlBillingAddress option:selected").text();
+    let billingId = $("#ddlBillingAddress").val();
 
     $(".error").text("");
     $(".is-invalid").removeClass("is-invalid");
@@ -143,10 +144,10 @@ async function SubmitRecord() {
     // Prepare data
     var formData = new FormData();
     formData.append("WorkOrderAgencyId", Id);
-    formData.append("AgencyId", agencyName);
-    formData.append("DeptId", deptName);
+    formData.append("AgencyId", agencyId);
+    formData.append("DeptId", deptId);
     formData.append("WorkOrderNo", workOrderNo);
-    formData.append("BillingId", 0);
+    formData.append("BillingId", billingId);
     formData.append("BillingAddress", billingAddress);
     formData.append("NoDeployedRes", noOfResources);
     formData.append("BillAddressEmail", deptEmailId);

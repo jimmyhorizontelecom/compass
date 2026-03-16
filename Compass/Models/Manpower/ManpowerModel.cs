@@ -47,6 +47,32 @@ namespace Compass.Models.ManpowerModel
         public int Id { get; set; }
         public string CancelRemarks { get; set; }
     }
+    public class DeptPurchaseInvoiceModel
+    {
+        public int Id { get; set; }
+        public int AgencyBillId { get; set; }
+        public string PurchaseBillDate { get; set; }
+        public string WorkOrderNo { get; set; }
+        public string AgencyBillNo { get; set; }
+        public int AgencyId { get; set; }
+        public string AgencyName { get; set; }
+        public int DeptId { get; set; }
+        public string DeptName { get; set; }
+        public int NoOfResources { get; set; }
+        public int BillingId { get; set; }
+        public string BillingAdd { get; set; }
+        public int MonthYear { get; set; }
+        public string Description { get; set; }
+        public string Narration { get; set; }
+        public int BasicBillAmt { get; set; }
+        public int AdminCharge { get; set; }
+        public int LiveryCharge { get; set; }
+        public int InputCgst { get; set; }
+        public int InputSgst { get; set; }
+        public int InputIgst { get; set; }
+        public int TotalAmt { get; set; }
+        
+    }
 
 
 }

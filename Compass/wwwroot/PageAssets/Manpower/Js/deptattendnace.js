@@ -163,10 +163,13 @@ async function SubmitRecord() {
     let isValid = true;
 
     let monthYear = $(".monthYearPicker").val();
-    let deptName = $("#ddlDeptName").val();
-    let agencyName = $("#ddlAgencyName").val();
+    let deptId = $("#ddlDeptName").val();
+    //let deptName = $("#ddlDeptName").val();
+    let agencyId = $("#ddlAgencyName").val();
+    //let agencyName = $("#ddlAgencyName").val();
     let workOrderNo = $("#ddlWorkOrder").val();
-    let billingAddress = $("#ddlBillingAddress").val();
+    let billingId = $("#ddlBillingAddress").val();
+    //let billingAddress = $("#ddlBillingAddress").val();
     let noOfResources = $("#txtNoOfResources").val().trim();
     let presentResources = $("#txtPresentResource").val().trim();
 
@@ -189,12 +192,12 @@ async function SubmitRecord() {
         $(".monthYearPicker").siblings(".error").text("Month & Year required");
         isValid = false;
     }
-    if (agencyName === "0" || agencyName === null) {
+    if (agencyId === "0" || agencyId === null) {
         $("#ddlAgencyName").addClass("is-invalid");
         $("#ddlAgencyName").siblings(".error").text("Agency Name is required.");
         isValid = false;
     }
-    if (deptName === "0" || deptName === null) {
+    if (deptId === "0" || deptId === null) {
         $("#ddlDeptName").addClass("is-invalid");
         $("#ddlDeptName").siblings(".error").text("Department Name is required.");
         isValid = false;
@@ -216,7 +219,7 @@ async function SubmitRecord() {
         isValid = false;
     }
 
-    if (billingAddress === "0" || billingAddress === null) {
+    if (billingId === "0" || billingId === null) {
         $("#ddlBillingAddress").addClass("is-invalid");
         $("#ddlBillingAddress").siblings(".error").text("Billing Address required.");
         isValid = false;
@@ -423,7 +426,7 @@ async function loadRecordUploadFile(recordId) {
         console.error("Error loading record:", error);
     }
 }
-// Submit record when Click on btn
+// Submit Upload files record when Click on btn
 $(".btnModalSubmit1").on("click", function () {
     SubmitUploadFile();
 });
@@ -615,19 +618,26 @@ async function loadRecordUpdate(recordId) {
     try {
 
         let records = await getRecords('Manpower', 'GetAgencyInvoiceRecord', filterData, '', 'N');
-
+        console.log("Full Response:", records);
         if (records && records.length > 0) {
 
             let data = records[0];
             Id = data.Id;
             $("#ddlPurchaseBillDate1").val(data.MonthYear);
             $("#txtWorkOrderNo1").val(data.WorkOrderId);
-            $("#txtAgencyBillNo1").val(data.AgencyName);
+            //$("#txtAgencyBillNo1").val(data.AgencyName);
             $("#txtAgencyName1").val(data.AgencyName);
             $("#txtDeptName1").val(data.departmentName);
             $("#txtNoResource1").val(data.UpladNoOfResource);
             $("#txtDepBillingAdd1").val(data.BillingAddress);
-            $("#monthYearPicker").val(data.MonthYear);
+            $("#monthYear1").val(data.MonthYear);
+            $("#hdnAgencyId1").val(data.AgencyId);
+            $("#hdnDeptId1").val(data.DeptId);
+            $("#hdnBillingId1").val(data.BillingId);
+
+            console.log("AgencyId:", data.AgencyId);
+            console.log("DeptId:", data.DeptId);
+            console.log("BillingId:", data.BillingId);
             
             //$('#myModal').modal('show');
         }
@@ -637,3 +647,145 @@ async function loadRecordUpdate(recordId) {
     }
 }
 
+// Submit Upload files record when Click on btn
+$(".btnModalSubmit2").on("click", function () {
+    SubmitPurchaseBill();
+});
+
+// Submit records
+async function SubmitPurchaseBill() {
+    alert('PurchaseBill');
+    let isValid = true;
+    $(".error").text("");
+    $(".is-invalid").removeClass("is-invalid");
+
+    let purcahseBillDate = $("#ddlPurchaseBillDate1").val();
+    let workOrderNo = $("#txtWorkOrderNo1").val().trim();
+    let billNo = $("#txtAgencyBillNo1").val().trim();
+    //let agencyId = $("#hdnAgencyId1").val().trim();
+   // let deptId = $("#hdnDeptId1").val().trim();
+    let noOfResource = $("#txtNoResource1").val().trim();
+   // let billingId = $("#hdnBillingId1").val().trim();
+    let billingAdd = $("#txtDepBillingAdd1").val();
+    let monthYear = $("#monthYear1").val();
+    //let monthYear = $(".monthYearPicker").val();
+    let discription = $("#txtDiscription1").val();
+    let narration = $("#txtNarration1").val().trim();
+    let billAmount = $("#numBasicAmount").val().trim();
+    let adminCharge = $("#numAdminCharge").val().trim();
+    let liveryCharge = $("#numLiveryCharge").val().trim();
+    let inputCGST = $("#numCgst").val().trim();
+    let inputSGST = $("#numSgst").val().trim();
+    let totalAmount = $("#numTotalAmount").val().trim();
+    let agencyId = $("#hdnAgencyId1").val();
+    let deptId = $("#hdnDeptId1").val();
+    let billingId = $("#hdnBillingId1").val();
+
+    if (purcahseBillDate === "") {
+        $("#ddlPurchaseBillDate1").addClass("is-invalid");
+        $("#ddlPurchaseBillDate1").siblings(".error").text("Bill Date Required");
+        isValid = false;
+    }
+    if (billNo === "") {
+        $("#txtAgencyBillNo1").addClass("is-invalid");
+        $("#txtAgencyBillNo1").siblings(".error").text("Bill No Required");
+        isValid = false;
+    }
+    if (!monthYear) {
+        $("#monthYear1").addClass("is-invalid");
+        $("#monthYear1").siblings(".error").text("Month & Year required");
+        isValid = false;
+    }
+    if (discription === "") {
+        $("#txtDiscription1").addClass("is-invalid");
+        $("#txtDiscription1").siblings(".error").text("Discription Required");
+        isValid = false;
+    }
+    if (narration === "") {
+        $("#txtNarration1").addClass("is-invalid");
+        $("#txtNarration1").siblings(".error").text("Narration Required");
+        isValid = false;
+    }
+    if (billAmount === "") {
+        $("#numBasicAmount").addClass("is-invalid");
+        $("#numBasicAmount").siblings(".error").text("Bill Amount Required");
+        isValid = false;
+    }
+    if (adminCharge === "") {
+        $("#numAdminCharge").addClass("is-invalid");
+        $("#numAdminCharge").siblings(".error").text("Admin Charge Required");
+        isValid = false;
+    }
+    if (liveryCharge === "") {
+        $("#numLiveryCharge").addClass("is-invalid");
+        $("#numLiveryCharge").siblings(".error").text("Livery Charge Required");
+        isValid = false;
+    }
+    //if (inputCGST === "") {
+    //    $("#numCgst").addClass("is-invalid");
+    //    $("#numCgst").siblings(".error").text("CGST Required");
+    //    isValid = false;
+    //}
+    //if (inputSGST === "") {
+    //    $("#numSgst").addClass("is-invalid");
+    //    $("#numSgst").siblings(".error").text("CGST Required");
+    //    isValid = false;
+    //}
+    //if (totalAmount === "") {
+    //    $("#numTotalAmount").addClass("is-invalid");
+    //    $("#numTotalAmount").siblings(".error").text("Total Amnount Required");
+    //    isValid = false;
+    //}
+            
+    if (!isValid) return;
+
+    var formData = new FormData();
+
+    //let monthYear = $("#monthYear1").val();
+    let finalMonthYear = monthYear.replace("-", "");
+    formData.append("MonthYear", finalMonthYear);
+    formData.append("AgencyBillId", 0);
+    formData.append("PurchaseBillDate", purcahseBillDate);
+    formData.append("WorkOrderNo", workOrderNo);
+    formData.append("NoOfResources", noOfResource);
+    formData.append("Id", Id);
+    formData.append("AgencyBillNo", billNo);
+    //formData.append("AgencyId", agencyId);
+    //formData.append("DeptId", deptId);
+    // formData.append("BillingId", billingId);
+    formData.append("AgencyId", parseInt(agencyId));
+    formData.append("DeptId", parseInt(deptId));
+    formData.append("BillingId", parseInt(billingId));
+    formData.append("BillingAdd", billingAdd);
+    formData.append("Description", discription);
+    formData.append("Narration", narration);
+    formData.append("BasicBillAmt", billAmount);
+    formData.append("AdminCharge", adminCharge);
+    formData.append("LiveryCharge", liveryCharge);
+    formData.append("InputCgst", inputCGST);
+    formData.append("InputSgst", inputSGST);
+    formData.append("InputIgst", 0);
+    formData.append("TotalAmt", totalAmount);
+    //formData.append("UpladNoOfResource", noOfResources);
+    //formData.append("PresentResource", presentResources);
+
+   
+    try {
+        //$("#ModalProgress").show();
+        let res = await acceptUpdate("Manpower", "AddOrEdit_PurchaseInvoiceRecord", formData);
+        if (res.success) {
+            alert('Hit');
+            recordlist();
+            resetModal();
+
+            Id = 0;
+            $('.modelalert').text(res.message);
+            closeModal('myModal');
+            MsgBox('Message', res.message, '');
+        }
+
+    } catch (err) {
+        $('.modelalert').text("Error: " + err);
+    }
+
+}
