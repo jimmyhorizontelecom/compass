@@ -64,13 +64,13 @@ namespace Compass.Models.ManpowerModel
         public int MonthYear { get; set; }
         public string Description { get; set; }
         public string Narration { get; set; }
-        public int BasicBillAmt { get; set; }
-        public int AdminCharge { get; set; }
-        public int LiveryCharge { get; set; }
-        public int InputCgst { get; set; }
-        public int InputSgst { get; set; }
-        public int InputIgst { get; set; }
-        public int TotalAmt { get; set; }
+        public decimal BasicBillAmt { get; set; }
+        public decimal AdminCharge { get; set; }
+        public decimal LiveryCharge { get; set; }
+        public decimal InputCgst { get; set; }
+        public decimal InputSgst { get; set; }
+        public decimal InputIgst { get; set; }
+        public decimal TotalAmt { get; set; }
         
     }
 

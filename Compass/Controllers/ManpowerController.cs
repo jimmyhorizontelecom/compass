@@ -629,9 +629,9 @@ namespace Compass.Controllers
                 var WorkOrderNo = model.WorkOrderNo;
                 var AgencyBillNo = model.AgencyBillNo;
                 var AgencyId = model.AgencyId;
-                var AgencyName = model.AgencyName;
+                //var AgencyName = model.AgencyName;
                 var DeptId = model.DeptId;
-                var DeptName = model.DeptName;
+                //var DeptName = model.DeptName;
                 var NoOfResources = model.NoOfResources;
                 var BillingId = model.BillingId;
                 var BillingAdd = model.BillingAdd;

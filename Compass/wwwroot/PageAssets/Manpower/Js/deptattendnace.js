@@ -662,13 +662,12 @@ async function SubmitPurchaseBill() {
     let purcahseBillDate = $("#ddlPurchaseBillDate1").val();
     let workOrderNo = $("#txtWorkOrderNo1").val().trim();
     let billNo = $("#txtAgencyBillNo1").val().trim();
-    //let agencyId = $("#hdnAgencyId1").val().trim();
-   // let deptId = $("#hdnDeptId1").val().trim();
+    let agencyId = $("#hdnAgencyId1").val();
+    let deptId = $("#hdnDeptId1").val();
+    let billingId = $("#hdnBillingId1").val();
     let noOfResource = $("#txtNoResource1").val().trim();
-   // let billingId = $("#hdnBillingId1").val().trim();
     let billingAdd = $("#txtDepBillingAdd1").val();
     let monthYear = $("#monthYear1").val();
-    //let monthYear = $(".monthYearPicker").val();
     let discription = $("#txtDiscription1").val();
     let narration = $("#txtNarration1").val().trim();
     let billAmount = $("#numBasicAmount").val().trim();
@@ -677,9 +676,8 @@ async function SubmitPurchaseBill() {
     let inputCGST = $("#numCgst").val().trim();
     let inputSGST = $("#numSgst").val().trim();
     let totalAmount = $("#numTotalAmount").val().trim();
-    let agencyId = $("#hdnAgencyId1").val();
-    let deptId = $("#hdnDeptId1").val();
-    let billingId = $("#hdnBillingId1").val();
+    
+    
 
     if (purcahseBillDate === "") {
         $("#ddlPurchaseBillDate1").addClass("is-invalid");
@@ -721,23 +719,31 @@ async function SubmitPurchaseBill() {
         $("#numLiveryCharge").siblings(".error").text("Livery Charge Required");
         isValid = false;
     }
-    //if (inputCGST === "") {
-    //    $("#numCgst").addClass("is-invalid");
-    //    $("#numCgst").siblings(".error").text("CGST Required");
-    //    isValid = false;
-    //}
-    //if (inputSGST === "") {
-    //    $("#numSgst").addClass("is-invalid");
-    //    $("#numSgst").siblings(".error").text("CGST Required");
-    //    isValid = false;
-    //}
-    //if (totalAmount === "") {
-    //    $("#numTotalAmount").addClass("is-invalid");
-    //    $("#numTotalAmount").siblings(".error").text("Total Amnount Required");
-    //    isValid = false;
-    //}
+    if (inputCGST === "") {
+        $("#numCgst").addClass("is-invalid");
+        $("#numCgst").siblings(".error").text("CGST Required");
+        isValid = false;
+    }
+    if (inputSGST === "") {
+        $("#numSgst").addClass("is-invalid");
+        $("#numSgst").siblings(".error").text("CGST Required");
+        isValid = false;
+    }
+    if (totalAmount === "") {
+        $("#numTotalAmount").addClass("is-invalid");
+        $("#numTotalAmount").siblings(".error").text("Total Amnount Required");
+        isValid = false;
+    }
             
     if (!isValid) return;
+
+    //convert calculation value in Number
+    billAmount = Number(billAmount);
+    adminCharge = Number(adminCharge);
+    liveryCharge = Number(liveryCharge);
+    inputCGST = Number(inputCGST);
+    inputSGST = Number(inputSGST);
+    totalAmount = Number(totalAmount);
 
     var formData = new FormData();
 
@@ -759,13 +765,13 @@ async function SubmitPurchaseBill() {
     formData.append("BillingAdd", billingAdd);
     formData.append("Description", discription);
     formData.append("Narration", narration);
-    formData.append("BasicBillAmt", billAmount);
-    formData.append("AdminCharge", adminCharge);
-    formData.append("LiveryCharge", liveryCharge);
-    formData.append("InputCgst", inputCGST);
-    formData.append("InputSgst", inputSGST);
+    formData.append("BasicBillAmt", Number(billAmount) || 0);
+    formData.append("AdminCharge", Number(adminCharge) || 0);
+    formData.append("LiveryCharge", Number(liveryCharge) || 0);
+    formData.append("InputCgst", Number(inputCGST) || 0);
+    formData.append("InputSgst", Number(inputSGST) || 0);
     formData.append("InputIgst", 0);
-    formData.append("TotalAmt", totalAmount);
+    formData.append("TotalAmt", Number(totalAmount) || 0);
     //formData.append("UpladNoOfResource", noOfResources);
     //formData.append("PresentResource", presentResources);
 
@@ -788,4 +794,34 @@ async function SubmitPurchaseBill() {
         $('.modelalert').text("Error: " + err);
     }
 
+}
+// Call the function when user changes amount fields.
+
+$(document).on("keyup change", "#numBasicAmount, #numLiveryCharge", function () {
+    calculateBillAmounts();
+});
+// Calculation Function for Bill Amount
+function calculateBillAmounts() {
+
+    let basicAmount = parseFloat($("#numBasicAmount").val()) || 0;
+    let liveryCharge = parseFloat($("#numLiveryCharge").val()) || 0;
+
+    // Admin Charge 2.5%
+    let adminCharge = basicAmount * 0.025;
+
+    // Subtotal
+    let subTotal = basicAmount + adminCharge /*+ liveryCharge*/;
+
+    // GST
+    let cgst = subTotal * 0.09;
+    let sgst = subTotal * 0.09;
+
+    // Total
+    let total = subTotal + liveryCharge + cgst + sgst;
+
+   
+    $("#numAdminCharge").val(adminCharge);
+    $("#numCgst").val(cgst);
+    $("#numSgst").val(sgst);
+    $("#numTotalAmount").val(total);
 }
