@@ -620,7 +620,6 @@ async function loadRecordUpdate(recordId) {
         let records = await getRecords('Manpower', 'GetAgencyInvoiceRecord', filterData, '', 'N');
         console.log("Full Response:", records);
         if (records && records.length > 0) {
-
             let data = records[0];
             Id = data.Id;
             $("#ddlPurchaseBillDate1").val(data.MonthYear);
@@ -654,7 +653,6 @@ $(".btnModalSubmit2").on("click", function () {
 
 // Submit records
 async function SubmitPurchaseBill() {
-    alert('PurchaseBill');
     let isValid = true;
     $(".error").text("");
     $(".is-invalid").removeClass("is-invalid");
@@ -675,9 +673,7 @@ async function SubmitPurchaseBill() {
     let liveryCharge = $("#numLiveryCharge").val().trim();
     let inputCGST = $("#numCgst").val().trim();
     let inputSGST = $("#numSgst").val().trim();
-    let totalAmount = $("#numTotalAmount").val().trim();
-    
-    
+    let totalAmount = $("#numTotalAmount").val().trim(); 
 
     if (purcahseBillDate === "") {
         $("#ddlPurchaseBillDate1").addClass("is-invalid");
@@ -737,14 +733,6 @@ async function SubmitPurchaseBill() {
             
     if (!isValid) return;
 
-    //convert calculation value in Number
-    billAmount = Number(billAmount);
-    adminCharge = Number(adminCharge);
-    liveryCharge = Number(liveryCharge);
-    inputCGST = Number(inputCGST);
-    inputSGST = Number(inputSGST);
-    totalAmount = Number(totalAmount);
-
     var formData = new FormData();
 
     //let monthYear = $("#monthYear1").val();
@@ -756,22 +744,19 @@ async function SubmitPurchaseBill() {
     formData.append("NoOfResources", noOfResource);
     formData.append("Id", Id);
     formData.append("AgencyBillNo", billNo);
-    //formData.append("AgencyId", agencyId);
-    //formData.append("DeptId", deptId);
-    // formData.append("BillingId", billingId);
     formData.append("AgencyId", parseInt(agencyId));
     formData.append("DeptId", parseInt(deptId));
     formData.append("BillingId", parseInt(billingId));
     formData.append("BillingAdd", billingAdd);
     formData.append("Description", discription);
     formData.append("Narration", narration);
-    formData.append("BasicBillAmt", Number(billAmount) || 0);
-    formData.append("AdminCharge", Number(adminCharge) || 0);
-    formData.append("LiveryCharge", Number(liveryCharge) || 0);
-    formData.append("InputCgst", Number(inputCGST) || 0);
-    formData.append("InputSgst", Number(inputSGST) || 0);
+    formData.append("BasicBillAmt", Number(billAmount));
+    formData.append("AdminCharge", Number(adminCharge));
+    formData.append("LiveryCharge", Number(liveryCharge));
+    formData.append("InputCgst", Number(inputCGST));
+    formData.append("InputSgst", Number(inputSGST));
     formData.append("InputIgst", 0);
-    formData.append("TotalAmt", Number(totalAmount) || 0);
+    formData.append("TotalAmt", Number(totalAmount));
     //formData.append("UpladNoOfResource", noOfResources);
     //formData.append("PresentResource", presentResources);
 
@@ -786,7 +771,7 @@ async function SubmitPurchaseBill() {
 
             Id = 0;
             $('.modelalert').text(res.message);
-            closeModal('myModal');
+            closeModal('myModal_AgencyInvoice');
             MsgBox('Message', res.message, '');
         }
 
@@ -820,8 +805,8 @@ function calculateBillAmounts() {
     let total = subTotal + liveryCharge + cgst + sgst;
 
    
-    $("#numAdminCharge").val(adminCharge);
-    $("#numCgst").val(cgst);
-    $("#numSgst").val(sgst);
-    $("#numTotalAmount").val(total);
+    $("#numAdminCharge").val(adminCharge.toFixed(2));
+    $("#numCgst").val(cgst.toFixed(2));
+    $("#numSgst").val(sgst.toFixed(2));
+    $("#numTotalAmount").val(total.toFixed(2));
 }
