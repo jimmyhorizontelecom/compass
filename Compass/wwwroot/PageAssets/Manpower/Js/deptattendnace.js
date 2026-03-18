@@ -101,12 +101,14 @@ function bindDatatable(records, tableId) {
                 </td>
                  <!-- Annexure File -->
                 <td class="text-center">
+                <span data-id="${value.Id}" >
                     <a href="javascript:void(0);" class="view-file" data-file="${value.AnnexureFile}" data-folder="Annexure" title="View Annexure">
                         <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"></i>
                     </a>
                 </td>
                  <!-- Agency Bill File -->
                 <td class="text-center">
+                <span data-id="${value.Id}" >
                     <a href="javascript:void(0);" class="view-file" data-file="${value.AgencyBillFile}" data-folder="AgencyBill" title="View Agency Bill">
                         <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"></i>
                     </a>

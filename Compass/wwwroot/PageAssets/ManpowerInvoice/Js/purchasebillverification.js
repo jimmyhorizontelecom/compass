@@ -58,22 +58,26 @@ function bindDatatable(records, tableId) {
                 <td>${value.departmentName}</td>
                 <td>${value.AgencyName}</td>
                                
-              <td class="text-center">
-                    <span data-id="${value.DeptId}" >
-                       <i  class="bi bi-download edit-test edit-icon">
-                       <a href="/Attachment/DeptAttendance/Attendance/${value.AttendanceCertificate}" target="_blank">Attendance</a>
-                       </i>
+               <!-- Attendance File -->
+                <td class="text-center">
+                <span data-id="${value.Id}" >
+                    <a href="javascript:void(0);" class="view-file" data-file="${value.AttendanceCertificate}" data-folder="Attendance" title="View Attendance">
+                         <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"></i>
+                    </a>
                     </span>
                 </td>
-                 <td class="text-center">
-                    <span data-id="${value.DeptId}" >
-                       <i class="bi bi-download edit-test edit-icon"></i>
-                    </span>
+                 <!-- Annexure File -->
+                <td class="text-center">
+                    <a href="javascript:void(0);" class="view-file" data-file="${value.AnnexureFile}" data-folder="Annexure" title="View Annexure">
+                        <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"></i>
+                    </a>
                 </td>
-                 <td class="text-center">
-                    <span data-id="${value.DeptId}" >
-                       <i class="bi bi-download edit-test edit-icon"></i>
-                    </span>
+                 <!-- Agency Bill File -->
+                <td class="text-center">
+                <span data-id="${value.Id}" >
+                    <a href="javascript:void(0);" class="view-file" data-file="${value.AgencyBillFile}" data-folder="AgencyBill" title="View Agency Bill">
+                        <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"></i>
+                    </a>
                 </td>
                  <td class="text-center">
                     <span data-id="${value.DeptId}" >
