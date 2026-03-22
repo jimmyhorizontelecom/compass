@@ -2,6 +2,8 @@
 
 
 $(document).ready(function () {
+    initializeMonthYearPickerByClass("monthYearPicker");
+  
     resetModal();
     recordlist();
     //alert('Purchase Bill Verification');
@@ -13,6 +15,11 @@ $(document).ready(function () {
     bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyName", " Agency Name");
     bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlBillStatu", " Bill Status");
 });
+//document.addEventListener("DOMContentLoaded", function () {
+
+//    initMonthYearPicker("monthYear");
+
+//});
 
 //Get Record for A table 
 async function recordlist() {
@@ -20,16 +27,18 @@ async function recordlist() {
     var filterData = {
         Id: 0,
         AgencyId: 0,
-        DeptId: 123,
-        MonthYear: '102025',
-        CreatedBy: 0,
-        UserRole: 39,
+        AgencyBillId: 0,
+        DeptId: 0,
+        MonthId: '112025',
+        PaymentStatus: 'C',
+        //CreatedBy: 0,
+        //UserRole: 39,
 
     };
 
     try {
 
-        let records = await getRecords('Manpower', 'GetDeptAttendanceRecord', filterData, '#myTable', 'N');
+        let records = await getRecords('ManpowerInvoice', 'GetPurchaseBillRecord', filterData, '#myTable', 'N');
         bindDatatable(records, '#myTable');
     }
     catch (error) {
@@ -52,11 +61,10 @@ function bindDatatable(records, tableId) {
 
         tbody.append(`
             <tr 
-                data-id="${value.Id}"
-                <td>${value.Id}</td>
+                data-id="${value.Id}">
                 <td>${SrNo}</td>
-                <td>${value.departmentName}</td>
-                <td>${value.AgencyName}</td>
+                <td>${value.DepartmentName}</td>
+                <td>${value.AgencyName}<br> ${value.AgencyBillNo}</td>
                                
                <!-- Attendance File -->
                 <td class="text-center">
@@ -79,25 +87,21 @@ function bindDatatable(records, tableId) {
                         <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"></i>
                     </a>
                 </td>
-                 <td class="text-center">
-                    <span data-id="${value.DeptId}" >
-                       <i class="bi bi-pencil-square edit-test edit-icon"></i>
-                    </span>
-                </td>
+                 <td ${value.BillDate} <br> ${value.BillMonth}</td>
                  
                  <td class="text-center">
-                    <span data-id="${value.DeptId}" >
+                    
+                       <i class="bi bi-pencil-square bill-Verification edit-icon"></i>
+                    
+                </td>
+                 <td class="text-center">
+                    <span data-id="${value.Id}" >
                        <i class="bi bi-pencil-square edit-test edit-icon"></i>
                     </span>
                 </td>
                  <td class="text-center">
                     <span data-id="${value.DeptId}" >
                        <i class="bi bi-pencil-square edit-test edit-icon"></i>
-                    </span>
-                </td>
-                 <td class="text-center">
-                    <span data-id="${value.DeptId}" >
-                       <i class="bi bi-pencil-square edit-AddSaleBillDetails edit-icon"> Generate Bill</i>
                     </span>
                 </td>
                  <td class="text-center">
@@ -131,51 +135,88 @@ function bindDatatable(records, tableId) {
 }
 
 
-//Edit Record From Table on Sale Bill Details on Click HPSEDC Bill
-$(document).on('click', '.edit-AddSaleBillDetails', async function () {
+// View Uploaded pdf on New tab file conditions 
+$(document).on('click', '.view-file', function (e) {
+    e.preventDefault(); // Prevent default <a> behavior
 
-    var row = $(this).closest('tr');
-    Id = row.data('id');
+    var fileName = $(this).data('file');
+    var folder = $(this).data('folder');
 
-    var isConfirmed = await DeleteEditBox('Edit Field', 'Do you want to edit Record?', 'question', Id);
+    if (!fileName || fileName === 'undefined' || fileName === '') {
+        toastr.error('File not uploaded');
+        return;
+    }
+
+    // Construct URL
+    var url = `/Attachment/DeptAttendance/${folder}/${fileName}`;
+
+    // Open in new tab
+    window.open(url, '_blank');
+});
+
+//Agency bill Verification
+// MsgBox on Click event on Agency Bill Verification 
+$(document).on('click', '.bill-Verification', async function () {
+
+    var recordId = $(this).data("id");
+    // alert(recordId);
+    console.log("Agency Bill Id:", recordId);
+
+    if (!recordId) {
+        toastr.error("Record Id not found");
+        return;
+    }
+
+    var isConfirmed = await DeleteEditBox('Edit File', 'Do you want to Edit Records', 'question');
 
     if (isConfirmed) {
-        console.log('Edit');
-        // User clicked Yes
-        await loadRecordById(row);
-        openModal('myModal_AddSaleBillDetail');
-        // $('#myModal').modal('show');
+        await loadAgencyBillVerification(recordId);
+        openModal('myModal_AgencyInvoice');
+        // Alternative if openModal not working
+        //$('#myModal_UploadFile').modal('show');
+
     } else {
-        // User clicked Cancel
-        console.log('Edit cancelled');
+
+        console.log('Upload cancelled');
+
     }
+
 });
-// get Record to fill
-async function loadRecordById(row) {
+// get Record to fill upload Annexure & Bill File
+async function loadAgencyBillVerification(recordId) {
+    alert('Load Agency BIll Verification')
+    //var filterData = {
+    //    Id: recordId,
+    //    AgencyId: 0,
+    //    DeptId: 0,
+    //    MonthYear: 0,
+    //    CreatedBy: 0,
+    //    UserRole: 39,
+    //};
 
-    var filterData = {
-        Id: row.data('id'),
-        AgencyId: 0,
-        DeptId: 123,
-        MonthYear: '102025',
-        CreatedBy: 0,
-        UserRole: 39,
-    };
+    //try {
 
-    try {
+    //    let records = await getRecords('Manpower', 'GetUploadAnnexureBillRecord', filterData, '', 'N');
 
-        let records = await getRecords('Manpower', 'GetDeptAttendanceRecord', filterData, '#myTable', 'N');
+    //    if (records && records.length > 0) {
 
-        if (records && records.length > 0) {
+    //        let data = records[0];
+    //        Id = data.Id;
+    //        $("#textMonthYearFill").val(data.MonthYear);
+    //        $("#txtDeptFill").val(data.departmentName);
+    //        $("#txtAgencyFill").val(data.AgencyName);
+    //        $("#textWorkOrderFill").val(data.WorkOrderId);
+    //        $("#txtNoResourcesFill").val(data.DeployedResource);
+    //        $("#txtPrsentResouceFill").val(data.UpladNoOfResource);
+    //        $("#textBillingAddFill").val(data.BillingAddress);
 
-            let data = records[0];
-            Id = data.Id;
-            $("#field1").val(data.Field1);
-            $("#field2").val(data.Field2);
-            //$('#myModal').modal('show');
-        }
-    }
-    catch (error) {
-        console.error("Error loading record:", error);
-    }
+    //        alert('test');
+
+
+    //        //$('#myModal').modal('show');
+    //    }
+    //}
+    //catch (error) {
+    //    console.error("Error loading record:", error);
+    //}
 }

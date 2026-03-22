@@ -344,7 +344,7 @@ async function SubmitRecord() {
 
 }
 
-// View Uploaded pdf file conditions 
+// View Uploaded pdf on New tab  file conditions 
 $(document).on('click', '.view-file', function (e) {
     e.preventDefault(); // Prevent default <a> behavior
 

@@ -18,7 +18,7 @@ namespace Compass.Models.ManpowerModel
         
     }
 
-    // Dept. Attendance 
+    // Dept. Attendance Filter
     public class WO_Filter
     {
         public int WorkOrderAgencyId { get; set; }
@@ -28,7 +28,7 @@ namespace Compass.Models.ManpowerModel
         public int UserRole { get; set; }
 
     }
-
+    //Dept Attendance Submit Record
     public class DeptAttendanceModel
    {
         public int Id { get; set; }    
@@ -41,12 +41,14 @@ namespace Compass.Models.ManpowerModel
         public IFormFile AgencyBillFile { get; set; }
         public int CreatedBy { get; set; }
 }
-
+    // Dept Attendance delete uploaded files
     public class DeleteAttendanceModel
     {
         public int Id { get; set; }
         public string CancelRemarks { get; set; }
     }
+
+    //Dept Attendance Purchase Invoice Model Submit
     public class DeptPurchaseInvoiceModel
     {
         public int Id { get; set; }
@@ -73,6 +75,9 @@ namespace Compass.Models.ManpowerModel
         public decimal TotalAmt { get; set; }
         
     }
+
+
+
 
 
 }

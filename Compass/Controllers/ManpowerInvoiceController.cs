@@ -43,7 +43,61 @@ namespace Compass.Controllers
         {
             return View();
         }
+        // Get record for the List
+        [HttpGet]
+        public async Task<IActionResult> GetPurchaseBillRecord([FromQuery] PInvoiceFilter filter)
 
+        {
+            try
+            {
+                // Access as object
+                SortedList parameters = new SortedList();
+               // parameters.Add("@Id", filter.Id);
+                parameters.Add("@AgencyBillId", filter.AgencyBillId);
+                parameters.Add("@MonthId", filter.MonthId);
+                parameters.Add("@AgencyId", filter.AgencyId);
+                parameters.Add("@DeptId", filter.DeptId);
+                parameters.Add("@PaymentStatus", filter.PaymentStatus);
+                
+
+
+                var dt = await _cn.FillDataTableAsync("TallyPurchaseVerification_List", "", parameters);
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<PInvoiceViewModel>());
+
+                var list = dt.AsEnumerable().Select(row => new PInvoiceViewModel
+
+                {
+                    Id = (row["AgencyBillId"]?.ToString()),
+                    DepartmentName = (row["departmentName"]?.ToString()),                 
+                    AgencyName = (row["AgencyName"]?.ToString()),
+                    AgencyBillNo = (row["Billno"]?.ToString()),
+                    AttendanceCertificate = row["AttendanceCertificate"]?.ToString(),
+                    AnnexureFile = row["AnnexureFile"]?.ToString(),
+                    AgencyBillFile = row["UploadBill"]?.ToString(),
+                    BillDate = row["CreatedDate1"]?.ToString(),
+                    BillMonth = row["MonthYear"]?.ToString(),
+
+
+
+                    //MonthYear = Convert.ToInt32(row["MonthYear"]?.ToString()),
+
+
+                }).ToList();
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
 
 
     }
