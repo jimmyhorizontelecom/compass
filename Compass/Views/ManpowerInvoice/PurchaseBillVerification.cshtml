@@ -262,7 +262,7 @@
 @section Modals {
     <!-- The Modal -->
     <!-- Purchase Bill Details Update Entry-->>
-    <div class="modal modal-lg" id="myModal_AgencyInvoice">
+    <div class="modal modal-lg" id="PInvoiceUpdateModal">
         <div class="modal-dialog ">
             <div class="modal-content position-relative">
                 <!-- 🔥 Loader Overlay -->
@@ -274,8 +274,7 @@
                 <div class="modal-header  bg-ld ">
                     <h4 class="modal-title txt-white" id="myModalLabel">Eneter Purchase Bill Details</h4>
                     <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
-                </div>
-                
+                </div>                
                 <!-- Modal body -->
                 <div class="modal-body">
                     <div id="#toast-container"></div>
@@ -283,10 +282,9 @@
                         <div class="form-group row">
                             <div class="col-md-4 mb-0">
                                 <label class="form-labelo">Agency Bill Date<span class="text-danger">*</span></label>
-                                <input type="date" id="ddlPurchaseBillDate1" class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                                <input type="date" id="datePurchaseBillDate1" class="form-control" />
                                 @* <input type="text" id="ddlPurchaseBillDate1" class="form-control" placeholder="ddmmyyyy" readonly> *@
-                                <span class="error"></span>
-                                
+                                <span class="error"></span>                               
                             </div>
                             <div class="col-md-4 mb-0">
                                 <label class="form-labelo">Work Order No.<span class="text-danger">*</span></label>
@@ -297,33 +295,30 @@
                                 <label class="form-labelo">Agency Bill No.<span class="text-danger">*</span></label>
                                 <input type="text" id="txtAgencyBillNo1" class="form-control" placeholder="Agency Bill No">
                                 <span class="error"></span>
-                            </div>
-                        
+                            </div>                        
                         </div>
                         <div class="form-group row">
                             <div class="col-md-4 mb-0">
                                 <label class="form-labelo">Agency<span class="text-danger">*</span></label>
-                                <input type="text" id="txtAgencyName1" class="form-control" placeholder="Agency Name" readonly>
-                                <!-- Hidden field for Agency Id -->
                                 <input type="hidden" id="hdnAgencyId1">
+                                <select id="ddlAgencyName1" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                                    <option selected value="0">--Select--</option>
+                                </select>
                                 <span class="error"></span>
-                            </div>
-                        
+                            </div>                       
                             <div class="col-md-4 mb-0">
                                 <label class="form-labelo">Department<span class="text-danger">*</span></label>
-                                <input type="text" id="txtDeptName1" class="form-control" placeholder="Department Name" readonly>
-                                <!-- Hidden field for Dept Id -->
                                 <input type="hidden" id="hdnDeptId1">
-                                <span class="error"></span>
-                                
+                                <select id="txtDeptName1" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                                    <option selected value="0">--Select--</option>
+                                </select>
+                                <span class="error"></span>                              
                             </div>
-
                             <div class="col-md-4 mb-0">
                                 <label class="form-labelo">No. of Resource <span class="text-danger">*</span></label>
                                 <input type="text" id="txtNoResource1" class="form-control" placeholder="No. of Resource" readonly>
                                 <span class="error"></span>
                             </div>
-
                         </div>
                         <div class="form-group row">
                             <div class="col-md-8 mb-0">
@@ -344,19 +339,16 @@
                         <div class="form-group row">
                             <div class="col-md-6 mb-0">
                                 <label class="form-labelo">Discription <span class="text-danger">*</span></label>
-                                <input type="text" id="txtDiscription1" class="form-control" placeholder="Discription">
+                                <textarea id="txtDiscription1" class="form-control" placeholder="Discription"></textarea>
                                 <span class="error"></span>
                             </div>
                             <div class="col-md-6 mb-0">
                                 <label class="form-labelo">Narration <span class="text-danger">*</span></label>
-                                <input type="text" id="txtNarration1" class="form-control" placeholder="Narration">
+                                <textarea id="txtNarration1" class="form-control" placeholder="Narration"></textarea>
                                 <span class="error"></span>
                             </div>
-                        </div>
-
-                   
+                        </div>                  
                     </div>
-
                     <div class="filter-panel mt-5 div-coral-base">
                         <div class="form-group row">
                             <div class="col-md-4">
@@ -406,6 +398,163 @@
                         </div>
 
                     </div>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer  bg-ld">
+                    <div class="me-auto">
+                        <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
+                    </div>
+                    <div class="flex-grow-1 text-center modelalert text-danger"></div>
+                    <button type="button" class="btn btnModel btnModalSubmit">Submit</button>
+                    <button type="button" data-bs-dismiss="modal" class="btn btnModel">Close</button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- HPSEDEC Sale Bill Details Entry-->>
+    <div class="modal modal-lg" id="SInvoiceModal">
+        <div class="modal-dialog ">
+            <div class="modal-content position-relative">
+                <!-- 🔥 Loader Overlay -->
+                <div id="" class="modal-loader modalLoader">
+                    <div class="spinner"></div>
+                    <p class="loading-text">Please wait...</p>
+                </div>
+                <!-- Modal Header -->
+                <div class="modal-header  bg-ld ">
+                    <h4 class="modal-title txt-white" id="myModalLabel">Add Sale Bill Details</h4>
+                    <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div id="#toast-container"></div>
+                    <div class="filter-panel mt-5 div-coral-base">
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label class="form-label">Work Order No. <span class="text-danger">*</span></label>
+                                <input type="text" id="txtWorkOrderNo2" class="form-control" placeholder="Work Order No">
+                                <span class="error"></span>
+                            </div>
+
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Purchase Bill No.<span class="text-danger">*</span></label>
+                                <input type="text" id="txtPurchaseBillNo2" class="form-control" placeholder="Purchase Bill No" readonly>
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Sale Bill Date<span class="text-danger">*</span></label>
+                                <input type="date" id="dateSaleBill2" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")">
+                                <span class="error"></span>
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Sale Bill No <span class="text-danger">*</span></label>
+                                <input type="text" id="txtSaleBillNo" class="form-control" placeholder="Sale Bill No" readonly>
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Agency <span class="text-danger">*</span></label>
+                                <input type="text" id="txtAgencyName2" class="form-control" placeholder="Agency Name" readonly>
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Department <span class="text-danger">*</span></label>
+                                <input type="text" id="txtDeptName2" class="form-control" placeholder="Department Name" readonly>
+                                <span class="error"></span>
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-8 mb-0">
+                                <label class="form-labelo">Department Full Name with Billing Address <span class="text-danger">*</span></label>
+                                <textarea id="txtDepBillingAdd2" class="form-control" placeholder="No. of Resource"></textarea>
+                                <input type="text" id="" class="form-control" placeholder="No. of Resource">
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Bill for Month</label>
+                                <input type="text" id="monthYear2" class="form-control" placeholder="MM/YYYY">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Pin Code <span class="text-danger">*</span></label>
+                                <input type="number" id="numPinCode" class="form-control" placeholder="Pin Code">
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">GST No. <span class="text-danger">*</span></label>
+                                <input type="text" id="txtGstNo" class="form-control" placeholder="GST No">
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">HSN Code <span class="text-danger">*</span></label>
+                                <input type="text" id="txtHsnCode" class="form-control" placeholder="HSN Code">
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-6 mb-0">
+                                <label class="form-labelo">Discription <span class="text-danger">*</span></label>
+                                <textarea id="txtDiscription2" class="form-control" placeholder="Discription"></textarea>
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-6 mb-0">
+                                <label class="form-labelo">Narration <span class="text-danger">*</span></label>
+                                <textarea id="txtNarration2" class="form-control" placeholder="Discription"></textarea>
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-panel mt-5 div-coral-base">
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label class="form-label">Basic Bill Amount <span class="text-danger">*</span></label>
+                                <input type="number" id="numBasicAmount2" class="form-control" placeholder="Agency Bill" readonly>
+                                <span class="error"></span>
+                            </div>
+
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo"> Admin Charge (2.5%) <span class="text-danger">*</span></label>
+                                <input type="number" id="numAdminCharge2" class="form-control" placeholder="Agency Bill" readonly>
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Livery Charge <span class="text-danger">*</span></label>
+                                <input type="number" id="numLiveryCharge2" class="form-control" placeholder="0" readonly>
+                                <span class="error"></span>
+                            </div>
+
+                        </div>
+                        
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label class="form-label">Output CGST (9%) <span class="text-danger">*</span></label>
+                                <input type="number" id="numCgst2" class="form-control" placeholder="CGST" readonly>
+                                <span class="error"></span>
+                            </div>
+
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo"> Output SGST (9%) <span class="text-danger">*</span></label>
+                                <input type="number" id="numSgst2" class="form-control" placeholder="SGST" readonly>
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Total Amount <span class="text-danger">*</span></label>
+                                <input type="number" id="numTotalAmount2" class="form-control" placeholder="Total Amount" readonly>
+                                <span class="error"></span>
+                            </div>
+
+                        </div>
+
+                    </div>
 
 
                 </div>
@@ -416,107 +565,6 @@
                     </div>
                     <div class="flex-grow-1 text-center modelalert text-danger"></div>
                     <button type="button" class="btn btnModel btnModalSubmit2">Submit</button>
-                    <button type="button" data-bs-dismiss="modal" class="btn btnModel">Close</button>
-
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <!-- Upload Model of Annexure & Bill-->>
-    <div class="modal modal-lg" id="myModal_UploadFile">
-        <div class="modal-dialog ">
-            <div class="modal-content position-relative">
-                <!-- 🔥 Loader Overlay -->
-                <div id="" class="modal-loader modalLoader">
-                    <div class="spinner"></div>
-                    <p class="loading-text">Please wait...</p>
-                </div>
-                <!-- Modal Header -->
-                <div class="modal-header  bg-ld ">
-                    <h4 class="modal-title txt-white" id="myModalLabel">Upload Annexure & Agency Bill File</h4>
-                    <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
-                </div>
-                
-                <!-- Modal body -->
-                <div class="modal-body">
-                    <div id="#toast-container"></div>
-                    <div class="filter-panel mt-5 div-coral-base">
-                        <div class="form-group row">
-                            <div class="col-md-4">
-                                <label class="form-label">Month Year <span class="text-danger">*</span></label>
-                                <input type="text" id="textMonthYearFill" class="form-control" placeholder="MMYYYY" readonly>
-                                <span class="error"></span>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Department <span class="text-danger">*</span></label>
-                                <input type="text" id="txtDeptFill" class="form-control" placeholder="Department" readonly>
-                                <span class="error"></span>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Agency <span class="text-danger">*</span></label>
-                                <input type="text" id="txtAgencyFill" class="form-control" placeholder="Agency" readonly>
-                                <span class="error"></span>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <div class="col-md-4">
-                                <label class="form-label">Work Order No. <span class="text-danger">*</span></label>
-                                <input type="text" id="textWorkOrderFill" class="form-control" placeholder="Work Order" readonly>
-                                <span class="error"></span>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">No. Of Resources <span class="text-danger">*</span></label>
-                                <input type="text" id="txtNoResourcesFill" class="form-control" placeholder="Resources No." readonly>
-                                <span class="error"></span>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">No. of Present Resource <span class="text-danger">*</span></label>
-                                <input type="text" id="txtPrsentResouceFill" class="form-control" placeholder="Present resource" readonly>
-                                <span class="error"></span>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <div class="col-md-12">
-                                <label class="form-label">Billing Address <span class="text-danger">*</span></label>
-                                <input type="text" id="textBillingAddFill" class="form-control" placeholder="Billing Address" readonly>
-                                <span class="error"></span>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <div class="col-md-6 mb-0">
-                                <label class="form-label">Upload Annexure File (5%)<span class="text-danger">*</span></label>
-                                <div class="input-group mb-0">
-                                    <input type="file" class="form-control" id="inputAnnexureFileAttached1">
-                                    @*  <label class="input-group-text" for="inputGroupFile02">Upload</label> *@
-                                </div>
-                                <span class="error text-danger"></span>
-                                @* <span class="error">Only PDF File (Max Size: 5 MB)</span> *@
-                            </div>
-
-                            <div class="col-md-6 mb-0">
-                                <label class="form-label">Upload Agency (Bill+Annexure 2.5%)<span class="text-danger">*</span></label>
-                                <div class="input-group mb-0">
-                                    <input type="file" class="form-control" id="inputGroupBillFileAttached1">
-                                    @*  <label class="input-group-text" for="inputGroupFile02">Upload</label> *@
-                                </div>
-                                <span class="error text-danger"></span>
-                                @* <span class="error">Only PDF File (Max Size: 5 MB)</span> *@
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <!-- Modal footer -->
-                <div class="modal-footer  bg-ld">
-                    <div class="me-auto">
-                        <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
-                    </div>
-                    <div class="flex-grow-1 text-center modelalert text-danger"></div>
-                    <button type="button" class="btn btnModel btnModalSubmit1">Submit</button>
                     <button type="button" data-bs-dismiss="modal" class="btn btnModel">Close</button>
 
                 </div>

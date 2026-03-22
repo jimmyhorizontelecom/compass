@@ -77,7 +77,7 @@ namespace Compass.Models.ManpowerViewModel
 
     public class PInvoiceViewModel
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public int DeptId { get; set; }
         public string DepartmentName { get; set; }
         public int AgencyId { get; set; }
@@ -90,12 +90,35 @@ namespace Compass.Models.ManpowerViewModel
         public string BillDate { get; set; }
         public string BillMonth { get; set; }
         public string AgencyBillEntryDate { get; set; }
-
-        
-        
+     
+    }
+    // Agency Bill Verification View
+    public class PInvoiceVerifyViewModel
+    {
+        public int Id { get; set; }
+        public string BillDate { get; set; }
+        public string WorkOrderId { get; set; }
+        public string AgencyBillNo { get; set; }
+        public string PurchaseBillNo { get; set; }
+        public int AgencyId { get; set; }
+        public string AgencyName { get; set; }
+        public int DeptId { get; set; }
+        public string DepartmentName { get; set; }
+        public int NoofResources { get; set; }
+        public int BillingId { get; set; }
+        public string DeptBillingAdd { get; set; }
+        public string BillMonth { get; set; }
+        public string Description { get; set; }
+        public string Narration { get; set; }
+        public decimal BasicBillAmt { get; set; }
+        public decimal AdminCharge { get; set; }
+        public decimal LiveryCharge { get; set; }
+        public decimal InputCgst { get; set; }
+        public decimal InputSgst { get; set; }
+        public decimal InputIgst { get; set; }
+        public decimal TotalAmt { get; set; }
 
     }
-
 
 
 }
