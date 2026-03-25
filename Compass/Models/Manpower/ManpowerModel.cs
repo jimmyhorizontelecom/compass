@@ -77,7 +77,56 @@ namespace Compass.Models.ManpowerModel
     }
 
 
+    //Purchase Bill Verification AgencyBillVerification
+    public class UpdatePInvoiceModel
+    {
+        public int Id { get; set; }
+        public int AgencyBillId { get; set; }
+        public char IsPurchaseBillVerified { get; set; }
+        public string VerificationRemarks { get; set; }
+        public string PurchaseBillDate { get; set; }
+        public string WorkOrderNo { get; set; }
+        public string AgencyBillNo { get; set; }
+        
+        public string Description { get; set; }
+        public string Narration { get; set; }   
 
+    }
+
+    //HPSEDEC Sale Invoice Model Submit
+    public class SInvoiceModel
+    {
+        public int Id { get; set; }
+        public int DeptBillId { get; set; }
+        public string WorkOrderNo { get; set; }
+        public string SaleBillNo { get; set; }
+        public string SaleBillDate { get; set; }
+        public string PBillNo { get; set; }
+        public int MonthYear { get; set; }
+        public int AgencyId { get; set; }
+        public string AgencyName { get; set; }
+        public int DeptId { get; set; }
+        public string DeptName { get; set; }
+        public int NoOfResources { get; set; }
+        public string GSTNo { get; set; }
+        public int PinNo { get; set; }
+        public string HsnCode { get; set; }
+        public int BillingId { get; set; }
+        public string BillingAdd { get; set; }
+        
+        public string Description { get; set; }
+        public string Narration { get; set; }
+        public decimal AgencyBillAmt { get; set; }
+        public decimal AdminAmt { get; set; }
+        public decimal LibraryAmt { get; set; }
+        public decimal CgstAmt { get; set; }
+        public decimal SgstAmt { get; set; }
+        public decimal TotalAmt { get; set; }
+        public decimal PaymentAmt { get; set; }
+        public decimal BalanceAmt { get; set; }
+        public char IsActive { get; set; }
+
+    }
 
 
 }

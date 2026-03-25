@@ -49,8 +49,11 @@
             
             <div class="col-md-3 mb-0">
                 <label class="form-labelo">Bill Status<span class="text-danger">*</span></label>
-                <select id="ddlBillStatu" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                @* <select id="ddlBillStatus" class="form-select search_ddl select2" aria-label=".form-select-sm"> *@
+                <select id="ddlBillStatus" class="form-select" aria-label=".form-select-sm">
                     <option selected value="0"> -- Select --</option>
+                    <option  value="A"> -- All --</option>
+                    <option  value="C"> -- Cancel --</option>
                 </select>
                 <span class="error"></span>
             </div>
@@ -272,17 +275,20 @@
                 </div>
                 <!-- Modal Header -->
                 <div class="modal-header  bg-ld ">
-                    <h4 class="modal-title txt-white" id="myModalLabel">Eneter Purchase Bill Details</h4>
+                    <h4 class="modal-title txt-white" id="myModalLabel">Update Purchase Bill Details</h4>
                     <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
                 </div>                
                 <!-- Modal body -->
                 <div class="modal-body">
                     <div id="#toast-container"></div>
                     <div class="filter-panel mt-5 div-coral-base">
+                        <!-- ✅ Hidden field (put here) -->
+                        <input type="hidden" id="hdnAgencyBillId">
+                        <div class="form-group row">
                         <div class="form-group row">
                             <div class="col-md-4 mb-0">
-                                <label class="form-labelo">Agency Bill Date<span class="text-danger">*</span></label>
-                                <input type="date" id="datePurchaseBillDate1" class="form-control" />
+                                <label class="form-labelo">Purchase Bill Date<span class="text-danger">*</span></label>
+                                <input type="text" id="datePurchaseBillDate1" class="form-control" />
                                 @* <input type="text" id="ddlPurchaseBillDate1" class="form-control" placeholder="ddmmyyyy" readonly> *@
                                 <span class="error"></span>                               
                             </div>
@@ -292,8 +298,8 @@
                                 <span class="error"></span>
                             </div>
                             <div class="col-md-4 mb-0">
-                                <label class="form-labelo">Agency Bill No.<span class="text-danger">*</span></label>
-                                <input type="text" id="txtAgencyBillNo1" class="form-control" placeholder="Agency Bill No">
+                                <label class="form-labelo">Purchase Bill No.<span class="text-danger">*</span></label>
+                                <input type="text" id="txtPurchaseBillNo1" class="form-control" placeholder="Agency Bill No">
                                 <span class="error"></span>
                             </div>                        
                         </div>
@@ -394,10 +400,31 @@
                                 <input type="number" id="numTotalAmount" class="form-control" placeholder="0" readonly>
                                 <span class="error"></span>
                             </div>
-
                         </div>
 
                     </div>
+
+                    <div class="filter-panel mt-5 div-coral-base">
+                        <div class="form-group row">
+                            <div class="col-md-6 mb-0">
+                                <input type="radio" name="billStatus" value="V" >
+                                <label>Verify Bill</label><br>
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-6 mb-0">
+                                <input type="radio" name="billStatus" value="R" >
+                                <label>Reject Bill</label>
+                                <span class="error"></span>
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <label class="form-labelo">Remarks <span class="text-danger">*</span></label>
+                            <textarea id="txtRemarks" class="form-control" placeholder="Enter remarks here"></textarea>
+                            <span class="error"></span>
+                        </div>
+                    </div>
+
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer  bg-ld">
@@ -433,7 +460,7 @@
                 <div class="modal-body">
                     <div id="#toast-container"></div>
                     <div class="filter-panel mt-5 div-coral-base">
-                        <div class="form-group row">
+                       
                             <div class="col-md-4">
                                 <label class="form-label">Work Order No. <span class="text-danger">*</span></label>
                                 <input type="text" id="txtWorkOrderNo2" class="form-control" placeholder="Work Order No">
@@ -447,7 +474,7 @@
                             </div>
                             <div class="col-md-4 mb-0">
                                 <label class="form-labelo">Sale Bill Date<span class="text-danger">*</span></label>
-                                <input type="date" id="dateSaleBill2" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")">
+                                <input type="date" id="dateSaleBillDate" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")">
                                 <span class="error"></span>
                             </div>
 
@@ -460,11 +487,13 @@
                             </div>
                             <div class="col-md-4 mb-0">
                                 <label class="form-labelo">Agency <span class="text-danger">*</span></label>
+                                <input type="hidden" id="hdnAgencyId2">
                                 <input type="text" id="txtAgencyName2" class="form-control" placeholder="Agency Name" readonly>
                                 <span class="error"></span>
                             </div>
                             <div class="col-md-4 mb-0">
                                 <label class="form-labelo">Department <span class="text-danger">*</span></label>
+                                <input type="hidden" id="hdnDeptId2">
                                 <input type="text" id="txtDeptName2" class="form-control" placeholder="Department Name" readonly>
                                 <span class="error"></span>
                             </div>
@@ -473,8 +502,9 @@
                         <div class="form-group row">
                             <div class="col-md-8 mb-0">
                                 <label class="form-labelo">Department Full Name with Billing Address <span class="text-danger">*</span></label>
+                                <input type="hidden" id="hdnBillingAddId2">
                                 <textarea id="txtDepBillingAdd2" class="form-control" placeholder="No. of Resource"></textarea>
-                                <input type="text" id="" class="form-control" placeholder="No. of Resource">
+                                <input type="text" id="txtNoResource2" class="form-control" placeholder="No. of Resource">
                                 <span class="error"></span>
                             </div>
                             <div class="col-md-4">

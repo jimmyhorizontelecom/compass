@@ -63,12 +63,12 @@ namespace Compass.Models.ManpowerViewModel
     {
         public int Id { get; set; }
         public int AgencyId { get; set; }
-        public int AgencyBillId { get; set; }
         public int MonthId { get; set; }
+        public int MonthIdTo { get; set; }
         public int DeptId { get; set; }
         public char PaymentStatus { get; set; }
-        //public int CreatedBy { get; set; }
-        //public int UserRole { get; set; }
+        public int CreatedBy { get; set; }
+        public int UserRole { get; set; }
 
     }
 
@@ -82,7 +82,6 @@ namespace Compass.Models.ManpowerViewModel
         public string DepartmentName { get; set; }
         public int AgencyId { get; set; }
         public string AgencyName { get; set; }
-        public string AgencyBillID { get; set; }
         public string AgencyBillNo { get; set; }
         public string AttendanceCertificate { get; set; }
         public string AnnexureFile { get; set; }
@@ -99,12 +98,12 @@ namespace Compass.Models.ManpowerViewModel
         public string BillDate { get; set; }
         public string WorkOrderId { get; set; }
         public string AgencyBillNo { get; set; }
-        public string PurchaseBillNo { get; set; }
+        public string SaleBillNo { get; set; }
         public int AgencyId { get; set; }
         public string AgencyName { get; set; }
         public int DeptId { get; set; }
         public string DepartmentName { get; set; }
-        public int NoofResources { get; set; }
+        public int NoofResource { get; set; }
         public int BillingId { get; set; }
         public string DeptBillingAdd { get; set; }
         public string BillMonth { get; set; }
