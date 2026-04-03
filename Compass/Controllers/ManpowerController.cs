@@ -72,13 +72,24 @@ namespace Compass.Controllers
                 var list = dt.AsEnumerable().Select(row => new WorkOrderListModel
 
                 {
+                    AgencyId = (row["AgencyId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["AgencyId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["AgencyId"]),
+                    //AgencyId = Convert.ToInt32(row["AgencyId"]?.ToString()),
                     AgencyName = (row["AgencyName"]?.ToString()),
+                    DeptId = (row["DeptId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["DeptId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["DeptId"]),
+                   // DeptId = Convert.ToInt32(row["DeptId"]?.ToString()),
                     DepartmentName = (row["DepartmentName"]?.ToString()),
                     WorkOrderId = (row["WorkOrderId"]?.ToString()),
                     BillingAddress = (row["BillingAddress"]?.ToString()),
-                    NoDeployedRes = Convert.ToInt32(row["NoDeployedRes"]?.ToString()),
+                    NoDeployedRes = (row["NoDeployedRes"] == DBNull.Value || string.IsNullOrWhiteSpace(row["NoDeployedRes"].ToString()))
+                    ? 0 : Convert.ToInt32(row["NoDeployedRes"]),
+                    //NoDeployedRes = Convert.ToInt32(row["NoDeployedRes"]?.ToString()),
                     IsResourceUploaded = (row["IsResourceUploaded"]?.ToString()),
-                    NoOfUploadedResource = Convert.ToInt32(row["NoOfUploadedResource"]?.ToString()),
+                    BillingAddEmail = (row["BillAddressEmail"]?.ToString()),
+                    NoOfUploadedResource = (row["NoOfUploadedResource"] == DBNull.Value || string.IsNullOrWhiteSpace(row["NoOfUploadedResource"].ToString()))
+                    ? 0 : Convert.ToInt32(row["NoOfUploadedResource"]),
+                    //NoOfUploadedResource = Convert.ToInt32(row["NoOfUploadedResource"]?.ToString()),
 
                 }).ToList();
 

@@ -77,9 +77,7 @@ function bindDatatable(records, tableId) {
 
     $.each(records, function (i, value) {
         let SrNo = i + 1;
-        console.log("Full Row Object:", value);
-        console.log("Possible Id fields:", value.Id, value.AttendaceId, value.AttendanceId);
-        
+        console.log(value); 
         tbody.append(`
             <tr 
                 data-id="${value.Id}">
@@ -126,13 +124,10 @@ function bindDatatable(records, tableId) {
                  </td>
                  <td class="text-center">
                     
-                       <i class="bi bi-pencil-square edit-test edit-icon" style="cursor:pointer;font-size:25px;"></i>
-                   
                 </td>
                  <td class="text-center">
                    
-                       <i class="bi bi-pencil-square edit-test edit-icon" style="cursor:pointer;font-size:25px;"></i>
-                   
+
                 </td>
                  <td class="text-center">
                    
@@ -367,7 +362,7 @@ $(document).on('click', '.view-file', function (e) {
 $(document).on('click', '.upload-Bill', async function () {
 
     var recordId = $(this).data("id");
-   // alert(recordId);
+   alert(recordId);
     console.log("Upload Bill Id:", recordId);
 
     if (!recordId) {
@@ -392,7 +387,7 @@ $(document).on('click', '.upload-Bill', async function () {
 });
 // get Record to fill upload Annexure & Bill File
 async function loadRecordUploadFile(recordId) {
-    //alert('Load Record function')
+    alert('Load Record function')
     var filterData = {
         Id: recordId,
         AgencyId: 0,
@@ -409,6 +404,7 @@ async function loadRecordUploadFile(recordId) {
         if (records && records.length > 0) {
 
             let data = records[0];
+            alert(data);
             Id = data.Id;
             $("#textMonthYearFill").val(data.MonthYear);
             $("#txtDeptFill").val(data.departmentName);
@@ -418,7 +414,7 @@ async function loadRecordUploadFile(recordId) {
             $("#txtPrsentResouceFill").val(data.UpladNoOfResource);
             $("#textBillingAddFill").val(data.BillingAddress);
             
-            alert('test');
+            //alert('test');
 
 
             //$('#myModal').modal('show');

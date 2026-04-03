@@ -5,6 +5,7 @@ namespace Compass.Models.ManpowerViewModel
     // Dept. Master
     public class WorkOrder
     {
+        public int Id { get; set; }
         public int AgencyId { get; set; }
         public int DeptId { get; set; }
         public string WorkOrderId { get; set; }
@@ -16,14 +17,16 @@ namespace Compass.Models.ManpowerViewModel
     public class WorkOrderListModel
     {
         
+        public int AgencyId { get; set; }
         public string AgencyName { get; set; }
+        public int DeptId{ get; set; }
         public string DepartmentName { get; set; }
-        
         public string WorkOrderId { get; set; }
         public string BillingAddress { get; set; }
         public int NoDeployedRes { get; set; }
         public string IsResourceUploaded { get; set; }
         public int NoOfUploadedResource { get; set; }
+        public string BillingAddEmail { get; set; }
     }
     //Dept Attendace Filter for get records
     public class DeptAttendanceFilter

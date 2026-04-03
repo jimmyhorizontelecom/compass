@@ -18,18 +18,19 @@
         <p class="loading-text">Please wait...</p>
     </div>
     <h4>Purchase Bill Verification </h4>
-    </div>
-    <div class="container-fluid">
-      <div id="modalLoader1" class="modal-loader modalLoader">
+</div>
+<div class="container-fluid">
+    <div id="modalLoader1" class="modal-loader modalLoader">
         <div class="spinner"></div>
         <p class="loading-text">Please wait...</p>
-      </div>
+    </div>
 
     <div class="filter-panel mt-5 div-coral-base">
         <div class="form-group row">
             <div class="col-md-3 ">
                 <label class="form-label"> Month & Year</label>
-                <input type="text" id="monthYearPicker" class="form-control" placeholder="MM/YYYY">
+                <input type="text" name="MonthYear" class="form-control monthYearPicker" maxlength="6" placeholder="MMYYYY">
+                @*  <input type="text" id="monthYearPicker" class="form-control" placeholder="MM/YYYY"> *@
                 <span class="error"></span>
             </div>
             <div class="col-md-3 mb-0">
@@ -52,8 +53,8 @@
                 @* <select id="ddlBillStatus" class="form-select search_ddl select2" aria-label=".form-select-sm"> *@
                 <select id="ddlBillStatus" class="form-select" aria-label=".form-select-sm">
                     <option selected value="0"> -- Select --</option>
-                    <option  value="A"> -- All --</option>
-                    <option  value="C"> -- Cancel --</option>
+                    <option value="A"> -- All --</option>
+                    <option value="C"> -- Cancel --</option>
                 </select>
                 <span class="error"></span>
             </div>
@@ -62,37 +63,37 @@
        
     <div class="container-fluid mt-5">
         @* <h2 class="mb-4">User List</h2> *@
-        <div class="filter-panel mt-5 div-coral-base">         
-                <table id="myTable" class="table orangeTh table-striped table-hover table-bordered">
-                    <thead class="bg-d">
-                        <tr>
-                            <th>Sr.No</th>
-                            <th>Department Name</th>
-                            <th>Agency Name <br> Agency Bill No</th>
-                            <th>Attendance</th>
-                            <th>Annexure</th>
-                            <th>Invoice</th>
-                            <th>Bill Date <br> Bill Month <br> Agency Bill Entry Date</th>
-                            <th>Agency Bill Verification</th>
-                            <th>Verification Status</th>
-                            <th>HPSEDE Bill </th>
-                            <th>EInvoice</th>
-                            <th>Print</th>
-                            <th>Cancel Sale Bill</th>                        
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                    <tfoot class="tfoot bg-primary">
-                        <tr>
-                            @* <td>3</td>
+        <div class="filter-panel mt-5 div-coral-base">
+            <table id="myTable" class="table orangeTh table-striped table-hover table-bordered">
+                <thead class="bg-d">
+                    <tr>
+                        <th>Sr.No</th>
+                        <th>Department Name</th>
+                        <th>Agency Name <br> Agency Bill No</th>
+                        <th>Attendance</th>
+                        <th>Annexure</th>
+                        <th>Invoice</th>
+                        <th>Bill Date <br> Bill Month <br> Agency Bill Entry Date</th>
+                        <th>Agency Bill Verification</th>
+                        <th>Verification Status</th>
+                        <th>HPSEDE Bill </th>
+                        <th>EInvoice</th>
+                        <th>Print</th>
+                        <th>Cancel Sale Bill</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+                <tfoot class="tfoot bg-primary">
+                    <tr>
+                        @* <td>3</td>
                     <td>Mike Brown</td>
                     <td>mike@example.com</td>
                     <td>Editor</td>
                     <td>Editor</td> *@
-                        </tr>
-                    </tfoot>
-                </table>
+                    </tr>
+                </tfoot>
+            </table>
         </div>
     </div>
 </div>
@@ -277,7 +278,7 @@
                 <div class="modal-header  bg-ld ">
                     <h4 class="modal-title txt-white" id="myModalLabel">Update Purchase Bill Details</h4>
                     <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
-                </div>                
+                </div>
                 <!-- Modal body -->
                 <div class="modal-body">
                     <div id="#toast-container"></div>
@@ -285,97 +286,97 @@
                         <!-- ✅ Hidden field (put here) -->
                         <input type="hidden" id="hdnAgencyBillId">
                         <div class="form-group row">
-                        <div class="form-group row">
-                            <div class="col-md-4 mb-0">
-                                <label class="form-labelo">Purchase Bill Date<span class="text-danger">*</span></label>
-                                <input type="text" id="datePurchaseBillDate1" class="form-control" />
-                                @* <input type="text" id="ddlPurchaseBillDate1" class="form-control" placeholder="ddmmyyyy" readonly> *@
-                                <span class="error"></span>                               
+                            <div class="form-group row">
+                                <div class="col-md-4 mb-0">
+                                    <label class="form-labelo">Purchase Bill Date<span class="text-danger">*</span></label>
+                                    <input type="text" id="datePurchaseBillDate1" class="form-control" />
+                                    @* <input type="text" id="ddlPurchaseBillDate1" class="form-control" placeholder="ddmmyyyy" readonly> *@
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 mb-0">
+                                    <label class="form-labelo">Work Order No.<span class="text-danger">*</span></label>
+                                    <input type="text" id="txtWorkOrderNo1" class="form-control" placeholder="Work Order" readonly>
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 mb-0">
+                                    <label class="form-labelo">Purchase Bill No.<span class="text-danger">*</span></label>
+                                    <input type="text" id="txtPurchaseBillNo1" class="form-control" placeholder="Agency Bill No">
+                                    <span class="error"></span>
+                                </div>
                             </div>
-                            <div class="col-md-4 mb-0">
-                                <label class="form-labelo">Work Order No.<span class="text-danger">*</span></label>
-                                <input type="text" id="txtWorkOrderNo1" class="form-control" placeholder="Work Order" readonly>
-                                <span class="error"></span>
+                            <div class="form-group row">
+                                <div class="col-md-4 mb-0">
+                                    <label class="form-labelo">Agency<span class="text-danger">*</span></label>
+                                    <input type="hidden" id="hdnAgencyId1">
+                                    <select id="ddlAgencyName1" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                                        <option selected value="0">--Select--</option>
+                                    </select>
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 mb-0">
+                                    <label class="form-labelo">Department<span class="text-danger">*</span></label>
+                                    <input type="hidden" id="hdnDeptId1">
+                                    <select id="txtDeptName1" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                                        <option selected value="0">--Select--</option>
+                                    </select>
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 mb-0">
+                                    <label class="form-labelo">No. of Resource <span class="text-danger">*</span></label>
+                                    <input type="text" id="txtNoResource1" class="form-control" placeholder="No. of Resource" readonly>
+                                    <span class="error"></span>
+                                </div>
                             </div>
-                            <div class="col-md-4 mb-0">
-                                <label class="form-labelo">Purchase Bill No.<span class="text-danger">*</span></label>
-                                <input type="text" id="txtPurchaseBillNo1" class="form-control" placeholder="Agency Bill No">
-                                <span class="error"></span>
-                            </div>                        
-                        </div>
-                        <div class="form-group row">
-                            <div class="col-md-4 mb-0">
-                                <label class="form-labelo">Agency<span class="text-danger">*</span></label>
-                                <input type="hidden" id="hdnAgencyId1">
-                                <select id="ddlAgencyName1" class="form-select search_ddl select2" aria-label=".form-select-sm">
-                                    <option selected value="0">--Select--</option>
-                                </select>
-                                <span class="error"></span>
-                            </div>                       
-                            <div class="col-md-4 mb-0">
-                                <label class="form-labelo">Department<span class="text-danger">*</span></label>
-                                <input type="hidden" id="hdnDeptId1">
-                                <select id="txtDeptName1" class="form-select search_ddl select2" aria-label=".form-select-sm">
-                                    <option selected value="0">--Select--</option>
-                                </select>
-                                <span class="error"></span>                              
-                            </div>
-                            <div class="col-md-4 mb-0">
-                                <label class="form-labelo">No. of Resource <span class="text-danger">*</span></label>
-                                <input type="text" id="txtNoResource1" class="form-control" placeholder="No. of Resource" readonly>
-                                <span class="error"></span>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <div class="col-md-8 mb-0">
-                                <label class="form-labelo">Department Full Name with Billing Address <span class="text-danger">*</span></label>
-                                <textarea id="txtDepBillingAdd1" class="form-control" placeholder="Billing Address"></textarea>
-                                <!-- Hidden field for Billing Id -->
-                                <input type="hidden" id="hdnBillingId1">
-                                <span class="error"></span>
-                                <span class="error"></span>
-                            </div>
-                            <div class="col-md-4">
+                            <div class="form-group row">
+                                <div class="col-md-8 mb-0">
+                                    <label class="form-labelo">Department Full Name with Billing Address <span class="text-danger">*</span></label>
+                                    <textarea id="txtDepBillingAdd1" class="form-control" placeholder="Billing Address"></textarea>
+                                    <!-- Hidden field for Billing Id -->
+                                    <input type="hidden" id="hdnBillingId1">
+                                    <span class="error"></span>
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4">
                                
-                                <label class="form-label">Bill For Month </label>
-                                <input type="text" id="monthYear1" name="MonthYear" class="form-control monthYearPicker" maxlength="6" placeholder="MMYYYY">
-                                <span class="error"></span> @* <span class="error text-danger"></span> *@
+                                    <label class="form-label">Bill For Month </label>
+                                    <input type="text" id="monthYear1" name="MonthYear" class="form-control monthYearPicker" maxlength="6" placeholder="MMYYYY">
+                                    <span class="error"></span> @* <span class="error text-danger"></span> *@
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-6 mb-0">
+                                    <label class="form-labelo">Discription <span class="text-danger">*</span></label>
+                                    <textarea id="txtDiscription1" class="form-control" placeholder="Discription"></textarea>
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-6 mb-0">
+                                    <label class="form-labelo">Narration <span class="text-danger">*</span></label>
+                                    <textarea id="txtNarration1" class="form-control" placeholder="Narration"></textarea>
+                                    <span class="error"></span>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <div class="col-md-6 mb-0">
-                                <label class="form-labelo">Discription <span class="text-danger">*</span></label>
-                                <textarea id="txtDiscription1" class="form-control" placeholder="Discription"></textarea>
-                                <span class="error"></span>
-                            </div>
-                            <div class="col-md-6 mb-0">
-                                <label class="form-labelo">Narration <span class="text-danger">*</span></label>
-                                <textarea id="txtNarration1" class="form-control" placeholder="Narration"></textarea>
-                                <span class="error"></span>
-                            </div>
-                        </div>                  
-                    </div>
-                    <div class="filter-panel mt-5 div-coral-base">
-                        <div class="form-group row">
-                            <div class="col-md-4">
-                                <label class="form-label">Basic Bill Amount <span class="text-danger">*</span></label>
-                                <input type="number" id="numBasicAmount" class="form-control" placeholder="0">
-                                <span class="error"></span>
-                            </div>
+                        <div class="filter-panel mt-5 div-coral-base">
+                            <div class="form-group row">
+                                <div class="col-md-4">
+                                    <label class="form-label">Basic Bill Amount <span class="text-danger">*</span></label>
+                                    <input type="number" id="numBasicAmount" class="form-control" placeholder="0">
+                                    <span class="error"></span>
+                                </div>
 
-                            <div class="col-md-4 mb-0">
-                                <label class="form-labelo"> Admin Charge (2.5%) <span class="text-danger">*</span></label>
-                                <input type="number" id="numAdminCharge" class="form-control" placeholder="0">
-                                <span class="error"></span>
-                            </div>
-                            <div class="col-md-4 mb-0">
-                                <label class="form-labelo">Livery Charge <span class="text-danger">*</span></label>
-                                <input type="number" id="numLiveryCharge" class="form-control" placeholder="0">
-                                <span class="error"></span>
-                            </div>
+                                <div class="col-md-4 mb-0">
+                                    <label class="form-labelo"> Admin Charge (2.5%) <span class="text-danger">*</span></label>
+                                    <input type="number" id="numAdminCharge" class="form-control" placeholder="0">
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 mb-0">
+                                    <label class="form-labelo">Livery Charge <span class="text-danger">*</span></label>
+                                    <input type="number" id="numLiveryCharge" class="form-control" placeholder="0">
+                                    <span class="error"></span>
+                                </div>
 
-                        </div>
-                        @* <div class="col-md-4 mb-0">
+                            </div>
+                            @* <div class="col-md-4 mb-0">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
                             <label class="form-check-label" for="flexCheckDefault">
@@ -383,65 +384,66 @@
                             </label>
                         </div>
                         </div> *@
-                        <div class="form-group row">
-                            <div class="col-md-3">
-                                <label class="form-label">Input CGST (9%) <span class="text-danger">*</span></label>
-                                <input type="number" id="numCgst" class="form-control" placeholder="0" readonly>
-                                <span class="error"></span>
+                            <div class="form-group row">
+                                <div class="col-md-3">
+                                    <label class="form-label">Input CGST (9%) <span class="text-danger">*</span></label>
+                                    <input type="number" id="numCgst" class="form-control" placeholder="0" readonly>
+                                    <span class="error"></span>
+                                </div>
+
+                                <div class="col-md-3 mb-0">
+                                    <label class="form-labelo"> Input SGST (9%) <span class="text-danger">*</span></label>
+                                    <input type="number" id="numSgst" class="form-control" placeholder="0" readonly>
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-3 mb-0">
+                                    <label class="form-labelo">Total Amount <span class="text-danger">*</span></label>
+                                    <input type="number" id="numTotalAmount" class="form-control" placeholder="0" readonly>
+                                    <span class="error"></span>
+                                </div>
                             </div>
 
-                            <div class="col-md-3 mb-0">
-                                <label class="form-labelo"> Input SGST (9%) <span class="text-danger">*</span></label>
-                                <input type="number" id="numSgst" class="form-control" placeholder="0" readonly>
-                                <span class="error"></span>
+                        </div>
+
+                        <div class="filter-panel mt-5 div-coral-base">
+                            <div class="form-group row">
+                                <div class="col-md-6 mb-0">
+                                    <input type="radio" name="billStatus" value="V">
+                                    <label>Verify Bill</label><br>
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-6 mb-0">
+                                    <input type="radio" name="billStatus" value="R">
+                                    <label>Reject Bill</label>
+                                    <span class="error"></span>
+                                </div>
+
                             </div>
-                            <div class="col-md-3 mb-0">
-                                <label class="form-labelo">Total Amount <span class="text-danger">*</span></label>
-                                <input type="number" id="numTotalAmount" class="form-control" placeholder="0" readonly>
+                            <div class="form-group row">
+                                <label class="form-labelo">Remarks <span class="text-danger">*</span></label>
+                                <textarea id="txtRemarks" class="form-control" placeholder="Enter remarks here"></textarea>
                                 <span class="error"></span>
                             </div>
                         </div>
 
                     </div>
-
-                    <div class="filter-panel mt-5 div-coral-base">
-                        <div class="form-group row">
-                            <div class="col-md-6 mb-0">
-                                <input type="radio" name="billStatus" value="V" >
-                                <label>Verify Bill</label><br>
-                                <span class="error"></span>
-                            </div>
-                            <div class="col-md-6 mb-0">
-                                <input type="radio" name="billStatus" value="R" >
-                                <label>Reject Bill</label>
-                                <span class="error"></span>
-                            </div>
-
+                    <!-- Modal footer -->
+                    <div class="modal-footer  bg-ld">
+                        <div class="me-auto">
+                            <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
                         </div>
-                        <div class="form-group row">
-                            <label class="form-labelo">Remarks <span class="text-danger">*</span></label>
-                            <textarea id="txtRemarks" class="form-control" placeholder="Enter remarks here"></textarea>
-                            <span class="error"></span>
-                        </div>
+                        <div class="flex-grow-1 text-center modelalert text-danger"></div>
+                        <button type="button" class="btn btnModel btnModalSubmit">Submit</button>
+                        <button type="button" data-bs-dismiss="modal" class="btn btnModel">Close</button>
+
                     </div>
 
                 </div>
-                <!-- Modal footer -->
-                <div class="modal-footer  bg-ld">
-                    <div class="me-auto">
-                        <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
-                    </div>
-                    <div class="flex-grow-1 text-center modelalert text-danger"></div>
-                    <button type="button" class="btn btnModel btnModalSubmit">Submit</button>
-                    <button type="button" data-bs-dismiss="modal" class="btn btnModel">Close</button>
-
-                </div>
-
             </div>
         </div>
     </div>
 
-    <!-- HPSEDEC Sale Bill Details Entry-->>
+    <!-- HPSEDEC Sale Bill Details Entry-->
     <div class="modal modal-lg" id="SInvoiceModal">
         <div class="modal-dialog ">
             <div class="modal-content position-relative">
@@ -460,7 +462,7 @@
                 <div class="modal-body">
                     <div id="#toast-container"></div>
                     <div class="filter-panel mt-5 div-coral-base">
-                       
+                        <div class="form-group row">
                             <div class="col-md-4">
                                 <label class="form-label">Work Order No. <span class="text-danger">*</span></label>
                                 <input type="text" id="txtWorkOrderNo2" class="form-control" placeholder="Work Order No">
