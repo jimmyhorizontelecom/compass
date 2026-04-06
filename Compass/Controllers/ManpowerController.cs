@@ -222,62 +222,102 @@ namespace Compass.Controllers
             }
         }
 
-       // Submit data
-       //[HttpPost]
-       // public IActionResult AddOrEdit_DeptAttendanceRecord1(DeptAttendanceModel model)
-       // {
-       //     try
-       //     {
-       //         //if (string.IsNullOrWhiteSpace(model.WorkOrderNo) ||
-       //         //    string.IsNullOrWhiteSpace(model.BillAddressEmail)
+        // No of resources when change on Billing Address ddl
+        [HttpGet]
+        public async Task<IActionResult> GetNoOfResourcesByBilling([FromQuery] DeptAttendanceFilter filter)
+        {
+            try
+            {
+                SortedList parameters = new SortedList();
+                parameters.Add("@AgencyId", filter.AgencyId);
+                parameters.Add("@DeptId", filter.DeptId);
+                parameters.Add("@WorkOrderAgencyId", filter.WorkOrderAgencyId); // IMPORTANT
+                parameters.Add("@UserId", filter.CreatedBy);
+                parameters.Add("@RoleId", filter.UserRole);
+                parameters.Add("@SearchTerm", DBNull.Value);
 
-       //         //    )
-       //         //{
-       //         //    return BadRequest(new
-       //         //    {
-       //         //        success = false,
-       //         //        message = "WorkOrderNo and BillAddressEmail are required."
-       //         //    });
-       //         //}
+                var dt = await _cn.FillDataTableAsync("TallyAgencyWorkOrder_ddlC", "", parameters);
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<object>());
+
+                var list = dt.AsEnumerable().Select(row => new
+                {
+                    Id = row["WorkOrderAgencyId"]?.ToString(),
+                    BillingId = row["BillingId"]?.ToString(),
+                    BillingAddress = row["BillingAddress"]?.ToString(),
+                    NoOfResources = Convert.ToInt32(row["NoDeployedRes"]?.ToString())
+                }).ToList();
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error",
+                    error = ex.Message
+                });
+            }
+        }
+
+        // Submit data
+        //[HttpPost]
+        // public IActionResult AddOrEdit_DeptAttendanceRecord1(DeptAttendanceModel model)
+        // {
+        //     try
+        //     {
+        //         //if (string.IsNullOrWhiteSpace(model.WorkOrderNo) ||
+        //         //    string.IsNullOrWhiteSpace(model.BillAddressEmail)
+
+        //         //    )
+        //         //{
+        //         //    return BadRequest(new
+        //         //    {
+        //         //        success = false,
+        //         //        message = "WorkOrderNo and BillAddressEmail are required."
+        //         //    });
+        //         //}
 
 
 
 
-       //         SortedList parameters = new SortedList();
-       //         parameters.Add("@Id", model.Id);
-       //         parameters.Add("@MonthYear", model.MonthYear);
-       //         parameters.Add("@WorkOrderId", model.WorkOrderNo);
-       //         parameters.Add("@UpladNoOfResource", model.UpladNoOfResource);
-       //         parameters.Add("@AttendanceCertificate", model.AttendanceFile);
-       //         parameters.Add("@AnnexureFile", model.AnnexureFile);
-       //         parameters.Add("@AgencyBillFile", model.AgencyBillFile);
-                
+        //         SortedList parameters = new SortedList();
+        //         parameters.Add("@Id", model.Id);
+        //         parameters.Add("@MonthYear", model.MonthYear);
+        //         parameters.Add("@WorkOrderId", model.WorkOrderNo);
+        //         parameters.Add("@UpladNoOfResource", model.UpladNoOfResource);
+        //         parameters.Add("@AttendanceCertificate", model.AttendanceFile);
+        //         parameters.Add("@AnnexureFile", model.AnnexureFile);
+        //         parameters.Add("@AgencyBillFile", model.AgencyBillFile);
 
-       //         var userId = User.FindFirst("UserId")?.Value;
-       //         parameters.Add("@CreatedBy", userId);
 
-       //         var result = _cn.ExecuteNonQueryWMessage(
-       //             "tblTallyAttendance_AcceptUpdate",
-       //             "",
-       //             parameters
-       //         );
+        //         var userId = User.FindFirst("UserId")?.Value;
+        //         parameters.Add("@CreatedBy", userId);
 
-       //         return Ok(new
-       //         {
-       //             success = true,
-       //             message = result.ToString()
-       //         });
-       //     }
-       //     catch (Exception ex)
-       //     {
-       //         return StatusCode(500, new
-       //         {
-       //             success = false,
-       //             message = "Server error.",
-       //             error = ex.Message
-       //         });
-       //     }
-       // }
+        //         var result = _cn.ExecuteNonQueryWMessage(
+        //             "tblTallyAttendance_AcceptUpdate",
+        //             "",
+        //             parameters
+        //         );
+
+        //         return Ok(new
+        //         {
+        //             success = true,
+        //             message = result.ToString()
+        //         });
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, new
+        //         {
+        //             success = false,
+        //             message = "Server error.",
+        //             error = ex.Message
+        //         });
+        //     }
+        // }
 
         [HttpPost]
         public async Task<IActionResult> AddOrEdit_DeptAttendanceRecord([FromForm] DeptAttendanceModel model)
@@ -450,9 +490,9 @@ namespace Compass.Controllers
             {
                 // Access as object
                 SortedList parameters = new SortedList();
-                parameters.Add("@Id", filter.Id);
+                parameters.Add("@AttendaceId", filter.Id);
                 
-                var dt = await _cn.FillDataTableAsync("tblTallyAttendance_Get", "", parameters);
+                var dt = await _cn.FillDataTableAsync("tblTallyAttendanceDetails_Get", "", parameters);
 
                 if (dt == null || dt.Rows.Count == 0)
                     return Ok(new List<DeptAttendanceViewModel>());
@@ -460,18 +500,18 @@ namespace Compass.Controllers
                 var list = dt.AsEnumerable().Select(row => new DeptAttendanceViewModel
 
                 {
-                    Id = row["AttendaceId"]?.ToString(),
+                    //Id = row["AttendaceId"]?.ToString(),
                     MonthYear = Convert.ToInt32(row["MonthYear"]?.ToString()),
                     departmentName = (row["departmentName"]?.ToString()),
                     AgencyName = (row["AgencyName"]?.ToString()),
-                    WorkOrderId = (row["WorkOrderId"]?.ToString()),
+                    WorkOrderId = (row["HpsedcWrokOrderNO"]?.ToString()),
                     //PurhaseInvNO = (row["PurhaseInvNO"]?.ToString()),
-                    DeployedResource = Convert.ToInt32(row["DeployedResource"]?.ToString()),
+                    //DeployedResource = Convert.ToInt32(row["DeployedResource"]?.ToString()),
                     UpladNoOfResource = Convert.ToInt32(row["UpladNoOfResource"]?.ToString()),
                     BillingAddress = (row["BillingAddress"]?.ToString()),
                     //AttendanceCertificate = row["AttendanceCertificate"]?.ToString(),
-                    AnnexureFile = row["AnnexureFile"]?.ToString(),
-                    AgencyBillFile = row["UploadBill"]?.ToString(),
+                    //AnnexureFile = row["AnnexureFile"]?.ToString(),
+                    //AgencyBillFile = row["UploadBill"]?.ToString(),
                 }).ToList();
 
                 return Ok(list);

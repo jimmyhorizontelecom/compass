@@ -1,4 +1,5 @@
 ﻿var Id = 0;
+var billingData = [];
 //common
 toastr.options = {
     closeButton: true,
@@ -21,11 +22,14 @@ $(document).ready(function () {
     // Dependent Dropdown Billing Address on Department
     bindDependentDataToDdl("Dropdown","MBillingAddress_ddl",null,// ❗ no modal
         "ddlDeptName", "ddlBillingAddress", "Select Billing Address");
-    // Dependent Dropdown Work Order on Agency 
+
+ // Dependent Dropdown Work Order on Agency
     bindDependentDataToDdlToParent("Dropdown", "MWorkOrder_ddl", null,// ❗ no modal
         "ddlDeptName", "ddlAgencyName", null , "ddlWorkOrder","Select Work Order ");
      
 
+
+// month year change event on table list
     $(document).on('changeDate change', '.monthYearPicker', function () {
 
         // Agar specific element ka value lena ho
@@ -65,6 +69,59 @@ async function recordlist(monthYearValue) {
         //hideModalLoader();
     }
 }
+
+//Get No. of Resources on change Billing Address ddl
+$(document).on("change", "#ddlBillingAddress", async function () {
+
+    let billingId = $("#ddlBillingAddress").val();
+    let deptId = $("#ddlDeptName").val();
+    let agencyId = $("#ddlAgencyName").val();
+    let workOrderId = $("#ddlWorkOrder").val();
+
+    if (!billingId || billingId == "0") {
+        $("#txtNoOfResources").val("");
+        return;
+    }
+
+    let filterData = {
+        AgencyId: parseInt(agencyId),
+        DeptId: parseInt(deptId),
+        WorkOrderAgencyId: parseInt(workOrderId),
+        CreatedBy: 0,
+        UserRole: 48
+    };
+
+    console.log("Sending Filter:", filterData);
+
+    try {
+
+        let res = await getRecords( "Manpower", "GetNoOfResourcesByBilling", filterData, "", "N");
+
+        console.log("API Response:", res);
+
+          if (res && res.length > 0) {
+
+            let data = res[0];   // ⭐ MOST IMPORTANT FIX
+
+            console.log("Selected Row:", data);
+
+            // OPTIONAL billing match (safe)
+            if (data.BillingId == billingId) {
+                $("#txtNoOfResources").val(data.NoOfResources);
+            } else {
+                $("#txtNoOfResources").val(data.NoOfResources); // fallback
+            }
+
+        } else {
+            $("#txtNoOfResources").val("");
+        }
+
+    } catch (err) {
+        console.error("Error:", err);
+    }
+
+});
+
 //Bind get record  in a table 
 function bindDatatable(records, tableId) {
 
@@ -387,7 +444,7 @@ $(document).on('click', '.upload-Bill', async function () {
 });
 // get Record to fill upload Annexure & Bill File
 async function loadRecordUploadFile(recordId) {
-    alert('Load Record function')
+   // alert('Load Record function')
     var filterData = {
         Id: recordId,
         AgencyId: 0,
@@ -779,7 +836,6 @@ async function SubmitPurchaseBill() {
 
 }
 // Call the function when user changes amount fields.
-
 $(document).on("keyup change", "#numBasicAmount, #numLiveryCharge", function () {
     calculateBillAmounts();
 });

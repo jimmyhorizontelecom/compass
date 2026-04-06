@@ -32,8 +32,10 @@ namespace Compass.Models.ManpowerViewModel
     public class DeptAttendanceFilter
     {
         public int Id { get; set; }
+        public int AttendaceId { get; set; }
         public int AgencyId { get; set; }
-        public string DeptId { get; set; }
+        public int WorkOrderAgencyId { get; set; }
+        public int DeptId { get; set; }
         public string MonthYear { get; set; }
         public int CreatedBy { get; set; }
         public int UserRole { get; set; }
@@ -44,6 +46,7 @@ namespace Compass.Models.ManpowerViewModel
     public class DeptAttendanceViewModel
     {
         public string Id { get; set; }
+        public string AttendaceId { get; set; }
         public int DeptId { get; set; }
         public string departmentName { get; set; }
         public int AgencyId { get; set; }

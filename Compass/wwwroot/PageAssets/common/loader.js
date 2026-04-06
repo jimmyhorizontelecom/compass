@@ -41,6 +41,92 @@ $(document).on('focus', '.monthYearPicker', function () {
         $(this).datepicker('show'); // Open immediately on focus
     }
 });
+//Global function defined for used everywhere
+window.initCustomPicker = function (selector) {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const $input = $(selector);
+    let currentYear = new Date().getFullYear(); // Default year
+
+    if ($input.length === 0) return;
+
+    // 1. Picker Container
+    const $picker = $('<div class="custom-month-picker"></div>').css({
+        'display': 'none',
+        'position': 'absolute',
+        'background': '#ffffff',
+        'border': '1px solid #ced4da',
+        'box-shadow': '0 10px 25px rgba(0,0,0,0.15)',
+        'padding': '12px',
+        'z-index': '999999',
+        'width': '240px',
+        'border-radius': '8px',
+        'user-select': 'none'
+    });
+
+    // 2. Header (Year Navigation)
+    const $header = $('<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 10px;"></div>');
+    const $prevBtn = $('<span style="cursor:pointer; padding: 0 10px;"> &lt; </span>');
+    const $nextBtn = $('<span style="cursor:pointer; padding: 0 10px;"> &gt; </span>');
+    const $yearDisplay = $(`<span>${currentYear}</span>`);
+
+    $header.append($prevBtn, $yearDisplay, $nextBtn);
+
+    // 3. Grid for Months
+    const $grid = $('<div style="display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important;"></div>');
+
+    function renderMonths() {
+        $grid.empty();
+        months.forEach((m, index) => {
+            const monthNum = (index + 1).toString().padStart(2, '0');
+            const $btn = $(`<div style="padding: 10px 0; text-align: center; cursor: pointer; border: 1px solid #f8f9fa; border-radius: 4px; font-size: 13px; background: #f8f9fa; color: #333;">${m}</div>`);
+
+            $btn.hover(
+                function () { $(this).css({ 'background': '#007bff', 'color': '#fff' }); },
+                function () { $(this).css({ 'background': '#f8f9fa', 'color': '#333' }); }
+            );
+
+            $btn.on('click', function () {
+                $input.val(`${monthNum}/${currentYear}`);
+                $picker.hide();
+            });
+            $grid.append($btn);
+        });
+    }
+
+    // Year change events
+    $prevBtn.on('click', function (e) {
+        e.stopPropagation();
+        currentYear--;
+        $yearDisplay.text(currentYear);
+    });
+    $nextBtn.on('click', function (e) {
+        e.stopPropagation();
+        currentYear++;
+        $yearDisplay.text(currentYear);
+    });
+
+    renderMonths();
+    $picker.append($header, $grid);
+    $('body').append($picker);
+
+    // Show/Hide Logic
+    $input.on('click', function (e) {
+        e.stopPropagation();
+        const offset = $(this).offset();
+        $picker.css({
+            'top': (offset.top + $(this).outerHeight() + 2) + 'px',
+            'left': offset.left + 'px'
+        }).show();
+    });
+
+    $(document).on('click', function (e) {
+        if (!$(e.target).closest('.custom-month-picker, ' + selector).length) {
+            $picker.hide();
+        }
+    });
+};
+
+
 
 function showModalLoader() {
     $(".modalLoader").css("display", "flex");
@@ -68,7 +154,7 @@ function DeleteEditBox(title, msg, icon, id) {
         showCancelButton: true,
         confirmButtonColor: '#FF6F61',   // coral
         cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Yes, Edit',
+        confirmButtonText: 'Yes',
         cancelButtonText: 'Cancel',
         showClass: {
             popup: 'animate__animated animate__fadeInDown'

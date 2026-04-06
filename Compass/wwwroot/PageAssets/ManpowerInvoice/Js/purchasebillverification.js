@@ -2,10 +2,12 @@
 
 
 $(document).ready(function () {
-    initializeMonthYearPickerByClass("monthYearPicker");
-  
+    //initializeMonthYearPickerByClass("monthYearPicker");
+    
     resetModal();
     recordlist();
+
+    initCustomPicker('#monthYear');
     //alert('Purchase Bill Verification');
     
     //Parent Dropdown
@@ -15,7 +17,7 @@ $(document).ready(function () {
 
     
     // load data when changes on ddl
-    $("#ddlAgencyName, #ddlDeptName,#ddlBillStatus").change(function () {
+    $("#monthYear, #ddlAgencyName, #ddlDeptName,#ddlBillStatus").change(function () {
         recordlist();
     });
    
@@ -25,8 +27,17 @@ $(document).ready(function () {
 async function recordlist() {
     var agencyId = parseInt($("#ddlAgencyName").val()) || 0;
     var deptId = parseInt($("#ddlDeptName").val()) || 0;
-    var monthId = '112025';
-    
+    //var monthId = '42026';
+    var MonthYear = $("#monthYear").val();
+    var monthId = "0"; // Default value
+    if (MonthYear) {
+        // 2. Format Change: "04/2026" -> "42026" (Month + Year)
+        // Use parseInt to Split leading zero 
+        var parts = MonthYear.split('/');
+        var m = parseInt(parts[0], 10); // "04" becomes 4
+        var y = parts[1];               // "2026"
+        monthId = m.toString() + y.toString(); // "42026"
+    }
     var paymentStatus = $("#ddlBillStatus").val();
 
     if (!paymentStatus || paymentStatus === "0") {
@@ -37,13 +48,13 @@ async function recordlist() {
 
     var filterData = {
         Id: 0,
-        AgencyId: agencyId,
+        AgencyId: agencyId,//1,
         AgencyBillId: 0,
         DeptId: deptId,
-        MonthId: monthId,
+        MonthId: monthId,//'42026',//monthId,
         PaymentStatus: paymentStatus,
-        CreatedBy: 0,
-        UserRole: 39,
+        //CreatedBy: 0,
+        //UserRole: 39,
 
     };
     console.log("Filter", filterData);
@@ -215,6 +226,7 @@ async function loadPInvoiceUpdate(recordId) {
         if (records && records.length > 0){
             let data = records[0];
             console.log(data)
+
             Id = data.Id;
             $("#datePurchaseBillDate1").val(data.BillDate);
             $("#txtWorkOrderNo1").val(data.WorkOrderId);

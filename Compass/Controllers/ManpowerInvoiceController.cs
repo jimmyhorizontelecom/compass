@@ -233,7 +233,7 @@ namespace Compass.Controllers
             {
 
                 //var Id = model.Id;
-                var Id = model.Id;
+                var Id = model.AgencyBillId;
                 var billStatus = model.IsPurchaseBillVerified;
                 var remarks = model.VerificationRemarks;
                 var description = model.Description;
