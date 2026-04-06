@@ -1,55 +1,55 @@
 ﻿// Month Year Picker 
-function initializeMonthYearPickerByClass(className) {
+//function initializeMonthYearPickerByClass(className) {
 
-    $('.' + className).each(function () {
+//    $('.' + className).each(function () {
 
-        // Prevent re-initialization
-        if (!$(this).data('datepicker')) {
+//        // Prevent re-initialization
+//        if (!$(this).data('datepicker')) {
 
-            $(this).datepicker({
-                format: "mmyyyy",      // Final value → 032026
-                startView: "months",   // Open month view first
-                minViewMode: "months", // Only month selectable
-                autoclose: true,
-                todayHighlight: true
-            });
+//            $(this).datepicker({
+//                format: "mmyyyy",      // Final value → 032026
+//                startView: "months",   // Open month view first
+//                minViewMode: "months", // Only month selectable
+//                autoclose: true,
+//                todayHighlight: true
+//            });
 
-            // Default current month set (mmyyyy)
-            //let today = new Date();
-            //let month = ("0" + (today.getMonth() + 1)).slice(-2);
-            //let year = today.getFullYear();
+//            // Default current month set (mmyyyy)
+//            //let today = new Date();
+//            //let month = ("0" + (today.getMonth() + 1)).slice(-2);
+//            //let year = today.getFullYear();
 
-            //$(this).datepicker('update', month + year);
-        }
+//            //$(this).datepicker('update', month + year);
+//        }
 
-    });
-}
+//    });
+//}
 
-// Initialize only when clicked
-$(document).on('focus', '.monthYearPicker', function () {
+//// Initialize only when clicked
+//$(document).on('focus', '.monthYearPicker', function () {
 
-    if (!$(this).data('datepicker')) {
+//    if (!$(this).data('datepicker')) {
 
-        $(this).datepicker({
-            format: "mmyyyy",
-            startView: "months",
-            minViewMode: "months",
-            autoclose: true,
-            todayHighlight: true
-        });
+//        $(this).datepicker({
+//            format: "mmyyyy",
+//            startView: "months",
+//            minViewMode: "months",
+//            autoclose: true,
+//            todayHighlight: true
+//        });
 
-        $(this).datepicker('show'); // Open immediately on focus
-    }
-});
+//        $(this).datepicker('show'); // Open immediately on focus
+//    }
+//});
 //Global function defined for used everywhere
 window.initCustomPicker = function (selector) {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const $input = $(selector);
-    let currentYear = new Date().getFullYear(); // Default year
+    let currentYear = new Date().getFullYear();
 
     if ($input.length === 0) return;
 
-    // 1. Picker Container
+    // 1. Picker Container (Har selector ke liye alag container generate hoga)
     const $picker = $('<div class="custom-month-picker"></div>').css({
         'display': 'none',
         'position': 'absolute',
@@ -63,18 +63,15 @@ window.initCustomPicker = function (selector) {
         'user-select': 'none'
     });
 
-    // 2. Header (Year Navigation)
     const $header = $('<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 10px;"></div>');
     const $prevBtn = $('<span style="cursor:pointer; padding: 0 10px;"> &lt; </span>');
     const $nextBtn = $('<span style="cursor:pointer; padding: 0 10px;"> &gt; </span>');
     const $yearDisplay = $(`<span>${currentYear}</span>`);
 
     $header.append($prevBtn, $yearDisplay, $nextBtn);
-
-    // 3. Grid for Months
     const $grid = $('<div style="display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important;"></div>');
 
-    function renderMonths() {
+    function renderMonths(targetInput) {
         $grid.empty();
         months.forEach((m, index) => {
             const monthNum = (index + 1).toString().padStart(2, '0');
@@ -85,34 +82,39 @@ window.initCustomPicker = function (selector) {
                 function () { $(this).css({ 'background': '#f8f9fa', 'color': '#333' }); }
             );
 
+            // ⭐ CRITICAL CHANGE HERE
             $btn.on('click', function () {
-                $input.val(`${monthNum}/${currentYear}`);
+                const finalValue = `${monthNum}/${currentYear}`;
+                $(targetInput).val(finalValue).trigger('change'); // Isse recordlist() call ho jayega
                 $picker.hide();
             });
             $grid.append($btn);
         });
     }
 
-    // Year change events
     $prevBtn.on('click', function (e) {
         e.stopPropagation();
         currentYear--;
         $yearDisplay.text(currentYear);
+        renderMonths($input); // Year badalne par buttons refresh
     });
+
     $nextBtn.on('click', function (e) {
         e.stopPropagation();
         currentYear++;
         $yearDisplay.text(currentYear);
+        renderMonths($input);
     });
 
-    renderMonths();
+    renderMonths($input);
     $picker.append($header, $grid);
     $('body').append($picker);
 
-    // Show/Hide Logic
     $input.on('click', function (e) {
         e.stopPropagation();
         const offset = $(this).offset();
+
+        // Picker ko input ke niche position karein
         $picker.css({
             'top': (offset.top + $(this).outerHeight() + 2) + 'px',
             'left': offset.left + 'px'

@@ -13,8 +13,9 @@ $(document).ready(function () {
     resetModal();
     recordlist();
 
-    initializeMonthYearPickerByClass("monthYearPicker");
-
+    //initializeMonthYearPickerByClass("monthYearPicker");
+    initCustomPicker('#monthYear');
+    initCustomPicker('#monthYear1');
     //Parent Dropdown
     bindDataToDdl("Dropdown", "MDepartment_ddl", "", "ddlDeptName", "Select Department Name");
     bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyName", "Select Agency Name"); 
@@ -30,30 +31,44 @@ $(document).ready(function () {
 
 
 // month year change event on table list
-    $(document).on('changeDate change', '.monthYearPicker', function () {
+    //$(document).on('changeDate change', '.monthYearPicker', function () {
 
-        // Agar specific element ka value lena ho
-        let selectedValue = $(this).val();
+    //    // Agar specific element ka value lena ho
+    //    let selectedValue = $(this).val();
 
-        console.log("Selected MonthYear:", selectedValue);
+    //    console.log("Selected MonthYear:", selectedValue);
 
-        // Call your record function
-        recordlist(selectedValue);
+    //    // Call your record function
+    //    recordlist(selectedValue);
+    //});
+
+    // ❗ Month change hone par table refresh karne ke liye
+    $(document).on('change', '#monthYear1', function () {
+        console.log("Month changed, reloading records...");
+        recordlist(); // Isse aapka niche wala function call hoga
     });
    
 });
-var monthYear = $('.monthYearPicker').val();
+//var monthYear = $('.monthYearPicker').val();
 //alert(monthYear);
 
 //Get Record for A table 
-async function recordlist(monthYearValue) {
-   
+async function recordlist() {
+    var monthYearVal = $("#monthYear1").val();
+    var finalMonthId = "0";
+
+    if (monthYearVal && monthYearVal.includes('/')) {
+        var parts = monthYearVal.split('/');
+        var m = parseInt(parts[0], 10);
+        var y = parts[1];
+        finalMonthId = m.toString() + y.toString(); // Result: "42026"
+    }
     //let monthYear = $(".monthYearPicker").val();
     var filterData = {
         Id:0,
         AgencyId: 0,
         DeptId: 0,
-        MonthYear: monthYearValue,
+        MonthYear: finalMonthId,
         CreatedBy: 0,
         UserRole: 39,
 
