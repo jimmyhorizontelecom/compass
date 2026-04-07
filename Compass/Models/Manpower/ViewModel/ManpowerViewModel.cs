@@ -126,4 +126,37 @@ namespace Compass.Models.ManpowerViewModel
     }
 
 
+    // ManpowerInvoice/NewInvoice
+    // filter for Table of New Invoice 
+    public class AgencyInvFilter
+    {
+        public int AgencyBillId { get; set; }
+        public int MonthId { get; set; }
+        public int MonthIdTo { get; set; }
+        public int AgencyId { get; set; }
+        public int DeptId { get; set; }
+        public char PaymentStatus { get; set; }
+       
+        public int PageNo { get; set; }
+        public int PageSize { get; set; }
+
+    }
+    // View Model for Table List of New Invoice
+    public class AgencyInvViewModel
+    {
+        public int AgencyBillId { get; set; }
+        public int DeptId { get; set; }
+        public string DeptName { get; set; }
+        public string DeptAdd { get; set; }
+        public int AgencyId { get; set; }
+        public string AgencyName { get; set; }
+        public string SaleBillNo { get; set; }
+        public string PurchaseBillNo { get; set; }
+        public decimal SaleBillAmt { get; set; }
+        public string SaleBillDate { get; set; }
+        
+
+    }
+
+
 }

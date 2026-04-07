@@ -47,7 +47,7 @@ namespace Compass.Controllers
         {
             return View();
         }
-        // Get record for the TTable List
+        // Get record for the Table List
         [HttpGet]
         public async Task<IActionResult> GetPurchaseBillRecord([FromQuery] PInvoiceFilter filter)
 
@@ -373,6 +373,66 @@ namespace Compass.Controllers
         {
             return View();
         }
+
+        // Get record for the Table List
+        [HttpGet]
+        public async Task<IActionResult> GetAgencyBillRecord([FromQuery] AgencyInvFilter filter)
+
+        {
+            try
+            {
+                var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
+                var roleId = Convert.ToInt32(User.FindFirst("RoleId")?.Value ?? "0");
+
+                // Access as object
+                SortedList parameters = new SortedList();
+                parameters.Add("@AgencyBillId", filter.AgencyBillId);
+                parameters.Add("@EmpId", userId);
+                parameters.Add("@UserRole",roleId);
+                parameters.Add("@MonthId", filter.MonthId);
+                parameters.Add("@MonthIdTo", filter.MonthIdTo);
+                parameters.Add("@AgencyId", filter.AgencyId);
+                parameters.Add("@DeptId", filter.DeptId);
+                parameters.Add("@PaymentStatus", filter.PaymentStatus);
+                parameters.Add("@PageNo", filter.PageNo);
+                parameters.Add("@PageSize", filter.PageSize);
+                parameters.Add("@SearchTerm", DBNull.Value);
+               
+                var dt = await _cn.FillDataTableAsync("TallyAgencyBill1_List_optimized", "", parameters);
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<AgencyInvViewModel>());
+
+                var list = dt.AsEnumerable().Select(row => new AgencyInvViewModel
+
+                {
+                    AgencyBillId = Convert.ToInt32(row["AgencyBillId"]?.ToString()),
+                    DeptId = Convert.ToInt32(row["DeptId"]?.ToString()),
+                    DeptName = (row["DepartmentName"]?.ToString()),
+                    DeptAdd = (row["DepartmentAddress"]?.ToString()),
+                    AgencyId = Convert.ToInt32(row["AgencyId"]?.ToString()),
+                    AgencyName = (row["AgencyName"]?.ToString()),
+                    SaleBillNo = (row["SaleBillNo"]?.ToString()),
+                    PurchaseBillNo = (row["Billno"]?.ToString()),
+                    SaleBillAmt = Convert.ToDecimal(row["TotalAmt"]??0),//.ToString()),
+                    SaleBillDate = row["SaleBillDate"]?.ToString(),
+                    
+                }).ToList();
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+
         #endregion
 
 

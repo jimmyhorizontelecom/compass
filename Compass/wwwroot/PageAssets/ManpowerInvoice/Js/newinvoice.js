@@ -1,24 +1,27 @@
-﻿var Id = 0;
+﻿var AgencyBillId = 0;
 
 
 $(document).ready(function () {
     resetModal();
     recordlist();
-    alert('New Invoice Loaded');
+   // alert('New Invoice Loaded');
 
     initCustomPicker('#fromMonthYear');
     initCustomPicker('#toMonthYear');
     //Parent Dropdwon ddl
     bindDataToDdl("Dropdown", "MDepartment_ddl", "", "ddlDeptName", " Department Name");
     bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyName", " Agency Name");
+
+    // load data when changes on ddl
+    $("#fromMonthYear, #toMonthYear, #ddlAgencyName, #ddlDeptName,#ddlPaymentStatus").change(function () {
+        recordlist();
+    });
 });
 
 //Get Record for A table 
 async function recordlist() {
     var agencyId = parseInt($("#ddlAgencyName").val()) || 0;
     var deptId = parseInt($("#ddlDeptName").val()) || 0;
-    var monthId = '42026';
-   
     var fromMonthYear = $("#fromMonthYear").val();
     var fromMonthId = "0"; // Default value
     if (fromMonthYear) {
@@ -29,8 +32,7 @@ async function recordlist() {
         var y = parts[1];               // "2026"
         fromMonthId = m.toString() + y.toString(); // "42026"
     }
-
-    var toMonthYear = $("#fromMonthYear").val();
+    var toMonthYear = $("#toMonthYear").val();
     var toMonthId = "0"; // Default value
     if (toMonthYear) {
         // 2. Format Change: "04/2026" -> "42026" (Month + Year)
@@ -40,31 +42,29 @@ async function recordlist() {
         var y = parts[1];               // "2026"
         toMonthId = m.toString() + y.toString(); // "42026"
     }
-
-
-    var paymentStatus = $("#ddlBillStatus").val();
-
+    var paymentStatus = $("#ddlPaymentStatus").val();
     if (!paymentStatus || paymentStatus === "0") {
         paymentStatus = 'A';
     }
-
     paymentStatus = paymentStatus.trim().toUpperCase();
 
     var filterData = {
-        Id: 0,
-        AgencyId: agencyId,//1,
+        
         AgencyBillId: 0,
-        DeptId: deptId,
-        MonthId: '42026',//monthId,
+        AgencyId: agencyId,//1,
+        DeptId:deptId,
+        MonthId: fromMonthId,//'42026',//monthId,
+        MonthIdTo: toMonthId,//'42026',//monthId,
         PaymentStatus: paymentStatus,
-        //CreatedBy: 0,
-        //UserRole: 39,
+        PageNo: 1,
+        PageSize: 10,
+        
 
     };
     console.log("Filter", filterData);
     try {
 
-        let records = await getRecords('ManpowerInvoice', 'GetPurchaseBillRecord', filterData, '#myTable', 'N');
+        let records = await getRecords('ManpowerInvoice', 'GetAgencyBillRecord', filterData, '#myTable', 'N');
         bindDatatable(records, '#myTable');
     }
     catch (error) {
@@ -88,23 +88,23 @@ function bindDatatable(records, tableId) {
 
         tbody.append(`
             <tr 
-                data-id="${value.Id}">
+                data-id="${value.AgencyBillId}">
                 <td>${SrNo}</td>
-                <td>${value.DepartmentName}</td>
+                <td>${value.DeptName}</td>
+                <td>${value.DeptAdd}</td>
                 <td>${value.AgencyName}</td>
-                <td>${value.AgencyName}</td>
-                <td>${value.BillDate} <br> ${value.BillMonth}</td>
-                <td>${value.BillDate} <br> ${value.BillMonth}</td>
-                <td>${value.BillDate} <br> ${value.BillMonth}</td>
+                <td>${value.SaleBillNo} <br> ${value.PurchaseBillNo}</td>
+                <td>${value.SaleBillAmt} </td>
+                <td>${value.SaleBillDate}</td>
                  <td class="text-center">  
-                          <i class="bi bi-pencil-square edit-PInvoiceUpdate edit-icon" data-id="${value.Id}" style="cursor:pointer;font-size:25px;"></i>             
+                                    
                 </td>
                 <td class="text-center">
                     
                        
                 </td>
                  <td class="text-center">
-                   <i class="bi bi-pencil-square edit-HPSEDC_SInvoice edit-icon" data-id="${value.Id}" style="cursor:pointer;font-size:25px;"></i>   
+                   
                 </td>
 
                  <td class="text-center">
