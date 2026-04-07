@@ -37,8 +37,8 @@ namespace Compass.Models.ManpowerViewModel
         public int WorkOrderAgencyId { get; set; }
         public int DeptId { get; set; }
         public string MonthYear { get; set; }
-        public int CreatedBy { get; set; }
-        public int UserRole { get; set; }
+       // public int CreatedBy { get; set; }
+        //public int UserRole { get; set; }
 
     }
 

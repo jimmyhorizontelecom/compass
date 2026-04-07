@@ -69,8 +69,8 @@ async function recordlist() {
         AgencyId: 0,
         DeptId: 0,
         MonthYear: finalMonthId,
-        CreatedBy: 0,
-        UserRole: 39,
+        //CreatedBy: 0,
+        //UserRole: 39,
 
     };
 

@@ -176,6 +176,8 @@ namespace Compass.Controllers
         public async Task<IActionResult> GetDeptAttendanceRecord([FromQuery] DeptAttendanceFilter filter)
               
         {
+            var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
+            var roleId = Convert.ToInt32(User.FindFirst("RoleId")?.Value ?? "0");
             try
             {
                 // Access as object
@@ -184,8 +186,8 @@ namespace Compass.Controllers
                 parameters.Add("@AgencyId", filter.AgencyId);
                 parameters.Add("@DeptId", filter.DeptId);
                 parameters.Add("@MonthYear", filter.MonthYear);
-                parameters.Add("@CreateBy", filter.CreatedBy);
-                parameters.Add("@RoleId", filter.UserRole);
+                parameters.Add("@CreateBy", 0);
+                parameters.Add("@RoleId", roleId);
 
                 
                 var dt = await _cn.FillDataTableAsync("tblTallyAttendance_list", "", parameters);
@@ -223,44 +225,44 @@ namespace Compass.Controllers
         }
 
         // No of resources when change on Billing Address ddl
-        [HttpGet]
-        public async Task<IActionResult> GetNoOfResourcesByBilling([FromQuery] DeptAttendanceFilter filter)
-        {
-            try
-            {
-                SortedList parameters = new SortedList();
-                parameters.Add("@AgencyId", filter.AgencyId);
-                parameters.Add("@DeptId", filter.DeptId);
-                parameters.Add("@WorkOrderAgencyId", filter.WorkOrderAgencyId); // IMPORTANT
-                parameters.Add("@UserId", filter.CreatedBy);
-                parameters.Add("@RoleId", filter.UserRole);
-                parameters.Add("@SearchTerm", DBNull.Value);
+        //[HttpGet]
+        //public async Task<IActionResult> GetNoOfResourcesByBilling([FromQuery] DeptAttendanceFilter filter)
+        //{
+        //    try
+        //    {
+        //        SortedList parameters = new SortedList();
+        //        parameters.Add("@AgencyId", filter.AgencyId);
+        //        parameters.Add("@DeptId", filter.DeptId);
+        //        parameters.Add("@WorkOrderAgencyId", filter.WorkOrderAgencyId); // IMPORTANT
+        //        parameters.Add("@UserId", filter.CreatedBy);
+        //        parameters.Add("@RoleId", filter.UserRole);
+        //        parameters.Add("@SearchTerm", DBNull.Value);
 
-                var dt = await _cn.FillDataTableAsync("TallyAgencyWorkOrder_ddlC", "", parameters);
+        //        var dt = await _cn.FillDataTableAsync("TallyAgencyWorkOrder_ddlC", "", parameters);
 
-                if (dt == null || dt.Rows.Count == 0)
-                    return Ok(new List<object>());
+        //        if (dt == null || dt.Rows.Count == 0)
+        //            return Ok(new List<object>());
 
-                var list = dt.AsEnumerable().Select(row => new
-                {
-                    Id = row["WorkOrderAgencyId"]?.ToString(),
-                    BillingId = row["BillingId"]?.ToString(),
-                    BillingAddress = row["BillingAddress"]?.ToString(),
-                    NoOfResources = Convert.ToInt32(row["NoDeployedRes"]?.ToString())
-                }).ToList();
+        //        var list = dt.AsEnumerable().Select(row => new
+        //        {
+        //            Id = row["WorkOrderAgencyId"]?.ToString(),
+        //            BillingId = row["BillingId"]?.ToString(),
+        //            BillingAddress = row["BillingAddress"]?.ToString(),
+        //            NoOfResources = Convert.ToInt32(row["NoDeployedRes"]?.ToString())
+        //        }).ToList();
 
-                return Ok(list);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
-                {
-                    success = false,
-                    message = "Server error",
-                    error = ex.Message
-                });
-            }
-        }
+        //        return Ok(list);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, new
+        //        {
+        //            success = false,
+        //            message = "Server error",
+        //            error = ex.Message
+        //        });
+        //    }
+        //}
 
         // Submit data
         //[HttpPost]
