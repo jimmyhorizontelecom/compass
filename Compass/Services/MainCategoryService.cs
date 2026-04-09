@@ -59,7 +59,21 @@ namespace Compass.Services
             return await _repository.GetWorkOredrDropdownAsync( Id, ParentId1, ParentId2, ParentId3, userId,  roleId, searchTerm);
         }
 
-       
+        // Get Bank ddl
+        public async Task<List<DropdownDto>> GetBankDropdownAsync(
+           int bankId,
+           string searchTerm)
+        {
+            return await _repository.GetBankDropdownAsync(bankId, searchTerm);
+        }
+        // Get Payment Mode ddl
+        public async Task<List<DropdownDto>> GetPaymentModeDropdownAsync(
+           int Id,
+           string searchTerm)
+        {
+            return await _repository.GetPaymentModeDropdownAsync(Id, searchTerm);
+        }
 
-            }
+
+    }
 }

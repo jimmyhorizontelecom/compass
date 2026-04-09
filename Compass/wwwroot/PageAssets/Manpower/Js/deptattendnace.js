@@ -462,11 +462,7 @@ async function loadRecordUploadFile(recordId) {
    // alert('Load Record function')
     var filterData = {
         Id: recordId,
-        AgencyId: 0,
-        DeptId: 0,
-        MonthYear: 0,
-        CreatedBy: 0,
-        UserRole: 39,
+        
     };
 
     try {

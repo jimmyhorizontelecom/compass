@@ -172,7 +172,50 @@ namespace Compass.Repositories
             return result;
         }
 
-      
+        //Get Bank ddl
+       
+        public async Task<List<DropdownDto>> GetBankDropdownAsync(
+           int bankId,
+           string searchTerm)
+        {
+
+            SortedList parameters = new SortedList();
+            parameters.Add("@BankId", bankId);
+            parameters.Add("@SearchTerm", string.IsNullOrEmpty(searchTerm) ? DBNull.Value : searchTerm);
+            var dt = await _cn.FillDataTableAsync(
+                    "HpsedcBan_kDdlC",
+                    "",
+                    parameters
+                );
+            if (dt == null || dt.Rows.Count == 0)
+                return new List<DropdownDto>();
+
+            var result = CommonNew.ToList<DropdownDto>(dt);
+            return result;
+        }
+
+        //Get Payment Mode ddl
+
+        public async Task<List<DropdownDto>> GetPaymentModeDropdownAsync(
+           int Id,
+           string searchTerm)
+        {
+
+            SortedList parameters = new SortedList();
+            parameters.Add("@Id", Id);
+            parameters.Add("@SearchTerm", string.IsNullOrEmpty(searchTerm) ? DBNull.Value : searchTerm);
+            var dt = await _cn.FillDataTableAsync(
+                    "HpsedcPaymentmode_Ddl",
+                    "",
+                    parameters
+                );
+            if (dt == null || dt.Rows.Count == 0)
+                return new List<DropdownDto>();
+
+            var result = CommonNew.ToList<DropdownDto>(dt);
+            return result;
+        }
+
 
     }
 }

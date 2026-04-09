@@ -51,10 +51,10 @@ async function recordlist() {
     var filterData = {
         
         AgencyBillId: 0,
-        AgencyId: agencyId,//1,
+        AgencyId: agencyId,
         DeptId:deptId,
-        MonthId: fromMonthId,//'42026',//monthId,
-        MonthIdTo: toMonthId,//'42026',//monthId,
+        MonthId: fromMonthId,
+        MonthIdTo: toMonthId,
         PaymentStatus: paymentStatus,
         PageNo: 1,
         PageSize: 10,
@@ -180,10 +180,11 @@ async function loadDeptPayment(recordId) {
             $("#hdnDeptId").val(data.AgencyId);
             $("#hdnAgencyId").val(data.AgencyId);
            
-
             console.log("AgencyId:", data.DeptId);
             console.log("DeptId:", data.DeptId);
-            
+            //Parent Dropdwon ddl
+            bindDataToDdl("Dropdown", "MBank_ddl", "", "ddlBankName", " Bank Name");
+            bindDataToDdl("Dropdown", "MPaymentMode_ddl", "", "ddlPaymentMode", " Payment Mode");
 
         }
     }
@@ -203,7 +204,7 @@ $(document).on('click', '.edit-PartialPayment', async function () {
     }
     var isConfirmed = await DeleteEditBox('Partial Payment', 'Do you want to Pay Partial Payment?', 'question');
     if (isConfirmed) {
-        //await loadPartialPayment(recordId);
+        await loadPartialPayment(recordId);
         openModal('PartialPaymentModal');
         // Alternative if openModal not working
         //$('#myModal_UploadFile').modal('show');
@@ -213,7 +214,33 @@ $(document).on('click', '.edit-PartialPayment', async function () {
     }
 });
 
+// get Record to fill Partial Dept. Payment
+async function loadPartialPayment(recordId) {
 
+    var filterData = {
+        AgencyBillId: recordId,
+
+    };
+
+    try {
+
+        let records = await getRecords('ManpowerInvoice', 'GetAgencyInvoiceDeptPaymentRecord', filterData, '', 'N');
+        console.log("Full Response:", records);
+        if (records && records.length > 0) {
+            let data = records[0];
+            console.log(data)
+            AgencyBillId = data.AgencyBillId;
+           
+            //Parent Dropdwon ddl
+            bindDataToDdl("Dropdown", "MBank_ddl", "", "ddlBankName2", " Bank Name");
+            bindDataToDdl("Dropdown", "MPaymentMode_ddl", "", "ddlPaymentMode2", " Payment Mode");
+
+        }
+    }
+    catch (error) {
+        console.error("Error loading record:", error);
+    }
+}
 
 // MsgBox on Edit Dept. Payment Button
 $(document).on('click', '.edit-DeptPaymentUpdate', async function () {
@@ -262,10 +289,12 @@ async function loadEditDeptPayment(recordId) {
             $("#hdnDeptId1").val(data.AgencyId);
             $("#hdnAgencyId1").val(data.AgencyId);
 
-
             console.log("AgencyId1:", data.DeptId);
             console.log("DeptId1:", data.DeptId);
 
+            //Parent Dropdwon ddl
+            bindDataToDdl("Dropdown", "MBank_ddl", "", "ddlBankName1", " Bank Name");
+            bindDataToDdl("Dropdown", "MPaymentMode_ddl", "", "ddlPaymentMode1", " Payment Mode");
 
         }
     }

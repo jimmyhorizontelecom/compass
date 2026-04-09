@@ -17,7 +17,11 @@ namespace Compass.Services
         // Get Work Order ddl
         Task<List<DropdownDto>> GetWorkOredrDropdownAsync(int Id, int ParentId1, int ParentId2, int ParentId3, int userId, int roleId, string searchTerm);
 
-        
+        // Get Bank ddl
+        Task<List<DropdownDto>> GetBankDropdownAsync(int bankId, string searchTerm);
+
+        // Get PPayment Mode ddl
+        Task<List<DropdownDto>> GetPaymentModeDropdownAsync(int Id, string searchTerm);
 
     }
 

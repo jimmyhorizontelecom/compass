@@ -83,6 +83,29 @@ namespace Compass.Controllers
             return Ok(result);
         }
 
+        //Get Bank ddl
+        [HttpGet]
+        public async Task<IActionResult> MBank_ddl(
+                int bankId = 0,
+                string searchTerm = "")
+        {
+            var result = await _service.GetBankDropdownAsync(bankId, searchTerm);
+            return Ok(result);
+        }
+
+        //Get Payment Mode ddl
+        [HttpGet]
+        public async Task<IActionResult> MPaymentMode_ddl(
+                int Id = 0,
+                string searchTerm = "")
+        {
+            var result = await _service.GetPaymentModeDropdownAsync(Id, searchTerm);
+            return Ok(result);
+        }
+
+
+
+
 
         public IActionResult Index()
         {

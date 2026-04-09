@@ -11,12 +11,17 @@ namespace Compass.Repositories
         // Get Agency ddl
         Task<List<DropdownDto>> GetAgencyDropdownAsync(int deptId, string searchTerm);
 
+        
+
         // Get Work Oreder ddl
         Task<List<DropdownDto>> GetWorkOredrDropdownAsync(int Id, int ParentId1, int ParentId2, int ParentId3, int userId, int roleId, string searchTerm);
 
-        
-        
-        
+        //Get Bank ddl
+        Task<List<DropdownDto>> GetBankDropdownAsync(int bankId, string searchTerm);
+        //Get Payment Mmode ddl
+        Task<List<DropdownDto>> GetPaymentModeDropdownAsync(int Id, string searchTerm);
+
+
 
 
 
