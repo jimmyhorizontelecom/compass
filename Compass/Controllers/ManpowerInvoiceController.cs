@@ -432,6 +432,51 @@ namespace Compass.Controllers
             }
         }
 
+        // Get record for Dept. Payment Modal
+        [HttpGet]
+        public async Task<IActionResult> GetAgencyInvoiceDeptPaymentRecord([FromQuery] AgencyInvFilter filter)
+
+        {
+            try
+            {
+                // Access as object
+                SortedList parameters = new SortedList();
+                parameters.Add("@AgencyBillId", filter.AgencyBillId);
+               
+                var dt = await _cn.FillDataTableAsync("TallyDepartmentBill_List", "", parameters);
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<AgencyInvDeptPayViewModel>());
+
+                var list = dt.AsEnumerable().Select(row => new AgencyInvDeptPayViewModel
+
+                {
+                    AgencyBillId = Convert.ToInt32(row["AgencyBillId"]?.ToString()),
+                    PurchaseBillNo = (row["Billno"]?.ToString()),
+                    PurchaseBillDate = (row["PurchaseBillDate"]?.ToString()),
+                    SaleBillNo = (row["SaleBillNo"]?.ToString()),
+                    SaleBillDate = (row["BillDate"]?.ToString()),
+                    SaleBillAmt = Convert.ToDecimal(row["TotalAmt"]?.ToString()),
+                    DeptId = Convert.ToInt32(row["DeptId"]?.ToString()),
+                    DeptName = (row["departmentName"]?.ToString()),
+                    DeptAdd = (row["DepartmentAddress"]?.ToString()),
+                    AgencyId = Convert.ToInt32(row["AgencyId"]?.ToString()),
+                    AgencyName = (row["AgencyName"]?.ToString()),
+
+                }).ToList();
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
 
         #endregion
 

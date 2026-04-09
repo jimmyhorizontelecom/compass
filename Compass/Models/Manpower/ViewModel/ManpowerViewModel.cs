@@ -158,5 +158,20 @@ namespace Compass.Models.ManpowerViewModel
 
     }
 
-
+    //Dept Payment view Modal
+    public class AgencyInvDeptPayViewModel
+    {
+        public int AgencyBillId { get; set; }
+        public string PurchaseBillNo { get; set; }
+        public string PurchaseBillDate { get; set; }
+        public string SaleBillNo { get; set; }
+        public string SaleBillDate { get; set; }
+        public Decimal SaleBillAmt { get; set; }
+        public int DeptId { get; set; }
+        public string DeptName { get; set; }
+        public string DeptAdd { get; set; }
+        public int AgencyId { get; set; }
+        public string AgencyName { get; set; }
+       
+    }
 }

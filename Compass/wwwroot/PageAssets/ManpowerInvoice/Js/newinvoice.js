@@ -152,63 +152,39 @@ $(document).on('click', '.edit-DeptPayment', async function () {
     }
 });
 
-// get Record to fill Agency Bill verification
+// get Record to fill Dept. Payment Modal
 async function loadDeptPayment(recordId) {
-    //alert('Load Record function')
-
+   
     var filterData = {
-        Id: recordId,
-        AgencyId: 0,
-        DeptId: 0,
-        MonthId: 0,
-        MonthIdTo: 0,
-        PaymentStatus: 'A',
-        CreatedBy: 0,
-        UserRole: 39,
+        AgencyBillId: recordId,
+        
     };
-
 
     try {
 
-        let records = await getRecords('ManpowerInvoice', 'GetAgencyInvoiceVerifyRecord', filterData, '', 'N');
+        let records = await getRecords('ManpowerInvoice', 'GetAgencyInvoiceDeptPaymentRecord', filterData, '', 'N');
         console.log("Full Response:", records);
         if (records && records.length > 0) {
             let data = records[0];
             console.log(data)
+            AgencyBillId = data.AgencyBillId;
+            $("#txtPurchaseBillNo").val(data.PurchaseBillNo);
+            $("#txtPurchaseBillDate").val(data.PurchaseBillDate);
+            $("#txtSaleBillNo").val(data.SaleBillNo);
+            $("#txtSaleBillDate").val(data.SaleBillDate);
+            $("#txtSaleBillAmt").val(parseFloat(data.SaleBillAmt).toFixed(2));
+            $("#txtDeptName").val(data.DeptName);
+            $("#txtAgencyName").val(data.AgencyName);
+            $("#txtDeptAdd").val(data.DeptAdd);
 
-            Id = data.Id;
-            $("#datePurchaseBillDate1").val(data.BillDate);
-            $("#txtWorkOrderNo1").val(data.WorkOrderId);
-            $("#txtPurchaseBillNo1").val(data.AgencyBillNo);
-            $("#txtDepBillingAdd1").val(data.DeptBillingAdd);
-            $("#txtNoResource1").val(data.NoofResource);
-            $("#monthYear1").val(data.BillMonth);
-            $("#txtDiscription1").val(data.Description);
-            $("#txtNarration1").val(data.Narration);
+            $("#hdnDeptId").val(data.AgencyId);
+            $("#hdnAgencyId").val(data.AgencyId);
+           
 
-            $("#numBasicAmount").val(parseFloat(data.BasicBillAmt).toFixed(2));
-            $("#numAdminCharge").val(parseFloat(data.AdminCharge).toFixed(2));
-            $("#numLiveryCharge").val(parseFloat(data.LiveryCharge).toFixed(2));
-            $("#numCgst").val(parseFloat(data.InputCgst).toFixed(2));
-            $("#numSgst").val(parseFloat(data.InputSgst).toFixed(2));
-            $("#numTotalAmount").val(parseFloat(data.TotalAmt).toFixed(2));
-
-            $("#hdnAgencyId1").val(data.AgencyId);
-            $("#hdnDeptId1").val(data.DeptId);
-            $("#hdnBillingId1").val(data.BillingId);
-
-            console.log("AgencyId:", data.AgencyId);
+            console.log("AgencyId:", data.DeptId);
             console.log("DeptId:", data.DeptId);
-            console.log("BillingId:", data.BillingId);
+            
 
-            bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlBankName", " Agency Name", data.AgencyId, 0);
-            var option = new Option(data.AgencyName, data.AgencyId, true, true);
-            $('#ddlAgencyName1').append(option).trigger('change');
-
-            bindDataToDdl("Dropdown", "MDepartment_ddl", "", "txtDeptName1", " Department Name", data.DeptId, 0);
-            var option = new Option(data.DepartmentName, data.DeptId, true, true);
-            $('#txtDeptName1').append(option).trigger('change');
-            //$('#myModal').modal('show');
         }
     }
     catch (error) {
@@ -250,7 +226,7 @@ $(document).on('click', '.edit-DeptPaymentUpdate', async function () {
     }
     var isConfirmed = await DeleteEditBox('Edit Record', 'Do you want to Edit Record?', 'question');
     if (isConfirmed) {
-        //await loadPartialPayment(recordId);
+        await loadEditDeptPayment(recordId);
         openModal('EditDeptPaymentModal');
         // Alternative if openModal not working
         //$('#myModal_UploadFile').modal('show');
@@ -258,7 +234,45 @@ $(document).on('click', '.edit-DeptPaymentUpdate', async function () {
         console.log('Edit cancelled');
     }
 });
+// get Record to fill Edit Dept. Payment
+async function loadEditDeptPayment(recordId) {
+    
+    var filterData = {
+        AgencyBillId: recordId,
 
+    };
+
+    try {
+
+        let records = await getRecords('ManpowerInvoice', 'GetAgencyInvoiceDeptPaymentRecord', filterData, '', 'N');
+        console.log("Full Response:", records);
+        if (records && records.length > 0) {
+            let data = records[0];
+            console.log(data)
+            AgencyBillId = data.AgencyBillId;
+            $("#txtPurchaseBillNo1").val(data.PurchaseBillNo);
+            $("#txtPurchaseBillDate1").val(data.PurchaseBillDate);
+            $("#txtSaleBillNo1").val(data.SaleBillNo);
+            $("#txtSaleBillDate1").val(data.SaleBillDate);
+            $("#txtSaleBillAmt1").val(parseFloat(data.SaleBillAmt).toFixed(2));
+            $("#txtDeptName1").val(data.DeptName);
+            $("#txtAgencyName1").val(data.AgencyName);
+            $("#txtDeptAdd1").val(data.DeptAdd);
+
+            $("#hdnDeptId1").val(data.AgencyId);
+            $("#hdnAgencyId1").val(data.AgencyId);
+
+
+            console.log("AgencyId1:", data.DeptId);
+            console.log("DeptId1:", data.DeptId);
+
+
+        }
+    }
+    catch (error) {
+        console.error("Error loading record:", error);
+    }
+}
 
 // MsgBox on View Dept. Payment Button
 $(document).on('click', '.edit-ViewDeptPayment', async function () {
