@@ -128,5 +128,21 @@ namespace Compass.Models.ManpowerModel
 
     }
 
+    //New Invoice Dept. Payment Model Submit
+    public class DeptPaymentModel
+    {
+        public int AgencyBillId { get; set; }
+        public int ReceiptiId { get; set; }
+        public int DepatrtmentBillId { get; set; }
+        public String TransactionId { get; set; }
+        public int ModeofPayment { get; set; }
+        public int BankNameId { get; set; }
+        public string Narration { get; set; }
+        public DateOnly ReceivedDate { get; set; }
+        public decimal ReceivedAmt { get; set; }
+        public decimal Gsttds { get; set; }
+        public decimal Tds { get; set; }
+        
 
+    }
 }

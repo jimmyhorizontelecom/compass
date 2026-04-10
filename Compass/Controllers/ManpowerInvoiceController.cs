@@ -365,6 +365,9 @@ namespace Compass.Controllers
             }
         }
 
+
+
+
         #endregion
 
 
@@ -466,6 +469,62 @@ namespace Compass.Controllers
                 }).ToList();
 
                 return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+        //Submit Dept. Payment 
+        [HttpPost]
+        public async Task<IActionResult> AddOrEdit_DeptPaymentRecord([FromForm] DeptPaymentModel model)
+        {
+            try
+            {
+                var receiptId = model.ReceiptiId;
+                var departmentBillId = model.DepatrtmentBillId;
+                var agencyBillId = model.AgencyBillId;
+                var transactionId = model.TransactionId;
+                var modeOfPayment = model.ModeofPayment;
+                var bankNameId = model.BankNameId;
+                var narration = model.Narration;
+                var receivedDate = model.ReceivedDate;
+                var receivedAmt = model.ReceivedAmt;
+                var gstTds = model.Gsttds;
+                var tds = model.Tds;
+                
+                var userId = User.FindFirst("UserId")?.Value;
+
+                SortedList parameters = new SortedList
+                    {
+                    { "@ReceiptId", receiptId },
+                    { "@DepartmentBillId", departmentBillId },
+                    { "@AgencyBillId", agencyBillId },
+                    { "@TransactionId", transactionId  },
+                    { "@ModeOfPayment", modeOfPayment },
+                    { "@BankNameId", bankNameId },
+                    { "@Narration", narration },
+                    { "@ReceivedDate", receivedDate },
+                    { "@ReceivedAmt", receivedAmt },
+                    { "@GSTTds2", gstTds },
+                    { "@Tds2", tds },
+                    
+                    { "@CreatedBy", userId }
+                };
+
+                var result = _cn.ExecuteNonQueryWMessage(
+                    "TallyReceivedPayment_AcceptUpdate",
+                    "",
+                    parameters
+                );
+
+                return Ok(new { success = true, message = result.ToString() });
             }
             catch (Exception ex)
             {
