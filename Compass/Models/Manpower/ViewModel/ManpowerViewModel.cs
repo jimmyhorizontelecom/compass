@@ -130,6 +130,8 @@ namespace Compass.Models.ManpowerViewModel
     // filter for Table of New Invoice 
     public class AgencyInvFilter
     {
+        public int ReceiptId { get; set; }
+        public int DepartmentBillId { get; set; }
         public int AgencyBillId { get; set; }
         public int MonthId { get; set; }
         public int MonthIdTo { get; set; }
@@ -173,5 +175,28 @@ namespace Compass.Models.ManpowerViewModel
         public int AgencyId { get; set; }
         public string AgencyName { get; set; }
        
+    }
+
+    //Dept Partial Payment List view Modal
+    public class AgencyInvPaymentListViewModel
+    {
+        public int ReceiptId {  get; set; }
+        public int AgencyBillId { get; set; }
+        public string AgencyName { get; set; }
+        public string TransactionId { get; set; }
+        public string PaymentMode { get; set; }
+        public string BankName { get; set; }
+        public string SaleBillNo { get; set; }
+        public decimal SaleBillAmt { get; set; }
+        public decimal ReceivedAmt { get; set; }
+        public string ReceivedDate { get; set; }
+        public decimal GstTds { get; set; }
+        public decimal Tds { get; set; }
+        public decimal DueBalance { get; set; }
+        public string Narration { get; set; }
+        public string VerifyPayment { get; set; }
+
+
+
     }
 }

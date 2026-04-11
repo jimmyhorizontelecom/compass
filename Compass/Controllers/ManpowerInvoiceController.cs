@@ -537,6 +537,64 @@ namespace Compass.Controllers
             }
         }
 
+
+        // Get record for Payment list for Partial Payment & View Payment
+        [HttpGet]
+        public async Task<IActionResult> GetPaymentReceivedRecord([FromQuery] AgencyInvFilter filter)
+
+        {
+            try
+            {
+               
+
+                // Access as object
+                SortedList parameters = new SortedList();
+                parameters.Add("@ReceiptId", filter.ReceiptId);
+                parameters.Add("@DepartmentBillId", filter.DepartmentBillId);
+                parameters.Add("@AgencyBillId", filter.AgencyBillId);
+               
+
+                var dt = await _cn.FillDataTableAsync("TallyReceivedPaymentTransaction_List", "", parameters);
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<AgencyInvPaymentListViewModel>());
+
+                var list = dt.AsEnumerable().Select(row => new AgencyInvPaymentListViewModel
+
+                {
+
+                    ReceiptId = Convert.ToInt32(row["ReceiptId"]?.ToString()),
+                    AgencyBillId = Convert.ToInt32(row["AgencyBillId"]?.ToString()),
+                    AgencyName = (row["AgencyName"]?.ToString()),
+                    TransactionId = (row["TransactionId"]?.ToString()),
+                    PaymentMode = (row["ModeOfPayment"]?.ToString()),
+                    BankName = (row["ModeOfPayment"]?.ToString()),
+                    SaleBillNo = (row["SaleBillNo"]?.ToString()),
+                    SaleBillAmt = Convert.ToDecimal(row["BillAmount"]?.ToString()),
+                    ReceivedAmt = Convert.ToDecimal(row["totalReceivedAmt"]?.ToString()),
+                    ReceivedDate = (row["ReceivedDate"]?.ToString()),
+                    GstTds = Convert.ToDecimal(row["GSTTds2"]?.ToString()),
+                    Tds = Convert.ToDecimal(row["Tds2"]?.ToString()),
+                    DueBalance = Convert.ToDecimal(row["DuesAmt"]?.ToString()),
+                    Narration = (row["Narration"]?.ToString()),
+                    
+
+
+                }).ToList();
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
         #endregion
 
 
