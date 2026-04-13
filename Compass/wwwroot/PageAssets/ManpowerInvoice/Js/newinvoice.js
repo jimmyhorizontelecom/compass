@@ -341,7 +341,7 @@ $(document).on('click', '.edit-PartialPayment', async function () {
 
         await loadPartialPayment(recordId);
         // load payment table list 
-        await loadPaymentList(recordId);
+        await loadPartialPaymentList(recordId);
 
         openModal('PartialPaymentModal');
         // Alternative if openModal not working
@@ -387,7 +387,7 @@ async function loadPartialPayment(recordId) {
     }
 }
 // get record in the Partial Payment Modal Table List
-async function loadPaymentList(recordId) {
+async function loadPartialPaymentList(recordId) {
 
     let filterData = {
         AgencyBillId: recordId,
@@ -398,7 +398,7 @@ async function loadPaymentList(recordId) {
         let records = await getRecords('ManpowerInvoice', 'GetPaymentReceivedRecord', filterData, '', 'N');
         console.log("Payment List:", records);
 
-        let tbody = $("#myTable1 tbody");
+        let tbody = $("#myTable2 tbody");
         tbody.empty();
 
         if (records && records.length > 0) {
@@ -414,7 +414,9 @@ async function loadPaymentList(recordId) {
                         <td>${value.ReceivedAmt || 0}</td>
                         <td>${value.GstTds || 0} <br> ${value.Tds || 0}</td>
                         <td>${value.DueBalance || 0}</td>
-                        <td>${value.VerifyPayment || ''}</td>
+                       <td class="text-center align-middle">
+                            <i class="bi bi-patch-check-fill verify-ReceivedPayment edit-icon" data-id="${value.AgencyBillId}" style="cursor:pointer;font-size:25px;color:blue;"> </i>
+                        </td>
                        
                     </tr>
                 `;
@@ -512,11 +514,14 @@ async function SubmitPartialPaymentModal() {
         if (res.success) {
             alert('Hit');
             recordlist();
+            // ✅ Reload table inside modal
+            await loadPartialPaymentList(AgencyBillId);
             resetModal();
             AgencyBillId = 0;
             $('.modelalert').text(res.message);
-            closeModal('DeptPaymentModal');
+            closeModal('PartialPaymentModal');
             MsgBox('Message', res.message, '');
+          
         }
 
     } catch (err) {
@@ -538,6 +543,8 @@ $(document).on('click', '.edit-DeptPaymentUpdate', async function () {
     var isConfirmed = await DeleteEditBox('Edit Record', 'Do you want to Edit Record?', 'question');
     if (isConfirmed) {
         await loadEditDeptPayment(recordId);
+        // load payment table list 
+        await loadEditPaymentList(recordId);
         openModal('EditDeptPaymentModal');
         // Alternative if openModal not working
         //$('#myModal_UploadFile').modal('show');
@@ -580,12 +587,88 @@ async function loadEditDeptPayment(recordId) {
             bindDataToDdl("Dropdown", "MBank_ddl", "", "ddlBankName1", " Bank Name");
             bindDataToDdl("Dropdown", "MPaymentMode_ddl", "", "ddlPaymentMode1", " Payment Mode");
 
+            // Calculation of Sale Bill Amount in GSTTDS, TDS and Payment Amount
+            let modal = $('#EditDeptPaymentModal');
+            modal.find('.saleAmt').val(parseFloat(data.SaleBillAmt).toFixed(2));
+            CalculateAmounts(modal);
+
         }
     }
     catch (error) {
         console.error("Error loading record:", error);
     }
 }
+
+// get record in the Edit Payment Modal Table List
+async function loadEditPaymentList(recordId) {
+
+    let filterData = {
+        AgencyBillId: recordId,
+
+    };
+
+    try {
+        let records = await getRecords('ManpowerInvoice', 'GetPaymentReceivedRecord', filterData, '', 'N');
+        console.log("Payment List:", records);
+
+        let tbody = $("#myTable1 tbody");
+        tbody.empty();
+
+        if (records && records.length > 0) {
+
+            $.each(records, function (index, value) {
+
+                let row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${value.TransactionId || ''}</td>
+                        <td>${value.PaymentMode || ''}</td>
+                        <td>${value.BankName || ''}</td>
+                        <td>${value.ReceivedAmt || 0}</td>
+                        <td>${value.GstTds || 0} <br> ${value.Tds || 0}</td>
+                        <td>${value.DueBalance || 0}</td>
+                        <td class="text-center align-middle">
+                            <i class="bi bi-patch-check-fill verify-ReceivedPayment edit-icon" data-id="${value.AgencyBillId}" style="cursor:pointer;font-size:25px;color:blue;"> </i>
+                        </td>
+                        <td class="text-center align-middle">
+                            <i class="bi bi-pencil-square edit-EditReceivedPayment edit-icon"  data-id="${value.AgencyBillId}" style="cursor:pointer;font-size:25px;"></i>
+                        </td>
+                       
+                    </tr>
+                `;
+
+                tbody.append(row);
+            });
+
+        } else {
+            tbody.append(`<tr><td colspan="9" class="text-center">No Data Found</td></tr>`);
+        }
+
+    } catch (error) {
+        console.error("Error loading payment list:", error);
+    }
+}
+
+// MsgBox on Edit Received/Accept Payment in Dept Payment
+$(document).on('click', '.edit-EditReceivedPayment', async function () {
+    var recordId = $(this).data("id");
+    alert(recordId);
+    console.log("Edit Record Id:", recordId);
+    if (!recordId) {
+        toastr.error("Record Id not found");
+        return;
+    }
+    var isConfirmed = await DeleteEditBox('Edit Record', 'Do you want to Edit Payment Record?', 'question');
+    if (isConfirmed) {
+        alert('Loading Edit Payment');
+        ////await deptPaymentRecordlist();
+        //await loadViewDeptPaymentList(recordId);
+        //openModal('ViewDeptPaymentModal');
+        ////eptPaymentRecordlist(recordId);
+    } else {
+        console.log('Edit cancelled');
+    }
+});
 
 // MsgBox on View Dept. Payment Button
 $(document).on('click', '.edit-ViewDeptPayment', async function () {
@@ -643,11 +726,13 @@ async function loadViewDeptPaymentList(recordId) {
             });
 
         } else {
-            tbody.append(`<tr><td colspan="8" class="text-center">No Data Found</td></tr>`);
+            tbody.append(`<tr><td colspan="9" class="text-center">No Data Found</td></tr>`);
         }
 
     } catch (error) {
         console.error("Error loading payment list:", error);
     }
 }
+
+
 
