@@ -377,7 +377,7 @@ namespace Compass.Controllers
             return View();
         }
 
-        // Get record for the Table List
+        // Get record for the Table List for Dept. Payment & Agency Payment
         [HttpGet]
         public async Task<IActionResult> GetAgencyBillRecord([FromQuery] AgencyInvFilter filter)
 
@@ -419,7 +419,8 @@ namespace Compass.Controllers
                     PurchaseBillNo = (row["Billno"]?.ToString()),
                     SaleBillAmt = Convert.ToDecimal(row["TotalAmt"]??0),//.ToString()),
                     SaleBillDate = row["SaleBillDate"]?.ToString(),
-                    
+                    //AgencyBillAmt = Convert.ToDecimal(row["AgencyBillAmt"] ?? 0),
+
                 }).ToList();
 
                 return Ok(list);
@@ -538,7 +539,7 @@ namespace Compass.Controllers
         }
 
 
-        // Get record for Payment list for Partial Payment & View Payment
+        // Get record for Payment list for Partial Payment & View Payment in Table
         [HttpGet]
         public async Task<IActionResult> GetPaymentReceivedRecord([FromQuery] AgencyInvFilter filter)
 
@@ -598,6 +599,230 @@ namespace Compass.Controllers
         #endregion
 
 
+
+        #region TallyAgencyPayment
+
+        public IActionResult TallyAgencyPayment()
+        {
+            return View();
+        }
+
+        // Get record for Agency Payment & Partial Payment Modal
+        [HttpGet]
+        public async Task<IActionResult> GetAgencyInvoicePartialPaymentRecord([FromQuery] AgencyInvFilter filter)
+
+        {
+            try
+            {
+                // Access as object
+                SortedList parameters = new SortedList();
+                parameters.Add("@AgencyBillId", filter.AgencyBillId);
+
+                var dt = await _cn.FillDataTableAsync("TallyAgencyBillPaymentPartial_Get", "", parameters);
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<AgencyInvDeptPayViewModel>());
+
+                var list = dt.AsEnumerable().Select(row => new AgencyInvDeptPayViewModel
+
+                {
+                    AgencyBillId = Convert.ToInt32(row["AgencyBillId"]?.ToString()),
+                    PurchaseBillNo = (row["Billno"]?.ToString()),
+                    PurchaseBillDate = (row["BillDate"]?.ToString()),
+                    SaleBillNo = (row["SaleBillNo"]?.ToString()),
+                    SaleBillDate = (row["SaleBillDate"]?.ToString()),
+                    SaleBillAmt = Convert.ToDecimal(row["SaleBillAmount"]?.ToString()),
+                    DeptId = Convert.ToInt32(row["DeptId"]?.ToString()),
+                    DeptName = (row["departmentName"]?.ToString()),
+                    DeptAdd = (row["DepartmentAddress"]?.ToString()),
+                    AgencyId = Convert.ToInt32(row["AgencyId"]?.ToString()),
+                    AgencyName = (row["AgencyName"]?.ToString()),
+
+                }).ToList();
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+        //Submit Agency Payment 
+        [HttpPost]
+        public async Task<IActionResult> AddOrEdit_AgencyPaymentRecord([FromForm] AgencyPaymentModel model)
+        {
+            try
+            {
+               // var receiptId = model.ReceiptiId;
+                //var departmentBillId = model.DepatrtmentBillId;
+                var agencyBillId = model.AgencyBillId;
+                var transactionId = model.TransactionId;
+                var modeOfPayment = model.ModeofPayment;
+                var narration = model.Narration;
+                var receivedDate = model.ReceivedDate;
+                var receivedAmt = model.ReceivedAmt;
+                var gstTds = model.Gsttds;
+                var tds1 = model.Tds1;
+                var tds2 = model.Tds2;
+
+                var userId = User.FindFirst("UserId")?.Value;
+
+                SortedList parameters = new SortedList
+                    {
+                   
+                    { "@PaymentId", 0 },
+                    { "@AgencyBillId", agencyBillId },
+                    { "@TransactionId", transactionId  },
+                    { "@ModeOfPayment", modeOfPayment },
+                    { "@Narration", narration },
+                    { "@PaymentDate", receivedDate },
+                    { "@PaymentAmt", receivedAmt },
+                    { "@GstTds2", gstTds },
+                    { "@Tds1", tds1 },
+                    { "@Tds2", tds2},
+
+                    { "@CreatedBy", userId }
+                };
+
+                var result = _cn.ExecuteNonQueryWMessage(
+                    "TallyAgencyPayment_AcceptUpdate",
+                    "",
+                    parameters
+                );
+
+                return Ok(new { success = true, message = result.ToString() });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+        //Submit Agency Partial Payment 
+        [HttpPost]
+        public async Task<IActionResult> AddOrEdit_AgencyPartialPaymentRecord([FromForm] AgencyPaymentModel model)
+        {
+            try
+            {
+                // var receiptId = model.ReceiptiId;
+                //var departmentBillId = model.DepatrtmentBillId;
+                var agencyBillId = model.AgencyBillId;
+                var transactionId = model.TransactionId;
+                var modeOfPayment = model.ModeofPayment;
+                var narration = model.Narration;
+                var receivedDate = model.ReceivedDate;
+                var receivedAmt = model.ReceivedAmt;
+                var gstTds = model.Gsttds;
+                var tds1 = model.Tds1;
+                var tds2 = model.Tds2;
+
+                var userId = User.FindFirst("UserId")?.Value;
+
+                SortedList parameters = new SortedList
+                    {
+
+                    { "@PaymentId", 0 },
+                    { "@AgencyBillId", agencyBillId },
+                    { "@TransactionId", transactionId  },
+                    { "@ModeOfPayment", modeOfPayment },
+                    { "@Narration", narration },
+                    { "@PaymentDate", receivedDate },
+                    { "@PaymentAmt", receivedAmt },
+                    { "@GstTds2", gstTds },
+                    { "@Tds1", tds1 },
+                    { "@Tds2", tds2},
+
+                    { "@CreatedBy", userId }
+                };
+
+                var result = _cn.ExecuteNonQueryWMessage(
+                    "TallyAgencyPaymentPatrial_AcceptUpdate",
+                    "",
+                    parameters
+                );
+
+                return Ok(new { success = true, message = result.ToString() });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+
+        // Get record for Payment list for Partial Payment & View Payment in Table
+        [HttpGet]
+        public async Task<IActionResult> GetAgencyPaymentReceivedRecord([FromQuery] AgencyInvFilter filter)
+
+        {
+            try
+            {
+
+
+                // Access as object
+                SortedList parameters = new SortedList();
+                parameters.Add("@AgencyBillId", filter.AgencyBillId);
+
+
+                var dt = await _cn.FillDataTableAsync("TallyAgencyParymentTransaction_get", "", parameters);
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<AgencyPartialPayListViewModel>());
+
+                var list = dt.AsEnumerable().Select(row => new AgencyPartialPayListViewModel
+
+                {
+
+                    AgencyBillId = Convert.ToInt32(row["AgencyBillId"]?.ToString()),
+                    TransactionId = (row["TransactionId"]?.ToString()),
+                    PaymentMode = (row["ModeOfPayment"]?.ToString()),
+                    ReceivedDate = (row["PaymentDate"]?.ToString()),
+                    GstTds = decimal.TryParse(row["GSTTds2"]?.ToString(), out var gst) ? gst : 0,
+                    //Convert.ToDecimal(row["GSTTds2"]?.ToString()),
+                    Tds1 = decimal.TryParse(row["Tds1"]?.ToString(), out var tds1) ? tds1 : 0,
+                    //Convert.ToDecimal(row["Tds1"]?.ToString()),
+                    Tds2 = decimal.TryParse(row["Tds2"]?.ToString(), out var tds2) ? tds2 : 0,
+                    //Convert.ToDecimal(row["Tds2"]?.ToString()),
+                    PaymentAmt = decimal.TryParse(row["PaymentAmt"]?.ToString(), out var pay) ? pay : 0,
+                    //Convert.ToDecimal(row["PaymentAmt"]?.ToString()),
+                    DueBalance = decimal.TryParse(row["BalanceAmt"]?.ToString(), out var bal) ? bal : 0,
+                    //Convert.ToDecimal(row["BalanceAmt"]?.ToString()),
+                    Narration = (row["Narration"]?.ToString()),
+
+
+
+                }).ToList();
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+        #endregion
     }
 
 }

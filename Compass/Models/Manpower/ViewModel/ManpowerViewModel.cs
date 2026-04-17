@@ -126,7 +126,7 @@ namespace Compass.Models.ManpowerViewModel
     }
 
 
-    // ManpowerInvoice/NewInvoice
+    // ManpowerInvoice/NewInvoice &  // ManpowerInvoice/TallyAgencyPayment
     // filter for Table of New Invoice 
     public class AgencyInvFilter
     {
@@ -138,11 +138,11 @@ namespace Compass.Models.ManpowerViewModel
         public int AgencyId { get; set; }
         public int DeptId { get; set; }
         public char PaymentStatus { get; set; }
-       
         public int PageNo { get; set; }
         public int PageSize { get; set; }
-
+      
     }
+
     // View Model for Table List of New Invoice
     public class AgencyInvViewModel
     {
@@ -156,6 +156,7 @@ namespace Compass.Models.ManpowerViewModel
         public string PurchaseBillNo { get; set; }
         public decimal SaleBillAmt { get; set; }
         public string SaleBillDate { get; set; }
+        //public decimal AgencyBillAmt { get; set; }
         
 
     }
@@ -196,7 +197,28 @@ namespace Compass.Models.ManpowerViewModel
         public string Narration { get; set; }
         public string VerifyPayment { get; set; }
 
-
-
     }
+
+    //Agency Partial Payment List view Modal
+    public class AgencyPartialPayListViewModel
+    {
+        public int AgencyBillId { get; set; }
+        public string TransactionId { get; set; }
+        public string PaymentMode { get; set; }
+        public string ReceivedDate { get; set; }
+        public decimal GstTds { get; set; }
+        public decimal Tds1 { get; set; }
+        public decimal Tds2 { get; set; }
+        public decimal PaymentAmt { get; set; }
+        public decimal DueBalance { get; set; }
+        public string Narration { get; set; }
+        
+    }
+
+
+
+
+
+
+
 }
