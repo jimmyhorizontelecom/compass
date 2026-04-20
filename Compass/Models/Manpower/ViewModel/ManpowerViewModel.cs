@@ -202,11 +202,13 @@ namespace Compass.Models.ManpowerViewModel
     //Agency Partial Payment List view Modal
     public class AgencyPartialPayListViewModel
     {
+        public int PaymentId { get; set; }
         public int AgencyBillId { get; set; }
         public string TransactionId { get; set; }
         public string PaymentMode { get; set; }
         public string ReceivedDate { get; set; }
         public decimal GstTds { get; set; }
+        public decimal ITTds { get; set; }
         public decimal Tds1 { get; set; }
         public decimal Tds2 { get; set; }
         public decimal PaymentAmt { get; set; }

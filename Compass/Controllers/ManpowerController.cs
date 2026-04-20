@@ -342,6 +342,10 @@ namespace Compass.Controllers
 
                 var userId = User.FindFirst("UserId")?.Value;
 
+
+
+
+
                 string AttendanceCertificate = "";
                 if (attachmentFile1 != null && attachmentFile1.Length > 0)
                 {

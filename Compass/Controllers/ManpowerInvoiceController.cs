@@ -766,7 +766,7 @@ namespace Compass.Controllers
         }
 
 
-        // Get record for Payment list for Partial Payment & View Payment in Table
+        // Get record for Payment list for Table in Partial Payment
         [HttpGet]
         public async Task<IActionResult> GetAgencyPaymentReceivedRecord([FromQuery] AgencyInvFilter filter)
 
@@ -822,6 +822,64 @@ namespace Compass.Controllers
             }
         }
 
+
+        // Get record for Payment list for View Table
+        [HttpGet]
+        public async Task<IActionResult> GetAgencyPaymentRecord([FromQuery] AgencyInvFilter filter)
+
+        {
+            try
+            {
+
+
+                // Access as object
+                SortedList parameters = new SortedList();
+                parameters.Add("@PaymentId", 0);
+                parameters.Add("@AgencyBillId", filter.AgencyBillId);
+
+
+                var dt = await _cn.FillDataTableAsync("TallyAgencyPaymentTransaction_List", "", parameters);
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<AgencyPartialPayListViewModel>());
+
+                var list = dt.AsEnumerable().Select(row => new AgencyPartialPayListViewModel
+
+                {
+
+                    PaymentId = Convert.ToInt32(row["PaymentId"]?.ToString()),
+                    AgencyBillId = Convert.ToInt32(row["AgencyBillId"]?.ToString()),
+                    TransactionId = (row["TransactionId"]?.ToString()),
+                    PaymentMode = (row["ModeOfPayment"]?.ToString()),
+                    Narration = (row["Narration"]?.ToString()),
+                    PaymentAmt = decimal.TryParse(row["totalReceivedAmt"]?.ToString(), out var pay) ? pay : 0,
+                    //Convert.ToDecimal(row["PaymentAmt"]?.ToString()),
+                    Tds2 = decimal.TryParse(row["ItTds"]?.ToString(), out var tds2) ? tds2 : 0,
+                    //Convert.ToDecimal(row["Tds2"]?.ToString()),
+                    GstTds = decimal.TryParse(row["GSTTds2"]?.ToString(), out var gst) ? gst : 0,
+                    //Convert.ToDecimal(row["GSTTds2"]?.ToString()),
+                    DueBalance = decimal.TryParse(row["DuesAmt"]?.ToString(), out var duebalane) ? duebalane : 0,
+                    //Tds1 = decimal.TryParse(row["Tds1"]?.ToString(), out var tds1) ? tds1 : 0,
+                    //Convert.ToDecimal(row["Tds1"]?.ToString()),
+                    ReceivedDate = (row["PaymentDate"]?.ToString()),
+
+
+
+
+                }).ToList();
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
         #endregion
     }
 

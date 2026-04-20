@@ -667,7 +667,7 @@ async function SubmitPartialPaymentModal() {
 //    }
 //});
 
-// MsgBox on View Dept. Payment Button
+// MsgBox on View Agency Payment Button
 $(document).on('click', '.edit-ViewDeptPayment', async function () {
     var recordId = $(this).data("id");
     alert(recordId);
@@ -695,10 +695,10 @@ async function loadViewAgencyPaymentList(recordId) {
     };
 
     try {
-        let records = await getRecords('ManpowerInvoice', 'GetAgencyPaymentReceivedRecord', filterData, '', 'N');
+        let records = await getRecords('ManpowerInvoice', 'GetAgencyPaymentRecord', filterData, '', 'N');
         console.log("Payment List:", records);
 
-        let tbody = $("#myTable2 tbody");
+        let tbody = $("#myTable3 tbody");
         tbody.empty();
 
         if (records && records.length > 0) {
@@ -708,14 +708,14 @@ async function loadViewAgencyPaymentList(recordId) {
                 let row = `
                     <tr>
                         <td>${index + 1}</td>
-                        <!-- <td>${value.AgencyName || ''}</td> -->
-                        <!-- <td>${value.SaleBillNo || ''}</td> -->
-                        <!-- <td>${value.SaleBillAmt || 0}</td> -->
-                        <td>${value.PaymentMode || 0}</td>
                         <td>${value.TransactionId || 0}</td>
-                        <td>${value.ReceivedAmt || 0}<br>${value.ReceivedDate || ''}</td>
-                        <td>${value.GstTds || 0} <br> ${value.Tds || 0}</td>
-                        <td>${value.Narration || '' } </td>
+                        <td>${value.PaymentMode || 0}</td>
+                        <td>${value.Narration || ''}</td>
+                        <td>${value.PaymentAmt || 0} </td>
+                        <td>${value.Tds2 || 0 } </td>
+                        <td>${value.GstTds || 0 } </td>
+                        <td>${value.DueBalance || 0 } </td>
+                        <td>${value.ReceivedDate || '' } </td>
                     </tr>
                 `;
 
