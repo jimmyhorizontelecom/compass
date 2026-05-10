@@ -777,24 +777,66 @@ namespace Compass.Controllers
         }
 
 
-        #endregion
+        // Get record for Payment list for Table in Partial Payment
+        [HttpGet]
+        public async Task<IActionResult> GetAgencyPaymentReceivedRecord([FromQuery] AgencyInvFilter filter)
 
-        #region New Invoice
-        public IActionResult NewInvoice()
         {
-            return View();
+            try
+            {
+
+
+                // Access as object
+                SortedList parameters = new SortedList();
+                parameters.Add("@AgencyBillId", filter.AgencyBillId);
+
+
+                var dt = await _cn.FillDataTableAsync("TallyAgencyParymentTransaction_get", "", parameters);
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<AgencyPartialPayListViewModel>());
+
+                var list = dt.AsEnumerable().Select(row => new AgencyPartialPayListViewModel
+
+                {
+
+                    AgencyBillId = Convert.ToInt32(row["AgencyBillId"]?.ToString()),
+                    TransactionId = (row["TransactionId"]?.ToString()),
+                    PaymentMode = (row["ModeOfPayment"]?.ToString()),
+                    ReceivedDate = (row["PaymentDate"]?.ToString()),
+                    GstTds = decimal.TryParse(row["GSTTds2"]?.ToString(), out var gst) ? gst : 0,
+                    //Convert.ToDecimal(row["GSTTds2"]?.ToString()),
+                    Tds1 = decimal.TryParse(row["Tds1"]?.ToString(), out var tds1) ? tds1 : 0,
+                    //Convert.ToDecimal(row["Tds1"]?.ToString()),
+                    Tds2 = decimal.TryParse(row["Tds2"]?.ToString(), out var tds2) ? tds2 : 0,
+                    //Convert.ToDecimal(row["Tds2"]?.ToString()),
+                    PaymentAmt = decimal.TryParse(row["PaymentAmt"]?.ToString(), out var pay) ? pay : 0,
+                    //Convert.ToDecimal(row["PaymentAmt"]?.ToString()),
+                    DueBalance = decimal.TryParse(row["BalanceAmt"]?.ToString(), out var bal) ? bal : 0,
+                    //Convert.ToDecimal(row["BalanceAmt"]?.ToString()),
+                    Narration = (row["Narration"]?.ToString()),
+
+
+
+                }).ToList();
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
         }
 
-
         #endregion
 
-        #region Purchase Bill Verification
-        public IActionResult PurchaseBillVerification()
-        {
-            return View();
-        }
 
 
-        #endregion
+
     }
 }

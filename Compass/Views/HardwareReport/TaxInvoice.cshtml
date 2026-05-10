@@ -1,0 +1,316 @@
+﻿@using Compass.Report.ViewModels
+@model List<ProductReportVM>
+
+<h2 class="text-center">Tax Invoice</h2>
+@* 
+@if (Model != null && Model.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr> 
+                <th>Category</th>
+                <th>Title</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.MainCategory</td>
+                    <td>@item.Title</td>
+                    <td>@item.IsActive</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-danger">No Data Found</p>
+}
+ *@
+<!-- Tax Invoice -->
+<div class="container-fluid">
+    <div style="border-style:solid">
+        <h5 class="text-center">
+            Himachal Pradesh State Electronics Development Corporation Limited <br />IT BHAWAN,1st FLOOR,Beolia Road, Mehli Shimla 171013 H.P.
+        </h5>
+        <h6 class="text-center">
+            GSTIN/UIN:02AAACH3904P2ZO <br />State Name: Himachal Pradesh, Code:02<br />Email: manpower@hpsedc.in
+        </h6>
+    </div>
+    <div style="padding:10px; border-style:solid; border-top:0px">
+        <span>IRN No:- </span><br />
+        <div style="display:flex">
+            <span style="width: 300px;">
+                Ack Date: <span>24/04/2026</span>
+            </span>
+
+            <span style="width: 400px;">
+                Ack No: <span>HPSEDC/00000001</span>
+            </span>
+
+            <span>
+                GST No: <span>HPSEDC00000001</span>
+            </span>
+        </div>
+    </div>
+    <div style="display:flex; border-style:solid; border-top:0px">
+        <div style="width:75%">
+            <span>Consignee(Ship to)</span><br />
+            <span>
+                RURAL DEVELOPMENT
+                The ADC- cum Project Director, DRDA Kullu, Distt. Kullu, H.P.
+                State Name:Himachal Pradesh, Code:02
+            </span>
+        </div>
+        <div style="width:25%; border-left:2px solid black">
+            <div style="padding:5px">
+                <span>Date:</span><br><span> 24/04/2026</span>
+            </div>
+            <div style="padding:5px; border-top:2px solid black">
+                <span>
+                    HPSEDC Invoice & WO.Ref No.
+                    EDC/04/26/07866
+                </span><br>
+                <span>(DRDA-1) HPSEDC/MANPOWER/CC/2022-10444 DATED 22.10</span>
+            </div>
+            
+        </div>
+    </div>
+    <div style="display:flex; border-style:solid; border-top:0px">
+        <div style="width:75%">
+            <span>Buyer (Bill to)</span><br />
+            <span>
+                RURAL DEVELOPMENT
+                The ADC- cum Project Director, DRDA Kullu, Distt. Kullu, H.P.
+                State Name:Himachal Pradesh, Code:02
+            </span>
+        </div>
+        <div style="width:25%;border-left:2px solid black">
+            <div style="padding:5px">
+                <span>Agency Invoice Ref. No.:</span><br><span> 2026-27/00185</span>
+            </div>
+            <div style="padding:5px; border-top:2px solid black">
+                <span>Date:</span><br><span> 24/04/2026</span>
+            </div>
+            
+        </div>
+    </div>
+    <div style="border-style:solid; border-top:0px">
+        <table class="table table-bordered" style="text-align:center;">
+            <thead>
+                <tr>
+                    <th>Sr. No</th>
+                    <th>Description</th>
+                    <th>No. Of Res.</th>
+                    <th>Rate</th>
+                    <th>Per</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot class="tfoot">
+                <tr>
+                    
+                    <td colspan="2">Total</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>Amount</td>
+                    
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div style="border-style:solid; border-top:0; margin:0;">
+        <span><strong> Amount Chargeable (In Words)</strong></span> <br />
+        <span><strong>Nineteen Thousand Five Hundred Thirty-Two Rupees Only</strong></span>
+       
+    </div>
+    <div style="border-style:solid; border-top:0; margin:0;">
+        <table class="table table-bordered" style="text-align:center; ">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="vertical-align:middle;">HSN/SAC</th>
+                    <th rowspan="2" style="vertical-align:middle;">Taxable Value</th>
+                    <!-- Central Tax split into 2 columns -->
+                    <th colspan="2">Central Tax</th>
+                    <!-- State Tax split into 2 columns -->
+                    <th colspan="2">State Tax</th>
+                    <th rowspan="2" style="vertical-align:middle;">Total Tax Amount</th>
+                </tr>
+                <tr>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot class="tfoot">
+                <tr>
+                    
+                    <td colspan="2">Total</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>Amount</td>
+                    
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div style="display:flex; border-style:solid; border-top:0px">
+        <div style="width:55%">
+            <span>Tax Amount (In Words)</span><br />
+            <span>Two Thousand Nine Hundred Seventy-Nine Rupees and Forty Paise Only</span><br />
+            <span>Remarks:</span><br />
+            <span>BILL FOR THE MONTH OF APRIL 2026</span>
+        </div>
+        <div style="width:45%; border-left:2px solid black">
+            <div style="padding:5px">
+                <span> <strong> Bank : </strong> IDBI Bank LTD</span><br>
+                <span> <strong> Branch Name :  </strong> Mehli Shimla, Himachal Pradesh  </span><br>
+                <span> <strong> Account Name :  </strong>  MD HP STATE ELECTRONICS DEV CO LTD </span><br>
+                <span> <strong> Account No. :  </strong>  1481102000000374 </span><br>
+                <span> <strong> IFSC Code :  </strong>  IBKL0001481 </span><br>
+                
+            </div>
+            
+        </div>
+    </div>
+    <div style="display:flex; border-style:solid; border-top:0px">
+        <div style="width:50%">
+            <span><strong>Declaration:</strong></span><br />
+            <span>
+                We declare that this invoice shows the
+                actual cost of manpower deployed and
+                that all particulars are true and correct.
+            </span><br />
+        </div>
+       @*  <div style="width:50%; border-left:2px solid black; display:flex; align-items:flex-end;">
+            <div style="padding:5px ;">
+                <span style="margin-left:50px"> <strong> Prepared By </strong> </span>
+                <span style="margin-left:150px"> <strong> Verified By </strong> </span>
+                <span style="margin-left:150px"> <strong> Authorised Signatory </strong></span>
+            </div>
+        </div> *@
+        <div style="width:50%; border-left:2px solid black;  position:relative;">
+    
+            <div style="position:absolute; bottom:5px; width:100%; padding:5px; display:flex; justify-content:space-between;">
+                <span><strong>Prepared By</strong></span>
+                <span><strong>Verified By</strong></span>
+                <span><strong>Authorised Signatory</strong></span>
+            </div>
+
+        </div>
+    </div>
+    <div style="border-style:solid; border-top:0; margin:0;text-align:center">
+        <span>This is a Compass System Generated Bill.</span>
+    </div>
+
+</div>
+
+<div style="page-break-after: always;">
+    <!-- Next content goes to new page -->
+</div>
+
+<!-- Letter -->
+<div class="container-fluid">
+    <div style="display:flex">
+        <div style="width:40%">
+            <h4> HIMACHAL PRADESH STATE ELECTRONICS DEVELOPMENT CORPORATION LIMITED</h4>
+        </div>
+        <div style="width:20%">
+            <h1>Logo</h1>
+        </div>
+        <div style="width:40%">
+            <h4>
+                IT Bhawan, Ground & 1st Floor Beolia Road, Mehli Shimla, H.P. -171013
+                Ph. 0177-2623513, 2628473,
+                GSTIN/UIN: 02AAACH3904P2ZO
+                State Name : Himachal Pradesh, Code : 02
+                E-Mail : hpsedc@hpsedc.in
+            </h4>
+        </div>
+
+
+
+
+    </div>
+    <div style="display:flex">
+        <div style="width:50%">
+            <h3><span>EDC/04/26/07866  -  009481</span></h3>
+        </div>
+        <div style="width:50% ; text-align:right">
+            <h3><span> <strong>Dispatch Date :22-04-26</strong></span></h3>
+        </div>
+    </div>
+    <div>
+        <h4 style="margin-left:50px">To </h4>
+        <h4 style="margin-left:150px">
+            <span>
+                The ADC- cum Project Director, <br />
+                DRDA Kullu,<br />
+                Distt. Kullu,<br />
+                H.P.
+            </span>
+        </h4>
+    </div>
+    <div>
+        <span><strong>Subject :</strong></span> <span>Deployment of Manpower (outsource basis) final bill there of.</span>
+    </div>
+    <div style="margin-top:10px">
+        <h6>Dear Sir/Madam,</h6>
+        <p style="text-indent:40px">
+            Please find enclosed herewith the sales bill(s) No. <span>EDC/04/26/07866</span>  Dated: <sspan>22-Apr-2026</sspan>
+            amounting to Rs. <span>19532.00</span> <span>(Nineteen Thousand Five Hundred Thirty-Two Rupees Only)</span> on account
+            of deployment of manpower services on outsourced basis, <span>BILL FOR THE MONTH OF APRIL 2026</span>
+        </p>
+        <p style="text-indent:40px">
+            It is therefore requested that necessary payment may kindly be released to this office through
+            cheque, Demand Draft or RTGS in favour of <span>MD HP STATE ELECTRONICS DEV CO LTD MEHLI SHIMLA (MANPOWER).</span>
+            The detail of Bank Account is as under:
+        </p>
+        <p style="margin-left:400px">
+            <strong> i) Account No. :</strong> <span> 1481102000000374</span><br />
+            <strong> ii) Bank Name : </strong> <span> IDBI Bank LTD</span><br />
+            <strong> iii) IFSC Code : </strong> <span> IBKL0001481</span>
+        </p>
+        <strong>Important Note :-</strong>
+        <p style="margin-left:100px"> 
+            1. Please share the details of payment i.e. UTR No. in case of Bank to Bank transfer or Payee code in
+            case of Treasury payment to this office through official letter and/or e-mail :
+            manpowerpayment@hpsedc.in
+        </p>
+        <p style="margin-left:100px"> 
+            2. In case the payment being released has been clubbed for different bills generated by HPSEDC, then
+            the bill-wise details of the payment is to be provided separately by your organisation so that proper
+            reconciliation is done by HPSEDC with the bank statement.
+        </p>
+        <p style="margin-left:100px"> 
+            3. Please note that in case Bill-wise payment details are not received in HPSEDC, it will be difficult to
+            reconcile the payments and it will result in non-payment of wages to the deployed manpower on
+            outsource basis for which HPSEDC may not be held responsible.
+        </p>
+        <p style="margin-left:100px"> 
+            Thanking you and assuring our best service always.
+        </p>
+        <div style="text-align:right; margin-right:200px">
+        <span > Yours faithfully</span> 
+        </div>
+        <div style="text-align:right; margin-top:50px; margin-right:200px">
+        <span > Authorized Signatory</span>
+        </div>
+
+
+    </div>
+
+
+
+</div>

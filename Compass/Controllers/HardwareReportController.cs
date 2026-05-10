@@ -1,6 +1,7 @@
 ﻿using ClosedXML.Excel;
 //using ExcelDataReader;
 using Compass.Classes;
+using Compass.Models.ManpowerViewModel;
 using Compass.Report.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -118,5 +119,89 @@ namespace Compass.Controllers
 
 
         #endregion
+
+
+        #region Tax Invoice
+        public async Task<IActionResult> TaxInvoice()
+        {
+            var dt = await _cn.FillDataTableAsync("HardwareProductategory_List", "", null);
+
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return View(new List<ProductReportVM>());
+            }
+
+            var list = CommonNew.ToList<ProductReportVM>(dt);
+
+            return View(list ?? new List<ProductReportVM>());
+        }
+        // Pdf Export
+        public async Task<IActionResult> TaxInvoicePdf()
+        {
+            var dt = await _cn.FillDataTableAsync("HardwareProductategory_List", "", null);
+            var list = CommonNew.ToList<ProductReportVM>(dt);
+
+            return new ViewAsPdf("TaxInvoice", list ?? new List<ProductReportVM>());
+        }
+
+
+
+
+
+
+        #endregion
+
+
+        #region Department Invoice
+        //public async Task<IActionResult> DepartmentInvoice()
+        //{
+        //    var dt = await _cn.FillDataTableAsync("TallyHpsedcDepartmentInvoice", "", null);
+
+        //    if (dt == null || dt.Rows.Count == 0)
+        //    {
+        //        return View(new List<DeptInvoiceReportVM>());
+        //    }
+
+        //    var list = CommonNew.ToList<DeptInvoiceReportVM>(dt);
+
+        //    return View(list ?? new List<DeptInvoiceReportVM>());
+        //}
+        public async Task<IActionResult> DepartmentInvoice([FromQuery] PInvoiceFilter filter)
+        {
+            SortedList parameters = new SortedList();
+            parameters.Add("@DeptBillId", 0);
+            parameters.Add("@AgencyBillId", filter.Id);
+            
+
+
+            var dt = await _cn.FillDataTableAsync("TallyHpsedcDepartmentInvoice", "", parameters);
+
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return View(new DeptInvoiceReportVM()); // send empty object
+            }
+
+            var list = CommonNew.ToList<DeptInvoiceReportVM>(dt);
+
+            //return View(list ?? new List<DeptInvoiceReportVM>());
+            return View(list.FirstOrDefault()); // ✅ send single record
+        }
+        // Pdf Export
+        //public async Task<IActionResult> DepartmentInvoicePdf()
+        //{
+        //    var dt = await _cn.FillDataTableAsync("TallyHpsedcDepartmentInvoice", "", null);
+        //    var list = CommonNew.ToList<DeptInvoiceReportVM>(dt);
+
+        //    return new ViewAsPdf("DepartmentInvoice", list ?? new List<DeptInvoiceReportVM>());
+        //}
+
+
+
+
+
+
+        #endregion
+
+
     }
 }

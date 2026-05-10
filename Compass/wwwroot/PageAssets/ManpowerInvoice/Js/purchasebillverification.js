@@ -132,7 +132,7 @@ function bindDatatable(records, tableId) {
                 </td>
                  <td class="text-center">
                   
-                       
+                      <button class="edit-HPSEDC_Invoice_Print edit-icon" data-id="${value.Id}" >Print</button> 
                   
                 </td>
                  <td class="text-center">
@@ -525,4 +525,38 @@ async function SubmitSInvoice() {
         $('.modelalert').text("Error: " + err);
     }
 
+}
+
+// MsgBox on HPSCED Print Bill 
+$(document).on('click', '.edit-HPSEDC_Invoice_Print', async function () {
+
+    var recordId = $(this).data("id");
+    alert(recordId);
+    console.log("Print Record Id:", recordId);
+
+    if (!recordId) {
+        toastr.error("Record Id not found");
+        return;
+    }
+
+
+    var isConfirmed = await DeleteEditBox('Print', 'Do you want to Print Record?', 'question');
+
+    if (isConfirmed) {
+        //alert('Testing');
+        printInvoice(recordId);
+        //await loadSInvoice(recordId);
+        // openModal('SInvoiceModal');
+        // Alternative if openModal not working
+        //$('#myModal_UploadFile').modal('show');
+
+    } else {
+
+        console.log('Edit cancelled');
+
+    }
+
+});
+function printInvoice(id) {
+    window.open(`/HardwareReport/DepartmentInvoice?Id=${id}`, '_blank');
 }
