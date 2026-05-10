@@ -186,7 +186,7 @@ namespace Compass.Controllers
                 parameters.Add("@AgencyId", filter.AgencyId);
                 parameters.Add("@DeptId", filter.DeptId);
                 parameters.Add("@MonthYear", filter.MonthYear);
-                parameters.Add("@CreateBy", 0);
+                parameters.Add("@CreateBy", userId);
                 parameters.Add("@RoleId", roleId);
 
                 
@@ -224,108 +224,19 @@ namespace Compass.Controllers
             }
         }
 
-        // No of resources when change on Billing Address ddl
-        //[HttpGet]
-        //public async Task<IActionResult> GetNoOfResourcesByBilling([FromQuery] DeptAttendanceFilter filter)
-        //{
-        //    try
-        //    {
-        //        SortedList parameters = new SortedList();
-        //        parameters.Add("@AgencyId", filter.AgencyId);
-        //        parameters.Add("@DeptId", filter.DeptId);
-        //        parameters.Add("@WorkOrderAgencyId", filter.WorkOrderAgencyId); // IMPORTANT
-        //        parameters.Add("@UserId", filter.CreatedBy);
-        //        parameters.Add("@RoleId", filter.UserRole);
-        //        parameters.Add("@SearchTerm", DBNull.Value);
-
-        //        var dt = await _cn.FillDataTableAsync("TallyAgencyWorkOrder_ddlC", "", parameters);
-
-        //        if (dt == null || dt.Rows.Count == 0)
-        //            return Ok(new List<object>());
-
-        //        var list = dt.AsEnumerable().Select(row => new
-        //        {
-        //            Id = row["WorkOrderAgencyId"]?.ToString(),
-        //            BillingId = row["BillingId"]?.ToString(),
-        //            BillingAddress = row["BillingAddress"]?.ToString(),
-        //            NoOfResources = Convert.ToInt32(row["NoDeployedRes"]?.ToString())
-        //        }).ToList();
-
-        //        return Ok(list);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, new
-        //        {
-        //            success = false,
-        //            message = "Server error",
-        //            error = ex.Message
-        //        });
-        //    }
-        //}
-
+       
         // Submit data
-        //[HttpPost]
-        // public IActionResult AddOrEdit_DeptAttendanceRecord1(DeptAttendanceModel model)
-        // {
-        //     try
-        //     {
-        //         //if (string.IsNullOrWhiteSpace(model.WorkOrderNo) ||
-        //         //    string.IsNullOrWhiteSpace(model.BillAddressEmail)
 
-        //         //    )
-        //         //{
-        //         //    return BadRequest(new
-        //         //    {
-        //         //        success = false,
-        //         //        message = "WorkOrderNo and BillAddressEmail are required."
-        //         //    });
-        //         //}
-
-
-
-
-        //         SortedList parameters = new SortedList();
-        //         parameters.Add("@Id", model.Id);
-        //         parameters.Add("@MonthYear", model.MonthYear);
-        //         parameters.Add("@WorkOrderId", model.WorkOrderNo);
-        //         parameters.Add("@UpladNoOfResource", model.UpladNoOfResource);
-        //         parameters.Add("@AttendanceCertificate", model.AttendanceFile);
-        //         parameters.Add("@AnnexureFile", model.AnnexureFile);
-        //         parameters.Add("@AgencyBillFile", model.AgencyBillFile);
-
-
-        //         var userId = User.FindFirst("UserId")?.Value;
-        //         parameters.Add("@CreatedBy", userId);
-
-        //         var result = _cn.ExecuteNonQueryWMessage(
-        //             "tblTallyAttendance_AcceptUpdate",
-        //             "",
-        //             parameters
-        //         );
-
-        //         return Ok(new
-        //         {
-        //             success = true,
-        //             message = result.ToString()
-        //         });
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, new
-        //         {
-        //             success = false,
-        //             message = "Server error.",
-        //             error = ex.Message
-        //         });
-        //     }
-        // }
 
         [HttpPost]
+
         public async Task<IActionResult> AddOrEdit_DeptAttendanceRecord([FromForm] DeptAttendanceModel model)
         {
             try
             {
+
+                var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
+                var roleId = Convert.ToInt32(User.FindFirst("RoleId")?.Value ?? "0");
 
                 var Id = model.Id;
                 var MonthYear = model.MonthYear;
@@ -335,12 +246,12 @@ namespace Compass.Controllers
                 //var UploadFolder = Request.Form["UploadFolder"].ToString();
 
                 // ✅ Get uploaded file
-               
+
                 IFormFile attachmentFile1 = model.AttendanceFile;
                 IFormFile attachmentFile2 = model.AnnexureFile;
                 IFormFile attachmentFile3 = model.AgencyBillFile;
 
-                var userId = User.FindFirst("UserId")?.Value;
+                
 
 
 
@@ -414,8 +325,8 @@ namespace Compass.Controllers
                         await attachmentFile3.CopyToAsync(stream);
                     }
                 }
-                             
-                
+
+
                 SortedList parameters = new SortedList
                     {
                     { "@Id", Id },
@@ -445,6 +356,130 @@ namespace Compass.Controllers
                     error = ex.Message
                 });
             }
+        }
+
+        //[HttpPost]
+        //public async Task<IActionResult> AddOrEdit_DeptAttendanceRecord([FromForm] DeptAttendanceModel model)
+        //{
+        //    try
+        //    {
+        //        var roleId = User.FindFirst("RoleId")?.Value;
+        //        var userId = User.FindFirst("UserId")?.Value;
+
+        //        var Id = model.Id;
+        //        var MonthYear = model.MonthYear;
+        //        var WorkOrderNo = model.WorkOrderNo;
+        //        var UpladNoOfResource = model.UpladNoOfResource;
+        //        var PresentResource = model.PresentResource;
+
+        //        // Files
+        //        IFormFile attachmentFile1 = model.AttendanceFile;
+        //        IFormFile attachmentFile2 = model.AnnexureFile;
+        //        IFormFile attachmentFile3 = model.AgencyBillFile;
+
+        //        // =========================
+        //        // 🔥 ROLE BASED VALIDATION
+        //        // =========================
+
+        //        // Attendance required for all
+        //        if (attachmentFile1 == null || attachmentFile1.Length == 0)
+        //        {
+        //            return BadRequest(new { success = false, message = "Attendance file is required" });
+        //        }
+
+        //        // Agency (RoleId = 48)
+        //        if (roleId == "48")
+        //        {
+        //            if (attachmentFile2 == null || attachmentFile2.Length == 0)
+        //            {
+        //                return BadRequest(new { success = false, message = "Annexure file is required" });
+        //            }
+
+        //            if (attachmentFile3 == null || attachmentFile3.Length == 0)
+        //            {
+        //                return BadRequest(new { success = false, message = "Agency bill file is required" });
+        //            }
+        //        }
+        //        else
+        //        {
+        //            // Department → ignore extra files
+        //            attachmentFile2 = null;
+        //            attachmentFile3 = null;
+        //        }
+
+        //        // =========================
+        //        // ✅ SAVE FILES
+        //        // =========================
+
+        //        string AttendanceCertificate = SaveFile(attachmentFile1, "Attendance");
+
+        //        string AnnexureFile = "";
+        //        string AgencyBillFile = "";
+
+        //        if (roleId == "48")
+        //        {
+        //            AnnexureFile = SaveFile(attachmentFile2, "Annexure");
+        //            AgencyBillFile = SaveFile(attachmentFile3, "AgencyBill");
+        //        }
+
+        //        // =========================
+        //        // ✅ DB SAVE
+        //        // =========================
+
+        //        SortedList parameters = new SortedList
+        //{
+        //    { "@Id", Id },
+        //    { "@MonthYear", MonthYear },
+        //    { "@WorkOrderId", WorkOrderNo },
+        //    { "@UpladNoOfResource", UpladNoOfResource },
+        //    { "@AttendanceCertificate", AttendanceCertificate },
+        //    { "@AnnexureFile", AnnexureFile },
+        //    { "@AgencyBillFile", AgencyBillFile },
+        //    { "@createdby", userId }
+        //};
+
+        //        var result = _cn.ExecuteNonQueryWMessage(
+        //            "tblTallyAttendance_AcceptUpdate",
+        //            "",
+        //            parameters
+        //        );
+
+        //        return Ok(new { success = true, message = result.ToString() });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, new
+        //        {
+        //            success = false,
+        //            message = "Server error.",
+        //            error = ex.Message
+        //        });
+        //    }
+        //}
+        // for saving file name inside folder
+        private string SaveFile(IFormFile file, string folderName)
+        {
+            if (file == null || file.Length == 0)
+                return "";
+
+            string folderPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                $"wwwroot/Attachment/DeptAttendance/{folderName}"
+            );
+
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
+
+            string fileName = $"{folderName}_{DateTime.Now:yyyyMMdd}_{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+
+            string filePath = Path.Combine(folderPath, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                file.CopyTo(stream);
+            }
+
+            return fileName;
         }
         // Delete Records from Table
         [HttpPost]

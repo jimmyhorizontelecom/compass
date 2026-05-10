@@ -39,7 +39,7 @@ namespace Compass.Models.ManpowerModel
         public IFormFile AttendanceFile { get; set; }   // For File upload
         public IFormFile AnnexureFile { get; set; }
         public IFormFile AgencyBillFile { get; set; }
-        public int CreatedBy { get; set; }
+       // public int CreatedBy { get; set; }
 }
     // Dept Attendance delete uploaded files
     public class DeleteAttendanceModel

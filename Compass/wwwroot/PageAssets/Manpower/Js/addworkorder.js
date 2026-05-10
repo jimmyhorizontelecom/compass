@@ -46,7 +46,7 @@ async function recordlist() {
         DeptId: deptId,
         WorkOrderId: 0,
         CreatedBy: 0,
-        UserRole: 39,
+       UserRole: 39,
 
     };
 
@@ -223,7 +223,7 @@ async function loadWorkOrder(recordId) {
         //Id: recordId,
         AgencyId: 0,
         DeptId: 0,
-        WorkOrderId: recordId,
+        WorkOrderId: 0,
         CreatedBy: 0,
         UserRole: 39,
     };

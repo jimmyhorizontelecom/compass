@@ -45,7 +45,7 @@ $(document).ready(function () {
     // ❗ Month change hone par table refresh karne ke liye
     $(document).on('change', '#monthYear1', function () {
         console.log("Month changed, reloading records...");
-        recordlist(); // Isse aapka niche wala function call hoga
+        recordlist(); 
     });
    
 });
@@ -69,9 +69,7 @@ async function recordlist() {
         AgencyId: 0,
         DeptId: 0,
         MonthYear: finalMonthId,
-        //CreatedBy: 0,
-        //UserRole: 39,
-
+       
     };
 
     try {
@@ -231,7 +229,7 @@ $(".btnModalSubmit").on("click", function () {
 async function SubmitRecord() {
     let isValid = true;
 
-    let monthYear = $(".monthYearPicker").val();
+    let monthYear = $("#monthYear").val();
     let deptId = $("#ddlDeptName").val();
     //let deptName = $("#ddlDeptName").val();
     let agencyId = $("#ddlAgencyName").val();
@@ -257,8 +255,8 @@ async function SubmitRecord() {
 
  
     if (!monthYear) {
-        $(".monthYearPicker").addClass("is-invalid");
-        $(".monthYearPicker").siblings(".error").text("Month & Year required");
+        $("monthYear").addClass("is-invalid");
+        $("monthYear").siblings(".error").text("Month & Year required");
         isValid = false;
     }
     if (agencyId === "0" || agencyId === null) {
@@ -372,9 +370,16 @@ async function SubmitRecord() {
    // }
 
     var formData = new FormData();
-    monthYear = $(".monthYearPicker").val(); // 03-2026
-    let finalMonthYear = monthYear.replace("-", ""); // 032026
-    formData.append("MonthYear", finalMonthYear);
+    monthYear = $("#monthYear").val(); // 03-2026
+    var finalMonthId = "0";
+
+    if (monthYear && monthYear.includes('/')) {
+        var parts = monthYear.split('/');
+        var m = parseInt(parts[0], 10);
+        var y = parts[1];
+        finalMonthId = m.toString() + y.toString(); // Result: "42026"
+    }
+    formData.append("MonthYear", finalMonthId);
     formData.append("WorkOrderNo", workOrderNo);
     formData.append("UpladNoOfResource", noOfResources);
     formData.append("PresentResource", presentResources);
