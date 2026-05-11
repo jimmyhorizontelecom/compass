@@ -29,28 +29,13 @@ $(document).ready(function () {
         "ddlDeptName", "ddlAgencyName", null , "ddlWorkOrder","Select Work Order ");
      
 
-
-// month year change event on table list
-    //$(document).on('changeDate change', '.monthYearPicker', function () {
-
-    //    // Agar specific element ka value lena ho
-    //    let selectedValue = $(this).val();
-
-    //    console.log("Selected MonthYear:", selectedValue);
-
-    //    // Call your record function
-    //    recordlist(selectedValue);
-    //});
-
-    // ❗ Month change hone par table refresh karne ke liye
+   // Reload Table when change MonthYear
     $(document).on('change', '#monthYear1', function () {
         console.log("Month changed, reloading records...");
         recordlist(); 
     });
    
 });
-//var monthYear = $('.monthYearPicker').val();
-//alert(monthYear);
 
 //Get Record for A table 
 async function recordlist() {
@@ -67,10 +52,13 @@ async function recordlist() {
     var filterData = {
         Id:0,
         AgencyId: 0,
-        DeptId: 0,
+        DeptId: roleId != "48" ,
         MonthYear: finalMonthId,
        
     };
+    console.log(roleId);
+    console.log(deptId);
+    console.log(filterData);
 
     try {
 
@@ -226,80 +214,415 @@ $(".btnModalSubmit").on("click", function () {
     SubmitRecord();
 });
 // Submit records
+//async function SubmitRecord() {
+//    let isValid = true;
+
+//    let monthYear = $("#monthYear").val();
+//    let deptId = $("#ddlDeptName").val();
+//    //let deptName = $("#ddlDeptName").val();
+//    let agencyId = $("#ddlAgencyName").val();
+//    //let agencyName = $("#ddlAgencyName").val();
+//    let workOrderNo = $("#ddlWorkOrder").val();
+//    let billingId = $("#ddlBillingAddress").val();
+//    //let billingAddress = $("#ddlBillingAddress").val();
+//    let noOfResources = $("#txtNoOfResources").val().trim();
+//    let presentResources = $("#txtPresentResource").val().trim();
+
+//    let Attendance = $("#inputAttendanceFileAttached").get(0);
+//    //let files_Attendance = Attendance.files;
+//    let files_Attendance = Attendance ? Attendance.files : [];
+
+//    let Annexure = $("#inputAnnexureFileAttached").get(0);
+//    //let files_Annexure = Annexure.files;
+//    let files_Annexure = Annexure ? Annexure.files : [];
+
+//    let GroupBill = $("#inputGroupBillFileAttached").get(0);
+//    //let files_GroupBill = GroupBill.files;
+//    let files_GroupBill = GroupBill ? GroupBill.files : [];
+
+//    $(".error").text("");
+//    $(".is-invalid").removeClass("is-invalid");
+
+
+
+//    if (!monthYear) {
+//        $("#monthYear").addClass("is-invalid");
+//        $("#monthYear").siblings(".error").text("Month & Year required");
+//        isValid = false;
+//    }
+//    if (agencyId === "0" || agencyId === null) {
+//        $("#ddlAgencyName").addClass("is-invalid");
+//        $("#ddlAgencyName").siblings(".error").text("Agency Name is required.");
+//        isValid = false;
+//    }
+//    if (deptId === "0" || deptId === null) {
+//        $("#ddlDeptName").addClass("is-invalid");
+//        $("#ddlDeptName").siblings(".error").text("Department Name is required.");
+//        isValid = false;
+//    }
+
+//    if (workOrderNo === "0" || workOrderNo === null) {
+//        $("#ddlWorkOrder").addClass("is-invalid");
+//        $("#ddlWorkOrder").siblings(".error").text("Work Order No required.");
+//        isValid = false;
+//    }
+//    if (noOfResources === "") {
+//        $("#txtNoOfResources").addClass("is-invalid");
+//        $("#txtNoOfResources").siblings(".error").text("No Of Resources required.");
+//        isValid = false;
+//    }
+//    if (presentResources === "") {
+//        $("#txtPresentResource").addClass("is-invalid");
+//        $("#txtPresentResource").siblings(".error").text("No Of Resources required.");
+//        isValid = false;
+//    }
+
+//    if (billingId === "0" || billingId === null) {
+//        $("#ddlBillingAddress").addClass("is-invalid");
+//        $("#ddlBillingAddress").siblings(".error").text("Billing Address required.");
+//        isValid = false;
+//    }
+
+//    // file validation
+//    //let fileSize = 5;
+//    //let allowedExtensions = ["pdf"];
+
+//    //// Attendance File Required
+//    //if (files_Attendance.length === 0) {
+//    //    $("#inputAttendanceFileAttached").addClass("is-invalid");
+//    //    $("#inputAttendanceFileAttached").siblings(".error").text("Attendance file required");
+//    //    isValid = false;
+//    //}
+//    //else {
+
+//    //    if (!fileSizeValidation('inputAttendanceFileAttached', fileSize)) {
+//    //        isValid = false;
+//    //    }
+
+//    //    if (!fileExtensionValidation('inputAttendanceFileAttached', allowedExtensions)) {
+//    //        isValid = false;
+//    //    }
+//    //}
+
+
+//    // //Annexure File Required
+//    //if (files_Annexure.length === 0) {
+//    //    $("#inputAnnexureFileAttached").addClass("is-invalid");
+//    //    $("#inputAnnexureFileAttached").siblings(".error").text("Annexure file required");
+//    //    isValid = false;
+//    //}
+//    //else {
+
+//    //    if (!fileSizeValidation('inputAnnexureFileAttached', fileSize)) {
+//    //        isValid = false;
+//    //    }
+
+//    //    if (!fileExtensionValidation('inputAnnexureFileAttached', allowedExtensions)) {
+//    //        isValid = false;
+//    //    }
+//    //}
+
+
+//    // //Group Bill File Required
+//    //if (files_GroupBill.length === 0) {
+//    //    $("#inputGroupBillFileAttached").addClass("is-invalid");
+//    //    $("#inputGroupBillFileAttached").siblings(".error").text("Group Bill file required");
+//    //    isValid = false;
+//    //}
+//    //else {
+
+//    //    if (!fileSizeValidation('inputGroupBillFileAttached', fileSize)) {
+//    //        isValid = false;
+//    //    }
+
+//    //    if (!fileExtensionValidation('inputGroupBillFileAttached', allowedExtensions)) {
+//    //        isValid = false;
+//    //    }
+//    //}
+
+
+
+//    // ===============================
+//    // FILE VALIDATION
+//    // ===============================
+
+//    let fileSize = 5;
+//    let allowedExtensions = ["pdf"];
+
+//    // ===============================
+//    // ATTENDANCE FILE (FOR ALL USERS)
+//    // ===============================
+
+//    if (files_Attendance.length === 0) {
+
+//        $("#inputAttendanceFileAttached").addClass("is-invalid");
+//        $("#inputAttendanceFileAttached")
+//            .closest(".col-md-3")
+//            .find(".error")
+//            .text("Attendance file required");
+
+//        isValid = false;
+//    }
+//    else {
+
+//        if (!fileSizeValidation('inputAttendanceFileAttached', fileSize)) {
+//            isValid = false;
+//        }
+
+//        if (!fileExtensionValidation('inputAttendanceFileAttached', allowedExtensions)) {
+//            isValid = false;
+//        }
+//    }
+
+//    // ===============================
+//    // AGENCY ROLE VALIDATION
+//    // RoleId = 48
+//    // ===============================
+
+//    if (roleId == "48") {
+
+//        // Annexure Required
+
+//        if (files_Annexure.length === 0) {
+
+//            $("#inputAnnexureFileAttached").addClass("is-invalid");
+
+//            $("#inputAnnexureFileAttached")
+//                .closest(".col-md-3")
+//                .find(".error")
+//                .text("Annexure file required");
+
+//            isValid = false;
+//        }
+//        else {
+
+//            if (!fileSizeValidation('inputAnnexureFileAttached', fileSize)) {
+//                isValid = false;
+//            }
+
+//            if (!fileExtensionValidation('inputAnnexureFileAttached', allowedExtensions)) {
+//                isValid = false;
+//            }
+//        }
+
+//        // Group Bill Required
+
+//        if (files_GroupBill.length === 0) {
+
+//            $("#inputGroupBillFileAttached").addClass("is-invalid");
+
+//            $("#inputGroupBillFileAttached")
+//                .closest(".col-md-3")
+//                .find(".error")
+//                .text("Agency Bill file required");
+
+//            isValid = false;
+//        }
+//        else {
+
+//            if (!fileSizeValidation('inputGroupBillFileAttached', fileSize)) {
+//                isValid = false;
+//            }
+
+//            if (!fileExtensionValidation('inputGroupBillFileAttached', allowedExtensions)) {
+//                isValid = false;
+//            }
+//        }
+//    }
+//    if (!isValid) return;
+
+//    //File validation
+//   // var fileSize = 1
+//   // let allowedExtensions = ["pdf"];
+//   // // Validation for Attendance File
+//   // var isValid1 = fileSizeValidation('inputAttendanceFileAttached', fileSize);
+
+//   // if (!isValid1) {
+//   //     MsgBox('Message', "File Size should be <=" + fileSize + "MB", '');
+//   //     return;
+//   // }
+//   //// let allowedExtensions = ["pdf"];
+
+//   // isValid1 = fileExtensionValidation('inputAttendanceFileAttached', allowedExtensions)
+//   // if (!isValid1) {
+//   //     MsgBox('Message', "File should be only " + allowedExtensions + '.');
+//   //     return;
+//   // }
+
+//    var formData = new FormData();
+//    monthYear = $("#monthYear").val(); // 03-2026
+//    var finalMonthId = "0";
+
+//    if (monthYear && monthYear.includes('/')) {
+//        var parts = monthYear.split('/');
+//        var m = parseInt(parts[0], 10);
+//        var y = parts[1];
+//        finalMonthId = m.toString() + y.toString(); // Result: "42026"
+//    }
+//    formData.append("MonthYear", finalMonthId);
+//    formData.append("WorkOrderNo", workOrderNo);
+//    formData.append("UpladNoOfResource", noOfResources);
+//    formData.append("PresentResource", presentResources);
+
+//    if (files_Attendance.length > 0) {
+//        formData.append("AttendanceFile", files_Attendance[0]);
+//    }
+
+//    //if (files_Annexure.length > 0) {
+//    //    formData.append("AnnexureFile", files_Annexure[0]);
+//    //}
+
+//    //if (files_GroupBill.length > 0) {
+//    //    formData.append("AgencyBillFile", files_GroupBill[0]);
+//    //}
+
+//    if (roleId == "48" && files_Annexure.length > 0) {
+//        formData.append("AnnexureFile", files_Annexure[0]);
+//    }
+
+//    if (roleId == "48" && files_GroupBill.length > 0) {
+//        formData.append("AgencyBillFile", files_GroupBill[0]);
+//    }
+
+//    try {
+//        //$("#ModalProgress").show();
+//        let res = await acceptUpdate("Manpower", "AddOrEdit_DeptAttendanceRecord", formData);
+//        if (res.success) {
+
+//            recordlist();
+//            resetModal();
+
+//            Id = 0;
+//            $('.modelalert').text(res.message);
+//            closeModal('myModal');
+//            MsgBox('Message', res.message, '');
+//        }
+
+//    } catch (err) {
+//        $('.modelalert').text("Error: " + err);
+//    }
+
+//}
+
+// View Uploaded pdf on New tab  file conditions
+
 async function SubmitRecord() {
+
     let isValid = true;
+
+    // ===============================
+    // FORM VALUES
+    // ===============================
 
     let monthYear = $("#monthYear").val();
     let deptId = $("#ddlDeptName").val();
-    //let deptName = $("#ddlDeptName").val();
     let agencyId = $("#ddlAgencyName").val();
-    //let agencyName = $("#ddlAgencyName").val();
     let workOrderNo = $("#ddlWorkOrder").val();
     let billingId = $("#ddlBillingAddress").val();
-    //let billingAddress = $("#ddlBillingAddress").val();
     let noOfResources = $("#txtNoOfResources").val().trim();
     let presentResources = $("#txtPresentResource").val().trim();
 
+    // ===============================
+    // FILE CONTROLS
+    // ===============================
+
     let Attendance = $("#inputAttendanceFileAttached").get(0);
-    let files_Attendance = Attendance.files;
+    let files_Attendance = Attendance ? Attendance.files : [];
 
     let Annexure = $("#inputAnnexureFileAttached").get(0);
-    let files_Annexure = Annexure.files;
+    let files_Annexure = Annexure ? Annexure.files : [];
 
     let GroupBill = $("#inputGroupBillFileAttached").get(0);
-    let files_GroupBill = GroupBill.files;
+    let files_GroupBill = GroupBill ? GroupBill.files : [];
+
+    // ===============================
+    // RESET VALIDATION
+    // ===============================
 
     $(".error").text("");
     $(".is-invalid").removeClass("is-invalid");
-  
 
- 
+    // ===============================
+    // BASIC VALIDATION
+    // ===============================
+
     if (!monthYear) {
-        $("monthYear").addClass("is-invalid");
-        $("monthYear").siblings(".error").text("Month & Year required");
+
+        $("#monthYear").addClass("is-invalid");
+        $("#monthYear").siblings(".error").text("Month & Year required");
+
         isValid = false;
     }
+
     if (agencyId === "0" || agencyId === null) {
+
         $("#ddlAgencyName").addClass("is-invalid");
-        $("#ddlAgencyName").siblings(".error").text("Agency Name is required.");
+        $("#ddlAgencyName").siblings(".error").text("Agency Name required");
+
         isValid = false;
     }
+
     if (deptId === "0" || deptId === null) {
+
         $("#ddlDeptName").addClass("is-invalid");
-        $("#ddlDeptName").siblings(".error").text("Department Name is required.");
+        $("#ddlDeptName").siblings(".error").text("Department Name required");
+
         isValid = false;
     }
 
     if (workOrderNo === "0" || workOrderNo === null) {
+
         $("#ddlWorkOrder").addClass("is-invalid");
-        $("#ddlWorkOrder").siblings(".error").text("Work Order No required.");
+        $("#ddlWorkOrder").siblings(".error").text("Work Order required");
+
         isValid = false;
     }
+
     if (noOfResources === "") {
+
         $("#txtNoOfResources").addClass("is-invalid");
-        $("#txtNoOfResources").siblings(".error").text("No Of Resources required.");
+        $("#txtNoOfResources").siblings(".error").text("No Of Resources required");
+
         isValid = false;
     }
+
     if (presentResources === "") {
+
         $("#txtPresentResource").addClass("is-invalid");
-        $("#txtPresentResource").siblings(".error").text("No Of Resources required.");
+        $("#txtPresentResource").siblings(".error").text("Present Resource required");
+
         isValid = false;
     }
 
     if (billingId === "0" || billingId === null) {
+
         $("#ddlBillingAddress").addClass("is-invalid");
-        $("#ddlBillingAddress").siblings(".error").text("Billing Address required.");
+        $("#ddlBillingAddress").siblings(".error").text("Billing Address required");
+
         isValid = false;
     }
 
-    // file validation
+    // ===============================
+    // FILE VALIDATION
+    // ===============================
+
     let fileSize = 5;
     let allowedExtensions = ["pdf"];
 
-    // Attendance File Required
+    // ===============================
+    // ATTENDANCE FILE REQUIRED
+    // FOR ALL USERS
+    // ===============================
+
     if (files_Attendance.length === 0) {
+
         $("#inputAttendanceFileAttached").addClass("is-invalid");
-        $("#inputAttendanceFileAttached").siblings(".error").text("Attendance file required");
+
+        $("#inputAttendanceFileAttached")
+            .closest(".col-md-3")
+            .find(".error")
+            .text("Attendance file required");
+
         isValid = false;
     }
     else {
@@ -313,110 +636,159 @@ async function SubmitRecord() {
         }
     }
 
+    // ===============================
+    // AGENCY ROLE VALIDATION
+    // RoleId = 48
+    // ===============================
 
-     //Annexure File Required
-    if (files_Annexure.length === 0) {
-        $("#inputAnnexureFileAttached").addClass("is-invalid");
-        $("#inputAnnexureFileAttached").siblings(".error").text("Annexure file required");
-        isValid = false;
-    }
-    else {
+    if (roleId == "48") {
 
-        if (!fileSizeValidation('inputAnnexureFileAttached', fileSize)) {
+        // ===============================
+        // ANNEXURE FILE
+        // ===============================
+
+        if (files_Annexure.length === 0) {
+
+            $("#inputAnnexureFileAttached").addClass("is-invalid");
+
+            $("#inputAnnexureFileAttached")
+                .closest(".col-md-3")
+                .find(".error")
+                .text("Annexure file required");
+
             isValid = false;
         }
+        else {
 
-        if (!fileExtensionValidation('inputAnnexureFileAttached', allowedExtensions)) {
+            if (!fileSizeValidation('inputAnnexureFileAttached', fileSize)) {
+                isValid = false;
+            }
+
+            if (!fileExtensionValidation('inputAnnexureFileAttached', allowedExtensions)) {
+                isValid = false;
+            }
+        }
+
+        // ===============================
+        // AGENCY BILL FILE
+        // ===============================
+
+        if (files_GroupBill.length === 0) {
+
+            $("#inputGroupBillFileAttached").addClass("is-invalid");
+
+            $("#inputGroupBillFileAttached")
+                .closest(".col-md-3")
+                .find(".error")
+                .text("Agency Bill file required");
+
             isValid = false;
+        }
+        else {
+
+            if (!fileSizeValidation('inputGroupBillFileAttached', fileSize)) {
+                isValid = false;
+            }
+
+            if (!fileExtensionValidation('inputGroupBillFileAttached', allowedExtensions)) {
+                isValid = false;
+            }
         }
     }
 
+    // ===============================
+    // STOP IF VALIDATION FAILED
+    // ===============================
 
-     //Group Bill File Required
-    if (files_GroupBill.length === 0) {
-        $("#inputGroupBillFileAttached").addClass("is-invalid");
-        $("#inputGroupBillFileAttached").siblings(".error").text("Group Bill file required");
-        isValid = false;
-    }
-    else {
-
-        if (!fileSizeValidation('inputGroupBillFileAttached', fileSize)) {
-            isValid = false;
-        }
-
-        if (!fileExtensionValidation('inputGroupBillFileAttached', allowedExtensions)) {
-            isValid = false;
-        }
+    if (!isValid) {
+        return;
     }
 
-    if (!isValid) return;
-
-    //File validation
-   // var fileSize = 1
-   // let allowedExtensions = ["pdf"];
-   // // Validation for Attendance File
-   // var isValid1 = fileSizeValidation('inputAttendanceFileAttached', fileSize);
-
-   // if (!isValid1) {
-   //     MsgBox('Message', "File Size should be <=" + fileSize + "MB", '');
-   //     return;
-   // }
-   //// let allowedExtensions = ["pdf"];
-
-   // isValid1 = fileExtensionValidation('inputAttendanceFileAttached', allowedExtensions)
-   // if (!isValid1) {
-   //     MsgBox('Message', "File should be only " + allowedExtensions + '.');
-   //     return;
-   // }
+    // ===============================
+    // FORM DATA
+    // ===============================
 
     var formData = new FormData();
-    monthYear = $("#monthYear").val(); // 03-2026
+
     var finalMonthId = "0";
 
     if (monthYear && monthYear.includes('/')) {
+
         var parts = monthYear.split('/');
+
         var m = parseInt(parts[0], 10);
         var y = parts[1];
-        finalMonthId = m.toString() + y.toString(); // Result: "42026"
+
+        finalMonthId = m.toString() + y.toString();
     }
+
     formData.append("MonthYear", finalMonthId);
     formData.append("WorkOrderNo", workOrderNo);
     formData.append("UpladNoOfResource", noOfResources);
     formData.append("PresentResource", presentResources);
 
+    // ===============================
+    // ATTENDANCE FILE
+    // ===============================
+
     if (files_Attendance.length > 0) {
+
         formData.append("AttendanceFile", files_Attendance[0]);
     }
 
-    if (files_Annexure.length > 0) {
-        formData.append("AnnexureFile", files_Annexure[0]);
+    // ===============================
+    // AGENCY FILES
+    // ===============================
+
+    if (roleId == "48") {
+
+        if (files_Annexure.length > 0) {
+
+            formData.append("AnnexureFile", files_Annexure[0]);
+        }
+
+        if (files_GroupBill.length > 0) {
+
+            formData.append("AgencyBillFile", files_GroupBill[0]);
+        }
     }
 
-    if (files_GroupBill.length > 0) {
-        formData.append("AgencyBillFile", files_GroupBill[0]);
-    }
+    // ===============================
+    // SUBMIT
+    // ===============================
 
     try {
-        //$("#ModalProgress").show();
-        let res = await acceptUpdate("Manpower", "AddOrEdit_DeptAttendanceRecord", formData);
+
+        let res = await acceptUpdate("Manpower","AddOrEdit_DeptAttendanceRecord",formData);
+
         if (res.success) {
 
             recordlist();
+
             resetModal();
-            
+
             Id = 0;
+
             $('.modelalert').text(res.message);
+
             closeModal('myModal');
+
             MsgBox('Message', res.message, '');
         }
+        else {
 
-    } catch (err) {
-        $('.modelalert').text("Error: " + err);
+            MsgBox('Error', res.message, '');
+        }
+
     }
+    catch (err) {
 
+        console.log(err);
+
+        $('.modelalert').text("Error : " + err);
+
+    }
 }
-
-// View Uploaded pdf on New tab  file conditions 
 $(document).on('click', '.view-file', function (e) {
     e.preventDefault(); // Prevent default <a> behavior
 

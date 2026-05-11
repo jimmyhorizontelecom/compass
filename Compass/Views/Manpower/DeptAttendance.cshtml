@@ -12,6 +12,9 @@
 }
 
 <div class="container">
+    <h5>RoleId : @roleId</h5>
+    <h5>UserId : @userId</h5>
+    <h5>DeptId : @deptId</h5>
     <h4>Department Attendnace </h4>
     <div id="modalLoader1" class="modal-loader modalLoader">
         <div class="spinner"></div>
@@ -434,9 +437,21 @@
 }
 
  
-
-
 @section Scripts {
+
+    <script>
+
+        var roleId = '@roleId';
+        var userId = '@userId';
+        var deptId = '@deptId';
+
+    </script>
+
     <script src="~/PageAssets/Manpower/Js/deptattendnace.js" asp-append-version="true"></script>
 
 }
+@* 
+@section Scripts {
+    <script src="~/PageAssets/Manpower/Js/deptattendnace.js" asp-append-version="true"></script>
+
+} *@
