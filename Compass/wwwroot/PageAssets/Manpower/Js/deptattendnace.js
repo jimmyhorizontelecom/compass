@@ -209,6 +209,28 @@ function bindDatatable(records, tableId) {
     //hideModalLoader();
 }
 
+// Map data No of resource
+$(".btnModalMapData").on("click", function () {
+    MapRecord();
+});
+async function MapRecord() {
+    var isConfirmed = await DeleteEditBox('Map Data', 'Do you want to Map No. of Resource?', 'question');
+
+    if (isConfirmed) {
+        //await loadMapRecord(recordId);
+        
+        openModal('myModal_MapRecord');
+        // Alternative if openModal not working
+        //$('#myModal_UploadFile').modal('show');
+
+    } else {
+
+        console.log('Upload cancelled');
+
+    }
+}
+
+
 // Submit record when Click on btn
 $(".btnModalSubmit").on("click", function () {
     SubmitRecord();

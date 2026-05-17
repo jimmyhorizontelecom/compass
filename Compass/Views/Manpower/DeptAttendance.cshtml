@@ -12,9 +12,7 @@
 }
 
 <div class="container">
-    <h5>RoleId : @roleId</h5>
-    <h5>UserId : @userId</h5>
-    <h5>DeptId : @deptId</h5>
+   
     <h4>Department Attendnace </h4>
     <div id="modalLoader1" class="modal-loader modalLoader">
         <div class="spinner"></div>
@@ -109,6 +107,7 @@
             }
             
             <div class="col-md-3 mb-0">
+                <button type="button" class="btn btnModel btnModalMapData">Map Data</button>
                 <button type="button" class="btn btnModel btnModalSubmit">Submit</button>
             </div>
 
@@ -170,6 +169,74 @@
 
 @section Modals {
     <!-- The Modal -->
+    <!-- Upload Model of Annexure & Bill-->>
+    <div class="modal modal-lg" id="myModal_MapRecord">
+        <div class="modal-dialog ">
+            <div class="modal-content position-relative">
+                <!-- 🔥 Loader Overlay -->
+                <div id="" class="modal-loader modalLoader">
+                    <div class="spinner"></div>
+                    <p class="loading-text">Please wait...</p>
+                </div>
+                <!-- Modal Header -->
+                <div class="modal-header  bg-ld ">
+                    <h4 class="modal-title txt-white" id="myModalLabel">Map No. of Resource</h4>
+                    <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
+                </div>
+                
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div id="#toast-container"></div>
+                    <div class="filter-panel mt-5 div-coral-base">
+                        
+                        <div class="table-responsive">
+                            <table id="myTable" class="table orangeTh table-striped table-hover table-bordered">
+                                <thead class="bg-d">
+                                    <tr>
+                                        <th>Sr.No</th>
+                                        <th><input type="checkbox" id="selectAll" />Select All</th>
+                                        <th>Employee Name</th>
+                                        <th>Fathers Name</th>
+                                        <th>Aadhar No</th>
+                                        <th>Designation</th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                                <tfoot class="tfoot bg-primary">
+                                    <tr>
+                                        @* <td>3</td>
+                    <td>Mike Brown</td>
+                    <td>mike@example.com</td>
+                    <td>Editor</td>
+                    <td>Editor</td> *@
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+
+
+                    </div>
+
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer  bg-ld">
+                    <div class="me-auto">
+                        <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
+                    </div>
+                    <div class="flex-grow-1 text-center modelalert text-danger"></div>
+                    <button type="button" class="btn btnModel btnModalSubmitMap">Submit</button>
+                    <button type="button" data-bs-dismiss="modal" class="btn btnModel">Close</button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
     <!-- Purchase Bill Details Update Entry-->>
     <div class="modal modal-lg" id="myModal_AgencyInvoice">
         <div class="modal-dialog ">
