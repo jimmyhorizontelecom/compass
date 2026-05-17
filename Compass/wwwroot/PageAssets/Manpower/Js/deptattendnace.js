@@ -220,16 +220,23 @@ async function MapRecord() {
         //await loadMapRecord(recordId);
         
         openModal('myModal_MapRecord');
-        // Alternative if openModal not working
-        //$('#myModal_UploadFile').modal('show');
+        
 
     } else {
 
-        console.log('Upload cancelled');
+        console.log('Maping cancelled');
 
     }
 }
 
+// Submit record when Click on btn
+$(".btnModalSubmitMap").on("click", function () {
+    MapRecordSubmit();
+});
+//Submit select No of rsources
+async function MapRecordSubmit() {
+    alert('Select Map Checkbox Submission');
+}
 
 // Submit record when Click on btn
 $(".btnModalSubmit").on("click", function () {
