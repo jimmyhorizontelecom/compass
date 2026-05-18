@@ -220,6 +220,7 @@ async function MapRecord() {
         //await loadMapRecord(recordId);
         
         openModal('myModal_MapRecord');
+        recordMaplist();
         
 
     } else {
@@ -228,6 +229,81 @@ async function MapRecord() {
 
     }
 }
+//Get Record for A Map No of Resource with Emp Name table 
+async function recordMaplist() {
+    
+    var filterData = {
+        WorkOrderId: $("#ddlWorkOrder").val(),
+        AgencyId: 0,
+        
+
+    };
+    
+    try {
+
+        let records = await getRecords('Manpower', 'GetMapEmpRsourceRecord', filterData, '#myTable_MapResource', 'N');
+        bindDatatable(records, '#myTable_MapResource');
+    }
+    catch (error) {
+        console.error("Error loading records:", error);
+        //hideModalLoader();
+    }
+}
+//Bind get record in a table  of Map Employee record 
+function bindDatatable(records, tableId) {
+
+    if ($.fn.DataTable.isDataTable(tableId)) {
+        $(tableId).DataTable().clear().destroy();
+    }
+
+    var tbody = $(tableId + " tbody");
+    tbody.empty();
+
+    $.each(records, function (i, value) {
+        let SrNo = i + 1;
+        console.log(value);
+        tbody.append(`
+            <tr 
+                data-id="${value.Id}">
+                <td>${SrNo}</td>
+                 <td class="text-center"> <input type="checkbox" class="rowCheckbox" >
+                </td>
+                <td>${value.EmpId}</td>
+                <td>${value.EmpName}</td>
+                <td>${value.EmpFatherName}</td>
+                <td>${value.EmpAadharNo} </td>
+                <td>${value.EmpDesignation}</td>
+                                 
+        `);
+    });
+
+    $(tableId).DataTable({
+        paging: true,
+        searching: true,
+        ordering: true,
+        info: true,
+        responsive: true
+    });
+
+    //hideModalLoader();
+}
+// Select All checkbox
+$(document).on('change', '#selectAll', function () {
+    $('.rowCheckbox').prop('checked', $(this).prop('checked'));
+});
+$(document).on('change', '.rowCheckbox', function () {
+    if (!$(this).prop('checked')) {
+        $('#selectAll').prop('checked', false);
+    } else {
+        // Check if all checkboxes are checked
+        if ($('.rowCheckbox:checked').length === $('.rowCheckbox').length) {
+            $('#selectAll').prop('checked', true);
+        }
+    }
+});
+
+
+
 
 // Submit record when Click on btn
 $(".btnModalSubmitMap").on("click", function () {

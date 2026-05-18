@@ -28,6 +28,28 @@ namespace Compass.Models.ManpowerViewModel
         public int NoOfUploadedResource { get; set; }
         public string BillingAddEmail { get; set; }
     }
+
+    //Map No. of Resource Employee record filter
+    public class MapEmployeeFilter
+    {
+        public int AgencyId { get; set; }
+        public int WorkOrderId { get; set; }
+    }
+
+    //Map no. of Resource Employee View Modal
+    //Dept Attendance Table List 
+    public class MapEmployeeViewModel
+    {
+        public int EmpId { get; set; }
+        public string EmpName { get; set; }
+        public string EmpFatherName { get; set; }
+        public string EmpAadharNo { get; set; }
+        public string EmpDesignation { get; set; }
+
+
+    }
+
+
     //Dept Attendace Filter for get records
     public class DeptAttendanceFilter
     {

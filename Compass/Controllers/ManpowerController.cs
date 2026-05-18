@@ -171,6 +171,54 @@ namespace Compass.Controllers
             return View();
         }
 
+        //Get employee name for data map
+        
+        [HttpGet]
+        public async Task<IActionResult> GetMapEmpRsourceRecord([FromQuery] MapEmployeeFilter filter)
+
+        {
+
+            
+            try
+            {
+                // Access as object
+                SortedList parameters = new SortedList();
+               
+                parameters.Add("@WorkorderId", filter.WorkOrderId);
+                parameters.Add("@AgencyId", filter.AgencyId);
+                
+
+                var dt = await _cn.FillDataTableAsync("TallyFetchEmployee_Get", "", parameters);
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<MapEmployeeViewModel>());
+
+                var list = dt.AsEnumerable().Select(row => new MapEmployeeViewModel
+
+                {
+                    EmpId = Convert.ToInt32(row["EmpId"]?.ToString()),
+                    EmpName = (row["Empname"]?.ToString()),
+                    EmpFatherName = (row["FatherName"]?.ToString()),
+                    EmpAadharNo = (row["AADHARNO"]?.ToString()),
+                    EmpDesignation = (row["fvDesignationName"]?.ToString()),
+                    
+                }).ToList();
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+
+
         // Get record for the List
         [HttpGet]
         public async Task<IActionResult> GetDeptAttendanceRecord([FromQuery] DeptAttendanceFilter filter)
