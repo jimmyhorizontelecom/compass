@@ -194,7 +194,10 @@
                                 <thead class="bg-d">
                                     <tr>
                                         <th>Sr.No</th>
-                                        <th><input type="checkbox" id="selectAll" />Select All</th>
+                                        <th>
+                                            <input type="checkbox" id="selectAll" class="emp-checkbox"
+                                                   value="${value.EmpId}" />Select All
+                                        </th>
                                         <th>Employee Id</th>
                                         <th>Employee Name</th>
                                         <th>Fathers Name</th>
@@ -228,7 +231,7 @@
                         <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
                     </div>
                     <div class="flex-grow-1 text-center modelalert text-danger"></div>
-                    <button type="button" class="btn btnModel btnModalSubmitMap">Submit</button>
+                    @* <button type="button" class="btn btnModel btnModalSubmitMap">Submit</button> *@
                     <button type="button" data-bs-dismiss="modal" class="btn btnModel">Close</button>
 
                 </div>

@@ -21,12 +21,16 @@ $(document).ready(function () {
     bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyName", "Select Agency Name"); 
    
     // Dependent Dropdown Billing Address on Department
-    bindDependentDataToDdl("Dropdown","MBillingAddress_ddl",null,// ❗ no modal
-        "ddlDeptName", "ddlBillingAddress", "Select Billing Address");
+    //bindDependentDataToDdl("Dropdown","MBillingAddress_ddl",null,// ❗ no modal
+    //    "ddlDeptName", "ddlBillingAddress", "Select Billing Address");
 
  // Dependent Dropdown Work Order on Agency
     bindDependentDataToDdlToParent("Dropdown", "MWorkOrder_ddl", null,// ❗ no modal
-        "ddlDeptName", "ddlAgencyName", null , "ddlWorkOrder","Select Work Order ");
+        "ddlDeptName", "ddlAgencyName", null, "ddlWorkOrder", "Select Work Order ");
+
+    // Dependent Dropdown Billing Address on WorkOrderId
+    bindDependentDataToDdlToParent("Dropdown", "MBillingAddress_ddl", null,// ❗ no modal
+        "ddlDeptName", "ddlAgencyName", "ddlWorkOrder", "ddlBillingAddress","Select Billing Address ");
      
 
    // Reload Table when change MonthYear
@@ -36,6 +40,59 @@ $(document).ready(function () {
     });
    
 });
+
+//Get No. of Resources on change Billing Address ddl
+$(document).on("change", "#ddlBillingAddress", async function () {
+
+    let billingId = $("#ddlBillingAddress").val();
+    let deptId = $("#ddlDeptName").val();
+    let agencyId = $("#ddlAgencyName").val();
+    let workOrderId = $("#ddlWorkOrder").val();
+
+    if (!billingId || billingId == "0") {
+        $("#txtNoOfResources").val("");
+        return;
+    }
+
+    let filterData = {
+        AgencyId: parseInt(agencyId),
+        DeptId: parseInt(deptId),
+        WorkOrderAgencyId: parseInt(workOrderId),
+        CreatedBy: 0,
+        UserRole: 48
+    };
+
+    console.log("Sending Filter:", filterData);
+
+    try {
+
+        let res = await getRecords("Manpower", "GetNoOfResourcesByBilling", filterData, "", "N");
+
+        console.log("API Response:", res);
+
+        if (res && res.length > 0) {
+
+            let data = res[0];   // ⭐ MOST IMPORTANT FIX
+
+            console.log("Selected Row:", data);
+
+            // OPTIONAL billing match (safe)
+            if (data.BillingId == billingId) {
+                $("#txtNoOfResources").val(data.NoOfResources);
+            } else {
+                $("#txtNoOfResources").val(data.NoOfResources); // fallback
+            }
+
+        } else {
+            $("#txtNoOfResources").val("");
+        }
+
+    } catch (err) {
+        console.error("Error:", err);
+    }
+
+});
+
 
 //Get Record for A table 
 async function recordlist() {
@@ -70,58 +127,6 @@ async function recordlist() {
         //hideModalLoader();
     }
 }
-
-//Get No. of Resources on change Billing Address ddl
-$(document).on("change", "#ddlBillingAddress", async function () {
-
-    let billingId = $("#ddlBillingAddress").val();
-    let deptId = $("#ddlDeptName").val();
-    let agencyId = $("#ddlAgencyName").val();
-    let workOrderId = $("#ddlWorkOrder").val();
-
-    if (!billingId || billingId == "0") {
-        $("#txtNoOfResources").val("");
-        return;
-    }
-
-    let filterData = {
-        AgencyId: parseInt(agencyId),
-        DeptId: parseInt(deptId),
-        WorkOrderAgencyId: parseInt(workOrderId),
-        CreatedBy: 0,
-        UserRole: 48
-    };
-
-    console.log("Sending Filter:", filterData);
-
-    try {
-
-        let res = await getRecords( "Manpower", "GetNoOfResourcesByBilling", filterData, "", "N");
-
-        console.log("API Response:", res);
-
-          if (res && res.length > 0) {
-
-            let data = res[0];   // ⭐ MOST IMPORTANT FIX
-
-            console.log("Selected Row:", data);
-
-            // OPTIONAL billing match (safe)
-            if (data.BillingId == billingId) {
-                $("#txtNoOfResources").val(data.NoOfResources);
-            } else {
-                $("#txtNoOfResources").val(data.NoOfResources); // fallback
-            }
-
-        } else {
-            $("#txtNoOfResources").val("");
-        }
-
-    } catch (err) {
-        console.error("Error:", err);
-    }
-
-});
 
 //Bind get record  in a table 
 function bindDatatable(records, tableId) {
@@ -167,6 +172,7 @@ function bindDatatable(records, tableId) {
                 <span data-id="${value.Id}" >
                     <a href="javascript:void(0);" class="view-file" data-file="${value.AgencyBillFile}" data-folder="AgencyBill" title="View Agency Bill">
                         <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"></i>
+                         
                     </a>
                 </td>
                  <td class="text-center">
@@ -181,10 +187,17 @@ function bindDatatable(records, tableId) {
                     style="cursor:pointer;font-size:25px;"></i> 
                  </td>
                  <td class="text-center">
-                    
+                    <i class="bi bi-download" style=" font-size:25px; color:red; font-weight:bold; -webkit-text-stroke:4px brown;"></i>
                 </td>
                  <td class="text-center">
-                   
+                   <i class="bi bi-download"
+   style="
+      font-size:32px;
+      color:red;
+      font-weight:bold;
+      -webkit-text-stroke:1px black;
+   ">
+</i>
 
                 </td>
                  <td class="text-center">
@@ -242,7 +255,7 @@ async function recordMaplist() {
     try {
 
         let records = await getRecords('Manpower', 'GetMapEmpRsourceRecord', filterData, '#myTable_MapResource', 'N');
-        bindDatatable(records, '#myTable_MapResource');
+        bindMapDatatable(records, '#myTable_MapResource');
     }
     catch (error) {
         console.error("Error loading records:", error);
@@ -250,7 +263,7 @@ async function recordMaplist() {
     }
 }
 //Bind get record in a table  of Map Employee record 
-function bindDatatable(records, tableId) {
+function bindMapDatatable(records, tableId) {
 
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().clear().destroy();
@@ -266,8 +279,7 @@ function bindDatatable(records, tableId) {
             <tr 
                 data-id="${value.Id}">
                 <td>${SrNo}</td>
-                 <td class="text-center"> <input type="checkbox" class="rowCheckbox" >
-                </td>
+                <td class="text-center"> <input type="checkbox" class="rowCheckbox" value="${value.EmpId}"></td>
                 <td>${value.EmpId}</td>
                 <td>${value.EmpName}</td>
                 <td>${value.EmpFatherName}</td>
@@ -305,14 +317,14 @@ $(document).on('change', '.rowCheckbox', function () {
 
 
 
-// Submit record when Click on btn
-$(".btnModalSubmitMap").on("click", function () {
-    MapRecordSubmit();
-});
-//Submit select No of rsources
-async function MapRecordSubmit() {
-    alert('Select Map Checkbox Submission');
-}
+//// Submit record when Click on btn
+//$(".btnModalSubmitMap").on("click", function () {
+//    MapRecordSubmit();
+//});
+////Submit select No of rsources
+//async function MapRecordSubmit() {
+//    alert('Select Map Checkbox Submission');
+//}
 
 // Submit record when Click on btn
 $(".btnModalSubmit").on("click", function () {
@@ -699,13 +711,13 @@ async function SubmitRecord() {
         isValid = false;
     }
 
-    if (billingId === "0" || billingId === null) {
+    //if (billingId === "0" || billingId === null) {
 
-        $("#ddlBillingAddress").addClass("is-invalid");
-        $("#ddlBillingAddress").siblings(".error").text("Billing Address required");
+    //    $("#ddlBillingAddress").addClass("is-invalid");
+    //    $("#ddlBillingAddress").siblings(".error").text("Billing Address required");
 
-        isValid = false;
-    }
+    //    isValid = false;
+    //}
 
     // ===============================
     // FILE VALIDATION
@@ -831,6 +843,21 @@ async function SubmitRecord() {
     formData.append("WorkOrderNo", workOrderNo);
     formData.append("UpladNoOfResource", noOfResources);
     formData.append("PresentResource", presentResources);
+    // ===============================
+    // EMPLOYEE LIST
+    // ===============================
+
+    $(".emp-checkbox:checked").each(function (i) {
+
+        formData.append("EmployeeList[" + i + "].EmpId", $(this).val());
+
+    });
+    if ($(".rowCheckbox:checked").length == 0) {
+
+        MsgBox('Error', 'Please select at least one employee', '');
+
+        return;
+    }
 
     // ===============================
     // ATTENDANCE FILE
@@ -894,6 +921,8 @@ async function SubmitRecord() {
 
     }
 }
+
+//View Uploaded file
 $(document).on('click', '.view-file', function (e) {
     e.preventDefault(); // Prevent default <a> behavior
 

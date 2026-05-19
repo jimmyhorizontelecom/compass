@@ -1,4 +1,5 @@
-﻿using Compass.Services;
+﻿using Compass.Models.ManpowerViewModel;
+using Compass.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Compass.Controllers
@@ -40,12 +41,20 @@ namespace Compass.Controllers
         //Get Billing Address ddl
         [HttpGet]
         public async Task<IActionResult> MBillingAddress_ddl(
-                int Id = 0,
-                int mainCatgId = 0,
-                string searchTerm = "")
-        {
-            var result = await _service.GetBillingAddressDropdownAsync(mainCatgId, searchTerm);
+             int ParentId1 = 0,
+            int ParentId2 = 0,
+            int ParentId3 = 0,
+            string searchTerm = "")
+            {
+            int userId = 0;
+            int roleId = 0;
+
+            int.TryParse(User.FindFirst("UserId")?.Value, out userId);
+            int.TryParse(User.FindFirst("RoleId")?.Value, out roleId);
+
+            var result = await _service.GetBillingAddressDropdownAsync(ParentId1, ParentId2, ParentId3, userId, roleId, searchTerm);
             return Ok(result);
+
         }
 
         //Get Agency ddl

@@ -29,11 +29,22 @@ namespace Compass.Services
 
         //Get Billing Address
 
+        //public async Task<List<DropdownDto>> GetBillingAddressDropdownAsync(
+        //    int deptId,
+        //    string searchTerm)
+        //{
+        //    return await _repository.GetBillingAddressDropdownAsync(deptId, searchTerm);
+        //}
         public async Task<List<DropdownDto>> GetBillingAddressDropdownAsync(
-            int deptId,
+            int ParentId1,
+            int ParentId2, 
+            int ParentId3,
+            int userId, 
+            int roleId, 
             string searchTerm)
         {
-            return await _repository.GetBillingAddressDropdownAsync(deptId, searchTerm);
+            return await _repository.GetBillingAddressDropdownAsync(ParentId1, ParentId2, ParentId3, userId, roleId, searchTerm);
+
         }
 
         //Get Agency ddl

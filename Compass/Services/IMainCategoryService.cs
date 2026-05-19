@@ -9,7 +9,8 @@ namespace Compass.Services
         //Get Department Billing Address
         Task<List<DropdownDto>> GetDepartmentDropdownAsync(int deptId, string searchTerm);
         //Get Billing Address ddl
-        Task<List<DropdownDto>> GetBillingAddressDropdownAsync(int deptId, string searchTerm);
+       // Task<List<DropdownDto>> GetBillingAddressDropdownAsync(int deptId, string searchTerm);
+        Task<List<DropdownDto>> GetBillingAddressDropdownAsync(int ParentId1, int ParentId2, int ParentId3, int userId, int roleId, string searchTerm);
 
         // Get Agency ddl
         Task<List<DropdownDto>> GetAgencyDropdownAsync(int deptId, string searchTerm);

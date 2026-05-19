@@ -418,6 +418,7 @@ namespace Compass.Controllers
                 var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
                 var roleId = Convert.ToInt32(User.FindFirst("RoleId")?.Value ?? "0");
 
+
                 // =========================
                 // MODEL VALUES
                 // =========================
@@ -576,6 +577,28 @@ namespace Compass.Controllers
                     AgencyBillFile = "";
                 }
 
+                // =========================
+                // TVP DATATABLE
+                // =========================
+
+                DataTable dt = new DataTable();
+
+                dt.Columns.Add("AgencyWorkOrderId", typeof(int));
+                dt.Columns.Add("EmpId", typeof(int));
+
+                // Selected employee list se data add karo
+
+                if (model.EmployeeList != null && model.EmployeeList.Count > 0)
+                {
+                    foreach (var item in model.EmployeeList)
+                    {
+                        dt.Rows.Add(
+                            Convert.ToInt32(WorkOrderNo),
+                            Convert.ToInt32(item.EmpId)
+                        );
+                    }
+                }
+
                 SortedList parameters = new SortedList
         {
             { "@Id", Id },
@@ -588,7 +611,8 @@ namespace Compass.Controllers
             { "@AttendanceCertificate", AttendanceCertificate ?? "" },
             { "@AnnexureFile", AnnexureFile ?? "" },
             { "@AgencyBillFile", AgencyBillFile ?? "" },
-            { "@createdby", userId }
+            { "@createdby", userId },
+            { "@tempTallyEmployeeAttendance", dt }
 
 
         };

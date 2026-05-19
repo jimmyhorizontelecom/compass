@@ -1,46 +1,4 @@
 ﻿// Month Year Picker 
-//function initializeMonthYearPickerByClass(className) {
-
-//    $('.' + className).each(function () {
-
-//        // Prevent re-initialization
-//        if (!$(this).data('datepicker')) {
-
-//            $(this).datepicker({
-//                format: "mmyyyy",      // Final value → 032026
-//                startView: "months",   // Open month view first
-//                minViewMode: "months", // Only month selectable
-//                autoclose: true,
-//                todayHighlight: true
-//            });
-
-//            // Default current month set (mmyyyy)
-//            //let today = new Date();
-//            //let month = ("0" + (today.getMonth() + 1)).slice(-2);
-//            //let year = today.getFullYear();
-
-//            //$(this).datepicker('update', month + year);
-//        }
-
-//    });
-//}
-
-//// Initialize only when clicked
-//$(document).on('focus', '.monthYearPicker', function () {
-
-//    if (!$(this).data('datepicker')) {
-
-//        $(this).datepicker({
-//            format: "mmyyyy",
-//            startView: "months",
-//            minViewMode: "months",
-//            autoclose: true,
-//            todayHighlight: true
-//        });
-
-//        $(this).datepicker('show'); // Open immediately on focus
-//    }
-//});
 //Global function defined for used everywhere
 window.initCustomPicker = function (selector) {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];

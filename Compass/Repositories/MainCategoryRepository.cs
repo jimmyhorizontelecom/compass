@@ -92,16 +92,43 @@ namespace Compass.Repositories
         }
 
         // Get Billing Address Dropdown
+        //public async Task<List<DropdownDto>> GetBillingAddressDropdownAsync(
+        //   int deptId,
+        //   string searchTerm)
+        //{
+
+        //    SortedList parameters = new SortedList();
+        //    parameters.Add("@DeptId", deptId);
+        //    parameters.Add("@SearchTerm", string.IsNullOrEmpty(searchTerm) ? DBNull.Value : searchTerm);
+        //    var dt = await _cn.FillDataTableAsync(
+        //            "TallyBillingAddress_cdll",
+        //            "",
+        //            parameters
+        //        );
+        //    if (dt == null || dt.Rows.Count == 0)
+        //        return new List<DropdownDto>();
+
+        //    var result = CommonNew.ToList<DropdownDto>(dt);
+        //    return result;
+        //}
         public async Task<List<DropdownDto>> GetBillingAddressDropdownAsync(
-           int deptId,
-           string searchTerm)
+            int ParentId1,
+            int ParentId2,
+            int ParentId3,
+            int userId,
+            int roleId,
+            string searchTerm)
         {
 
             SortedList parameters = new SortedList();
-            parameters.Add("@DeptId", deptId);
+            parameters.Add("@DeptId", ParentId1);
+            parameters.Add("@AgencyId", ParentId2);
+            parameters.Add("@WorkOrderAgencyId", ParentId3);
+            parameters.Add("@UserId", userId);
+            parameters.Add("@RoleId", roleId);
             parameters.Add("@SearchTerm", string.IsNullOrEmpty(searchTerm) ? DBNull.Value : searchTerm);
             var dt = await _cn.FillDataTableAsync(
-                    "TallyBillingAddress_cdll",
+                    "TallyAgencyWorkOrder_ddlC",
                     "",
                     parameters
                 );
