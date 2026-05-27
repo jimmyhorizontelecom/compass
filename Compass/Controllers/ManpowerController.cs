@@ -218,6 +218,98 @@ namespace Compass.Controllers
         }
 
 
+        // Gert Marked Employee list by Department
+        //Get employee name for data map
+
+        //[HttpGet]
+        //public async Task<IActionResult> GetMarkedEmpRsourceRecord([FromQuery] MapEmployeeFilter filter)
+
+        //{
+
+
+        //    try
+        //    {
+        //        // Access as object
+        //        SortedList parameters = new SortedList();
+
+        //        parameters.Add("@Id", filter.Id);
+        //        parameters.Add("@AttendaceId", filter.AttendaceId);
+
+
+        //        var dt = await _cn.FillDataTableAsync("tblTallyAttendance_Get", "", parameters);
+
+        //        if (dt == null || dt.Rows.Count == 0)
+        //            return Ok(new List<MapEmployeeViewModel>());
+
+        //        var list = dt.AsEnumerable().Select(row => new MapEmployeeViewModel
+
+        //        {
+        //            //EmpId = Convert.ToInt32(row["EmpId"]?.ToString()),
+        //            EmpId = row["EmpId"] != DBNull.Value ? Convert.ToInt32(row["EmpId"]): 0,
+        //            EmpName = (row["Empname"]?.ToString()),
+        //            EmpFatherName = (row["FatherName"]?.ToString()),
+        //            EmpAadharNo = (row["AADHARNO"]?.ToString()),
+        //            EmpDesignation = (row["fvDesignationName"]?.ToString()),
+
+        //        }).ToList();
+
+        //        return Ok(list);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, new
+        //        {
+        //            success = false,
+        //            message = "Server error.",
+        //            error = ex.Message
+        //        });
+        //    }
+        //}
+        [HttpGet]
+        public async Task<IActionResult> GetMarkedEmpRsourceRecord([FromQuery] MapEmployeeFilter filter)
+        {
+            try
+            {
+                SortedList parameters = new SortedList();
+
+                parameters.Add("@Id", filter.Id);
+                parameters.Add("@AttendaceId", filter.AttendaceId);
+
+                // DataSet use karo
+                var ds = await _cn.FillDataSetAsync("tblTallyAttendance_Get", "", parameters);
+
+                // Second table lo
+                DataTable dt = ds.Tables[1];
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<MapEmployeeViewModel>());
+
+                var list = dt.AsEnumerable().Select(row => new MapEmployeeViewModel
+                {
+                    EmpId = row["EmpId"] != DBNull.Value
+                                ? Convert.ToInt32(row["EmpId"])
+                                : 0,
+
+                    EmpName = row["Empname"]?.ToString(),
+                    EmpFatherName = row["FatherName"]?.ToString(),
+                    EmpAadharNo = row["AADHARNO"]?.ToString(),
+
+                  
+
+                }).ToList();
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
 
         // Get record for the List
         [HttpGet]
@@ -247,7 +339,8 @@ namespace Compass.Controllers
                 var list = dt.AsEnumerable().Select(row => new DeptAttendanceViewModel
 
                 {
-                    Id = row["AttendaceId"]?.ToString(),
+                    Id = row["Id"]?.ToString(),
+                    AttendaceId = row["AttendaceId"]?.ToString(),
                     departmentName = (row["departmentName"]?.ToString()),
                     AgencyName = (row["AgencyName"]?.ToString()),
                     WorkOrderId = (row["WorkOrderId"]?.ToString()),
@@ -654,13 +747,13 @@ namespace Compass.Controllers
         {
             try
             {
-                Console.WriteLine("Delete Id Received: " + model.Id);
+                Console.WriteLine("Delete Id Received: " + model.AttendaceId);
 
                 var userId = User.FindFirst("UserId")?.Value;
 
                 SortedList parameters = new SortedList
         {
-            { "@AttendaceId", model.Id },
+            { "@AttendaceId", model.AttendaceId },
             { "@IsCancel", "Y" },
             { "@CancelBy", userId },
             { "@CancelRemarks", model.CancelRemarks ?? "" }
@@ -698,7 +791,7 @@ namespace Compass.Controllers
             {
                 // Access as object
                 SortedList parameters = new SortedList();
-                parameters.Add("@AttendaceId", filter.Id);
+                parameters.Add("@AttendaceId", filter.AttendaceId);
 
                 var dt = await _cn.FillDataTableAsync("tblTallyAttendanceDetails_Get", "", parameters);
 
@@ -709,6 +802,7 @@ namespace Compass.Controllers
 
                 {
                     //Id = row["AttendaceId"]?.ToString(),
+                    //AttendaceId = row["AttendaceId"]?.ToString(),
                     MonthYear = Convert.ToInt32(row["MonthYear"]?.ToString()),
                     departmentName = (row["departmentName"]?.ToString()),
                     AgencyName = (row["AgencyName"]?.ToString()),
@@ -720,6 +814,48 @@ namespace Compass.Controllers
                     //AttendanceCertificate = row["AttendanceCertificate"]?.ToString(),
                     //AnnexureFile = row["AnnexureFile"]?.ToString(),
                     //AgencyBillFile = row["UploadBill"]?.ToString(),
+                }).ToList();
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+
+        // Get Map record marked by Department
+        [HttpGet]
+        public async Task<IActionResult> GetMapResourceRecord([FromQuery] DeptAttendanceFilter filter)
+
+        {
+            try
+            {
+                // Access as object
+                SortedList parameters = new SortedList();
+                parameters.Add("@Id", 0);
+                parameters.Add("@AttendaceId", filter.Id);
+
+                var dt = await _cn.FillDataTableAsync("tblTallyAttendance_Get", "", parameters);
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<ViewMapResourceViewModel>());
+
+                var list = dt.AsEnumerable().Select(row => new ViewMapResourceViewModel
+
+                {
+                    //Id = row["AttendaceId"]?.ToString(),
+                    EmpId = Convert.ToInt32(row["EmpId"]?.ToString()),
+                    EmpName = (row["Empname"]?.ToString()),
+                    FatherName = (row["FatherName"]?.ToString()),
+                    AadharNo = (row["AADHARNO"]?.ToString()),
+                    
                 }).ToList();
 
                 return Ok(list);
@@ -826,7 +962,7 @@ namespace Compass.Controllers
             }
         }
 
-        // Get record Upload Annexure & agency File
+        // Get record for Agency Invoice
         [HttpGet]
         public async Task<IActionResult> GetAgencyInvoiceRecord([FromQuery] DeptAttendanceFilter filter)
 
@@ -835,7 +971,7 @@ namespace Compass.Controllers
             {
                 // Access as object
                 SortedList parameters = new SortedList();
-                parameters.Add("@AttendaceId", filter.Id);
+                parameters.Add("@AttendaceId", filter.AttendaceId);
 
                 var dt = await _cn.FillDataTableAsync("tblTallyAttendanceDetails_Get", "", parameters);
 
@@ -845,7 +981,7 @@ namespace Compass.Controllers
                 var list = dt.AsEnumerable().Select(row => new DeptAttendanceViewModel
 
                 {
-                    Id = row["AgencyId"]?.ToString(),
+                    //Id = row["AgencyId"]?.ToString(),
                     MonthYear = Convert.ToInt32(row["MonthYear"]?.ToString()),
                     DeptId = Convert.ToInt32(row["DeptId"]?.ToString()),
                     departmentName = (row["departmentName"]?.ToString()),

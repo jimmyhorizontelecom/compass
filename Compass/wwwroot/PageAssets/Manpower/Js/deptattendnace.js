@@ -1,4 +1,5 @@
 ﻿var Id = 0;
+var AttendaceId = 0;
 var billingData = [];
 //common
 toastr.options = {
@@ -143,7 +144,8 @@ function bindDatatable(records, tableId) {
         console.log(value); 
         tbody.append(`
             <tr 
-                data-id="${value.Id}">
+                data-id="${value.Id}"
+                data-id="${value.AttendanceId}" >
                 <td>${SrNo}</td>
                 <td>${value.departmentName}</td>
                 <td>${value.AgencyName}</td>
@@ -178,12 +180,14 @@ function bindDatatable(records, tableId) {
                  <td class="text-center">
                     <i class="bi bi-pencil-square upload-Bill edit-icon"
                         data-id="${value.Id}"
+                         data-AttendaceId="${value.AttendaceId}"
                     style="cursor:pointer;font-size:25px;"></i>
                 </td>
-                 
+                 <!--Delete File-->
                  <td class="text-center" >
+
                     <i class="bi bi-trash text-danger delete-Records"
-                    data-id="${value.Id}"
+                    data-AttendaceId="${value.AttendaceId}"
                     style="cursor:pointer;font-size:25px;"></i> 
                  </td>
                  <td class="text-center">
@@ -191,19 +195,11 @@ function bindDatatable(records, tableId) {
                 </td>
                  <td class="text-center">
                    <i class="bi bi-download"
-   style="
-      font-size:32px;
-      color:red;
-      font-weight:bold;
-      -webkit-text-stroke:1px black;
-   ">
-</i>
-
+                    style="font-size:32px;color:red;font-weight:bold;-webkit-text-stroke:1px black;"></i>
                 </td>
                  <td class="text-center">
-                   
                        <i class="bi bi-pencil-square edit-AgencyInvoice edit-icon"
-                       data-id="${value.Id}"
+                       data-AttendaceId="${value.AttendaceId}"
                        style="cursor:pointer;font-size:25px;"></i>
                   
                 </td>
@@ -233,7 +229,7 @@ async function MapRecord() {
         //await loadMapRecord(recordId);
         
         openModal('myModal_MapRecord');
-        recordMaplist();
+        await recordMaplist();
         
 
     } else {
@@ -278,6 +274,7 @@ function bindMapDatatable(records, tableId) {
         tbody.append(`
             <tr 
                 data-id="${value.Id}">
+                data-id="${value.AttendanceId}">
                 <td>${SrNo}</td>
                 <td class="text-center"> <input type="checkbox" class="rowCheckbox" value="${value.EmpId}"></td>
                 <td>${value.EmpId}</td>
@@ -313,18 +310,6 @@ $(document).on('change', '.rowCheckbox', function () {
         }
     }
 });
-
-
-
-
-//// Submit record when Click on btn
-//$(".btnModalSubmitMap").on("click", function () {
-//    MapRecordSubmit();
-//});
-////Submit select No of rsources
-//async function MapRecordSubmit() {
-//    alert('Select Map Checkbox Submission');
-//}
 
 // Submit record when Click on btn
 $(".btnModalSubmit").on("click", function () {
@@ -621,16 +606,13 @@ $(".btnModalSubmit").on("click", function () {
 
 //}
 
-// View Uploaded pdf on New tab  file conditions
 
 async function SubmitRecord() {
 
     let isValid = true;
-
-    // ===============================
-    // FORM VALUES
-    // ===============================
-
+        
+    // Form Values
+    
     let monthYear = $("#monthYear").val();
     let deptId = $("#ddlDeptName").val();
     let agencyId = $("#ddlAgencyName").val();
@@ -639,9 +621,9 @@ async function SubmitRecord() {
     let noOfResources = $("#txtNoOfResources").val().trim();
     let presentResources = $("#txtPresentResource").val().trim();
 
-    // ===============================
+   
     // FILE CONTROLS
-    // ===============================
+   
 
     let Attendance = $("#inputAttendanceFileAttached").get(0);
     let files_Attendance = Attendance ? Attendance.files : [];
@@ -659,9 +641,9 @@ async function SubmitRecord() {
     $(".error").text("");
     $(".is-invalid").removeClass("is-invalid");
 
-    // ===============================
+    
     // BASIC VALIDATION
-    // ===============================
+   
 
     if (!monthYear) {
 
@@ -719,17 +701,17 @@ async function SubmitRecord() {
     //    isValid = false;
     //}
 
-    // ===============================
+    
     // FILE VALIDATION
-    // ===============================
+    
 
     let fileSize = 5;
     let allowedExtensions = ["pdf"];
 
-    // ===============================
+    
     // ATTENDANCE FILE REQUIRED
     // FOR ALL USERS
-    // ===============================
+  
 
     if (files_Attendance.length === 0) {
 
@@ -753,16 +735,15 @@ async function SubmitRecord() {
         }
     }
 
-    // ===============================
-    // AGENCY ROLE VALIDATION
+   
+    // Agency Role Validation
     // RoleId = 48
-    // ===============================
-
+   
     if (roleId == "48") {
 
-        // ===============================
-        // ANNEXURE FILE
-        // ===============================
+       
+        // Annexure File
+       
 
         if (files_Annexure.length === 0) {
 
@@ -786,10 +767,9 @@ async function SubmitRecord() {
             }
         }
 
-        // ===============================
-        // AGENCY BILL FILE
-        // ===============================
-
+        
+        // Agency Bill File
+        
         if (files_GroupBill.length === 0) {
 
             $("#inputGroupBillFileAttached").addClass("is-invalid");
@@ -843,21 +823,22 @@ async function SubmitRecord() {
     formData.append("WorkOrderNo", workOrderNo);
     formData.append("UpladNoOfResource", noOfResources);
     formData.append("PresentResource", presentResources);
-    // ===============================
-    // EMPLOYEE LIST
-    // ===============================
 
-    $(".emp-checkbox:checked").each(function (i) {
+    // Employee List
+    
+    let checkedEmployees = $(".rowCheckbox:checked");
+
+    if (checkedEmployees.length == 0) {
+
+        MsgBox('Error', 'Please select at least one employee', '');
+        return;
+    }
+
+    checkedEmployees.each(function (i) {
 
         formData.append("EmployeeList[" + i + "].EmpId", $(this).val());
 
     });
-    if ($(".rowCheckbox:checked").length == 0) {
-
-        MsgBox('Error', 'Please select at least one employee', '');
-
-        return;
-    }
 
     // ===============================
     // ATTENDANCE FILE
@@ -944,8 +925,12 @@ $(document).on('click', '.view-file', function (e) {
 // MsgBox on Click event on Upload Annexure & Bill 
 $(document).on('click', '.upload-Bill', async function () {
 
-    var recordId = $(this).data("id");
+    var Id = $(this).data("id");
+    var recordId = $(this).data("attendaceid");
+   
+   alert(Id);
    alert(recordId);
+    console.log("Upload Bill Id:", Id);
     console.log("Upload Bill Id:", recordId);
 
     if (!recordId) {
@@ -957,10 +942,10 @@ $(document).on('click', '.upload-Bill', async function () {
 
     if (isConfirmed) {
         await loadRecordUploadFile(recordId);
+        await recordMarkedEpmlist(Id,recordId);
         openModal('myModal_UploadFile');
-        // Alternative if openModal not working
-        //$('#myModal_UploadFile').modal('show');
-
+        
+   
     } else {
 
         console.log('Upload cancelled');
@@ -972,7 +957,7 @@ $(document).on('click', '.upload-Bill', async function () {
 async function loadRecordUploadFile(recordId) {
    // alert('Load Record function')
     var filterData = {
-        Id: recordId,
+        AttendaceId: recordId,
         
     };
 
@@ -1003,6 +988,67 @@ async function loadRecordUploadFile(recordId) {
         console.error("Error loading record:", error);
     }
 }
+
+//Get Record mapped No of Resource marked by department 
+async function recordMarkedEpmlist(Id, AttendaceId) {
+
+    var filterData = {
+        Id: Id,
+        AttendaceId: AttendaceId,
+
+
+    };
+
+    try {
+
+        let records = await getRecords('Manpower', 'GetMarkedEmpRsourceRecord', filterData, '#myTable_ViewMapResource', 'N');
+        bindMarkedDatatable(records, '#myTable_ViewMapResource');
+    }
+    catch (error) {
+        console.error("Error loading records:", error);
+        //hideModalLoader();
+    }
+}
+//Bind get record in a table  of Map Employee record 
+function bindMarkedDatatable(records, tableId) {
+
+    if ($.fn.DataTable.isDataTable(tableId)) {
+        $(tableId).DataTable().clear().destroy();
+    }
+
+    var tbody = $(tableId + " tbody");
+    tbody.empty();
+
+    $.each(records, function (i, value) {
+        let SrNo = i + 1;
+        console.log(value);
+        tbody.append(`
+            <tr 
+               data-id="${value.Id}">
+                data-id="${value.AttendanceId}">
+                <td>${SrNo}</td>
+                <td>${value.EmpId}</td>
+                <td>${value.EmpName}</td>
+                <td>${value.EmpFatherName}</td>
+                <td>${value.EmpAadharNo} </td>
+                
+            </tr>                   
+        `);
+    });
+
+    $(tableId).DataTable({
+        paging: true,
+        searching: true,
+        ordering: true,
+        info: true,
+        responsive: true
+    });
+
+    //hideModalLoader();
+}
+
+
+
 // Submit Upload files record when Click on btn
 $(".btnModalSubmit1").on("click", function () {
     SubmitUploadFile();
@@ -1103,7 +1149,8 @@ async function SubmitUploadFile() {
 // MsgBox on Click event on Delete Icon 
 $(document).on('click', '.delete-Records', async function () {
 
-    var recordId = $(this).data("id");
+    var recordId = $(this).data("attendaceid");
+    alert(recordId);
 
     console.log("Delete Id:", recordId);
 
@@ -1120,16 +1167,16 @@ $(document).on('click', '.delete-Records', async function () {
 
 });
 // Delete Records Function
-async function deleteAttendanceRecord(Id) {
+async function deleteAttendanceRecord(recordId) {
 
     try {
 
         let formData = new FormData();
 
-        formData.append("Id", Id);
+        formData.append("AttendaceId", recordId);
         formData.append("CancelRemarks", "Deleted by user");
 
-        console.log("Sending Delete Data:", Id);
+        console.log("Sending Delete Data:", recordId);
 
         let res = await acceptUpdate("Manpower","Delete_DeptAttendanceRecord",formData);
 
@@ -1156,8 +1203,9 @@ async function deleteAttendanceRecord(Id) {
 
 $(document).on('click', '.edit-AgencyInvoice', async function () {
 
-    var recordId = $(this).data("id");
-    // alert(recordId);
+    //var recordId = $(this).data("id");
+    var recordId = $(this).data("attendaceid");
+     alert(recordId);
     console.log("Edit Record Id:", recordId);
 
     if (!recordId) {
@@ -1184,12 +1232,12 @@ $(document).on('click', '.edit-AgencyInvoice', async function () {
 async function loadRecordUpdate(recordId) {
     //alert('Load Record function')
     var filterData = {
-        Id: recordId,
-        AgencyId: 0,
-        DeptId: 0,
-        MonthYear: 0,
-        CreatedBy: 0,
-        UserRole: 39,
+        AttendaceId: recordId,
+        // AgencyId: 0,
+        // DeptId: 0,
+        // MonthYear: 0,
+        // CreatedBy: 0,
+        // UserRole: 39,
     };
 
     try {
@@ -1206,7 +1254,7 @@ async function loadRecordUpdate(recordId) {
             $("#txtDeptName1").val(data.departmentName);
             $("#txtNoResource1").val(data.UpladNoOfResource);
             $("#txtDepBillingAdd1").val(data.BillingAddress);
-            $("#monthYear1").val(data.MonthYear);
+            $("#monthYear2").val(data.MonthYear);
             $("#hdnAgencyId1").val(data.AgencyId);
             $("#hdnDeptId1").val(data.DeptId);
             $("#hdnBillingId1").val(data.BillingId);

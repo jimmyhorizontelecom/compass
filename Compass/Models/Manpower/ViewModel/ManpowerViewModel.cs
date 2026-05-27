@@ -32,7 +32,9 @@ namespace Compass.Models.ManpowerViewModel
     //Map No. of Resource Employee record filter
     public class MapEmployeeFilter
     {
+        public int Id { get; set; }
         public int AgencyId { get; set; }
+        public int AttendaceId { get; set; }
         public int WorkOrderId { get; set; }
     }
 
@@ -58,7 +60,7 @@ namespace Compass.Models.ManpowerViewModel
         public int AgencyId { get; set; }
         public int WorkOrderAgencyId { get; set; }
         public int DeptId { get; set; }
-        public string MonthYear { get; set; }
+        public int MonthYear { get; set; }
        // public int CreatedBy { get; set; }
         //public int UserRole { get; set; }
 
@@ -85,6 +87,18 @@ namespace Compass.Models.ManpowerViewModel
         public string AgencyBillFile { get; set; }
 
     }
+
+    //View Map Resource by department
+    public class ViewMapResourceViewModel
+    {
+        public int EmpId { get; set; }
+        public string EmpName { get; set; }
+        public string FatherName { get; set; }
+        public string AadharNo { get; set; }
+       
+    }
+
+
 
     //Purchase Invoice filter
     public class PInvoiceFilter

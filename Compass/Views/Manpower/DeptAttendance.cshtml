@@ -169,7 +169,7 @@
 
 @section Modals {
     <!-- The Modal -->
-    <!-- Upload Model of Annexure & Bill-->>
+    <!-- Mark No. of resources by Department-->>
     <div class="modal modal-lg" id="myModal_MapRecord">
         <div class="modal-dialog ">
             <div class="modal-content position-relative">
@@ -195,8 +195,7 @@
                                     <tr>
                                         <th>Sr.No</th>
                                         <th>
-                                            <input type="checkbox" id="selectAll" class="emp-checkbox"
-                                                   value="${value.EmpId}" />Select All
+                                            <input type="checkbox" id="selectAll" /> Select All
                                         </th>
                                         <th>Employee Id</th>
                                         <th>Employee Name</th>
@@ -315,9 +314,8 @@
                                 <span class="error"></span>
                             </div>
                             <div class="col-md-4">
-                               
                                 <label class="form-label">Bill For Month </label>
-                                <input type="text" id="monthYear1" name="MonthYear" class="form-control monthYearPicker" maxlength="6" placeholder="MMYYYY">
+                                <input type="text" id="monthYear2" class="form-control" placeholder="MMYYYY">
                                 <span class="error"></span> @* <span class="error text-danger"></span> *@
                             </div>
                         </div>
@@ -488,7 +486,29 @@
                             </div>
                         </div>
                     </div>
+                    <div class="filter-panel mt-5 div-coral-base">
+                        <h6>View Employee Details Mark By Department</h6>
+                        <div class="table-responsive">
+                            <table id="myTable_ViewMapResource" class="table orangeTh table-striped table-hover table-bordered">
+                                <thead class="bg-d">
+                                    <tr>
+                                        <th>Sr.No</th>
+                                        <th>Employee Id</th>
+                                        <th>Employee Name</th>
+                                        <th>Fathers Name</th>
+                                        <th>Aadhar No</th>
+                                                                             
 
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+
+
+
+                    </div>
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer  bg-ld">

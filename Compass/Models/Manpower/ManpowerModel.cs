@@ -56,7 +56,7 @@ namespace Compass.Models.ManpowerModel
     // Dept Attendance delete uploaded files
     public class DeleteAttendanceModel
     {
-        public int Id { get; set; }
+        public int AttendaceId { get; set; }
         public string CancelRemarks { get; set; }
     }
 
