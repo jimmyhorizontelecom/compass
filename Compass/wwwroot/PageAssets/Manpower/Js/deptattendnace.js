@@ -990,11 +990,11 @@ async function loadRecordUploadFile(recordId) {
 }
 
 //Get Record mapped No of Resource marked by department 
-async function recordMarkedEpmlist(Id, AttendaceId) {
+async function recordMarkedEpmlist(Id, recordId) {
 
     var filterData = {
         Id: Id,
-        AttendaceId: AttendaceId,
+        AttendaceId: recordId,
 
 
     };
