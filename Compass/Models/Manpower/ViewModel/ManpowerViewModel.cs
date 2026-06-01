@@ -89,6 +89,7 @@ namespace Compass.Models.ManpowerViewModel
 
     }
 
+
     //View Map Resource by department
     public class ViewMapResourceViewModel
     {

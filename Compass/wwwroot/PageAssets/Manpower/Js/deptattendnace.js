@@ -1134,11 +1134,12 @@ async function deleteAttendanceRecord(recordId) {
 $(document).on('click', '.edit-AgencyInvoice', async function () {
 
     //var recordId = $(this).data("id");
-    var recordId = $(this).data("attendaceid");
-     alert(recordId);
-    console.log("Edit Record Id:", recordId);
+   // var recordId = $(this).data("attendaceid");
+    AttendaceId = $(this).data("attendaceid");
+    alert(AttendaceId);
+    console.log("Edit Record Id:", AttendaceId);
 
-    if (!recordId) {
+    if (!AttendaceId) {
         toastr.error("Record Id not found");
         return;
     }
@@ -1146,7 +1147,7 @@ $(document).on('click', '.edit-AgencyInvoice', async function () {
     var isConfirmed = await DeleteEditBox('Edit Field', 'Do you want to edit Record?', 'question');
 
     if (isConfirmed) {
-        await loadRecordUpdate(recordId);
+        await loadRecordUpdate(AttendaceId);
         openModal('myModal_AgencyInvoice');
         // Alternative if openModal not working
         //$('#myModal_UploadFile').modal('show');
@@ -1159,10 +1160,10 @@ $(document).on('click', '.edit-AgencyInvoice', async function () {
 
 });
 // get Record to fill
-async function loadRecordUpdate(recordId) {
+async function loadRecordUpdate(AttendaceId) {
     //alert('Load Record function')
     var filterData = {
-        AttendaceId: recordId,
+        AttendaceId: AttendaceId,
         
     };
 
@@ -1173,6 +1174,7 @@ async function loadRecordUpdate(recordId) {
         if (records && records.length > 0) {
             let data = records[0];
             Id = data.Id;
+            AttendaceId = data.AttendaceId;
             $("#ddlPurchaseBillDate1").val(data.MonthYear);
             $("#txtWorkOrderNo1").val(data.WorkOrderId);
             //$("#txtAgencyBillNo1").val(data.AgencyName);
@@ -1184,11 +1186,9 @@ async function loadRecordUpdate(recordId) {
             $("#hdnAgencyId1").val(data.AgencyId);
             $("#hdnDeptId1").val(data.DeptId);
             $("#hdnBillingId1").val(data.BillingId);
-
             console.log("AgencyId:", data.AgencyId);
             console.log("DeptId:", data.DeptId);
             console.log("BillingId:", data.BillingId);
-            
             //$('#myModal').modal('show');
         }
     }
@@ -1216,7 +1216,7 @@ async function SubmitPurchaseBill() {
     let billingId = $("#hdnBillingId1").val();
     let noOfResource = $("#txtNoResource1").val().trim();
     let billingAdd = $("#txtDepBillingAdd1").val();
-    let monthYear = $("#monthYear1").val();
+    let monthYear = $("#monthYear2").val();
     let discription = $("#txtDiscription1").val();
     let narration = $("#txtNarration1").val().trim();
     let billAmount = $("#numBasicAmount").val().trim();
@@ -1236,11 +1236,11 @@ async function SubmitPurchaseBill() {
         $("#txtAgencyBillNo1").siblings(".error").text("Bill No Required");
         isValid = false;
     }
-    if (!monthYear) {
-        $("#monthYear1").addClass("is-invalid");
-        $("#monthYear1").siblings(".error").text("Month & Year required");
-        isValid = false;
-    }
+    // if (!monthYear) {
+    //     $("#monthYear2").addClass("is-invalid");
+    //     $("#monthYear2").siblings(".error").text("Month & Year required");
+    //     isValid = false;
+    // }
     if (discription === "") {
         $("#txtDiscription1").addClass("is-invalid");
         $("#txtDiscription1").siblings(".error").text("Discription Required");
@@ -1293,7 +1293,7 @@ async function SubmitPurchaseBill() {
     formData.append("PurchaseBillDate", purcahseBillDate);
     formData.append("WorkOrderNo", workOrderNo);
     formData.append("NoOfResources", noOfResource);
-    formData.append("Id", Id);
+    formData.append("AttendaceId", AttendaceId);
     formData.append("AgencyBillNo", billNo);
     formData.append("AgencyId", parseInt(agencyId));
     formData.append("DeptId", parseInt(deptId));
@@ -1320,7 +1320,7 @@ async function SubmitPurchaseBill() {
             recordlist();
             resetModal();
 
-            Id = 0;
+            AttendaceId = 0;
             $('.modelalert').text(res.message);
             closeModal('myModal_AgencyInvoice');
             MsgBox('Message', res.message, '');

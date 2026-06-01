@@ -850,14 +850,12 @@ namespace Compass.Controllers
             {
 
                 //var Id = model.Id;
-                var Id = model.Id;
+                var AttendaceId = model.AttendaceId;
                 var PurchaseBillDate = model.PurchaseBillDate;
                 var WorkOrderNo = model.WorkOrderNo;
                 var AgencyBillNo = model.AgencyBillNo;
                 var AgencyId = model.AgencyId;
-                //var AgencyName = model.AgencyName;
                 var DeptId = model.DeptId;
-                //var DeptName = model.DeptName;
                 var NoOfResources = model.NoOfResources;
                 var BillingId = model.BillingId;
                 var BillingAdd = model.BillingAdd;
@@ -881,7 +879,7 @@ namespace Compass.Controllers
                     { "@WorkOrderNo", WorkOrderNo },
                     { "@NoOfResource", NoOfResources },
                     { "@BillforMonth", MonthYear },
-                    { "@AttendanceId", Id },
+                    { "@AttendanceId", AttendaceId },
                     { "@Billno", AgencyBillNo },
                     { "@AgencyId", AgencyId },
                     { "@DeptId", DeptId },

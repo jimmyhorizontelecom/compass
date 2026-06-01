@@ -65,7 +65,7 @@ namespace Compass.Models.ManpowerModel
     //Dept Attendance Purchase Invoice Model Submit
     public class DeptPurchaseInvoiceModel
     {
-        public int Id { get; set; }
+        public int AttendaceId { get; set; }
         public int AgencyBillId { get; set; }
         public string PurchaseBillDate { get; set; }
         public string WorkOrderNo { get; set; }
