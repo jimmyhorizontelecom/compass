@@ -621,9 +621,10 @@ namespace Compass.Controllers
             {
                 // Access as object
                 SortedList parameters = new SortedList();
+                parameters.Add("@Id", filter.Id);
                 parameters.Add("@AttendaceId", filter.AttendaceId);
 
-                var dt = await _cn.FillDataTableAsync("tblTallyAttendanceDetails_Get", "", parameters);
+                var dt = await _cn.FillDataTableAsync("tblTallyAttendance_Get", "", parameters);
 
                 if (dt == null || dt.Rows.Count == 0)
                     return Ok(new List<DeptAttendanceViewModel>());
@@ -631,14 +632,14 @@ namespace Compass.Controllers
                 var list = dt.AsEnumerable().Select(row => new DeptAttendanceViewModel
 
                 {
-                    //Id = row["AttendaceId"]?.ToString(),
-                    //AttendaceId = row["AttendaceId"]?.ToString(),
+                    Id = Convert.ToInt32(row["Id"]?.ToString()),
+                    AttendaceId = Convert.ToInt32(row["AttendaceId"]?.ToString()),
                     MonthYear = Convert.ToInt32(row["MonthYear"]?.ToString()),
                     departmentName = (row["departmentName"]?.ToString()),
                     AgencyName = (row["AgencyName"]?.ToString()),
-                    WorkOrderId = (row["HpsedcWrokOrderNO"]?.ToString()),
+                    WorkOrderId = (row["WorkOrderId"]?.ToString()),
                     //PurhaseInvNO = (row["PurhaseInvNO"]?.ToString()),
-                    //DeployedResource = Convert.ToInt32(row["DeployedResource"]?.ToString()),
+                    DeployedResource = Convert.ToInt32(row["DeployedResource"]?.ToString()),
                     UpladNoOfResource = Convert.ToInt32(row["UpladNoOfResource"]?.ToString()),
                     BillingAddress = (row["BillingAddress"]?.ToString()),
                     //AttendanceCertificate = row["AttendanceCertificate"]?.ToString(),
@@ -917,8 +918,11 @@ namespace Compass.Controllers
             }
         }
         #endregion
-
-
+        //SP
+        //TallySaleBillCancel_AcceptUpdate
+        //TallyDispatchInv_List_Optimized
+        //TallyDispatchInv_List"
+        //TallyDispatchInv_AcceptUpdate
 
         #region ESIEPF Report
         public IActionResult ESIEPFReport()

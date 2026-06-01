@@ -90,7 +90,7 @@ function bindDatatable(records, tableId) {
         tbody.append(`
             <tr 
                 data-id="${value.Id}"
-                data-id="${value.AttendanceId}" >
+                data-attendanceId="${value.AttendanceId}" >
                 <td>${SrNo}</td>
                 <td>${value.departmentName}</td>
                 <td>${value.AgencyName}</td>
@@ -125,14 +125,14 @@ function bindDatatable(records, tableId) {
                  <td class="text-center">
                     <i class="bi bi-pencil-square upload-Bill edit-icon"
                         data-id="${value.Id}"
-                         data-AttendaceId="${value.AttendaceId}"
+                         data-attendaceId="${value.AttendaceId}"
                     style="cursor:pointer;font-size:25px;"></i>
                 </td>
                  <!--Delete File-->
                  <td class="text-center" >
 
                     <i class="bi bi-trash text-danger delete-Records"
-                    data-AttendaceId="${value.AttendaceId}"
+                    data-attendaceId="${value.AttendaceId}"
                     style="cursor:pointer;font-size:25px;"></i> 
                  </td>
                  <td class="text-center">
@@ -144,7 +144,7 @@ function bindDatatable(records, tableId) {
                 </td>
                  <td class="text-center">
                        <i class="bi bi-pencil-square edit-AgencyInvoice edit-icon"
-                       data-AttendaceId="${value.AttendaceId}"
+                       data-attendaceId="${value.AttendaceId}"
                        style="cursor:pointer;font-size:25px;"></i>
                   
                 </td>
@@ -864,10 +864,8 @@ $(document).on('click', '.view-file', function (e) {
 
 // MsgBox on Click event on Upload Annexure & Bill 
 $(document).on('click', '.upload-Bill', async function () {
-    var Id = $(this).data("id");
+    Id = $(this).data("id");
     var recordId = $(this).data("attendaceid");  
-   alert(Id);
-   alert(recordId);
     console.log("Upload Bill Id:", Id);
     console.log("Upload Bill Id:", recordId);
     if (!recordId) {
@@ -875,28 +873,24 @@ $(document).on('click', '.upload-Bill', async function () {
         return;
     }
     var isConfirmed = await DeleteEditBox('Upload File','Do you want to upload Annexure/Bill?','question');
-
     if (isConfirmed) {
-        await loadRecordUploadFile(recordId);
+        await loadRecordUploadFile(Id,recordId);
         await recordMarkedEpmlist(Id,recordId);
         openModal('myModal_UploadFile');
-        
-   
     } else {
-
         console.log('Upload cancelled');
-
     }
 
 });
 // get Record to fill upload Annexure & Bill File
-async function loadRecordUploadFile(recordId) {
+async function loadRecordUploadFile(Id,recordId) {
    // alert('Load Record function')
     var filterData = {
+        Id:Id,
         AttendaceId: recordId,
         
     };
-
+    alert(filterData);
     try {
 
         let records = await getRecords('Manpower', 'GetUploadAnnexureBillRecord', filterData, '', 'N');
@@ -924,7 +918,6 @@ async function loadRecordUploadFile(recordId) {
         console.error("Error loading record:", error);
     }
 }
-
 //Get Record mapped No of Resource marked by department 
 async function recordMarkedEpmlist(Id, recordId) {
 
@@ -992,7 +985,7 @@ $(".btnModalSubmit1").on("click", function () {
 
 // Submit records
 async function SubmitUploadFile() {
-  
+   
     let isValid = true;
     
     let files_Annexure = $("#inputAnnexureFileAttached1")[0]?.files || [];
@@ -1072,7 +1065,7 @@ async function SubmitUploadFile() {
 
             Id = Id;
             $('.modelalert').text(res.message);
-            closeModal('myModal');
+            closeModal('myModal_UploadFile');
             MsgBox('Message', res.message, '');
         }
 
@@ -1170,11 +1163,7 @@ async function loadRecordUpdate(recordId) {
     //alert('Load Record function')
     var filterData = {
         AttendaceId: recordId,
-        // AgencyId: 0,
-        // DeptId: 0,
-        // MonthYear: 0,
-        // CreatedBy: 0,
-        // UserRole: 39,
+        
     };
 
     try {
@@ -1356,14 +1345,14 @@ function calculateBillAmounts() {
     let adminCharge = basicAmount * 0.025;
 
     // Subtotal
-    let subTotal = basicAmount + adminCharge /*+ liveryCharge*/;
+    let subTotal = basicAmount + adminCharge + liveryCharge;
 
     // GST
     let cgst = subTotal * 0.09;
     let sgst = subTotal * 0.09;
 
     // Total
-    let total = subTotal + liveryCharge + cgst + sgst;
+    let total = subTotal +  cgst + sgst;
 
    
     $("#numAdminCharge").val(adminCharge.toFixed(2));
