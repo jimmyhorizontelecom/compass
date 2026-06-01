@@ -1,6 +1,7 @@
 ﻿using Compass.Models.ManpowerViewModel;
 using Microsoft.AspNetCore.Http;
 
+
 namespace Compass.Models.ManpowerModel
 {
     // Dept. Master  
@@ -40,7 +41,8 @@ namespace Compass.Models.ManpowerModel
         public IFormFile AnnexureFile { get; set; }
         public IFormFile AgencyBillFile { get; set; }
 
-        public List<EmployeeAttendanceModel> EmployeeList { get; set; }
+        public string EmployeeListJson { get; set; }
+        //public List<EmployeeAttendanceModel> EmployeeList { get; set; }
 
     }
 

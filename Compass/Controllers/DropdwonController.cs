@@ -31,13 +31,7 @@ namespace Compass.Controllers
             var result = await _service.GetDepartmentDropdownAsync(id, searchTerm);
             return Ok(result);
         }
-        //[HttpGet]
-        //public async Task<IActionResult> MDepartment_ddl(int id, int mainCatgId, string searchTerm)
-        //{
-        //    var data = await _service.GetDepartmentDropdownAsync(0, searchTerm);
-        //    return Json(data);
-        //}
-
+     
         //Get Billing Address ddl
         [HttpGet]
         public async Task<IActionResult> MBillingAddress_ddl(

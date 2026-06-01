@@ -27,6 +27,7 @@ namespace Compass.Models.ManpowerViewModel
         public string IsResourceUploaded { get; set; }
         public int NoOfUploadedResource { get; set; }
         public string BillingAddEmail { get; set; }
+        public string searchTerm { get; set; }
     }
 
     //Map No. of Resource Employee record filter
@@ -69,8 +70,8 @@ namespace Compass.Models.ManpowerViewModel
     //Dept Attendance Table List 
     public class DeptAttendanceViewModel
     {
-        public string Id { get; set; }
-        public string AttendaceId { get; set; }
+        public int Id { get; set; }
+        public int AttendaceId { get; set; }
         public int DeptId { get; set; }
         public string departmentName { get; set; }
         public int AgencyId { get; set; }

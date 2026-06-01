@@ -1,0 +1,36 @@
+﻿@using System.Security.Claims
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    var roleId = User.FindFirst("RoleId")?.Value;
+    var userId = User.FindFirst("UserId")?.Value;
+    var deptId = User.FindFirst("DeptId")?.Value;
+}
+@{
+    Layout = "~/Views/Shared/_TestLayout.cshtml";
+}
+
+<div class="container">
+    <div class="filter-panel mt-5 div-coral-base">
+        <div class="form-group row">
+
+            <div class="col-md-6 mb-0">
+                <label class="form-label">Date of Enquiry</label>
+                <input type="date" value="">  
+            </div>
+            <div class="col-md-6 mb-0">
+                <label class="form-label">Department Name</label>
+                <select id="ddlDeptName" >
+                    <option selected value="0"> -- Select --</option>
+                </select>
+                
+            </div>
+            
+        </div>
+       
+</div>
+</div>
+
+
+

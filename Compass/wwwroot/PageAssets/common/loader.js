@@ -85,9 +85,6 @@ window.initCustomPicker = function (selector) {
         }
     });
 };
-
-
-
 function showModalLoader() {
     $(".modalLoader").css("display", "flex");
 }
@@ -539,7 +536,7 @@ function bindDependentDataToDdlToParent(controller, action, modalId,
                                 return {
                                     id: item.Id,
                                     text: item.Text,
-                                    resource: item.DeployedResource // Add for fill No. of Resource
+                                    noDeployedRes: item.NoDeployedRes // Add for fill No. of Resource
                                 };
                             })
                         };

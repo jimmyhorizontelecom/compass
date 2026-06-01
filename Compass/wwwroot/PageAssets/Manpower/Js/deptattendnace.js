@@ -32,92 +32,39 @@ $(document).ready(function () {
     // Dependent Dropdown Billing Address on WorkOrderId
     bindDependentDataToDdlToParent("Dropdown", "MBillingAddress_ddl", null,// ❗ no modal
         "ddlDeptName", "ddlAgencyName", "ddlWorkOrder", "ddlBillingAddress","Select Billing Address ");
-     
-
+   
    // Reload Table when change MonthYear
     $(document).on('change', '#monthYear1', function () {
         console.log("Month changed, reloading records...");
         recordlist(); 
+    });  
+});
+$('#ddlBillingAddress')
+    .on('select2:select', function (e) {
+        $('#txtNoOfResources').val(e.params.data.noDeployedRes || 0);
+    })
+    .on('select2:clear', function () {
+        $('#txtNoOfResources').val('');
     });
-   
-});
-
-//Get No. of Resources on change Billing Address ddl
-$(document).on("change", "#ddlBillingAddress", async function () {
-
-    let billingId = $("#ddlBillingAddress").val();
-    let deptId = $("#ddlDeptName").val();
-    let agencyId = $("#ddlAgencyName").val();
-    let workOrderId = $("#ddlWorkOrder").val();
-
-    if (!billingId || billingId == "0") {
-        $("#txtNoOfResources").val("");
-        return;
-    }
-
-    let filterData = {
-        AgencyId: parseInt(agencyId),
-        DeptId: parseInt(deptId),
-        WorkOrderAgencyId: parseInt(workOrderId),
-        CreatedBy: 0,
-        UserRole: 48
-    };
-
-    console.log("Sending Filter:", filterData);
-
-    try {
-
-        let res = await getRecords("Manpower", "GetNoOfResourcesByBilling", filterData, "", "N");
-
-        console.log("API Response:", res);
-
-        if (res && res.length > 0) {
-
-            let data = res[0];   // ⭐ MOST IMPORTANT FIX
-
-            console.log("Selected Row:", data);
-
-            // OPTIONAL billing match (safe)
-            if (data.BillingId == billingId) {
-                $("#txtNoOfResources").val(data.NoOfResources);
-            } else {
-                $("#txtNoOfResources").val(data.NoOfResources); // fallback
-            }
-
-        } else {
-            $("#txtNoOfResources").val("");
-        }
-
-    } catch (err) {
-        console.error("Error:", err);
-    }
-
-});
-
-
 //Get Record for A table 
 async function recordlist() {
     var monthYearVal = $("#monthYear1").val();
     var finalMonthId = "0";
-
     if (monthYearVal && monthYearVal.includes('/')) {
         var parts = monthYearVal.split('/');
         var m = parseInt(parts[0], 10);
         var y = parts[1];
         finalMonthId = m.toString() + y.toString(); // Result: "42026"
     }
-    //let monthYear = $(".monthYearPicker").val();
-    var filterData = {
+      var filterData = {
         Id:0,
         AgencyId: 0,
         DeptId: roleId != "48" ,
-        MonthYear: finalMonthId,
-       
+        MonthYear: finalMonthId,      
     };
     console.log(roleId);
     console.log(deptId);
     console.log(filterData);
-
     try {
 
         let records = await getRecords('Manpower', 'GetDeptAttendanceRecord', filterData, '#myTable', 'N');
@@ -128,10 +75,8 @@ async function recordlist() {
         //hideModalLoader();
     }
 }
-
 //Bind get record  in a table 
 function bindDatatable(records, tableId) {
-
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().clear().destroy();
     }
@@ -244,8 +189,6 @@ async function recordMaplist() {
     var filterData = {
         WorkOrderId: $("#ddlWorkOrder").val(),
         AgencyId: 0,
-        
-
     };
     
     try {
@@ -310,7 +253,12 @@ $(document).on('change', '.rowCheckbox', function () {
         }
     }
 });
-
+$(".btnModalSubmitMap").on("click", function () {
+    var totalSelected = $(".rowCheckbox:checked").length;
+    $("#txtPresentResource").val(totalSelected);
+    closeModal('myModal_MapRecord');
+   // SubmitRecord();
+});
 // Submit record when Click on btn
 $(".btnModalSubmit").on("click", function () {
     SubmitRecord();
@@ -605,14 +553,9 @@ $(".btnModalSubmit").on("click", function () {
 //    }
 
 //}
-
-
 async function SubmitRecord() {
-
-    let isValid = true;
-        
+    let isValid = true;  
     // Form Values
-    
     let monthYear = $("#monthYear").val();
     let deptId = $("#ddlDeptName").val();
     let agencyId = $("#ddlAgencyName").val();
@@ -620,11 +563,7 @@ async function SubmitRecord() {
     let billingId = $("#ddlBillingAddress").val();
     let noOfResources = $("#txtNoOfResources").val().trim();
     let presentResources = $("#txtPresentResource").val().trim();
-
-   
     // FILE CONTROLS
-   
-
     let Attendance = $("#inputAttendanceFileAttached").get(0);
     let files_Attendance = Attendance ? Attendance.files : [];
 
@@ -793,17 +732,17 @@ async function SubmitRecord() {
         }
     }
 
-    // ===============================
+   
     // STOP IF VALIDATION FAILED
-    // ===============================
+    
 
     if (!isValid) {
         return;
     }
 
-    // ===============================
+    
     // FORM DATA
-    // ===============================
+    
 
     var formData = new FormData();
 
@@ -825,7 +764,7 @@ async function SubmitRecord() {
     formData.append("PresentResource", presentResources);
 
     // Employee List
-    
+    let employees = [];
     let checkedEmployees = $(".rowCheckbox:checked");
 
     if (checkedEmployees.length == 0) {
@@ -833,12 +772,13 @@ async function SubmitRecord() {
         MsgBox('Error', 'Please select at least one employee', '');
         return;
     }
-
-    checkedEmployees.each(function (i) {
-
-        formData.append("EmployeeList[" + i + "].EmpId", $(this).val());
-
+ 
+    checkedEmployees.each(function () {
+        employees.push({
+            EmpId: parseInt($(this).val())
+        });
     });
+    formData.append("EmployeeListJson", JSON.stringify(employees));
 
     // ===============================
     // ATTENDANCE FILE
@@ -924,20 +864,16 @@ $(document).on('click', '.view-file', function (e) {
 
 // MsgBox on Click event on Upload Annexure & Bill 
 $(document).on('click', '.upload-Bill', async function () {
-
     var Id = $(this).data("id");
-    var recordId = $(this).data("attendaceid");
-   
+    var recordId = $(this).data("attendaceid");  
    alert(Id);
    alert(recordId);
     console.log("Upload Bill Id:", Id);
     console.log("Upload Bill Id:", recordId);
-
     if (!recordId) {
         toastr.error("Record Id not found");
         return;
     }
-
     var isConfirmed = await DeleteEditBox('Upload File','Do you want to upload Annexure/Bill?','question');
 
     if (isConfirmed) {
@@ -968,8 +904,8 @@ async function loadRecordUploadFile(recordId) {
         if (records && records.length > 0) {
 
             let data = records[0];
-            alert(data);
-            Id = data.Id;
+            alert(JSON.stringify(data));
+            Id = data.Id;          
             $("#textMonthYearFill").val(data.MonthYear);
             $("#txtDeptFill").val(data.departmentName);
             $("#txtAgencyFill").val(data.AgencyName);
@@ -1056,6 +992,7 @@ $(".btnModalSubmit1").on("click", function () {
 
 // Submit records
 async function SubmitUploadFile() {
+  
     let isValid = true;
     
     let files_Annexure = $("#inputAnnexureFileAttached1")[0]?.files || [];
@@ -1133,7 +1070,7 @@ async function SubmitUploadFile() {
             recordlist();
             resetModal();
 
-            Id = 0;
+            Id = Id;
             $('.modelalert').text(res.message);
             closeModal('myModal');
             MsgBox('Message', res.message, '');
