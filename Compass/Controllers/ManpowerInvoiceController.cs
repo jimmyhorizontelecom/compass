@@ -80,6 +80,7 @@ namespace Compass.Controllers
                     AgencyBillFile = row["UploadBill"]?.ToString(),
                     BillDate = row["CreatedDate1"]?.ToString(),
                     BillMonth = row["MonthYear"]?.ToString(),
+                    VerificationStatus = row["IsPurchaseBillVerified"]?.ToString(),
 
 
 
@@ -285,7 +286,7 @@ namespace Compass.Controllers
 
                 //var Id = model.Id;
                 var deptBillId = model.DeptBillId;
-                var agencyBillId = model.Id;
+                var Id = model.Id;
                 var workOrderNo = model.WorkOrderNo;
                 var saleBillNo = model.SaleBillNo;
                 var saleBillDate = model.SaleBillDate;
@@ -317,7 +318,7 @@ namespace Compass.Controllers
                 SortedList parameters = new SortedList
                     {
                     { "@DeptBillId", deptBillId },
-                    { "@AgencyBillId", agencyBillId },
+                    { "@AgencyBillId", Id },
                     { "@WorkOderNo", workOrderNo },
                     { "@SaleBillNo", saleBillNo },
                     { "@BillDate", saleBillDate },

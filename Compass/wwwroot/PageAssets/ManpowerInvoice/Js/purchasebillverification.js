@@ -117,8 +117,9 @@ function bindDatatable(records, tableId) {
                 </td>
 
                  <td class="text-center">
-                    
-                       
+                   ${getVerificationStatusButton(value.VerificationStatus)}
+           
+    </button> 
                 </td>
                  <td class="text-center">
                    <i class="bi bi-pencil-square edit-HPSEDC_SInvoice edit-icon" data-id="${value.Id}" style="cursor:pointer;font-size:25px;"></i>
@@ -425,13 +426,14 @@ async function loadSInvoice(recordId) {
 
 // Submit HPSEDC Sale Bill Details
 $(".btnModalSubmit2").on("click", function () {
+
     SubmitSInvoice();
 });
 
 // Submit records
 async function SubmitSInvoice() {
    
-    //alert('SInvoiceUpdate');
+  alert('SInvoiceUpdate');
     let isValid = true;
     $(".error").text("");
     $(".is-invalid").removeClass("is-invalid");
@@ -475,11 +477,15 @@ async function SubmitSInvoice() {
     }
     
     if (!isValid) return;
-
+   
     var formData = new FormData();
 
     formData.append("DeptBillId", 0);
-    formData.append("AgencyBillId", parseInt(agencyBillId));
+    
+    formData.append("Id", Id);
+   
+    alert('Cheking');
+    alert(Id);
     formData.append("WorkOrderNo", workOrderNo);
     formData.append("SaleBillNo", saleBillNo);
     formData.append("SaleBillDate", saleBillDate);
@@ -517,7 +523,7 @@ async function SubmitSInvoice() {
 
             Id = 0;
             $('.modelalert').text(res.message);
-            closeModal('myModal_AgencyInvoice');
+            closeModal('SInvoiceModal');
             MsgBox('Message', res.message, '');
         }
 
@@ -559,4 +565,16 @@ $(document).on('click', '.edit-HPSEDC_Invoice_Print', async function () {
 });
 function printInvoice(id) {
     window.open(`/HardwareReport/DepartmentInvoice?Id=${id}`, '_blank');
+}
+
+
+function getVerificationStatusButton(status) {
+
+    if (status === "V" ) {
+        return '<button class="btn btn-success btn-sm">Verified</button>';
+    }
+    else {
+        return '<button class="btn btn-danger btn-sm">Not Verified</button>';
+    }
+    return '';
 }

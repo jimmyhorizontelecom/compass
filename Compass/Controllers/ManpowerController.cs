@@ -254,6 +254,7 @@ namespace Compass.Controllers
                     AttendanceCertificate = row["AttendanceCertificate"]?.ToString(),
                     AnnexureFile = row["AnnexureFile"]?.ToString(),
                     AgencyBillFile = row["UploadBill"]?.ToString(),
+                    VerificationStatus = row["IsPurchaseBillVerified"]?.ToString(),
                 }).ToList();
 
                 return Ok(list);

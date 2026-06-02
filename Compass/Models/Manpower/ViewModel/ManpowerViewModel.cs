@@ -86,6 +86,7 @@ namespace Compass.Models.ManpowerViewModel
         public string AttendanceCertificate { get; set; }
         public string AnnexureFile { get; set; }
         public string AgencyBillFile { get; set; }
+        public string VerificationStatus { get; set; }
 
     }
 
@@ -116,7 +117,7 @@ namespace Compass.Models.ManpowerViewModel
 
     }
 
-
+    //ManpowerInvoice/PurchaseBillVerification
     // Purchase Invoice Get record table list
 
     public class PInvoiceViewModel
@@ -133,6 +134,7 @@ namespace Compass.Models.ManpowerViewModel
         public string BillDate { get; set; }
         public string BillMonth { get; set; }
         public string AgencyBillEntryDate { get; set; }
+        public string VerificationStatus { get; set; }
      
     }
     // Agency Bill Verification View

@@ -136,11 +136,10 @@ function bindDatatable(records, tableId) {
                     style="cursor:pointer;font-size:25px;"></i> 
                  </td>
                  <td class="text-center">
-                    <i class="bi bi-download" style=" font-size:25px; color:red; font-weight:bold; -webkit-text-stroke:4px brown;"></i>
+                    ${getVerificationStatusButton(value.VerificationStatus)}
                 </td>
                  <td class="text-center">
-                   <i class="bi bi-download"
-                    style="font-size:32px;color:red;font-weight:bold;-webkit-text-stroke:1px black;"></i>
+                  
                 </td>
                  <td class="text-center">
                        <i class="bi bi-pencil-square edit-AgencyInvoice edit-icon"
@@ -1359,4 +1358,16 @@ function calculateBillAmounts() {
     $("#numCgst").val(cgst.toFixed(2));
     $("#numSgst").val(sgst.toFixed(2));
     $("#numTotalAmount").val(total.toFixed(2));
+}
+
+function getVerificationStatusButton(status) {
+
+    if (status === "V") {
+        return '<button class="btn btn-success btn-sm">Verified</button>';
+    }
+    else {
+        return '<button class="btn btn-danger btn-sm">Not Verified</button>';
+    }
+
+    return '';
 }
