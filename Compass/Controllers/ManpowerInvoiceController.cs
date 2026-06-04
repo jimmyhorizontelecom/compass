@@ -81,6 +81,7 @@ namespace Compass.Controllers
                     BillDate = row["CreatedDate1"]?.ToString(),
                     BillMonth = row["MonthYear"]?.ToString(),
                     VerificationStatus = row["IsPurchaseBillVerified"]?.ToString(),
+                    IsSaleBIllGenerated = row["IsSaleBIllGenerated"]?.ToString(),
 
 
 
@@ -164,6 +165,8 @@ namespace Compass.Controllers
         public async Task<IActionResult> GetAgencyInvoiceVerifyRecord([FromQuery] PInvoiceFilter filter)
 
         {
+            var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
+            var roleId = Convert.ToInt32(User.FindFirst("RoleId")?.Value ?? "0");
             try
             {
                 // Access as object
@@ -174,8 +177,8 @@ namespace Compass.Controllers
                 parameters.Add("@MonthId", filter.MonthId);
                 parameters.Add("@MonthIdTo", filter.MonthIdTo);
                 parameters.Add("@PaymentStatus", filter.PaymentStatus);
-                parameters.Add("@EmpId", filter.CreatedBy);
-                parameters.Add("@UserRole", filter.UserRole);
+                parameters.Add("@EmpId", userId);
+                parameters.Add("@UserRole", roleId);
 
                 var dt = await _cn.FillDataTableAsync("TallyAgencyBill1_List", "", parameters);
 
@@ -366,7 +369,48 @@ namespace Compass.Controllers
             }
         }
 
+        //Submit Cancel Bill
+        [HttpPost]
+        public async Task<IActionResult> AddOrEdit_CancelSaleBillRecord([FromForm] CancelSaleBill model)
+        {
+            try
+            {
 
+                //var Id = model.Id;
+                var Id = model.Id;
+                var IsCancelBill = model.IsCancelBill ? "Y" : "N";
+                var VerificationRemarks = model.VerificationRemarks;
+                
+                var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
+               
+                
+                SortedList parameters = new SortedList
+                    {
+                    { "@AgencyBillId", Id },
+                    { "@IsCancel", IsCancelBill },
+                    { "@CancelBy", userId },
+                    { "@CancelRemarks", VerificationRemarks },
+                    
+                };
+
+                var result = _cn.ExecuteNonQueryWMessage(
+                    "TallySaleBillCancel_AcceptUpdate",
+                    "",
+                    parameters
+                );
+
+                return Ok(new { success = true, message = result.ToString() });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
 
 
         #endregion

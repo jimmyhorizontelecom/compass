@@ -11,6 +11,11 @@ toastr.options = {
 
 //ready
 $(document).ready(function () {
+    //  roleId = $("#hdnUserRole").val();
+
+    // if (roleId != "48") {
+    //     $(".admin-col").hide();
+    // }
     resetModal();
     recordlist();
 
@@ -19,25 +24,25 @@ $(document).ready(function () {
     initCustomPicker('#monthYear1');
     //Parent Dropdown
     bindDataToDdl("Dropdown", "MDepartment_ddl", "", "ddlDeptName", "Select Department Name");
-    bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyName", "Select Agency Name"); 
-   
+    bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyName", "Select Agency Name");
+
     // Dependent Dropdown Billing Address on Department
     //bindDependentDataToDdl("Dropdown","MBillingAddress_ddl",null,// ❗ no modal
     //    "ddlDeptName", "ddlBillingAddress", "Select Billing Address");
 
- // Dependent Dropdown Work Order on Agency
+    // Dependent Dropdown Work Order on Agency
     bindDependentDataToDdlToParent("Dropdown", "MWorkOrder_ddl", null,// ❗ no modal
         "ddlDeptName", "ddlAgencyName", null, "ddlWorkOrder", "Select Work Order ");
 
     // Dependent Dropdown Billing Address on WorkOrderId
     bindDependentDataToDdlToParent("Dropdown", "MBillingAddress_ddl", null,// ❗ no modal
-        "ddlDeptName", "ddlAgencyName", "ddlWorkOrder", "ddlBillingAddress","Select Billing Address ");
-   
-   // Reload Table when change MonthYear
+        "ddlDeptName", "ddlAgencyName", "ddlWorkOrder", "ddlBillingAddress", "Select Billing Address ");
+
+    // Reload Table when change MonthYear
     $(document).on('change', '#monthYear1', function () {
         console.log("Month changed, reloading records...");
-        recordlist(); 
-    });  
+        recordlist();
+    });
 });
 $('#ddlBillingAddress')
     .on('select2:select', function (e) {
@@ -56,11 +61,13 @@ async function recordlist() {
         var y = parts[1];
         finalMonthId = m.toString() + y.toString(); // Result: "42026"
     }
-      var filterData = {
-        Id:0,
+    var filterData = {
+        Id: 0,
         AgencyId: 0,
-        DeptId: roleId != "48" ,
-        MonthYear: finalMonthId,      
+        //DeptId: roleId != "48" ,
+        // DeptId: roleId == "48" ? 0 : deptId,
+        DeptId: (roleId === "48") ? 0 : deptId,
+        MonthYear: finalMonthId,
     };
     console.log(roleId);
     console.log(deptId);
@@ -83,84 +90,91 @@ function bindDatatable(records, tableId) {
 
     var tbody = $(tableId + " tbody");
     tbody.empty();
-
     $.each(records, function (i, value) {
+
         let SrNo = i + 1;
-        console.log(value); 
+
         tbody.append(`
-            <tr 
-                data-id="${value.Id}"
-                data-attendanceId="${value.AttendanceId}" >
-                <td>${SrNo}</td>
-                <td>${value.departmentName}</td>
-                <td>${value.AgencyName}</td>
-                <td>${value.WorkOrderId} <br> ${value.PurhaseInvNO}</td>
-                <td>${value.DeployedResource}</td>
-                <td>${value.UpladNoOfResource}</td>
-                <td>${value.MonthYear}</td>
-                
-                <!-- Attendance File -->
-                <td class="text-center">
-                <span data-id="${value.Id}" >
-                    <a href="javascript:void(0);" class="view-file" data-file="${value.AttendanceCertificate}" data-folder="Attendance" title="View Attendance">
-                         <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"></i>
-                    </a>
-                    </span>
+            <tr data-id="${value.Id}" data-attendanceId="${value.AttendanceId}">
+             <td>${SrNo}</td>
+            <td>${value.departmentName ?? ""}</td>
+            <td>${value.AgencyName ?? ""}</td>
+             <td>
+                ${value.WorkOrderId ?? ""}  <br>  ${value.PurhaseInvNO ?? ""}
+            </td>
+            <td>${value.DeployedResource ?? 0}</td>
+            <td>${value.UpladNoOfResource ?? 0}</td>
+            <td>${value.MonthYear ?? ""}</td>
+            <!--Attendnace File-->
+            <td class="text-center">
+                 <a href="javascript:void(0)" class="view-file" data-file="${value.AttendanceCertificate}" data-folder="Attendance" title="View Attendance File">
+                 <i class="bi bi-file-earmark-arrow-down-fill text-danger" style="font-size:25px;"></i>  </a>
+            </td>
+               <!--Annexure File-->
+            <td class="text-center">
+                <a href="javascript:void(0)" class="view-file"  data-file="${value.AnnexureFile}"  data-folder="Annexure" title="View Annexure File">
+                <i class="bi bi-file-earmark-arrow-down-fill text-danger" style="font-size:25px;"></i> </a>
+            </td>
+               <!--Agency Bill File-->
+            <td class="admin-col text-center">
+                <a href="javascript:void(0)" class="view-file" data-file="${value.AgencyBillFile}" data-folder="AgencyBill" title="View AgencyBill File">
+                <i class="bi bi-file-earmark-arrow-down-fill text-danger" style="font-size:25px;"></i> </a>
+            </td>
+               <!-- Upload Annexure & Bill File-->
+          <td class="admin-col text-center">
+             <i class="bi bi-file-earmark-arrow-up-fill text-primary upload-Bill"  data-id="${value.Id}"
+             data-attendaceId="${value.AttendaceId} " title="Upload Annexure & Bill File" style="cursor:pointer;font-size:25px;"></i> </td>
+                <!--Delete Uploaded Files-->
+            <td class="text-center">
+                 ${ (!value.AnnexureFile && !value.AgencyBillFile)
+                        ? `<i class="bi bi-trash-fill text-danger delete-Records" data-attendaceid="${value.AttendaceId}" style="cursor:pointer;font-size:25px;"></i>`
+                        : `<i class="bi bi-trash-fill text-muted" title="Cannot delete after upload" style="font-size:25px;opacity:0.4;cursor:not-allowed;"></i>`}
                 </td>
-                 <!-- Annexure File -->
-                <td class="text-center">
-                <span data-id="${value.Id}" >
-                    <a href="javascript:void(0);" class="view-file" data-file="${value.AnnexureFile}" data-folder="Annexure" title="View Annexure">
-                        <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"></i>
-                    </a>
-                </td>
-                 <!-- Agency Bill File -->
-                <td class="text-center">
-                <span data-id="${value.Id}" >
-                    <a href="javascript:void(0);" class="view-file" data-file="${value.AgencyBillFile}" data-folder="AgencyBill" title="View Agency Bill">
-                        <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"></i>
-                         
-                    </a>
-                </td>
-                 <td class="text-center">
-                    <i class="bi bi-pencil-square upload-Bill edit-icon"
-                        data-id="${value.Id}"
-                         data-attendaceId="${value.AttendaceId}"
-                    style="cursor:pointer;font-size:25px;"></i>
-                </td>
-                 <!--Delete File-->
-                 <td class="text-center" >
+           <!--Verification Status-->
+             <td class="admin-col text-center">
+                ${value.VerificationStatus === "V"
+                ? '<i class="bi bi-check-circle-fill text-success" style="font-size:25px;"></i>'
+                : '<i class="bi bi-x-circle-fill text-danger" style="font-size:25px;"></i>'}
+            </td>
+               <!--Remarks-->
+            <td class="admin-col text-center">${value.Remarks ?? ""}
+            </td>
+            <!--Agency Invoice-->
+            <td class="admin-col text-center">
+                <i class="bi bi-file-earmark-plus-fill text-success edit-AgencyInvoice" data-attendaceId="${value.AttendaceId}"
+               title="Agency Invoice Entry" style="cursor:pointer;font-size:25px;"></i>
+           </td>
+</tr>
+`);
 
-                    <i class="bi bi-trash text-danger delete-Records"
-                    data-attendaceId="${value.AttendaceId}"
-                    style="cursor:pointer;font-size:25px;"></i> 
-                 </td>
-                 <td class="text-center">
-                    ${getVerificationStatusButton(value.VerificationStatus)}
-                </td>
-                 <td class="text-center">
-                  
-                </td>
-                 <td class="text-center">
-                       <i class="bi bi-pencil-square edit-AgencyInvoice edit-icon"
-                       data-attendaceId="${value.AttendaceId}"
-                       style="cursor:pointer;font-size:25px;"></i>
-                  
-                </td>
-                 
-        `);
     });
-
-    $(tableId).DataTable({
+    // $(tableId).DataTable({
+    //     paging: true,
+    //     searching: true,
+    //     ordering: true,
+    //     info: true,
+    //     responsive: true
+    // });
+    let table = $(tableId).DataTable({
         paging: true,
         searching: true,
         ordering: true,
         info: true,
-        responsive: true
-    });
+        responsive: true,
 
-    //hideModalLoader();
+        columnDefs: [
+            {
+                targets: [9, 10, 12, 13, 14], // admin columns
+                visible: roleId === "48"
+            }
+        ]
+    });
+    // role id check for data table creation
+    if (roleId !== "48") {
+        table.columns([9, 10, 12, 13, 14]).visible(false);
+    }
 }
+
 
 // Map data No of resource
 $(".btnModalMapData").on("click", function () {
@@ -171,10 +185,10 @@ async function MapRecord() {
 
     if (isConfirmed) {
         //await loadMapRecord(recordId);
-        
+
         openModal('myModal_MapRecord');
         await recordMaplist();
-        
+
 
     } else {
 
@@ -184,12 +198,12 @@ async function MapRecord() {
 }
 //Get Record for A Map No of Resource with Emp Name table 
 async function recordMaplist() {
-    
+
     var filterData = {
         WorkOrderId: $("#ddlWorkOrder").val(),
         AgencyId: 0,
     };
-    
+
     try {
 
         let records = await getRecords('Manpower', 'GetMapEmpRsourceRecord', filterData, '#myTable_MapResource', 'N');
@@ -256,7 +270,7 @@ $(".btnModalSubmitMap").on("click", function () {
     var totalSelected = $(".rowCheckbox:checked").length;
     $("#txtPresentResource").val(totalSelected);
     closeModal('myModal_MapRecord');
-   // SubmitRecord();
+    // SubmitRecord();
 });
 // Submit record when Click on btn
 $(".btnModalSubmit").on("click", function () {
@@ -553,7 +567,7 @@ $(".btnModalSubmit").on("click", function () {
 
 //}
 async function SubmitRecord() {
-    let isValid = true;  
+    let isValid = true;
     // Form Values
     let monthYear = $("#monthYear").val();
     let deptId = $("#ddlDeptName").val();
@@ -579,9 +593,9 @@ async function SubmitRecord() {
     $(".error").text("");
     $(".is-invalid").removeClass("is-invalid");
 
-    
+
     // BASIC VALIDATION
-   
+
 
     if (!monthYear) {
 
@@ -639,17 +653,17 @@ async function SubmitRecord() {
     //    isValid = false;
     //}
 
-    
+
     // FILE VALIDATION
-    
+
 
     let fileSize = 5;
     let allowedExtensions = ["pdf"];
 
-    
+
     // ATTENDANCE FILE REQUIRED
     // FOR ALL USERS
-  
+
 
     if (files_Attendance.length === 0) {
 
@@ -673,15 +687,15 @@ async function SubmitRecord() {
         }
     }
 
-   
+
     // Agency Role Validation
     // RoleId = 48
-   
+
     if (roleId == "48") {
 
-       
+
         // Annexure File
-       
+
 
         if (files_Annexure.length === 0) {
 
@@ -705,9 +719,9 @@ async function SubmitRecord() {
             }
         }
 
-        
+
         // Agency Bill File
-        
+
         if (files_GroupBill.length === 0) {
 
             $("#inputGroupBillFileAttached").addClass("is-invalid");
@@ -731,17 +745,17 @@ async function SubmitRecord() {
         }
     }
 
-   
+
     // STOP IF VALIDATION FAILED
-    
+
 
     if (!isValid) {
         return;
     }
 
-    
+
     // FORM DATA
-    
+
 
     var formData = new FormData();
 
@@ -771,7 +785,7 @@ async function SubmitRecord() {
         MsgBox('Error', 'Please select at least one employee', '');
         return;
     }
- 
+
     checkedEmployees.each(function () {
         employees.push({
             EmpId: parseInt($(this).val())
@@ -811,7 +825,7 @@ async function SubmitRecord() {
 
     try {
 
-        let res = await acceptUpdate("Manpower","AddOrEdit_DeptAttendanceRecord",formData);
+        let res = await acceptUpdate("Manpower", "AddOrEdit_DeptAttendanceRecord", formData);
 
         if (res.success) {
 
@@ -864,17 +878,17 @@ $(document).on('click', '.view-file', function (e) {
 // MsgBox on Click event on Upload Annexure & Bill 
 $(document).on('click', '.upload-Bill', async function () {
     Id = $(this).data("id");
-    var recordId = $(this).data("attendaceid");  
+    var recordId = $(this).data("attendaceid");
     console.log("Upload Bill Id:", Id);
     console.log("Upload Bill Id:", recordId);
     if (!recordId) {
         toastr.error("Record Id not found");
         return;
     }
-    var isConfirmed = await DeleteEditBox('Upload File','Do you want to upload Annexure/Bill?','question');
+    var isConfirmed = await DeleteEditBox('Upload File', 'Do you want to upload Annexure/Bill?', 'question');
     if (isConfirmed) {
-        await loadRecordUploadFile(Id,recordId);
-        await recordMarkedEpmlist(Id,recordId);
+        await loadRecordUploadFile(Id, recordId);
+        await recordMarkedEpmlist(Id, recordId);
         openModal('myModal_UploadFile');
     } else {
         console.log('Upload cancelled');
@@ -882,12 +896,12 @@ $(document).on('click', '.upload-Bill', async function () {
 
 });
 // get Record to fill upload Annexure & Bill File
-async function loadRecordUploadFile(Id,recordId) {
-   // alert('Load Record function')
+async function loadRecordUploadFile(Id, recordId) {
+    // alert('Load Record function')
     var filterData = {
-        Id:Id,
+        Id: Id,
         AttendaceId: recordId,
-        
+
     };
     alert(filterData);
     try {
@@ -898,7 +912,7 @@ async function loadRecordUploadFile(Id,recordId) {
 
             let data = records[0];
             alert(JSON.stringify(data));
-            Id = data.Id;          
+            Id = data.Id;
             $("#textMonthYearFill").val(data.MonthYear);
             $("#txtDeptFill").val(data.departmentName);
             $("#txtAgencyFill").val(data.AgencyName);
@@ -906,7 +920,7 @@ async function loadRecordUploadFile(Id,recordId) {
             $("#txtNoResourcesFill").val(data.DeployedResource);
             $("#txtPrsentResouceFill").val(data.UpladNoOfResource);
             $("#textBillingAddFill").val(data.BillingAddress);
-            
+
             //alert('test');
 
 
@@ -984,9 +998,9 @@ $(".btnModalSubmit1").on("click", function () {
 
 // Submit records
 async function SubmitUploadFile() {
-   
+
     let isValid = true;
-    
+
     let files_Annexure = $("#inputAnnexureFileAttached1")[0]?.files || [];
     let files_GroupBill = $("#inputGroupBillFileAttached1")[0]?.files || [];
 
@@ -1107,7 +1121,7 @@ async function deleteAttendanceRecord(recordId) {
 
         console.log("Sending Delete Data:", recordId);
 
-        let res = await acceptUpdate("Manpower","Delete_DeptAttendanceRecord",formData);
+        let res = await acceptUpdate("Manpower", "Delete_DeptAttendanceRecord", formData);
 
         if (res.success) {
 
@@ -1133,7 +1147,7 @@ async function deleteAttendanceRecord(recordId) {
 $(document).on('click', '.edit-AgencyInvoice', async function () {
 
     //var recordId = $(this).data("id");
-   // var recordId = $(this).data("attendaceid");
+    // var recordId = $(this).data("attendaceid");
     AttendaceId = $(this).data("attendaceid");
     alert(AttendaceId);
     console.log("Edit Record Id:", AttendaceId);
@@ -1163,7 +1177,7 @@ async function loadRecordUpdate(AttendaceId) {
     //alert('Load Record function')
     var filterData = {
         AttendaceId: AttendaceId,
-        
+
     };
 
     try {
@@ -1223,7 +1237,7 @@ async function SubmitPurchaseBill() {
     let liveryCharge = $("#numLiveryCharge").val().trim();
     let inputCGST = $("#numCgst").val().trim();
     let inputSGST = $("#numSgst").val().trim();
-    let totalAmount = $("#numTotalAmount").val().trim(); 
+    let totalAmount = $("#numTotalAmount").val().trim();
 
     if (purcahseBillDate === "") {
         $("#ddlPurchaseBillDate1").addClass("is-invalid");
@@ -1280,7 +1294,7 @@ async function SubmitPurchaseBill() {
         $("#numTotalAmount").siblings(".error").text("Total Amnount Required");
         isValid = false;
     }
-            
+
     if (!isValid) return;
 
     var formData = new FormData();
@@ -1310,7 +1324,7 @@ async function SubmitPurchaseBill() {
     //formData.append("UpladNoOfResource", noOfResources);
     //formData.append("PresentResource", presentResources);
 
-   
+
     try {
         //$("#ModalProgress").show();
         let res = await acceptUpdate("Manpower", "AddOrEdit_PurchaseInvoiceRecord", formData);
@@ -1351,23 +1365,12 @@ function calculateBillAmounts() {
     let sgst = subTotal * 0.09;
 
     // Total
-    let total = subTotal +  cgst + sgst;
+    let total = subTotal + cgst + sgst;
 
-   
+
     $("#numAdminCharge").val(adminCharge.toFixed(2));
     $("#numCgst").val(cgst.toFixed(2));
     $("#numSgst").val(sgst.toFixed(2));
     $("#numTotalAmount").val(total.toFixed(2));
 }
 
-function getVerificationStatusButton(status) {
-
-    if (status === "V") {
-        return '<button class="btn btn-success btn-sm">Verified</button>';
-    }
-    else {
-        return '<button class="btn btn-danger btn-sm">Not Verified</button>';
-    }
-
-    return '';
-}

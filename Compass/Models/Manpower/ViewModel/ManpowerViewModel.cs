@@ -135,6 +135,7 @@ namespace Compass.Models.ManpowerViewModel
         public string BillMonth { get; set; }
         public string AgencyBillEntryDate { get; set; }
         public string VerificationStatus { get; set; }
+        public string IsSaleBIllGenerated { get; set; }
      
     }
     // Agency Bill Verification View

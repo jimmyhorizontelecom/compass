@@ -142,6 +142,16 @@ namespace Compass.Models.ManpowerModel
 
     }
 
+    //Cancel Sale Bill
+    public class CancelSaleBill
+    {
+        public int Id { get; set; }
+        public int AgencyBillId { get; set; }
+        public Boolean IsCancelBill { get; set; }
+        public string VerificationRemarks { get; set; }
+       
+    }
+
     //New Invoice Dept. Payment Model Submit
     public class DeptPaymentModel
     {

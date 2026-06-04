@@ -3,24 +3,24 @@
 
 $(document).ready(function () {
     //initializeMonthYearPickerByClass("monthYearPicker");
-    
+
     resetModal();
     recordlist();
 
     initCustomPicker('#monthYear');
     //alert('Purchase Bill Verification');
-    
+
     //Parent Dropdown
     bindDataToDdl("Dropdown", "MDepartment_ddl", "", "ddlDeptName", " Department Name");
     bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyName", " Agency Name");
     //bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlBillStatu", " Bill Status");
 
-    
+
     // load data when changes on ddl
     $("#monthYear, #ddlAgencyName, #ddlDeptName,#ddlBillStatus").change(function () {
         recordlist();
     });
-   
+
 });
 
 //Get Record for A table 
@@ -70,7 +70,7 @@ async function recordlist() {
 }
 //Bind get record  in a table 
 function bindDatatable(records, tableId) {
-   
+
 
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().clear().destroy();
@@ -85,7 +85,7 @@ function bindDatatable(records, tableId) {
         tbody.append(`
             <tr 
                 data-id="${value.Id}">
-                <td>${SrNo}</td>
+                 <td>${SrNo}</td>
                 <td>${value.DepartmentName}</td>
                 <td>${value.AgencyName}<br> ${value.AgencyBillNo}</td>
                                
@@ -111,37 +111,38 @@ function bindDatatable(records, tableId) {
                     </a>
                 </td>
                  <td> ${value.BillDate} <br> ${value.BillMonth}</td>
-                 
-                 <td class="text-center">  
-                          <i class="bi bi-pencil-square edit-PInvoiceUpdate edit-icon" data-id="${value.Id}" style="cursor:pointer;font-size:25px;"></i>             
+                   <!--Verify Purchase Invoice -->
+               <td class="text-center">
+                 ${value.VerificationStatus === "V"
+                ? '<i class="bi bi-lock-fill text-secondary" title="Already Verified" style="font-size:25px;"></i>'
+                : `<i class="bi bi-pencil-square edit-PInvoiceUpdate edit-icon"  data-id="${value.Id}"  style="cursor:pointer;font-size:25px;"></i>`}
                 </td>
+                  <!-- Bill Verification Status -->
+                 <td class="text-center">
+                   ${value.VerificationStatus === "V"
+                ? '<i class="bi bi-check-circle-fill text-success" title="Verified" style="font-size:25px;"></i>'
+                : '<i class="bi bi-x-circle-fill text-danger" title="Not Verified" style="font-size:25px;"></i>'}
+               </td>
+                  <!-- HPSEDC Bill Generate -->
+                 <td class="text-center">
+                    ${value.IsSaleBIllGenerated === "C"
+                ? '<i class="bi bi-lock-fill text-secondary" title="Verify Bill First" style="font-size:25px;"></i>'
+                : `<i class="bi bi-pencil-square edit-HPSEDC_SInvoice edit-icon"   data-id="${value.Id}"  style="cursor:pointer;font-size:25px;"></i>`}
+                </td>
+                  <!-- E-Invoice -->
+                <td class="text-center">
 
-                 <td class="text-center">
-                   ${getVerificationStatusButton(value.VerificationStatus)}
-           
-    </button> 
                 </td>
+                  <!-- Invoice Print -->
                  <td class="text-center">
-                   <i class="bi bi-pencil-square edit-HPSEDC_SInvoice edit-icon" data-id="${value.Id}" style="cursor:pointer;font-size:25px;"></i>
-                  
+                       <i class="bi bi-printer-fill edit-HPSEDC_Invoice_Print" data-id="${value.Id}" title="Print Invoice"
+                       style="cursor:pointer;font-size:25px;color:#0d6efd;">  </i>
+                </td>
+                  <!-- Cancel Bill -->
+                 <td class="text-center">
                       
-                   
-                </td>
-                 <td class="text-center">
-                   
-                   
-                </td>
-                 <td class="text-center">
-                  
-                      <button class="edit-HPSEDC_Invoice_Print edit-icon" data-id="${value.Id}" >Print</button> 
-                  
-                </td>
-                 <td class="text-center">
-                   
-                       
-                   
-                </td>
-                 
+                 </td>
+                
         `);
     });
 
@@ -212,19 +213,19 @@ async function loadPInvoiceUpdate(recordId) {
         Id: recordId,
         AgencyId: 0,
         DeptId: 0,
-        MonthId: 0,        
-        MonthIdTo: 0,     
-        PaymentStatus: 'A', 
+        MonthId: 0,
+        MonthIdTo: 0,
+        PaymentStatus: 'A',
         CreatedBy: 0,
         UserRole: 39,
     };
-   
+
 
     try {
 
         let records = await getRecords('ManpowerInvoice', 'GetAgencyInvoiceVerifyRecord', filterData, '', 'N');
         console.log("Full Response:", records);
-        if (records && records.length > 0){
+        if (records && records.length > 0) {
             let data = records[0];
             console.log(data)
 
@@ -238,13 +239,13 @@ async function loadPInvoiceUpdate(recordId) {
             $("#txtDiscription1").val(data.Description);
             $("#txtNarration1").val(data.Narration);
 
-            $("#numBasicAmount").val(parseFloat(data.BasicBillAmt).toFixed(2)); 
-            $("#numAdminCharge").val(parseFloat(data.AdminCharge).toFixed(2)); 
-            $("#numLiveryCharge").val(parseFloat(data.LiveryCharge).toFixed(2)); 
-            $("#numCgst").val(parseFloat(data.InputCgst).toFixed(2)); 
+            $("#numBasicAmount").val(parseFloat(data.BasicBillAmt).toFixed(2));
+            $("#numAdminCharge").val(parseFloat(data.AdminCharge).toFixed(2));
+            $("#numLiveryCharge").val(parseFloat(data.LiveryCharge).toFixed(2));
+            $("#numCgst").val(parseFloat(data.InputCgst).toFixed(2));
             $("#numSgst").val(parseFloat(data.InputSgst).toFixed(2));
             $("#numTotalAmount").val(parseFloat(data.TotalAmt).toFixed(2));
-                       
+
             $("#hdnAgencyId1").val(data.AgencyId);
             $("#hdnDeptId1").val(data.DeptId);
             $("#hdnBillingId1").val(data.BillingId);
@@ -252,11 +253,11 @@ async function loadPInvoiceUpdate(recordId) {
             console.log("AgencyId:", data.AgencyId);
             console.log("DeptId:", data.DeptId);
             console.log("BillingId:", data.BillingId);
-           
+
             bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyName1", " Agency Name", data.AgencyId, 0);
             var option = new Option(data.AgencyName, data.AgencyId, true, true);
             $('#ddlAgencyName1').append(option).trigger('change');
-           
+
             bindDataToDdl("Dropdown", "MDepartment_ddl", "", "txtDeptName1", " Department Name", data.DeptId, 0);
             var option = new Option(data.DepartmentName, data.DeptId, true, true);
             $('#txtDeptName1').append(option).trigger('change');
@@ -292,26 +293,26 @@ async function SubmitPInvoiceUpdate() {
     if (!status) {
         alert("Please select Verify or Reject");
         isValid = false;
-    } 
+    }
     if (remarks === "") {
         $("#txtRemarks").addClass("is-invalid");
         $("#txtRemarks").siblings(".error").text("Remarks required");
         isValid = false;
     }
-    
+
     if (!isValid) return;
 
     var formData = new FormData();
 
-    
+
     formData.append("AgencyBillId", Id);
-    formData.append("IsPurchaseBillVerified", status );
+    formData.append("IsPurchaseBillVerified", status);
     formData.append("VerificationRemarks", remarks);
     formData.append("Description", discription);
     formData.append("Narration", narration);
     formData.append("PurchaseBillDate", purcahseBillDate);
     formData.append("AgencyBillNo", billNo);
-    
+
 
 
     try {
@@ -345,7 +346,7 @@ $(document).on('click', '.edit-HPSEDC_SInvoice', async function () {
         toastr.error("Record Id not found");
         return;
     }
-   
+
 
     var isConfirmed = await DeleteEditBox('Edit Field', 'Do you want to edit Record?', 'question');
 
@@ -374,8 +375,8 @@ async function loadSInvoice(recordId) {
         MonthId: 0,
         MonthIdTo: 0,
         PaymentStatus: 'A',
-        CreatedBy: 0,
-        UserRole: 39,
+        // CreatedBy: 0,
+        //UserRole: 39,
     };
 
     try {
@@ -385,10 +386,10 @@ async function loadSInvoice(recordId) {
         if (records && records.length > 0) {
             let data = records[0];
             Id = data.Id;
-            
+
             $("#txtWorkOrderNo2").val(data.WorkOrderId);
             $("#txtPurchaseBillNo2").val(data.AgencyBillNo);
-           // $("#dateSaleBillDate").val(data.BillDate);
+            // $("#dateSaleBillDate").val(data.BillDate);
             $("#txtSaleBillNo").val(data.SaleBillNo);
             $("#hdnAgencyId2").val(data.AgencyId);
             $("#txtAgencyName2").val(data.AgencyName);
@@ -432,8 +433,8 @@ $(".btnModalSubmit2").on("click", function () {
 
 // Submit records
 async function SubmitSInvoice() {
-   
-  alert('SInvoiceUpdate');
+
+    alert('SInvoiceUpdate');
     let isValid = true;
     $(".error").text("");
     $(".is-invalid").removeClass("is-invalid");
@@ -458,7 +459,7 @@ async function SubmitSInvoice() {
     let cgstAmt = $("#numCgst2").val();
     let sgstAmt = $("#numSgst2").val();
     let totalAmt = $("#numTotalAmount2").val();
-    
+
 
     if (pinCode === "") {
         $("#numPinCode").addClass("is-invalid");
@@ -475,15 +476,15 @@ async function SubmitSInvoice() {
         $("#txtHsnCode").siblings(".error").text("Month & Year required");
         isValid = false;
     }
-    
+
     if (!isValid) return;
-   
+
     var formData = new FormData();
 
     formData.append("DeptBillId", 0);
-    
+
     formData.append("Id", Id);
-   
+
     alert('Cheking');
     alert(Id);
     formData.append("WorkOrderNo", workOrderNo);
@@ -509,7 +510,7 @@ async function SubmitSInvoice() {
     formData.append("PaymentAmt", 0);
     formData.append("BalanceAmt", 0);
     formData.append("IsActive", 0);
-    
+
 
 
 
@@ -568,13 +569,88 @@ function printInvoice(id) {
 }
 
 
-function getVerificationStatusButton(status) {
 
-    if (status === "V" ) {
-        return '<button class="btn btn-success btn-sm">Verified</button>';
+// MsgBox on Cancel Sale Bill
+$(document).on('click', '.edit-CancelSaleBill', async function () {
+    var recordId = $(this).data("id");
+    alert(recordId);
+    console.log("Edit Record Id:", recordId);
+    if (!recordId) {
+        toastr.error("Record Id not found");
+        return;
     }
-    else {
-        return '<button class="btn btn-danger btn-sm">Not Verified</button>';
+
+    Id = recordId;
+    console.log("Global Id =", Id);
+    var isConfirmed = await DeleteEditBox('Edit Field', 'Do you want to Cancel Sale Bill?', 'question');
+    if (isConfirmed) {
+        alert('Testing');
+        //await loadPInvoiceUpdate(recordId);
+        openModal('CancelSaleBill');
+        // Alternative if openModal not working
+        //$('#myModal_UploadFile').modal('show');
+
+    } else {
+        console.log('Edit cancelled');
     }
-    return '';
+});
+
+$(".btnModalCancel").on("click", function () {
+    alert('Button Clciked');
+    SubmitCancelBill();
+});
+// Submit records
+async function SubmitCancelBill() {
+    alert('Loading');
+    let isValid = true;
+    $(".error").text("");
+    $(".is-invalid").removeClass("is-invalid");
+
+    let isCancel = $("#ChkboxIsCancel").is(":checked");
+    //let remarks = $("#txtCancelRemarks").val();
+    let remarks = $("#txtCancelRemarks").val();
+    console.log("Remarks =", remarks);
+    if (!isCancel) {
+        $("#ChkboxIsCancel").addClass("is-invalid");
+        $("#ChkboxIsCancel").siblings(".error").text("Please Tick Check box");
+        isValid = false;
+    }
+    if (remarks === "") {
+        $("#txtCancelRemarks").addClass("is-invalid");
+        $("#txtCancelRemarks").siblings(".error").text("Please Enter Remarks");
+        isValid = false;
+    }
+
+    if (!isValid) return;
+
+    var formData = new FormData();
+    formData.append("Id", Id);
+    formData.append("IsCancelBill", isCancel);
+    formData.append("VerificationRemarks", remarks);
+    console.log("Id =", Id);
+    console.log("isCancel =", isCancel);
+    console.log("VerificationRemarks =", remarks);
+
+    try {
+        //$("#ModalProgress").show();
+        let res = await acceptUpdate("ManpowerInvoice", "AddOrEdit_CancelSaleBillRecord", formData);
+        if (res.success) {
+            alert('Hit');
+            recordlist();
+            resetModal();
+            Id = 0;
+            $('.modelalert').text(res.message);
+            closeModal('CancelSaleBill');
+            MsgBox('Message', res.message, '');
+        }
+
+    } catch (err) {
+        $('.modelalert').text("Error: " + err);
+    }
+
 }
+
+
+//         ${ value.VerificationStatus === "V"
+// ? '<i class="bi bi-shield-check text-success" title="Verified" style="font-size:25px;"></i>'
+// : `<i class="bi bi-pencil-square edit-PInvoiceUpdate" data-id="${value.Id}"  title="Verify Bill" style="cursor:pointer;font-size:25px;"></i>`}
