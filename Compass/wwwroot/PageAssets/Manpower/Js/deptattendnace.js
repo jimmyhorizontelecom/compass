@@ -141,8 +141,11 @@ function bindDatatable(records, tableId) {
             </td>
             <!--Agency Invoice-->
             <td class="admin-col text-center">
-                <i class="bi bi-file-earmark-plus-fill text-success edit-AgencyInvoice" data-attendaceId="${value.AttendaceId}"
-               title="Agency Invoice Entry" style="cursor:pointer;font-size:25px;"></i>
+                         ${value.IsPurhaseBIllGenerated === "N"
+            ? ` <i class="bi bi-file-earmark-plus-fill text-success edit-AgencyInvoice" data-attendaceId="${value.AttendaceId}"
+               title="Agency Invoice Entry" style="cursor:pointer;font-size:25px;"></i>`
+            : ` <i class="bi bi-file-earmark-plus-fill text-muted "  title="Invoice already Generated" style="font-size:25px;opacity:0.4;cursor:not-allowed;"></i>`}
+
            </td>
 </tr>
 `);
@@ -1143,7 +1146,20 @@ async function deleteAttendanceRecord(recordId) {
     }
 
 }
+//IGST Checkbox Click event
+$("#flexCheckDefault").change(function () {
 
+    if ($(this).is(":checked")) {
+        $("#igstBox").show();
+    } else {
+        $("#igstBox").hide();
+    }
+
+    calculateBillAmounts();
+
+});
+
+//Msgbox on Agency Invoice Entry 
 $(document).on('click', '.edit-AgencyInvoice', async function () {
 
     //var recordId = $(this).data("id");
@@ -1172,6 +1188,7 @@ $(document).on('click', '.edit-AgencyInvoice', async function () {
     }
 
 });
+
 // get Record to fill
 async function loadRecordUpdate(AttendaceId) {
     //alert('Load Record function')
@@ -1237,6 +1254,7 @@ async function SubmitPurchaseBill() {
     let liveryCharge = $("#numLiveryCharge").val().trim();
     let inputCGST = $("#numCgst").val().trim();
     let inputSGST = $("#numSgst").val().trim();
+    let inputIGST = $("#numIgst").val().trim();
     let totalAmount = $("#numTotalAmount").val().trim();
 
     if (purcahseBillDate === "") {
@@ -1289,6 +1307,11 @@ async function SubmitPurchaseBill() {
         $("#numSgst").siblings(".error").text("CGST Required");
         isValid = false;
     }
+    if (inputIGST === "") {
+        $("#numIgst").addClass("is-invalid");
+        $("#numIgst").siblings(".error").text("IGST Required");
+        isValid = false;
+    }
     if (totalAmount === "") {
         $("#numTotalAmount").addClass("is-invalid");
         $("#numTotalAmount").siblings(".error").text("Total Amnount Required");
@@ -1319,7 +1342,7 @@ async function SubmitPurchaseBill() {
     formData.append("LiveryCharge", Number(liveryCharge));
     formData.append("InputCgst", Number(inputCGST));
     formData.append("InputSgst", Number(inputSGST));
-    formData.append("InputIgst", 0);
+    formData.append("InputIgst", Number(inputIGST) );
     formData.append("TotalAmt", Number(totalAmount));
     //formData.append("UpladNoOfResource", noOfResources);
     //formData.append("PresentResource", presentResources);
@@ -1360,17 +1383,35 @@ function calculateBillAmounts() {
     // Subtotal
     let subTotal = basicAmount + adminCharge + liveryCharge;
 
-    // GST
-    let cgst = subTotal * 0.09;
-    let sgst = subTotal * 0.09;
+    let cgst = 0;
+    let sgst = 0;
+    let igst = 0;
+
+    // Check IGST mode
+    if ($("#flexCheckDefault").is(":checked")) {
+
+        // IGST 18%
+        igst = subTotal * 0.18;
+
+        $("#numIgst").val(igst.toFixed(2));
+        $("#numCgst").val("0.00");
+        $("#numSgst").val("0.00");
+
+    } else {
+
+        // CGST 9% + SGST 9%
+        cgst = subTotal * 0.09;
+        sgst = subTotal * 0.09;
+
+        $("#numCgst").val(cgst.toFixed(2));
+        $("#numSgst").val(sgst.toFixed(2));
+        $("#numIgst").val("0.00");
+    }
 
     // Total
-    let total = subTotal + cgst + sgst;
-
+    let total = subTotal + cgst + sgst + igst;
 
     $("#numAdminCharge").val(adminCharge.toFixed(2));
-    $("#numCgst").val(cgst.toFixed(2));
-    $("#numSgst").val(sgst.toFixed(2));
     $("#numTotalAmount").val(total.toFixed(2));
 }
 

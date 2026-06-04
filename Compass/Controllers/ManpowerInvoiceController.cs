@@ -41,9 +41,7 @@ namespace Compass.Controllers
         }
 
         #region PurchaseBillVerification
-
-        
-        public IActionResult PurchaseBillVerification()
+      public IActionResult PurchaseBillVerification()
         {
             return View();
         }
@@ -62,9 +60,7 @@ namespace Compass.Controllers
                 parameters.Add("@AgencyId", filter.AgencyId);
                 parameters.Add("@DeptId", filter.DeptId);
                 parameters.Add("@PaymentStatus", filter.PaymentStatus);
-                
-                var dt = await _cn.FillDataTableAsync("TallyPurchaseVerification_List", "", parameters);
-
+              var dt = await _cn.FillDataTableAsync("TallyPurchaseVerification_List", "", parameters);
                 if (dt == null || dt.Rows.Count == 0)
                     return Ok(new List<PInvoiceViewModel>());
 
@@ -82,12 +78,7 @@ namespace Compass.Controllers
                     BillMonth = row["MonthYear"]?.ToString(),
                     VerificationStatus = row["IsPurchaseBillVerified"]?.ToString(),
                     IsSaleBIllGenerated = row["IsSaleBIllGenerated"]?.ToString(),
-
-
-
-                    //MonthYear = Convert.ToInt32(row["MonthYear"]?.ToString()),
-
-
+                    //IsSaleBIllGenerated = row["IsSaleBIllGenerated"]?.ToString(),
                 }).ToList();
 
                 return Ok(list);
@@ -103,64 +94,7 @@ namespace Compass.Controllers
             }
         }
 
-
         // Get record for Agency Bill Verification & HPSEDC Sale Bill
-        //[HttpGet]
-        //public async Task<IActionResult> GetAgencyInvoiceVerifyRecord1([FromQuery] PInvoiceFilter filter)
-
-        //{
-        //    try
-        //    {
-        //        // Access as object
-        //        SortedList parameters = new SortedList();
-        //        parameters.Add("@AgencyBillId", filter.Id);
-
-        //        var dt = await _cn.FillDataTableAsync("TallyDeptBill_ListGet1", "", parameters);
-
-        //        if (dt == null || dt.Rows.Count == 0)
-        //            return Ok(new List<PInvoiceVerifyViewModel>());
-
-        //        var list = dt.AsEnumerable().Select(row => new PInvoiceVerifyViewModel
-
-        //        {
-        //            Id = Convert.ToInt32(row["AgencyBillId"]?.ToString()),
-        //            BillDate = (row["BillDate"]?.ToString()),
-        //            WorkOrderId = (row["WorkOrderNo"]?.ToString()),
-        //            //PurchaseBillNo = (row["DeptBillNO"]?.ToString()),
-        //            AgencyBillNo = (row["Billno"]?.ToString()),
-        //            AgencyId = Convert.ToInt32(row["AgencyId"]?.ToString()),
-        //            AgencyName = (row["AgencyName"]?.ToString()),
-        //            DeptId = Convert.ToInt32(row["DeptId"]?.ToString()),
-        //            DepartmentName = (row["departmentName"]?.ToString()),
-        //            NoofResources = Convert.ToInt32(row["DeptId"]?.ToString()),
-        //            BillingId = Convert.ToInt32(row["BillingId"]?.ToString()),
-        //            DeptBillingAdd = (row["DepartmentAddress"]?.ToString()),
-        //            BillMonth = (row["BillforMonth"]?.ToString()),
-        //            Description = (row["Description"]?.ToString()),
-        //            Narration = (row["Narration"]?.ToString()),
-        //            BasicBillAmt = Convert.ToDecimal(row["AgencyBillAmt"]?.ToString()),
-        //            AdminCharge = Convert.ToDecimal(row["AdminAmt"]?.ToString()),
-        //            LiveryCharge = Convert.ToDecimal(row["LibaryAmt"]?.ToString()),
-        //            InputCgst = Convert.ToDecimal(row["cgstAmt"]?.ToString()),
-        //            InputSgst = Convert.ToDecimal(row["SGSTAtm"]?.ToString()),
-        //            TotalAmt = Convert.ToDecimal(row["TotalAmt"]?.ToString()),
-                    
-
-        //        }).ToList();
-
-        //        return Ok(list);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, new
-        //        {
-        //            success = false,
-        //            message = "Server error.",
-        //            error = ex.Message
-        //        });
-        //    }
-        //}
-
         [HttpGet]
         public async Task<IActionResult> GetAgencyInvoiceVerifyRecord([FromQuery] PInvoiceFilter filter)
 
@@ -210,6 +144,7 @@ namespace Compass.Controllers
                     LiveryCharge = Convert.ToDecimal(row["LibaryAmt"]?.ToString()),
                     InputCgst = Convert.ToDecimal(row["cgstAmt"]?.ToString()),
                     InputSgst = Convert.ToDecimal(row["SGSTAtm"]?.ToString()),
+                    InputIgst = Convert.ToDecimal(row["IGSTAmt"]?.ToString()),
                     TotalAmt = Convert.ToDecimal(row["TotalAmt"]?.ToString()),
 
 

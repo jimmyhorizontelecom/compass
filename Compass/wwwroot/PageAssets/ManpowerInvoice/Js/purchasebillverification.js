@@ -1,34 +1,23 @@
 ﻿var Id = 0;
-
-
 $(document).ready(function () {
-    //initializeMonthYearPickerByClass("monthYearPicker");
-
     resetModal();
     recordlist();
-
+// Intiliase Month&Year Calender    
     initCustomPicker('#monthYear');
-    //alert('Purchase Bill Verification');
-
     //Parent Dropdown
     bindDataToDdl("Dropdown", "MDepartment_ddl", "", "ddlDeptName", " Department Name");
     bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyName", " Agency Name");
-    //bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlBillStatu", " Bill Status");
-
-
+    bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlBillStatu", " Bill Status");
     // load data when changes on ddl
     $("#monthYear, #ddlAgencyName, #ddlDeptName,#ddlBillStatus").change(function () {
         recordlist();
     });
-
 });
-
 //Get Record for A table 
 async function recordlist() {
     var agencyId = parseInt($("#ddlAgencyName").val()) || 0;
     var deptId = parseInt($("#ddlDeptName").val()) || 0;
-    //var monthId = '42026';
-    var MonthYear = $("#monthYear").val();
+   var MonthYear = $("#monthYear").val();
     var monthId = "0"; // Default value
     if (MonthYear) {
         // 2. Format Change: "04/2026" -> "42026" (Month + Year)
@@ -39,13 +28,10 @@ async function recordlist() {
         monthId = m.toString() + y.toString(); // "42026"
     }
     var paymentStatus = $("#ddlBillStatus").val();
-
     if (!paymentStatus || paymentStatus === "0") {
         paymentStatus = 'A';
     }
-
     paymentStatus = paymentStatus.trim().toUpperCase();
-
     var filterData = {
         Id: 0,
         AgencyId: agencyId,//1,
@@ -53,13 +39,9 @@ async function recordlist() {
         DeptId: deptId,
         MonthId: monthId,//'42026',//monthId,
         PaymentStatus: paymentStatus,
-        //CreatedBy: 0,
-        //UserRole: 39,
-
     };
     console.log("Filter", filterData);
     try {
-
         let records = await getRecords('ManpowerInvoice', 'GetPurchaseBillRecord', filterData, '#myTable', 'N');
         bindDatatable(records, '#myTable');
     }
@@ -70,53 +52,43 @@ async function recordlist() {
 }
 //Bind get record  in a table 
 function bindDatatable(records, tableId) {
-
-
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().clear().destroy();
     }
-
     var tbody = $(tableId + " tbody");
     tbody.empty();
-
     $.each(records, function (i, value) {
         let SrNo = i + 1;
-
         tbody.append(`
             <tr 
                 data-id="${value.Id}">
                  <td>${SrNo}</td>
                 <td>${value.DepartmentName}</td>
-                <td>${value.AgencyName}<br> ${value.AgencyBillNo}</td>
-                               
+                <td>${value.AgencyName}<br> ${value.AgencyBillNo}</td>              
                <!-- Attendance File -->
                 <td class="text-center">
                 <span data-id="${value.Id}" >
                     <a href="javascript:void(0);" class="view-file" data-file="${value.AttendanceCertificate}" data-folder="Attendance" title="View Attendance">
-                         <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"></i>
-                    </a>
-                    </span>
+                         <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"></i> </a> </span>
                 </td>
                  <!-- Annexure File -->
                 <td class="text-center">
                     <a href="javascript:void(0);" class="view-file" data-file="${value.AnnexureFile}" data-folder="Annexure" title="View Annexure">
-                        <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"></i>
-                    </a>
-                </td>
+                        <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"></i> </a>
+                 </td>
                  <!-- Agency Bill File -->
                 <td class="text-center">
                 <span data-id="${value.Id}" >
                     <a href="javascript:void(0);" class="view-file" data-file="${value.AgencyBillFile}" data-folder="AgencyBill" title="View Agency Bill">
-                        <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"></i>
-                    </a>
+                        <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"></i> </a>
                 </td>
                  <td> ${value.BillDate} <br> ${value.BillMonth}</td>
                    <!--Verify Purchase Invoice -->
-               <td class="text-center">
-                 ${value.VerificationStatus === "V"
-                ? '<i class="bi bi-lock-fill text-secondary" title="Already Verified" style="font-size:25px;"></i>'
-                : `<i class="bi bi-pencil-square edit-PInvoiceUpdate edit-icon"  data-id="${value.Id}"  style="cursor:pointer;font-size:25px;"></i>`}
-                </td>
+               <td class="text-center">             
+                 ${  value.VerificationStatus === "V"
+                     ? `<i class="bi bi-pencil-square text-secondary"  title="Already Verified"   style="font-size:25px; cursor:not-allowed; opacity:0.6;"></i>`
+                     : `<i class="bi bi-pencil-square edit-PInvoiceUpdate edit-icon"  data-id="${value.Id}"  title="Edit Purchase Bill" style="cursor:pointer;font-size:25px;"></i>` }
+                 </td>
                   <!-- Bill Verification Status -->
                  <td class="text-center">
                    ${value.VerificationStatus === "V"
@@ -125,14 +97,14 @@ function bindDatatable(records, tableId) {
                </td>
                   <!-- HPSEDC Bill Generate -->
                  <td class="text-center">
-                    ${value.IsSaleBIllGenerated === "C"
-                ? '<i class="bi bi-lock-fill text-secondary" title="Verify Bill First" style="font-size:25px;"></i>'
-                : `<i class="bi bi-pencil-square edit-HPSEDC_SInvoice edit-icon"   data-id="${value.Id}"  style="cursor:pointer;font-size:25px;"></i>`}
+                    ${value.IsPurchaseBillVerified === "V"
+                         ? '<i class="bi bi-lock-fill text-secondary" title="Verify Bill First" style="font-size:25px;"></i>'
+                         : `<i class="bi bi-pencil-square edit-HPSEDC_SInvoice edit-icon"   data-id="${value.Id}"  style="cursor:pointer;font-size:25px;"></i>`}
                 </td>
                   <!-- E-Invoice -->
                 <td class="text-center">
 
-                </td>
+                 </td>
                   <!-- Invoice Print -->
                  <td class="text-center">
                        <i class="bi bi-printer-fill edit-HPSEDC_Invoice_Print" data-id="${value.Id}" title="Print Invoice"
@@ -140,12 +112,10 @@ function bindDatatable(records, tableId) {
                 </td>
                   <!-- Cancel Bill -->
                  <td class="text-center">
-                      
-                 </td>
-                
-        `);
+                  <i class="bi bi-x-circle-fill  ${value.IsSaleBillGenerated ? 'text-danger edit-CancelSaleBill' : 'text-muted disabled-icon'}"
+                      data-id="${value.Id}"  title="${value.IsSaleBillGenerated ? 'Cancel Bill' : 'Sale Bill not generated'}"
+                     style="cursor:${value.IsSaleBillGenerated ? 'pointer' : 'not-allowed'}; font-size:25px;">  </i> </td> `);
     });
-
     $(tableId).DataTable({
         paging: true,
         searching: true,
@@ -153,11 +123,8 @@ function bindDatatable(records, tableId) {
         info: true,
         responsive: true
     });
-
     //hideModalLoader();
 }
-
-
 // View Uploaded pdf on New tab file conditions 
 $(document).on('click', '.view-file', function (e) {
     e.preventDefault(); // Prevent default <a> behavior
@@ -176,7 +143,14 @@ $(document).on('click', '.view-file', function (e) {
     // Open in new tab
     window.open(url, '_blank');
 });
-
+//IGST Checkbox Click event
+$("#flexCheckDefault").change(function () {
+    if ($(this).is(":checked")) {
+        $("#igstBox").show();
+    } else {
+        $("#igstBox").hide();
+    }
+});
 // MsgBox on Agency Bill verification 
 $(document).on('click', '.edit-PInvoiceUpdate', async function () {
 
@@ -204,11 +178,8 @@ $(document).on('click', '.edit-PInvoiceUpdate', async function () {
         console.log('Edit cancelled');
     }
 });
-
 // get Record to fill Agency Bill verification
 async function loadPInvoiceUpdate(recordId) {
-    //alert('Load Record function')
-
     var filterData = {
         Id: recordId,
         AgencyId: 0,
@@ -216,19 +187,13 @@ async function loadPInvoiceUpdate(recordId) {
         MonthId: 0,
         MonthIdTo: 0,
         PaymentStatus: 'A',
-        CreatedBy: 0,
-        UserRole: 39,
-    };
-
-
+     };
     try {
-
         let records = await getRecords('ManpowerInvoice', 'GetAgencyInvoiceVerifyRecord', filterData, '', 'N');
         console.log("Full Response:", records);
         if (records && records.length > 0) {
             let data = records[0];
             console.log(data)
-
             Id = data.Id;
             $("#datePurchaseBillDate1").val(data.BillDate);
             $("#txtWorkOrderNo1").val(data.WorkOrderId);
@@ -238,26 +203,22 @@ async function loadPInvoiceUpdate(recordId) {
             $("#monthYear1").val(data.BillMonth);
             $("#txtDiscription1").val(data.Description);
             $("#txtNarration1").val(data.Narration);
-
             $("#numBasicAmount").val(parseFloat(data.BasicBillAmt).toFixed(2));
             $("#numAdminCharge").val(parseFloat(data.AdminCharge).toFixed(2));
             $("#numLiveryCharge").val(parseFloat(data.LiveryCharge).toFixed(2));
             $("#numCgst").val(parseFloat(data.InputCgst).toFixed(2));
             $("#numSgst").val(parseFloat(data.InputSgst).toFixed(2));
+            $("#numIgst").val(parseFloat(data.InputIgst).toFixed(2));
             $("#numTotalAmount").val(parseFloat(data.TotalAmt).toFixed(2));
-
             $("#hdnAgencyId1").val(data.AgencyId);
             $("#hdnDeptId1").val(data.DeptId);
             $("#hdnBillingId1").val(data.BillingId);
-
             console.log("AgencyId:", data.AgencyId);
             console.log("DeptId:", data.DeptId);
             console.log("BillingId:", data.BillingId);
-
             bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyName1", " Agency Name", data.AgencyId, 0);
             var option = new Option(data.AgencyName, data.AgencyId, true, true);
             $('#ddlAgencyName1').append(option).trigger('change');
-
             bindDataToDdl("Dropdown", "MDepartment_ddl", "", "txtDeptName1", " Department Name", data.DeptId, 0);
             var option = new Option(data.DepartmentName, data.DeptId, true, true);
             $('#txtDeptName1').append(option).trigger('change');
@@ -268,13 +229,11 @@ async function loadPInvoiceUpdate(recordId) {
         console.error("Error loading record:", error);
     }
 }
-
 // Submit Updated Purchase Bill Details
 $(".btnModalSubmit").on("click", function () {
     SubmitPInvoiceUpdate();
 });
-
-// Submit records
+// Submit Verify records of Purchase Invoice
 async function SubmitPInvoiceUpdate() {
     let agencyBillId = $("#hdnAgencyBillId").val();
     console.log("Submitting ID:", agencyBillId); // 🔥 debug
@@ -334,7 +293,6 @@ async function SubmitPInvoiceUpdate() {
     }
 
 }
-
 // MsgBox on HPSCED Sale Bill 
 $(document).on('click', '.edit-HPSEDC_SInvoice', async function () {
 
@@ -364,7 +322,6 @@ $(document).on('click', '.edit-HPSEDC_SInvoice', async function () {
     }
 
 });
-
 // get Record to fill HPSEDEC Sale Bill
 async function loadSInvoice(recordId) {
     //alert('Load Record function')
@@ -409,6 +366,10 @@ async function loadSInvoice(recordId) {
             $("#numSgst2").val(parseFloat(data.InputSgst).toFixed(2));
             $("#numTotalAmount2").val(parseFloat(data.TotalAmt).toFixed(2));
 
+            recalculateInvoice();
+
+
+
             //$("#hdnAgencyId2").val(data.AgencyId);
             //$("#hdnDeptId2").val(data.DeptId);
             //$("#hdnBillingId2").val(data.BillingId);
@@ -423,6 +384,61 @@ async function loadSInvoice(recordId) {
     catch (error) {
         console.error("Error loading record:", error);
     }
+}
+function recalculateInvoice() {
+
+    let basic = parseFloat($("#numBasicAmount2").val()) || 0;
+    let livery = parseFloat($("#numLiveryCharge2").val()) || 0;
+
+    // Admin 5%
+    let admin = basic * 0.05;
+    $("#numAdminCharge2").val(admin.toFixed(2));
+
+    let taxableAmount = basic + admin + livery;
+
+    let gstRate = 0.18;
+
+    let isIGST = $("#flexCheckDefault").is(":checked");
+
+    let cgst = 0;
+    let sgst = 0;
+    let igst = 0;
+
+    if (isIGST) {
+
+        // ✅ IGST mode
+        igst = taxableAmount * gstRate;
+
+        $("#Igst").val(igst.toFixed(2));
+
+        $("#numCgst2").val(0);
+        $("#numSgst2").val(0);
+
+    } else {
+
+        // ✅ CGST + SGST mode
+        let gst = taxableAmount * gstRate;
+
+        cgst = gst / 2;
+        sgst = gst / 2;
+
+        $("#numCgst2").val(cgst.toFixed(2));
+        $("#numSgst2").val(sgst.toFixed(2));
+
+        $("#Igst").val(0);
+    }
+
+    let total = taxableAmount + (igst || (cgst + sgst));
+
+    $("#numTotalAmount2").val(total.toFixed(2));
+
+    return {
+        admin,
+        cgst,
+        sgst,
+        igst,
+        total
+    };
 }
 
 // Submit HPSEDC Sale Bill Details
@@ -573,7 +589,13 @@ function printInvoice(id) {
 // MsgBox on Cancel Sale Bill
 $(document).on('click', '.edit-CancelSaleBill', async function () {
     var recordId = $(this).data("id");
-    alert(recordId);
+    let row = $(this);
+   // alert(row)
+    // If disabled state detected
+    if (row.hasClass("disabled-icon")) {
+        toastr.warning("HPSEDC Bill not generated");
+        return;
+    }
     console.log("Edit Record Id:", recordId);
     if (!recordId) {
         toastr.error("Record Id not found");
@@ -635,7 +657,6 @@ async function SubmitCancelBill() {
         //$("#ModalProgress").show();
         let res = await acceptUpdate("ManpowerInvoice", "AddOrEdit_CancelSaleBillRecord", formData);
         if (res.success) {
-            alert('Hit');
             recordlist();
             resetModal();
             Id = 0;

@@ -87,7 +87,7 @@ namespace Compass.Models.ManpowerViewModel
         public string AnnexureFile { get; set; }
         public string AgencyBillFile { get; set; }
         public string VerificationStatus { get; set; }
-
+        public string IsPurhaseBIllGenerated { get; set; }
     }
 
 
@@ -136,6 +136,7 @@ namespace Compass.Models.ManpowerViewModel
         public string AgencyBillEntryDate { get; set; }
         public string VerificationStatus { get; set; }
         public string IsSaleBIllGenerated { get; set; }
+       
      
     }
     // Agency Bill Verification View

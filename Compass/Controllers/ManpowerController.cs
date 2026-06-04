@@ -255,6 +255,7 @@ namespace Compass.Controllers
                     AnnexureFile = row["AnnexureFile"]?.ToString(),
                     AgencyBillFile = row["UploadBill"]?.ToString(),
                     VerificationStatus = row["IsPurchaseBillVerified"]?.ToString(),
+                    IsPurhaseBIllGenerated = row["IsPurhaseBIllGenerated"]?.ToString(),
                 }).ToList();
 
                 return Ok(list);
