@@ -78,6 +78,7 @@ namespace Compass.Controllers
                     BillMonth = row["MonthYear"]?.ToString(),
                     VerificationStatus = row["IsPurchaseBillVerified"]?.ToString(),
                     IsSaleBIllGenerated = row["IsSaleBIllGenerated"]?.ToString(),
+                    BillStatus = row["BillStatus"]?.ToString(),
                     //IsSaleBIllGenerated = row["IsSaleBIllGenerated"]?.ToString(),
                 }).ToList();
 

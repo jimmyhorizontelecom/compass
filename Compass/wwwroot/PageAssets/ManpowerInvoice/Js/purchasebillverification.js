@@ -15,6 +15,7 @@ $(document).ready(function () {
 });
 //Get Record for A table 
 async function recordlist() {
+    alert('ManpowerInvoice Loading');
     var agencyId = parseInt($("#ddlAgencyName").val()) || 0;
     var deptId = parseInt($("#ddlDeptName").val()) || 0;
    var MonthYear = $("#monthYear").val();
@@ -59,6 +60,7 @@ function bindDatatable(records, tableId) {
     tbody.empty();
     $.each(records, function (i, value) {
         let SrNo = i + 1;
+       // alert(JSON.stringify(value));
         tbody.append(`
             <tr 
                 data-id="${value.Id}">
@@ -97,9 +99,12 @@ function bindDatatable(records, tableId) {
                </td>
                   <!-- HPSEDC Bill Generate -->
                  <td class="text-center">
-                    ${value.IsPurchaseBillVerified === "V"
-                         ? '<i class="bi bi-lock-fill text-secondary" title="Verify Bill First" style="font-size:25px;"></i>'
-                         : `<i class="bi bi-pencil-square edit-HPSEDC_SInvoice edit-icon"   data-id="${value.Id}"  style="cursor:pointer;font-size:25px;"></i>`}
+                 ${value.BillStatus === "P"
+                ? `<i class="bi bi-pencil-square edit-HPSEDC_SInvoice edit-icon"  data-id="${value.Id}"   title="Generate Sale Bill"  style="cursor:pointer;font-size:25px;"></i>`
+                : `<i class="bi bi-pencil-square text-secondary" title="${value.BillStatus === 'S' ? 'Sale Bill Already Generated' : 'Sale Bill Cancelled'}"
+                style="font-size:25px;cursor:not-allowed;opacity:0.6;"></i>`
+                }
+                   
                 </td>
                   <!-- E-Invoice -->
                 <td class="text-center">
@@ -112,9 +117,12 @@ function bindDatatable(records, tableId) {
                 </td>
                   <!-- Cancel Bill -->
                  <td class="text-center">
-                  <i class="bi bi-x-circle-fill  ${value.IsSaleBillGenerated ? 'text-danger edit-CancelSaleBill' : 'text-muted disabled-icon'}"
-                      data-id="${value.Id}"  title="${value.IsSaleBillGenerated ? 'Cancel Bill' : 'Sale Bill not generated'}"
-                     style="cursor:${value.IsSaleBillGenerated ? 'pointer' : 'not-allowed'}; font-size:25px;">  </i> </td> `);
+                ${value.BillStatus === "S"
+            ? `<i class="bi bi-x-circle-fill edit-CancelSaleBill edit-icon" data-id="${value.Id}" title="Cancel Sale Bill" style="cursor:pointer;font-size:25px;"></i>`
+            : `<i class="bi bi-x-circle-fill text-secondary"  title="${value.BillStatus === 'C' ? 'Sale Bill Already Cancelled' : 'Sale Bill Not Generated'}"
+                 style="font-size:25px;cursor:not-allowed;opacity:0.6;"></i>`}
+                </td>
+        `);
     });
     $(tableId).DataTable({
         paging: true,
@@ -590,7 +598,8 @@ function printInvoice(id) {
 $(document).on('click', '.edit-CancelSaleBill', async function () {
     var recordId = $(this).data("id");
     let row = $(this);
-   // alert(row)
+    alert(recordId)
+    alert(row)
     // If disabled state detected
     if (row.hasClass("disabled-icon")) {
         toastr.warning("HPSEDC Bill not generated");
