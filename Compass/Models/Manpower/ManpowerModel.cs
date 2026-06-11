@@ -185,7 +185,30 @@ namespace Compass.Models.ManpowerModel
         public decimal Gsttds { get; set; }
         public decimal Tds1 { get; set; }
         public decimal Tds2 { get; set; }
+    }
+
+    #region Dispatch
+    public class DispatchModel
+    {
+        public int DispatchId { get; set; }
+        public int DeptBillId { get; set; }
+        public int DispatchNo { get; set; }
+        public int OfficeAddressId { get; set; }
+        public string OfficeAdddress { get; set; }
+        
 
 
     }
+
+
+    #endregion
 }
+
+
+
+
+
+//Agency                        TallyAgencyDdl_List
+//Dept                          stpHPSEDCSSODepartmentDDL1
+//Work Order                TallyAgencyWorkOrder_Simple_Get
+//No Of Res.                TallyAgencyWorkOrder1_get1

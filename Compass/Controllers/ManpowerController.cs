@@ -54,6 +54,8 @@ namespace Compass.Controllers
         public async Task<IActionResult> GetDeptMasterRecord([FromQuery] WorkOrder filter)
 
         {
+            var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
+            var roleId = Convert.ToInt32(User.FindFirst("RoleId")?.Value ?? "0");
             try
             {
                 // Access as object
@@ -62,8 +64,8 @@ namespace Compass.Controllers
                 parameters.Add("@AgencyId", filter.AgencyId);
                 parameters.Add("@DeptId", filter.DeptId);
                 parameters.Add("@WorkOrderId", filter.WorkOrderId);
-                parameters.Add("@CreatedBy", filter.CreatedBy);
-                parameters.Add("@RoleId", filter.UserRole);
+                parameters.Add("@CreatedBy", userId);
+                parameters.Add("@RoleId", roleId);
 
                 var dt = await _cn.FillDataTableAsync("TallyAgencyDeptWorkOrder_List1", "", parameters);
 

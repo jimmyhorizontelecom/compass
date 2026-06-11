@@ -45,8 +45,8 @@ async function recordlist() {
         AgencyId: agencyId,
         DeptId: deptId,
         WorkOrderId: 0,
-        CreatedBy: 0,
-       UserRole: 39,
+       // CreatedBy: 0,
+       //UserRole: 39,
 
     };
 

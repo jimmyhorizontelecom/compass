@@ -579,7 +579,140 @@ namespace Compass.Controllers
 
         #endregion
 
+        #region Dispatch
+        public IActionResult Dispatch()
+        {
+            return View();
+        }
 
+        // Get record for the List
+        [HttpGet]
+        public async Task<IActionResult> GetDispatchDetailRecord([FromQuery] DispatchFilter filter)
+        {
+            try
+            {
+                // Access as object
+                SortedList parameters = new SortedList();
+                parameters.Add("@DeptBillId", filter.DeptBillId);
+                parameters.Add("@MonthYear", filter.MonthYear);
+                parameters.Add("@PageNumber", filter.PageNumber);
+                parameters.Add("@PageSize", filter.PageSize);
+                parameters.Add("@SearchTerm", filter.SearchTerm);
+                               
+                
+                var dt = await _cn.FillDataTableAsync("TallyDispatchInv_List_Optimized", "", parameters);
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<DipsatchListViewModel>());
+                var list = dt.AsEnumerable().Select(row => new DipsatchListViewModel
+                {
+                    DeptBillId = (row["DeptBillId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["DeptBillId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["DeptBillId"]),
+                    AgencyName = (row["AgencyName"]?.ToString()),
+                    AgencyBillNo = (row["AgencyBillNo"]?.ToString()),
+                    SaleBillNo = (row["SaleBillNo"]?.ToString()),
+                    BillFormonth = (row["BillforMonth"] == DBNull.Value || string.IsNullOrWhiteSpace(row["BillforMonth"].ToString()))
+                    ? 0 : Convert.ToInt32(row["BillforMonth"]),
+                    DispatchStatus = (row["IsDispatched"]?.ToString()),
+                    DeptAddress = (row["DepartmentAddress"]?.ToString()),
+                    DispatchNo = (row["DispatchNo"] == DBNull.Value || string.IsNullOrWhiteSpace(row["DispatchNo"].ToString()))
+                    ? 0 : Convert.ToInt32(row["DispatchNo"]),    
+                }).ToList();
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+        // Get record for Fill Dispatch details Modal
+        [HttpGet]
+        public async Task<IActionResult> GetDispatchDetailModal([FromQuery] DispatchFilter filter)
+        {
+            try
+            {
+                // Access as object
+                SortedList parameters = new SortedList();
+                parameters.Add("@DeptBillId", filter.DeptBillId);
+                parameters.Add("@MonthYear", filter.MonthYear);
+                
+                var dt = await _cn.FillDataTableAsync("TallyDispatchInv_List", "", parameters);
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<DipsatchListViewModel>());
+                var list = dt.AsEnumerable().Select(row => new DipsatchListViewModel
+                {
+                    DeptBillId = (row["DeptBillId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["DeptBillId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["DeptBillId"]),
+                    SaleBillNo = (row["SaleBillNo"]?.ToString()),
+                    DeptName = (row["departmentName"]?.ToString()),
+                    DeptAddress = (row["DepartmentAddress"]?.ToString()),
+                    DispatchNo = (row["DispatchNo1"] == DBNull.Value || string.IsNullOrWhiteSpace(row["DispatchNo1"].ToString()))
+                    ? 0 : Convert.ToInt32(row["DispatchNo1"]),
+                }).ToList();
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+        //Submit Dept. Payment 
+        [HttpPost]
+        public async Task<IActionResult> AddOrEdit_DispatchRecord([FromForm] DispatchModel model)
+        {
+            try
+            {
+                var dispatchId = model.DispatchId;
+                var deptBillId = model.DeptBillId;
+                var dispatchNo = model.DispatchNo;
+                var officeAddressId = model.OfficeAddressId;
+                var officeAdddress = model.OfficeAdddress;
+                
+                var userId = User.FindFirst("UserId")?.Value;
+
+                SortedList parameters = new SortedList
+                    {
+                    { "@DispatchId", dispatchId },
+                    { "@DeptBIllId", deptBillId },
+                    { "@DispatchNo", dispatchNo },
+                    { "@OfficeAddressId", officeAddressId  },
+                    { "@OfficeAdddress", officeAdddress },
+                    { "@DisptchBy", userId },
+            };
+
+                var result = _cn.ExecuteNonQueryWMessage(
+                    "TallyDispatchInv_AcceptUpdate",
+                    "",
+                    parameters
+                );
+
+                return Ok(new { success = true, message = result.ToString() });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+
+
+        #endregion
 
         #region TallyAgencyPayment
 

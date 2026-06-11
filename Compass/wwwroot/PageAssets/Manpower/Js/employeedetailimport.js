@@ -114,6 +114,8 @@ function bindDatatable(records, tableId) {
 $(document).on('click', '.btnRemoveRow', function () {
     $(this).closest('tr').remove();
 });
+
+
 // // Submit record when Click on btn
 // $(".btnModalSubmit").on("click", function () {
 //     SubmitRecord();

@@ -8,6 +8,7 @@ namespace Compass.Models.ManpowerViewModel
         public int Id { get; set; }
         public int AgencyId { get; set; }
         public int DeptId { get; set; }
+        public int MonthYear { get; set; }
         public string WorkOrderId { get; set; }
         public int CreatedBy { get; set; }
         public int UserRole { get; set; }
@@ -274,13 +275,43 @@ namespace Compass.Models.ManpowerViewModel
         public decimal OtherAllowance { get; set; }
         public string IsEPF { get; set; }
         public string IsESIC { get; set; }
-      
-
     }
 
 
     #endregion
 
+
+    #region Dispatch
+    //Dispatch filter
+    public class DispatchFilter
+    {
+        public int DeptBillId { get; set; }
+        public int MonthYear { get; set; }
+        public int PageNumber { get; set; }
+        public int PageSize { get; set; }
+        public int SearchTerm { get; set; }
+      
+    }
+
+
+    //Employee List
+    public class DipsatchListViewModel
+    {
+        public int DeptBillId { get; set; }
+        public string AgencyName { get; set; }
+        public string AgencyBillNo { get; set; }
+        public string SaleBillNo { get; set; }
+        public int BillFormonth { get; set; }
+        public string DeptName { get; set; }
+        public string DeptAddress { get; set; }
+        public string DispatchStatus { get; set; }
+        public int DispatchNo { get; set; }
+        
+    }
+
+
+
+    #endregion
 
 
 
