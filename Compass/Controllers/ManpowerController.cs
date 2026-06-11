@@ -59,21 +59,16 @@ namespace Compass.Controllers
             try
             {
                 // Access as object
-
                 SortedList parameters = new SortedList();
                 parameters.Add("@AgencyId", filter.AgencyId);
                 parameters.Add("@DeptId", filter.DeptId);
                 parameters.Add("@WorkOrderId", filter.WorkOrderId);
                 parameters.Add("@CreatedBy", userId);
                 parameters.Add("@RoleId", roleId);
-
                 var dt = await _cn.FillDataTableAsync("TallyAgencyDeptWorkOrder_List1", "", parameters);
-
                 if (dt == null || dt.Rows.Count == 0)
                     return Ok(new List<WorkOrderListModel>());
-
                 var list = dt.AsEnumerable().Select(row => new WorkOrderListModel
-
                 {
                     AgencyId = (row["AgencyId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["AgencyId"].ToString()))
                     ? 0 : Convert.ToInt32(row["AgencyId"]),
@@ -93,7 +88,6 @@ namespace Compass.Controllers
                     NoOfUploadedResource = (row["NoOfUploadedResource"] == DBNull.Value || string.IsNullOrWhiteSpace(row["NoOfUploadedResource"].ToString()))
                     ? 0 : Convert.ToInt32(row["NoOfUploadedResource"]),
                     //NoOfUploadedResource = Convert.ToInt32(row["NoOfUploadedResource"]?.ToString()),
-
                 }).ToList();
 
                 return Ok(list);
@@ -162,9 +156,6 @@ namespace Compass.Controllers
                 });
             }
         }
-
-
-
 
         #endregion
 
@@ -980,11 +971,7 @@ namespace Compass.Controllers
             }
         }
         #endregion
-        //SP
-        //TallySaleBillCancel_AcceptUpdate
-        //TallyDispatchInv_List_Optimized
-        //TallyDispatchInv_List"
-        //TallyDispatchInv_AcceptUpdate
+        
 
 
 

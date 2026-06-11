@@ -56,17 +56,13 @@ async function recordlist() {
 
 //Bind get record  in a table
 function bindDatatable(records, tableId) {
-
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().clear().destroy();
     }
-
     var tbody = $(tableId + " tbody");
     tbody.empty();
-
     $.each(records, function (i, value) {
         let SrNo = i + 1;
-
         tbody.append(`
             <tr
                 data-deptBillId="${value.DeptBillId}">
@@ -82,14 +78,12 @@ function bindDatatable(records, tableId) {
                 ? '<i class="bi bi-check-circle-fill text-success" title="Verified" style="font-size:25px;"></i>'
                 : '<i class="bi bi-x-circle-fill text-danger" title="Not Verified" style="font-size:25px;"></i>'}
                </td>
-              
                 <!--Dispatch Action-->
                 <td class="text-center">
                          ${value.DispatchStatus != "Y" 
-            ? ` <i class="bi bi-file-earmark-plus-fill text-success edit-DispatchAction" data-deptbillid="${value.DeptBillId}"
+            ? ` <i class="bi bi-truck text-success edit-DispatchAction" data-deptbillid="${value.DeptBillId}"
                title="Update Dispatch Details" style="cursor:pointer;font-size:25px;"></i>`
-                : ` <i class="bi bi-file-earmark-plus-fill text-muted "  title="Dispatch Details already updated" style="font-size:25px;opacity:0.4;cursor:not-allowed;"></i>`}
-
+            : ` <i class="bi bi-truck text-muted "  title="Dispatch Details already updated" style="font-size:25px;opacity:0.8;cursor:not-allowed;"></i>`}
            </td>
                 <td>${value.DispatchNo}</td>
                
@@ -106,10 +100,6 @@ function bindDatatable(records, tableId) {
     //hideModalLoader();
 }
 
-// Submit Dept. Payment Modal
-// $(".btnDispatchAction").on("click", function () {
-//     alert('Loading');
-// });
 //Msgbox on Action on Dispatch 
 $(document).on('click', '.edit-DispatchAction', async function () {
     var recordId = $(this).data("deptbillid");
