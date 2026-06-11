@@ -166,6 +166,66 @@ namespace Compass.Controllers
 
         #endregion
 
+        #region Employee Deatils Import
+        public IActionResult EmployeeDetailImport()
+        {
+            return View();
+        }
+
+        // Get record for the List
+        [HttpGet]
+        public async Task<IActionResult> GetEmpDetailRecord([FromQuery] WorkOrder filter)
+        {
+            try
+            {
+                // Access as object
+               SortedList parameters = new SortedList();
+                parameters.Add("@AgencyId", filter.AgencyId);
+                parameters.Add("@DeptId", filter.DeptId);
+                parameters.Add("@WorkOrderId", filter.WorkOrderId);
+                parameters.Add("@CreatedBy", filter.CreatedBy);
+                parameters.Add("@RoleId", filter.UserRole);
+
+                var dt = await _cn.FillDataTableAsync("TallyAgencyDeptWorkOrder_List1", "", parameters);
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<AddEmpDetailsListViewModel>());
+
+                var list = dt.AsEnumerable().Select(row => new AddEmpDetailsListViewModel
+
+                {
+                    //AgencyId = (row["AgencyId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["AgencyId"].ToString()))
+                   // ? 0 : Convert.ToInt32(row["AgencyId"]),
+                    EmpName = (row["AgencyName"]?.ToString()),
+                    FathersName = (row["AgencyName"]?.ToString()),
+                    IsFullTimer = (row["AgencyName"]?.ToString()),
+                    DesignationId = (row["DeptId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["DeptId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["DeptId"]),
+                    AdhaarNo = (row["DeptId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["DeptId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["DeptId"]),
+                    BasicSalary = (row["DeptId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["DeptId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["DeptId"]),
+                    OtherAllowance = (row["DeptId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["DeptId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["DeptId"]),
+                    IsEPF = (row["AgencyName"]?.ToString()),
+                    IsESIC = (row["AgencyName"]?.ToString()),
+                }).ToList();
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+
+        #endregion
+
         #region Dept Attendance
         public IActionResult DeptAttendance()
         {
@@ -923,6 +983,9 @@ namespace Compass.Controllers
         //TallyDispatchInv_List_Optimized
         //TallyDispatchInv_List"
         //TallyDispatchInv_AcceptUpdate
+
+
+
 
         #region ESIEPF Report
         public IActionResult ESIEPFReport()

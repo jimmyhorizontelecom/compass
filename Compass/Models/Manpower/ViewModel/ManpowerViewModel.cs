@@ -261,6 +261,26 @@ namespace Compass.Models.ManpowerViewModel
     }
 
 
+    #region Employee Detail Import
+    //Employee List
+    public class AddEmpDetailsListViewModel
+    {
+        public string EmpName { get; set; }
+        public string FathersName { get; set; }
+        public string IsFullTimer { get; set; }
+        public int DesignationId { get; set; }
+        public int AdhaarNo { get; set; }
+        public decimal BasicSalary { get; set; }
+        public decimal OtherAllowance { get; set; }
+        public string IsEPF { get; set; }
+        public string IsESIC { get; set; }
+      
+
+    }
+
+
+    #endregion
+
 
 
 
