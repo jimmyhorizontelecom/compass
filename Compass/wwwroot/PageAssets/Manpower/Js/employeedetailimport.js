@@ -19,20 +19,26 @@ $(document).ready(function () {
     //bind ddl to filter
     bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyFilter", " Agency Name");
     bindDataToDdl("Dropdown", "MDepartment_ddl", "", "ddlDeptFilter", " Department Name");
+    // bind ddl on two parentId
+    bindDependentDataToDdlToParent("Dropdown", "MEmpImportWorkOrder_ddl", null,// ❗ no modal
+        "ddlAgencyFilter", "ddlDeptFilter", null, "ddlWorkOrder", "Select Work Order ");
+
     // load data when changes on ddl
     // $("#ddlAgencyFilter, #ddlDeptFilter").change(function () {
     //     recordlist();
     // });
-    // // initial load
-    // setTimeout(() => recordlist(), 500);
-    //bind ddl to modal
-    bindDataToDdl("Dropdown", "MAgency_ddl", "myModal_AddEmployee", "ddlAgencyName", " Agency Name");
-    bindDataToDdl("Dropdown", "MDepartment_ddl", "myModal_AddEmployee", "ddlDeptName", " Department Name");
-    // bindDependentDataToDdl("Dropdown", "MBillingAddress_ddl", null,//❗ With/Without modal
-    //   "ddlDeptName", "ddlBillingAddress", "Select Billing Address");
-
 
 });
+
+//Get No. of Resources when click on Work Order DDL
+$('#ddlWorkOrder')
+    .on('select2:select', function (e) {
+        $('#txtNoofResources').val(e.params.data.noDeployedRes || 0);
+    })
+    .on('select2:clear', function () {
+        $('#txtNoofResources').val('');
+    });
+
 
 // Open Add Employee Details Model
 $(".btnAddEmployeeDetails").on("click", function () {
@@ -46,20 +52,20 @@ $(".btnModalAddEmpSubmit").on("click", function () {
 
 //Get Record for A table
 async function recordlist() {
-    //var agencyId = parseInt($("#ddlAgencyFilter").val()) || 0;
-    //var deptId = parseInt($("#ddlDeptFilter").val()) || 0;
+    var agencyId = parseInt($("#ddlAgencyFilter").val()) || 0;
+    var deptId = parseInt($("#ddlDeptFilter").val()) || 0;
     var filterData = {
-        Id: 0,
-        AgencyId: 3,
-        DeptId: 56,
+         Id: 0,
+        AgencyId: deptId,//3,
+        DeptId: deptId,//56,
         WorkOrderId: 0,
-        CreatedBy: 123,
-        UserRole: 39,
+        //CreatedBy: 123,
+       // UserRole: 39,
     };
 
     try {
 
-        let records = await getRecords('Manpower', 'GetEmpDetailRecord', filterData, '#myTable', 'N');
+        let records = await getRecords('Manpower', 'GetEmpDetailRecord1', filterData, '#myTable', 'N');
         bindDatatable(records, '#myTable');
     }
     catch (error) {
@@ -110,93 +116,131 @@ function bindDatatable(records, tableId) {
     //hideModalLoader();
 }
 
+//Download Designation Code Excel Sheet
+$(document).on('click', '.btnDownloadDesignationSheet', function () {
+    window.location.href = '/Manpower/DownloadDesignationCode';
+});
+
+//Download Temnplates for Upload Excel files
+$(document).on('click', '.btnDownloadTemplate', function () {
+    window.location.href = '/Manpower/DownloadTemplate';
+});
+
 //Remove Employee Details from Table
 $(document).on('click', '.btnRemoveRow', function () {
     $(this).closest('tr').remove();
 });
 
 
-// // Submit record when Click on btn
-// $(".btnModalSubmit").on("click", function () {
-//     SubmitRecord();
-// });
-
-// async function SubmitRecord() {
-//     let isValid = true;
-//     let agencyId = $("#ddlAgencyName").val();
-//     let deptId = $("#ddlDeptName").val();
-//     let workOrderNo = $("#txtworkOrderNo").val().trim();
-//     let noOfResources = $("#txtnoOfResources").val().trim();
-//     let deptEmailId = $("#txtdeptEmailId").val().trim();
-//     //let billingAddress = $("#ddlBillingAddress").val();
-//     let billingAddress = $("#ddlBillingAddress option:selected").text();
-//     let billingId = $("#ddlBillingAddress").val();
-
-//     $(".error").text("");
-//     $(".is-invalid").removeClass("is-invalid");
-
-//     if (agencyId === "0" || agencyId === null){
-//         $("#ddlAgencyName").addClass("is-invalid");
-//         $("#ddlAgencyName").siblings(".error").text("Agency Name is required.");
-//         isValid = false;
-//     }
-//     if (deptId === "0" || deptId === null) {
-//         $("#ddlDeptName").addClass("is-invalid");
-//         $("#ddlDeptName").siblings(".error").text("Department Name is required.");
-//         isValid = false;
-//     }
-
-//     if (workOrderNo === "") {
-//         $("#txtworkOrderNo").addClass("is-invalid");
-//         $("#txtworkOrderNo").siblings(".error").text("Work Order No required.");
-//         isValid = false;
-//     }
-//     if (noOfResources === "") {
-//         $("#txtnoOfResources").addClass("is-invalid");
-//         $("#txtnoOfResources").siblings(".error").text("No Of Resources required.");
-//         isValid = false;
-//     }
-//     if (deptEmailId === "") {
-//         $("#txtdeptEmailId").addClass("is-invalid");
-//         $("#txtdeptEmailId").siblings(".error").text("Dept. Email Id required.");
-//         isValid = false;
-//     }
-//     if (billingId === "0" || billingId === null) {
-//         $("#ddlBillingAddress").addClass("is-invalid");
-//         $("#ddlBillingAddress").siblings(".error").text("Billing Address required.");
-//         isValid = false;
-//     }
-
-//     if (!isValid) return;
-//     // Prepare data
-//     var formData = new FormData();
-//     formData.append("WorkOrderAgencyId", Id);
-//     formData.append("AgencyId", agencyId);
-//     formData.append("DeptId", deptId);
-//     formData.append("WorkOrderNo", workOrderNo);
-//     formData.append("BillingId", billingId);
-//     formData.append("BillingAddress", billingAddress);
-//     formData.append("NoDeployedRes", noOfResources);
-//     formData.append("BillAddressEmail", deptEmailId);
-
-//     try {
-//         //$("#ModalProgress").show();
-//         let res = await acceptUpdate("Manpower", "AddOrEditRecord", formData);
-//         if (res.success) {
-
-//             recordlist();
-//             resetModal();
-//             Id = 0;
-//             $('.modelalert').text(res.message);
-//             closeModal('myModal');
-//             MsgBox('Message', res.message, '');
-//         }
-
-//     } catch (err) {
-//         $('.modelalert').text("Error: " + err);
-//     }
-
-// }
+// Submit record when Click on btn
+$(".btnEmpImportSubmit").on("click", function () {
+    alert('Submitting data');
+    SubmitRecord();
+});
 
 
+async function SubmitRecord() {
+    let isValid = true;
+    // Form Values
+    let agencyId = $("#ddlAgencyFilter").val();
+    let deptId = $("#ddlDeptFilter").val();
+    let workOrderNo = $("#ddlWorkOrder").val();
+    let noOfResources = $("#txtNoofResources").val().trim();
+    // File Control
+    let Attendance = $("#inputAttendanceFileAttached").get(0);
+    let files_Attendance = Attendance ? Attendance.files : [];
+    // Reset Validation
+    $(".error").text("");
+    $(".is-invalid").removeClass("is-invalid");
+    // Validation
+    if (agencyId === "0" || agencyId === null) {
+        $("#ddlAgencyFilter").addClass("is-invalid");
+        $("#ddlAgencyFilter").siblings(".error").text("Agency Name required");
+        isValid = false;
+    }
+    if (deptId === "0" || deptId === null) {
+        $("#ddlDeptFilter").addClass("is-invalid");
+        $("#ddlDeptFilter").siblings(".error").text("Department Name required");
+        isValid = false;
+    }
+    if (workOrderNo === "0" || workOrderNo === null) {
+        $("#ddlWorkOrder").addClass("is-invalid");
+        $("#ddlWorkOrder").siblings(".error").text("Work Order required");
+        isValid = false;
+    }
+    if (noOfResources === "") {
+        $("#txtNoofResources").addClass("is-invalid");
+        $("#txtNoofResources").siblings(".error").text("No Of Resources required");
+        isValid = false;
+    }
+    // File Validation
+    let fileSize = 5;
+    let allowedExtensions = ["pdf"];
+    //Upload Excel File Validation
+    if (files_Attendance.length === 0) {
+        $("#inputUploadEmpImportFileAttached").addClass("is-invalid");
+        $("#inputUploadEmpImportFileAttached")
+            .closest(".col-md-3")
+            .find(".error")
+            .text("Employee Import Details Excel Scheet required");
+        isValid = false;
+    }
+    else {
+        if (!fileSizeValidation('inputUploadEmpImportFileAttached', fileSize)) {
+            isValid = false;
+        }
+        if (!fileExtensionValidation('inputUploadEmpImportFileAttached', allowedExtensions)) {
+            isValid = false;
+        }
+    }
+    // Stop If vaklidation failed
+    if (!isValid) {
+        return;
+    }
+    // Form Data
+    var formData = new FormData();
+    formData.append("MonthYear", finalMonthId);
+    formData.append("WorkOrderNo", workOrderNo);
+    formData.append("UpladNoOfResource", noOfResources);
+    formData.append("PresentResource", presentResources);
+     // Employee List
+    // let employees = [];
+    // let checkedEmployees = $(".rowCheckbox:checked");
 
+    // if (checkedEmployees.length == 0) {
+
+    //     MsgBox('Error', 'Please select at least one employee', '');
+    //     return;
+    // }
+
+    // checkedEmployees.each(function () {
+    //     employees.push({
+    //         EmpId: parseInt($(this).val())
+    //     });
+    // });
+    // formData.append("EmployeeListJson", JSON.stringify(employees));
+
+    // Uplaod Emp Import Excel File
+    if (files_Attendance.length > 0) {
+        formData.append("AttendanceFile", files_Attendance[0]);
+    }
+    // Submit Data
+    try {
+        let res = await acceptUpdate("Manpower", "AddOrEdit_DeptAttendanceRecord1", formData);
+         if (res.success) {
+             recordlist();
+             resetModal();
+            Id = 0;
+            $('.modelalert').text(res.message);
+            closeModal('myModal');
+            MsgBox('Message', res.message, '');
+        }
+        else {
+            MsgBox('Error', res.message, '');
+        }
+    }
+    catch (err) {
+        console.log(err);
+        $('.modelalert').text("Error : " + err);
+    }
+}

@@ -1,5 +1,6 @@
 ﻿
 var Id = 0;
+var WorkOrderId = 0;
 //common
 toastr.options = {
     closeButton: true,
@@ -7,49 +8,45 @@ toastr.options = {
     positionClass: "toast-center-center",
     timeOut: "3000"
 };
-
-
 //ready
-
 $(document).ready(function () {
     resetModal();
-    //recordlist();
-
+    recordlist();
     //bind ddl to filter
     bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyFilter", " Agency Name");
     bindDataToDdl("Dropdown", "MDepartment_ddl", "", "ddlDeptFilter", " Department Name");
-    // load data when changes on ddl
-    $("#ddlAgencyFilter, #ddlDeptFilter").change(function () {
-        recordlist();
-    });
-    // initial load
-    setTimeout(() => recordlist(), 500);
+
     //bind ddl to modal
     bindDataToDdl("Dropdown", "MAgency_ddl", "myModal", "ddlAgencyName", " Agency Name");
     bindDataToDdl("Dropdown", "MDepartment_ddl", "myModal", "ddlDeptName", " Department Name");
-    bindDependentDataToDdl("Dropdown", "MBillingAddress_ddl", null,//❗ With/Without modal
+    bindDependentDataToDdl("Dropdown", "MAddWorkOrderBillingAddress_ddl", "myModal",//❗ With/Without modal
         "ddlDeptName", "ddlBillingAddress", "Select Billing Address");
+    //Reload table when change
+    // $("#ddlAgencyFilter, #ddlDeptFilter").change(function () {
+    //     recordlist();
 
-    
+    //   });
+    $(document).on('change', '#ddlAgencyFilter,#ddlDeptFilter', function () {
+
+        console.log("Agency:", $("#ddlAgencyFilter").val());
+        console.log("Dept:", $("#ddlDeptFilter").val());
+
+        recordlist();
+    });
+       
 });
-
 
 //Get Record for A table 
 async function recordlist() {
 
     var agencyId = parseInt($("#ddlAgencyFilter").val()) || 0;
     var deptId = parseInt($("#ddlDeptFilter").val()) || 0;
-
     var filterData = {
-        Id:0,
         AgencyId: agencyId,
         DeptId: deptId,
         WorkOrderId: 0,
-       // CreatedBy: 0,
-       //UserRole: 39,
-
-    };
-
+     };
+    console.log(filterData);
     try {
 
         let records = await getRecords('Manpower', 'GetDeptMasterRecord', filterData, '#myTable', 'N');
@@ -106,6 +103,8 @@ function bindDatatable(records, tableId) {
     //hideModalLoader();
 }
 
+
+
 // Submit record when Click on btn
 $(".btnModalSubmit").on("click", function () {
     SubmitRecord();
@@ -160,7 +159,7 @@ async function SubmitRecord() {
     if (!isValid) return;
     // Prepare data
     var formData = new FormData();
-    formData.append("WorkOrderAgencyId", Id);
+    formData.append("WorkOrderAgencyId", WorkOrderId);
     formData.append("AgencyId", agencyId);
     formData.append("DeptId", deptId);
     formData.append("WorkOrderNo", workOrderNo);
@@ -176,7 +175,7 @@ async function SubmitRecord() {
 
             recordlist();
             resetModal();
-            Id = 0;
+            WorkOrderId = 0;
             $('.modelalert').text(res.message);
             closeModal('myModal');
             MsgBox('Message', res.message, '');
@@ -223,12 +222,10 @@ async function loadWorkOrder(recordId) {
         //Id: recordId,
         AgencyId: 0,
         DeptId: 0,
-        WorkOrderId: 0,
-        CreatedBy: 0,
-        UserRole: 39,
+        WorkOrderId: recordId,
+        //CreatedBy: 0,
+       // UserRole: 39,
     };
-
-
     try {
 
         let records = await getRecords('Manpower', 'GetDeptMasterRecord', filterData, 'myModal', 'N');
@@ -253,10 +250,10 @@ async function loadWorkOrder(recordId) {
             var option = new Option(data.DepartmentName, data.DeptId, true, true);
             $('#ddlDeptName').append(option).trigger('change');
 
-            bindDependentDataToDdl("Dropdown", "MBillingAddress_ddl", null,//❗ With/Without modal
-                "ddlDeptName", "ddlBillingAddress", "Select Billing Address", data.DeptId, 0);
+            bindDependentDataToDdl("Dropdown", "MAddWorkOrderBillingAddress_ddl", "myModal",//❗ With/Without modal
+               "ddlDeptName", "ddlBillingAddress", "Select Billing Address", data.DeptId, 0);
             var option = new Option(data.BillingAddress, true);
-            $('#ddlBillingAddress').append(option).trigger('change');
+           $('#ddlBillingAddress').append(option).trigger('change');
 
             //$('#myModal').modal('show');
         }

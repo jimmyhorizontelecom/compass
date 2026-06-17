@@ -103,7 +103,7 @@ namespace Compass.Controllers
             }
         }
 
-        // Submit data 
+              // Submit data 
         [HttpPost]
         public IActionResult AddOrEditRecord(WorkOrderModel model)
         {
@@ -169,6 +169,8 @@ namespace Compass.Controllers
         [HttpGet]
         public async Task<IActionResult> GetEmpDetailRecord([FromQuery] WorkOrder filter)
         {
+            var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
+            var roleId = Convert.ToInt32(User.FindFirst("RoleId")?.Value ?? "0");
             try
             {
                 // Access as object
@@ -176,8 +178,8 @@ namespace Compass.Controllers
                 parameters.Add("@AgencyId", filter.AgencyId);
                 parameters.Add("@DeptId", filter.DeptId);
                 parameters.Add("@WorkOrderId", filter.WorkOrderId);
-                parameters.Add("@CreatedBy", filter.CreatedBy);
-                parameters.Add("@RoleId", filter.UserRole);
+                parameters.Add("@CreatedBy", userId);
+                parameters.Add("@RoleId", roleId);
 
                 var dt = await _cn.FillDataTableAsync("TallyAgencyDeptWorkOrder_List1", "", parameters);
 
@@ -215,6 +217,37 @@ namespace Compass.Controllers
                 });
             }
         }
+        //Download Designation Code files
+        [HttpGet]
+        public IActionResult DownloadDesignationCode()
+        {
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(),
+                "wwwroot", "PageAssets","Manpower", "Templates", "Designation_List.xlsx");
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound("Template file not found.");
+            }
+            return PhysicalFile(
+                filePath,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Designation_List.xlsx");
+        }
+        //Download Templates files
+        [HttpGet]
+        public IActionResult DownloadTemplate()
+        {
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(),
+                "wwwroot", "PageAssets", "Manpower", "Templates", "Employee_Detail_Upload.xlsx");
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound("Template file not found.");
+            }
+            return PhysicalFile(
+                filePath,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Employee Detail Upload.xlsx");
+        }
+
+
+
 
 
         #endregion

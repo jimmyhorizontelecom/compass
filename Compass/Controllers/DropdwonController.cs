@@ -1,5 +1,6 @@
 ﻿using Compass.Models.ManpowerViewModel;
 using Compass.Services;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Compass.Controllers
@@ -23,54 +24,85 @@ namespace Compass.Controllers
         }
         //Get Department ddl
         [HttpGet]
+        //public async Task<IActionResult> MDepartment_ddl(
+        //        int id = 0,
+        //        int mainCatgId = 0,
+        //        string searchTerm = "")
+        //{
+        //    var result = await _service.GetDepartmentDropdownAsync(id, searchTerm);
+        //    return Ok(result);
+        //}
         public async Task<IActionResult> MDepartment_ddl(
-                int id = 0,
-                int mainCatgId = 0,
-                string searchTerm = "")
+         int deptId = 0,
+         int agencyId = 0,
+         string searchTerm = "")
         {
-            var result = await _service.GetDepartmentDropdownAsync(id, searchTerm);
+            var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
+            var result = await _service.GetDepartmentDropdownAsync(deptId, userId, agencyId, searchTerm);
             return Ok(result);
         }
-     
-        //Get Billing Address ddl
+
+        ////Get Billing Address ddl
+        //[HttpGet]
+        //public async Task<IActionResult> MBillingAddress_ddl(
+        //     int ParentId1 = 0,
+        //    int ParentId2 = 0,
+        //    int ParentId3 = 0,
+        //    string searchTerm = "")
+        //    {
+        //    int userId = 0;
+        //    int roleId = 0;
+
+        //    int.TryParse(User.FindFirst("UserId")?.Value, out userId);
+        //    int.TryParse(User.FindFirst("RoleId")?.Value, out roleId);
+
+        //    var result = await _service.GetBillingAddressDropdownAsync(ParentId1, ParentId2, ParentId3, userId, roleId, searchTerm);
+        //    return Ok(result);
+
+        //}
+
+        //Get Billing Address for Add New Work Order in Dept Master
         [HttpGet]
-        public async Task<IActionResult> MBillingAddress_ddl(
-             int ParentId1 = 0,
-            int ParentId2 = 0,
-            int ParentId3 = 0,
+        public async Task<IActionResult> MAddWorkOrderBillingAddress_ddl(
+            int mainCatgId = 0,
             string searchTerm = "")
-            {
-            int userId = 0;
-            int roleId = 0;
-
-            int.TryParse(User.FindFirst("UserId")?.Value, out userId);
-            int.TryParse(User.FindFirst("RoleId")?.Value, out roleId);
-
-            var result = await _service.GetBillingAddressDropdownAsync(ParentId1, ParentId2, ParentId3, userId, roleId, searchTerm);
+        {
+            var result = await _service.GetAddWorkOrderBillingAddressDropdownAsync(mainCatgId, searchTerm);
             return Ok(result);
 
         }
+
+
 
         //Get Agency ddl
+        //[HttpGet]
+        //public async Task<IActionResult> MAgency_ddl(
+        //        int deptId = 0,
+        //        int mainCatgId = 0,
+
+        //        string searchTerm = "")
+        //{
+        //    var result = await _service.GetAgencyDropdownAsync(deptId, searchTerm);
+        //    return Ok(result);
+        //}
         [HttpGet]
         public async Task<IActionResult> MAgency_ddl(
-                int deptId = 0,
-                int mainCatgId = 0,
-
-                string searchTerm = "")
+        int agencyId = 0,
+        string searchTerm = "")
         {
-            var result = await _service.GetAgencyDropdownAsync(deptId, searchTerm);
+            int roleId = Convert.ToInt32(User.FindFirst("RoleId")?.Value ?? "0");
+            var result = await _service.GetAgencyDropdownAsync(agencyId, roleId, searchTerm);
             return Ok(result);
         }
 
-        //Get Work Order ddl
+
+        //Get Work Order ddl & Billing Address depends on Work Order based on Parent 1 & Parent 2
         [HttpGet]
         public async Task<IActionResult> MWorkOrder_ddl(
             int Id,
             int ParentId1 = 0,
             int ParentId2=0,
             int ParentId3=0,
-           
             string searchTerm = ""
             )
         {
@@ -106,6 +138,29 @@ namespace Compass.Controllers
             return Ok(result);
         }
 
+
+        //Get Work Order ddl based on Parent 1 & Parent 2 for Employee dETAIL iMPORT
+        [HttpGet]
+        public async Task<IActionResult> MEmpImportWorkOrder_ddl(
+            int Id,
+            int ParentId1 = 0,
+            int ParentId2 = 0,
+            int ParentId3 = 0,
+
+            string searchTerm = ""
+            )
+        {
+            //var userId = User.FindFirst("UserId")?.Value;
+            //var roleId = User.FindFirst("RoleId")?.Value;
+           int userId = 0;
+           int roleId = 0;
+
+            int.TryParse(User.FindFirst("UserId")?.Value, out userId);
+            int.TryParse(User.FindFirst("RoleId")?.Value, out roleId);
+
+            var result = await _service.GetEMPImportWorkOrderDropdownAsync(Id, ParentId1, ParentId2, ParentId3, userId, roleId, searchTerm);
+            return Ok(result);
+        }
 
 
 

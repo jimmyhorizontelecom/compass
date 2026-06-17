@@ -411,51 +411,125 @@ function bindDataToDdl(controllerName, methodName, modalId, dropDownId, message)
 }
 
 // both child drop down with or without model
-function bindDependentDataToDdl(controller, action, modalId,
-    parentId, childId, placeholder) {
+// function bindDependentDataToDdl(controller, action, modalId,
+//     parentId, childId, placeholder) {
+
+//     console.log("Action Called:", action);
+//     console.log("Parent:", parentId);
+//     console.log("Child:", childId);
+
+//     var parent = $('#' + parentId);
+//     var child = $('#' + childId);
+
+//     // Page load par child disable
+//     child.prop('disabled', true);
+
+//     //parent.on('change', function () {
+//     parent.on('change', function () {
+//         console.log("Dept Changed:", $(this).val());
+//         console.log("URL:", '/' + controller + '/' + action);
+//         var parentValue = $(this).val();
+
+//         // Clear previous value
+//         child.val(null).trigger('change');
+
+//         if (!parentValue || parentValue == "0") {
+//             child.prop('disabled', true);
+//             return;
+//         }
+
+//         child.prop('disabled', false);
+
+//         // Destroy previous Select2 if exists
+//         if (child.hasClass("select2-hidden-accessible")) {
+//             child.select2('destroy');
+//         }
+
+
+//         var options = {
+//             placeholder: placeholder,
+//             allowClear: true,
+//             width: '100%',
+//             ajax: {
+//                 url: '/' + controller + '/' + action,
+//                 dataType: 'json',
+//                 delay: 250,
+//                 data: function (params) {
+//                     return {
+//                         id: 0,
+//                         mainCatgId: parentValue,
+//                         searchTerm: params.term
+//                     };
+//                 },
+//                 processResults: function (data) {
+//                     return {
+//                         results: $.map(data, function (item) {
+//                             return {
+//                                 id: item.Id,
+//                                 text: item.Text
+//                             };
+//                         })
+//                     };
+//                 }
+//             }
+//         };
+
+//         // If inside modal
+//         if (modalId) {
+//             options.dropdownParent = $('#' + modalId);
+//         }
+
+//         child.select2(options);
+
+//     });
+// }
+
+function bindDependentDataToDdl( controller, action, modalId, parentId, childId, placeholder) {
 
     var parent = $('#' + parentId);
     var child = $('#' + childId);
 
-    // Page load par child disable
     child.prop('disabled', true);
 
-    parent.on('change', function () {
+    // Purana event remove karke bind
+    parent.off('change.depddl').on('change.depddl', function () {
 
         var parentValue = $(this).val();
-
-        // Clear previous value
-        child.val(null).trigger('change');
-
-        if (!parentValue || parentValue == "0") {
+        //console.log("Dept Changed:", parentValue);
+        //console.log("URL:", '/' + controller + '/' + action);
+         child.val(null).trigger('change');
+      if (!parentValue || parentValue == "0") {
             child.prop('disabled', true);
             return;
         }
-
         child.prop('disabled', false);
-
-        // Destroy previous Select2 if exists
-        if (child.hasClass("select2-hidden-accessible")) {
+        // Existing Select2 destroy
+        if (child.data('select2')) {
             child.select2('destroy');
         }
-
-
         var options = {
             placeholder: placeholder,
             allowClear: true,
             width: '100%',
+            minimumInputLength: 0, // important
+
             ajax: {
                 url: '/' + controller + '/' + action,
                 dataType: 'json',
                 delay: 250,
+
                 data: function (params) {
                     return {
                         id: 0,
                         mainCatgId: parentValue,
-                        searchTerm: params.term
+                        searchTerm: params.term || ""
                     };
                 },
+
                 processResults: function (data) {
+
+                    console.log("Response:", data);
+
                     return {
                         results: $.map(data, function (item) {
                             return {
@@ -464,20 +538,26 @@ function bindDependentDataToDdl(controller, action, modalId,
                             };
                         })
                     };
-                }
+                },
+
+                cache: true
             }
         };
 
-        // If inside modal
         if (modalId) {
             options.dropdownParent = $('#' + modalId);
         }
-
         child.select2(options);
-
+        // Force dropdown refresh
+        child.trigger('change');
     });
-}
 
+    // Agar parent pehle se selected hai (edit mode)
+    if (parent.val() && parent.val() != "0") {
+        parent.trigger('change');
+    }
+}
+//depnedent on two parentId
 function bindDependentDataToDdlToParent(controller, action, modalId,
     parentId1, parentId2, parentId3, childId, placeholder) {
 

@@ -35,7 +35,7 @@ $(document).ready(function () {
         "ddlDeptName", "ddlAgencyName", null, "ddlWorkOrder", "Select Work Order ");
 
     // Dependent Dropdown Billing Address on WorkOrderId
-    bindDependentDataToDdlToParent("Dropdown", "MBillingAddress_ddl", null,// ❗ no modal
+    bindDependentDataToDdlToParent("Dropdown", "MWorkOrder_ddl", null,// ❗ no modal
         "ddlDeptName", "ddlAgencyName", "ddlWorkOrder", "ddlBillingAddress", "Select Billing Address ");
 
     // Reload Table when change MonthYear

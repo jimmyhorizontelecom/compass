@@ -20,11 +20,19 @@ namespace Compass.Services
         {
             return await _repository.GetMainCategoryDropdownAsync(id, mainCatgId, searchTerm);
         }
+        //public async Task<List<DropdownDto>> GetDepartmentDropdownAsync(
+        //    int deptId,           
+        //    string searchTerm)
+        //{
+        //    return await _repository.GetDepartmentDropdownAsync(deptId, searchTerm);
+        //}
         public async Task<List<DropdownDto>> GetDepartmentDropdownAsync(
-            int deptId,           
-            string searchTerm)
+     int deptId,
+     int userId,
+     int agencyId,
+     string searchTerm)
         {
-            return await _repository.GetDepartmentDropdownAsync(deptId, searchTerm);
+            return await _repository.GetDepartmentDropdownAsync(deptId, userId, agencyId, searchTerm);
         }
 
         //Get Billing Address
@@ -35,39 +43,56 @@ namespace Compass.Services
         //{
         //    return await _repository.GetBillingAddressDropdownAsync(deptId, searchTerm);
         //}
-        public async Task<List<DropdownDto>> GetBillingAddressDropdownAsync(
-            int ParentId1,
-            int ParentId2, 
-            int ParentId3,
-            int userId, 
-            int roleId, 
-            string searchTerm)
+        //public async Task<List<DropdownDto>> GetBillingAddressDropdownAsync(
+        //    int ParentId1,
+        //    int ParentId2,
+        //    int ParentId3,
+        //    int userId,
+        //    int roleId,
+        //    string searchTerm)
+        //{
+        //    return await _repository.GetBillingAddressDropdownAsync(ParentId1, ParentId2, ParentId3, userId, roleId, searchTerm);
+
+        //}
+
+        //Get Billing Address for Add New Work Order in Dept Master
+        public async Task<List<DropdownDto>> GetAddWorkOrderBillingAddressDropdownAsync(
+          int deptId,
+           string searchTerm)
         {
-            return await _repository.GetBillingAddressDropdownAsync(ParentId1, ParentId2, ParentId3, userId, roleId, searchTerm);
+            return await _repository.GetAddWorkOrderBillingAddressDropdownAsync(deptId, searchTerm);
 
         }
 
         //Get Agency ddl
 
+        //public async Task<List<DropdownDto>> GetAgencyDropdownAsync(
+        //    int deptId,
+        //    string searchTerm)
+        //{
+        //    return await _repository.GetAgencyDropdownAsync(deptId, searchTerm);
+        //}
         public async Task<List<DropdownDto>> GetAgencyDropdownAsync(
-            int deptId,
-            string searchTerm)
+        int agencyId,
+        int roleId,
+        string searchTerm)
         {
-            return await _repository.GetAgencyDropdownAsync(deptId, searchTerm);
+            return await _repository.GetAgencyDropdownAsync(agencyId, roleId, searchTerm);
         }
 
-        //Get Work Oreder ddl
+
+        //Get Work Order ddl & Billing Address depends on Work Order based on Parent 1 & Parent 2
 
         public async Task<List<DropdownDto>> GetWorkOredrDropdownAsync(
-            int Id, 
-            int ParentId1, 
-            int ParentId2, 
+            int Id,
+            int ParentId1,
+            int ParentId2,
             int ParentId3,
-            int userId, 
+            int userId,
             int roleId,
             string searchTerm)
         {
-            return await _repository.GetWorkOredrDropdownAsync( Id, ParentId1, ParentId2, ParentId3, userId,  roleId, searchTerm);
+            return await _repository.GetWorkOredrDropdownAsync(Id, ParentId1, ParentId2, ParentId3, userId, roleId, searchTerm);
         }
 
         // Get Bank ddl
@@ -86,5 +111,18 @@ namespace Compass.Services
         }
 
 
+        //Get Work Order ddl based on Parent 1 & Parent 2 from Employee Detail Import
+
+        public async Task<List<DropdownDto>> GetEMPImportWorkOrderDropdownAsync(
+            int Id,
+            int ParentId1,
+            int ParentId2,
+            int ParentId3,
+            int userId,
+            int roleId,
+            string searchTerm)
+        {
+            return await _repository.GetEMPImportWorkOrderDropdownAsync(Id, ParentId1, ParentId2, ParentId3, userId, roleId, searchTerm);
+        }
     }
 }
