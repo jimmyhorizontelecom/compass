@@ -22,6 +22,7 @@ using System.Text;
 using System.Text.Json;
 using wfms_ddl;
 
+
 namespace Compass.Controllers
 {
     public class ManpowerController : Controller
@@ -246,9 +247,268 @@ namespace Compass.Controllers
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Employee Detail Upload.xlsx");
         }
 
+        //Get Excel Templates
+        [HttpGet]
+        public IActionResult DownloadFormat()
+        {
+            using var workbook = new XLWorkbook();
+
+            var masterSheet = workbook.Worksheets.Add("Master");
+
+            masterSheet.Cell("A1").Value = "Designation";
+            masterSheet.Cell("A2").Value = "HR";
+            masterSheet.Cell("A3").Value = "Accounts";
+            masterSheet.Columns().AdjustToContents();
+
+            var dataSheet = workbook.Worksheets.Add("Template");
+
+            dataSheet.Cell("A1").Value = "RollNo";
+            dataSheet.Cell("B1").Value = "Name";
+            dataSheet.Cell("C1").Value = "Mobile";
+            dataSheet.Cell("D1").Value = "Department";
+            dataSheet.Columns().AdjustToContents();
+
+            using var stream = new MemoryStream();
+
+            workbook.SaveAs(stream);
+
+            return File(
+                stream.ToArray(),
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "StudentUploadFormat.xlsx");
+        }
 
 
+        //Upload Excel
+        [HttpPost]
+        public async Task<IActionResult> UploadExcel(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("Please select a file.");
 
+            var employees = new List<EmpImportExcelModel>();
+
+            using var stream = file.OpenReadStream();
+            using var workbook = new XLWorkbook(stream);
+
+            var worksheet = workbook.Worksheet(1);
+
+            var rows = worksheet.RowsUsed().Skip(1);
+
+            foreach (var row in rows)
+            {
+                employees.Add(new EmpImportExcelModel
+                {
+                    EmpName = row.Cell(1).GetString(),
+                    FathersName = row.Cell(2).GetString(),
+                    IsFullTimer = row.Cell(3).GetString(),
+                    DesigationId = row.Cell(4).GetString(),
+                    AADHARNO = row.Cell(5).GetString(),
+                    Basics = Convert.ToDecimal(row.Cell(6).GetValue<string>() == "" ? "0" : row.Cell(6).GetValue<string>()),
+                    Others = Convert.ToDecimal(row.Cell(7).GetValue<string>() == "" ? "0" : row.Cell(7).GetValue<string>()),
+                    IsPF = row.Cell(8).GetString(),
+                    IsESI = row.Cell(9).GetString()
+                });
+            }
+
+            return Ok(employees);
+        }
+
+        //Read data from Excel File
+        [HttpPost]
+        public IActionResult ReadExcel(IFormFile file)
+        {
+            try
+            {
+                List<EmpImportExcelModel> list = new();
+
+                using var stream = file.OpenReadStream();
+                using var workbook = new XLWorkbook(stream);
+
+                var ws = workbook.Worksheet(1);
+
+                foreach (var row in ws.RowsUsed().Skip(1))
+                {
+                    list.Add(new EmpImportExcelModel
+                    {
+                        EmpName = row.Cell(2).GetString(),
+                        FathersName = row.Cell(3).GetString(),
+                        IsFullTimer = row.Cell(4).GetString(),
+                        DesigationId = row.Cell(5).GetString(),
+                        AADHARNO = row.Cell(6).GetString(),
+                        Basics = Convert.ToDecimal(row.Cell(7).GetString()),
+                        Others = Convert.ToDecimal(row.Cell(8).GetString()),
+                        IsPF = row.Cell(9).GetString(),
+                        IsESI = row.Cell(10).GetString()
+                    });
+                }
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        //Verify Employee Import
+        [HttpPost]
+        public async Task<IActionResult> VerifyEmployeeImport([FromBody] List<EmpImportExcelModel> employees)
+        {
+             
+           try
+            {
+
+                DataTable dtEmpDetails = new DataTable();
+                dtEmpDetails.Columns.Add("DeptId", typeof(int));
+                dtEmpDetails.Columns.Add("AgencyId", typeof(int));
+                dtEmpDetails.Columns.Add("WorkOrderNo", typeof(string));
+                dtEmpDetails.Columns.Add("TotalManpower", typeof(int));
+
+                dtEmpDetails.Columns.Add("Empname", typeof(string));
+                dtEmpDetails.Columns.Add("FatherName", typeof(string));
+                dtEmpDetails.Columns.Add("IsFullTime", typeof(string));
+                dtEmpDetails.Columns.Add("DesigationId", typeof(string));
+                dtEmpDetails.Columns.Add("AADHARNO", typeof(string));
+
+                dtEmpDetails.Columns.Add("BasicSalary", typeof(decimal));
+                dtEmpDetails.Columns.Add("OthersAllowance", typeof(decimal));
+
+                dtEmpDetails.Columns.Add("IsPf", typeof(string));
+                dtEmpDetails.Columns.Add("IsEsi", typeof(string));
+
+                foreach (var item in employees)
+                {
+                    dtEmpDetails.Rows.Add(
+                        item.DeptId,
+                        item.AgencyId,
+                        item.WorkOrderNo,
+                        item.TotalManpower,
+                        item.EmpName,
+                        item.FathersName,
+                        item.IsFullTimer,
+                        item.DesigationId,
+                        item.AADHARNO,
+                        item.Basics,
+                        item.Others,
+                        item.IsPF,
+                        item.IsESI
+                    );
+                }
+
+                SortedList parameters = new SortedList();
+                parameters.Add("@EmpId", 0);
+                parameters.Add("@NoOfEmp", employees.Count);
+                parameters.Add("@EmpDetails", dtEmpDetails);
+
+                var dt = await _cn.FillDataTableAsync(
+                    "stpTallyEmployeesImportMasterVerified",
+                    "",
+                    parameters);
+              
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<EmpImportVerificationViewModel>());
+
+                var list = dt.AsEnumerable().Select(row =>
+                    new EmpImportVerificationViewModel
+                    {
+
+                        EmpName = row["Empname"]?.ToString(),
+                        FathersName = row["FatherName"]?.ToString(),
+                        IsFullTimer = row["IsFullTime"]?.ToString(),
+                        DesigationId = row["DesigationId"]?.ToString(),
+                        AADHARNO = row["AADHARNO"]?.ToString(),
+                        Basics = row["BasicSalary"]?.ToString(),
+                        Others = row["OthersAllowance"]?.ToString(),
+                        IsPF = row["IsPf"]?.ToString(),
+                        IsESI = row["IsEsi"]?.ToString(),
+                        Error_Message = row["Error_Message"]?.ToString(),
+                        VerificationStatus = row["VerificationStatus"]?.ToString(),
+                        Isuploaded = row["Isuploaded"]?.ToString()
+                    }).ToList();
+
+                return Ok(list);
+               
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+            }
+
+        //Submit Import table data to database table
+        [HttpPost]
+        public async Task<IActionResult> SubmitEmployeeImport([FromBody] List<EmpImportExcelModel> employees)
+        {
+            var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
+            try
+            {
+                DataTable dtEmpDetails = new DataTable();
+
+                dtEmpDetails.Columns.Add("DeptId", typeof(int));
+                dtEmpDetails.Columns.Add("AgencyId", typeof(int));
+                dtEmpDetails.Columns.Add("WorkOrderNo", typeof(string));
+                dtEmpDetails.Columns.Add("TotalManpower", typeof(int));
+                dtEmpDetails.Columns.Add("Empname", typeof(string));
+                dtEmpDetails.Columns.Add("FatherName", typeof(string));
+                dtEmpDetails.Columns.Add("IsFullTime", typeof(string));
+                dtEmpDetails.Columns.Add("DesigationId", typeof(string));
+                dtEmpDetails.Columns.Add("AADHARNO", typeof(string));
+                dtEmpDetails.Columns.Add("BasicSalary", typeof(decimal));
+                dtEmpDetails.Columns.Add("OthersAllowance", typeof(decimal));
+                dtEmpDetails.Columns.Add("IsPf", typeof(string));
+                dtEmpDetails.Columns.Add("IsEsi", typeof(string));
+
+                foreach (var item in employees)
+                {
+                    dtEmpDetails.Rows.Add(
+                        item.DeptId,
+                        item.AgencyId,
+                        item.WorkOrderNo,
+                        item.TotalManpower,
+                        item.EmpName,
+                        item.FathersName,
+                        item.IsFullTimer,
+                        item.DesigationId,
+                        item.AADHARNO,
+                        item.Basics,
+                        item.Others,
+                        item.IsPF,
+                        item.IsESI
+                    );
+                }
+
+                SortedList parameters = new SortedList();
+                parameters.Add("@EmpId", userId); // Logged in UserId
+                parameters.Add("@EmpDetails", dtEmpDetails);
+                parameters.Add("@mes", "");
+
+                var result = await _cn.FillDataTableAsync(
+                    "stpTallyEmployeesImportMaster",
+                    "",
+                    parameters);
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "Employees Uploaded Successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
 
         #endregion
 
@@ -576,6 +836,7 @@ namespace Compass.Controllers
                 if (!string.IsNullOrEmpty(model.EmployeeListJson))
                 {
                     employeeList = JsonConvert.DeserializeObject<List<EmployeeAttendanceModel>>(model.EmployeeListJson);
+
                 }
 
                 DataTable dt = new DataTable();

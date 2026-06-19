@@ -180,10 +180,7 @@ namespace Compass.Controllers
                 var narration = model.Narration;
                 var billDate = model.PurchaseBillDate;
                 var billNo = model.AgencyBillNo;
-                
-
                 var userId = User.FindFirst("UserId")?.Value;
-
                 SortedList parameters = new SortedList
                     {
                     { "@AgencyBillId", Id },
@@ -192,17 +189,14 @@ namespace Compass.Controllers
                     { "@Description", description },
                     { "@Narration", narration },
                     { "@BillDate", billDate },
-                    { "@Billno", billNo },
-                    
+                    { "@Billno", billNo },                  
                     { "@createdby", userId }
                 };
-
                 var result = _cn.ExecuteNonQueryWMessage(
                     "TallyPurchaseVarification_AcceptUpdate",
                     "",
                     parameters
                 );
-
                 return Ok(new { success = true, message = result.ToString() });
             }
             catch (Exception ex)
@@ -222,7 +216,6 @@ namespace Compass.Controllers
         {
             try
             {
-
                 //var Id = model.Id;
                 var deptBillId = model.DeptBillId;
                 var Id = model.Id;
@@ -249,11 +242,8 @@ namespace Compass.Controllers
                 var paymentAmt = model.PaymentAmt;
                 var balanceAmt = model.BalanceAmt;
                 var isActive = model.IsActive;
-                
-
 
                 var userId = User.FindFirst("UserId")?.Value;
-
                 SortedList parameters = new SortedList
                     {
                     { "@DeptBillId", deptBillId },
@@ -281,8 +271,6 @@ namespace Compass.Controllers
                     { "@PaymentAmt", paymentAmt },
                     { "@BalanceAmt", balanceAmt },
                     { "@IsActive", isActive },
-                    
-
                     { "@createdby", userId }
                 };
 

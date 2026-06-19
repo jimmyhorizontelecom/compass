@@ -2,6 +2,8 @@
 
 namespace Compass.Models.ManpowerViewModel
 {
+
+    #region DeptMatser Add New Work Order
     // Dept. Master
     public class WorkOrder
     {
@@ -31,6 +33,65 @@ namespace Compass.Models.ManpowerViewModel
         public string searchTerm { get; set; }
     }
 
+
+    #endregion
+
+
+    #region Employee Detail Import
+    //Employee List
+    public class AddEmpDetailsListViewModel
+    {
+        public string EmpName { get; set; }
+        public string FathersName { get; set; }
+        public string IsFullTimer { get; set; }
+        public int DesignationId { get; set; }
+        public int AdhaarNo { get; set; }
+        public decimal BasicSalary { get; set; }
+        public decimal OtherAllowance { get; set; }
+        public string IsEPF { get; set; }
+        public string IsESIC { get; set; }
+    }
+
+
+    public class EmpImportExcelModel
+    {
+        public int DeptId { get; set; }
+        public int AgencyId { get; set; }
+        public string WorkOrderNo { get; set; }
+        public int TotalManpower { get; set; }
+        public string EmpName { get; set; }
+        public string FathersName { get; set; }
+        public string IsFullTimer { get; set; }
+        public string AADHARNO { get; set; }
+        public string DesigationId { get; set; }
+        public decimal Basics { get; set; }
+        public decimal Others { get; set; }
+        public string IsPF { get; set; }
+        public string IsESI { get; set; }
+    }
+    public class EmpImportVerificationViewModel
+    {
+        public string EmpName { get; set; }
+        public string FathersName { get; set; }
+        public string IsFullTimer { get; set; }
+        public string AADHARNO { get; set; }
+        public string DesigationId { get; set; }
+        public string Basics { get; set; }
+        public string Others { get; set; }
+        public string IsPF { get; set; }
+        public string IsESI { get; set; }
+        public string Error_Message { get; set; }
+        public string VerificationStatus { get; set; }
+        public string Isuploaded { get; set; }
+    }
+
+
+
+    #endregion
+
+
+
+    #region Dept Attendance
     //Map No. of Resource Employee record filter
     public class MapEmployeeFilter
     {
@@ -104,6 +165,10 @@ namespace Compass.Models.ManpowerViewModel
 
 
 
+    #endregion
+
+
+    #region Purchase Bill Verification
     //Purchase Invoice filter
     public class PInvoiceFilter
     {
@@ -262,23 +327,9 @@ namespace Compass.Models.ManpowerViewModel
     }
 
 
-    #region Employee Detail Import
-    //Employee List
-    public class AddEmpDetailsListViewModel
-    {
-        public string EmpName { get; set; }
-        public string FathersName { get; set; }
-        public string IsFullTimer { get; set; }
-        public int DesignationId { get; set; }
-        public int AdhaarNo { get; set; }
-        public decimal BasicSalary { get; set; }
-        public decimal OtherAllowance { get; set; }
-        public string IsEPF { get; set; }
-        public string IsESIC { get; set; }
-    }
-
-
     #endregion
+
+ 
 
 
     #region Dispatch

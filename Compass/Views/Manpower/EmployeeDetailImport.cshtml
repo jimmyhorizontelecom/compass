@@ -40,7 +40,7 @@
 <div class="container-fluid mt-2">
     <div class="filter-panel mt-2 div-coral-base">
         <div class="form-group row">
-            <div class="col-md-2 mb-0">
+            <div class="col-md-2 mb-0 d-flex justify-content-center align-items-center">
                 <label class="form-labelo"> <span class="text-danger">.</span></label>
                 <button type="button" class="btn btnModel btnDownloadTemplate" style="width:max-content">Download Template</button>
             </div>
@@ -73,22 +73,18 @@
             <div class="col-md-2 mb-0">
                 <label class="form-label">Choose File<span class="text-danger">*</span></label>
                 <div class="input-group mb-0">
-                    <input type="file" class="form-control" id="inputUploadEmpImportFileAttached" placeholder="DesignationCodeExcelSheet">
+                    <input type="file" class="form-control" id="inputUploadEmpImportFileAttached" accept=".xlsx,.xls" placeholder="DesignationCodeExcelSheet">
                 </div>
                 <span class="error text-danger"></span>
             </div>
         </div>
         <div class="form-group row">
-            <div class="col-md-10 mb-0">
-              
-            </div>
-            <div class="col-md-2 mb-0">
-                <button type="button" class="btn btnModel btnViewFile" style="width:max-content">View</button>
-                <button type="button" class="btn btnModel btnVerifyFile" style="width:max-content">Verify</button>
+            <div class="col-md-2 mb-0 d-flex justify-content-between">
+                <button type="button" id="btnViewExcel" class="btn btnModel btnViewFile mx-4" style="width:max-content">View</button>
+                <button type="button" class="btn btnModel btnVerifyFile mx-4" style="width:max-content">Verify</button>
             </div>
         </div>
     </div>
-    
     <div class="filter-panel mt-2 div-coral-base">
         <table id="myTable" class="table orangeTh table-striped table-hover table-bordered">
             <thead class="bg-d">
@@ -103,6 +99,8 @@
                     <th>Others</th>
                     <th>Is Pf</th>
                     <th>Is ESI</th>
+                    <th>Status</th>
+                    <th>Error</th>
                     <th>Remove</th>
                 </tr>
             </thead>
@@ -118,6 +116,15 @@
                 </tr>
             </tfoot>
         </table>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-10 mb-0">
+         
+        </div>
+        <div class="col-md-2 mb-0 d-flex justify-content-between">
+            @* <button type="button" id="btnViewExcel" class="btn btnModel btnViewFile mx-4" style="width:max-content">View</button> *@
+            <button type="button" class="btn btnModel btnSubmitTableData mx-4" style="width:max-content">Submit</button>
+        </div>
     </div>
 </div>
 }
@@ -137,7 +144,6 @@
                     <h4 class="modal-title txt-white" id="myModalLabel">Add Employee Details</h4>
                     <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
                 </div>
-
                 <!-- Modal body -->
                 <div class="modal-body">
                     <div id="#toast-container"></div>
@@ -149,7 +155,6 @@
                                     <option selected value="0">--Select--</option>
                                 </select>
                                 <span class="error"></span>
-
                             </div>
                             <div class="col-md-4 mb-0">
                                 <label class="form-labelo">Department Name<span class="text-danger">*</span></label>
@@ -160,7 +165,7 @@
                             </div>
                             <div class="col-md-4 mb-0">
                                 <label class="form-labelo">Work Order No<span class="text-danger">*</span></label>
-                                <select id="ddlWorkOrder" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                                <select id="ddlWorkOrder1" class="form-select search_ddl select2" aria-label=".form-select-sm">
                                     <option selected value="0"> -- Select --</option>
                                 </select>
                                 <span class="error"></span>
@@ -238,7 +243,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="filter-panel mt-5 div-coral-base">
                             <div class="form-group row">
                                 <div class="col-md-4 mb-0">
@@ -268,11 +272,8 @@
                                     <input type="number" id="numTotalAmt" class="form-control txtbx cleartxt" placeholder="Total Amount" readonly/>
                                     <span class="error"></span>
                                 </div>
-
                             </div>
                         </div>
-
-
                     </div>
                     <!-- Modal footer -->
                     <div class="modal-footer  bg-ld">
@@ -282,14 +283,11 @@
                         <div class="flex-grow-1 text-center modelalert text-danger"></div>
                         <button type="button" class="btn btnModel btnModalAddEmpSubmit">Submit</button>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
 }
-
-
 
 @section Scripts {
     <script src="~/PageAssets/Manpower/Js/employeedetailimport.js" asp-append-version="true"></script>

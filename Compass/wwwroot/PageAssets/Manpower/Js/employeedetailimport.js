@@ -1,5 +1,6 @@
 ﻿
 var Id = 0;
+var employeeRecords = [];
 //common
 toastr.options = {
     closeButton: true,
@@ -14,7 +15,7 @@ toastr.options = {
 $(document).ready(function () {
     resetModal();
     alert('Loading Employee Details Import');
-    recordlist();
+    //recordlist();
 
     //bind ddl to filter
     bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyFilter", " Agency Name");
@@ -23,6 +24,13 @@ $(document).ready(function () {
     bindDependentDataToDdlToParent("Dropdown", "MEmpImportWorkOrder_ddl", null,// ❗ no modal
         "ddlAgencyFilter", "ddlDeptFilter", null, "ddlWorkOrder", "Select Work Order ");
 
+
+    //bind ddl in the Model
+    bindDataToDdl("Dropdown", "MAgency_ddl", "myModal_AddEmployee", "ddlAgencyName", " Agency Name");
+    bindDataToDdl("Dropdown", "MDepartment_ddl", "myModal_AddEmployee", "ddlDeptName", " Department Name");
+    // bind ddl on two parentId
+    bindDependentDataToDdlToParent("Dropdown", "MEmpImportWorkOrder_ddl", "myModal_AddEmployee",// ❗ no modal
+        "ddlAgencyName", "ddlDeptName", null, "ddlWorkOrder1", "Select Work Order ");
     // load data when changes on ddl
     // $("#ddlAgencyFilter, #ddlDeptFilter").change(function () {
     //     recordlist();
@@ -50,43 +58,52 @@ $(".btnModalAddEmpSubmit").on("click", function () {
     alert('Add Employee Button Work Succeed');
 });
 
-//Get Record for A table
-async function recordlist() {
-    var agencyId = parseInt($("#ddlAgencyFilter").val()) || 0;
-    var deptId = parseInt($("#ddlDeptFilter").val()) || 0;
-    var filterData = {
-         Id: 0,
-        AgencyId: deptId,//3,
-        DeptId: deptId,//56,
-        WorkOrderId: 0,
-        //CreatedBy: 123,
-       // UserRole: 39,
-    };
 
+
+//Download Designation Code Excel Sheet
+$(document).on('click', '.btnDownloadDesignationSheet', function () {
+    window.location.href = '/Manpower/DownloadDesignationCode';
+    //window.location.href = '/Manpower/DownloadFormat';
+});
+
+//Download Temnplates for Upload Excel files
+$(document).on('click', '.btnDownloadTemplate', function () {
+    window.location.href = '/Manpower/DownloadTemplate';
+});
+//Click event on View Uploaded excel file
+$(document).on('click', '.btnViewFile', function () {
+     readExcelRecord();
+});
+
+// Read Excel and Bind Record 
+async function readExcelRecord() {
+    //alert("Function Called");
+    let file = $("#inputUploadEmpImportFileAttached")[0].files[0];
+    console.log(file);
+    if (!file) {
+        alert("Please select excel file.");
+        return;
+    }
+    let formData = new FormData();
+    formData.append("file", file);
     try {
-
-        let records = await getRecords('Manpower', 'GetEmpDetailRecord1', filterData, '#myTable', 'N');
+        let records = await uploadExcelFile('Manpower', 'ReadExcel', formData);
+        employeeRecords = records;
         bindDatatable(records, '#myTable');
     }
     catch (error) {
         console.error("Error loading records:", error);
-        //hideModalLoader();
     }
 }
-
 //Bind get record  in a table
 function bindDatatable(records, tableId) {
-
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().clear().destroy();
     }
-
     var tbody = $(tableId + " tbody");
     tbody.empty();
-
     $.each(records, function (i, value) {
         let SrNo = i + 1;
-
         tbody.append(`
             <tr
                 data-id="${value.Id}">
@@ -94,12 +111,16 @@ function bindDatatable(records, tableId) {
                 <td>${value.EmpName}</td>
                 <td>${value.FathersName}</td>
                 <td>${value.IsFullTimer}</td>
-                <td>${value.DesignationId}</td>
-                <td>${value.AdhaarNo}</td>
-                <td>${value.BasicSalary}</td>
-                <td>${value.OtherAllowance}</td>
-                <td>${value.IsEPF}</td>
-                <td>${value.IsESIC}</td>
+                <td>${value.DesigationId}</td>
+                <td>${value.AADHARNO}</td>
+                <td>${value.Basics}</td>
+                <td>${value.Others}</td>
+                <td>${value.IsPF}</td>
+                <td>${value.IsESI}</td>
+                 <td class="${value.VerificationStatus === 'Green' ? 'text-success fw-bold' : 'text-danger fw-bold'}">
+                    ${value.VerificationStatus}
+                </td>
+                <td>${value.Error_Message ?? ''}</td>
                 <td class="text-center">
                      <button type="button"  class="btn btn-link text-danger btnRemoveRow" title="Remove"> ✖  </button>
                 </td>
@@ -116,131 +137,78 @@ function bindDatatable(records, tableId) {
     //hideModalLoader();
 }
 
-//Download Designation Code Excel Sheet
-$(document).on('click', '.btnDownloadDesignationSheet', function () {
-    window.location.href = '/Manpower/DownloadDesignationCode';
-});
-
-//Download Temnplates for Upload Excel files
-$(document).on('click', '.btnDownloadTemplate', function () {
-    window.location.href = '/Manpower/DownloadTemplate';
-});
-
 //Remove Employee Details from Table
 $(document).on('click', '.btnRemoveRow', function () {
     $(this).closest('tr').remove();
 });
-
-
-// Submit record when Click on btn
-$(".btnEmpImportSubmit").on("click", function () {
-    alert('Submitting data');
-    SubmitRecord();
+//Clcik event on View Uploaded excel file
+// $(document).on('click', '.btnViewFile', function () {
+//     readExcelRecord();
+// });
+//Click event on Verify Button after Uplaod Excel file
+$(".btnVerifyFile").on("click", function () {
+    alert('Verify');
+    verifyEmployeeImport();
 });
-
-
-async function SubmitRecord() {
-    let isValid = true;
-    // Form Values
-    let agencyId = $("#ddlAgencyFilter").val();
-    let deptId = $("#ddlDeptFilter").val();
-    let workOrderNo = $("#ddlWorkOrder").val();
-    let noOfResources = $("#txtNoofResources").val().trim();
-    // File Control
-    let Attendance = $("#inputAttendanceFileAttached").get(0);
-    let files_Attendance = Attendance ? Attendance.files : [];
-    // Reset Validation
-    $(".error").text("");
-    $(".is-invalid").removeClass("is-invalid");
-    // Validation
-    if (agencyId === "0" || agencyId === null) {
-        $("#ddlAgencyFilter").addClass("is-invalid");
-        $("#ddlAgencyFilter").siblings(".error").text("Agency Name required");
-        isValid = false;
-    }
-    if (deptId === "0" || deptId === null) {
-        $("#ddlDeptFilter").addClass("is-invalid");
-        $("#ddlDeptFilter").siblings(".error").text("Department Name required");
-        isValid = false;
-    }
-    if (workOrderNo === "0" || workOrderNo === null) {
-        $("#ddlWorkOrder").addClass("is-invalid");
-        $("#ddlWorkOrder").siblings(".error").text("Work Order required");
-        isValid = false;
-    }
-    if (noOfResources === "") {
-        $("#txtNoofResources").addClass("is-invalid");
-        $("#txtNoofResources").siblings(".error").text("No Of Resources required");
-        isValid = false;
-    }
-    // File Validation
-    let fileSize = 5;
-    let allowedExtensions = ["pdf"];
-    //Upload Excel File Validation
-    if (files_Attendance.length === 0) {
-        $("#inputUploadEmpImportFileAttached").addClass("is-invalid");
-        $("#inputUploadEmpImportFileAttached")
-            .closest(".col-md-3")
-            .find(".error")
-            .text("Employee Import Details Excel Scheet required");
-        isValid = false;
-    }
-    else {
-        if (!fileSizeValidation('inputUploadEmpImportFileAttached', fileSize)) {
-            isValid = false;
-        }
-        if (!fileExtensionValidation('inputUploadEmpImportFileAttached', allowedExtensions)) {
-            isValid = false;
-        }
-    }
-    // Stop If vaklidation failed
-    if (!isValid) {
+//Get records after Verify Data from Table 
+async function verifyEmployeeImport() {
+    if (employeeRecords.length == 0) {
+        MsgBox('Error', 'Please view excel first.', '');
         return;
     }
-    // Form Data
-    var formData = new FormData();
-    formData.append("MonthYear", finalMonthId);
-    formData.append("WorkOrderNo", workOrderNo);
-    formData.append("UpladNoOfResource", noOfResources);
-    formData.append("PresentResource", presentResources);
-     // Employee List
-    // let employees = [];
-    // let checkedEmployees = $(".rowCheckbox:checked");
+    console.log(employeeRecords);
+    employeeRecords.forEach(item => {
+        item.DeptId = parseInt($("#ddlDeptFilter").val()) || 0;
+        item.AgencyId = parseInt($("#ddlAgencyFilter").val()) || 0;
+        item.WorkOrderNo = $("#ddlWorkOrder").val() || "";
+        item.TotalManpower = parseInt($("#txtNoofResources").val()) || 0;
 
-    // if (checkedEmployees.length == 0) {
-
-    //     MsgBox('Error', 'Please select at least one employee', '');
-    //     return;
-    // }
-
-    // checkedEmployees.each(function () {
-    //     employees.push({
-    //         EmpId: parseInt($(this).val())
-    //     });
-    // });
-    // formData.append("EmployeeListJson", JSON.stringify(employees));
-
-    // Uplaod Emp Import Excel File
-    if (files_Attendance.length > 0) {
-        formData.append("AttendanceFile", files_Attendance[0]);
-    }
-    // Submit Data
+    });
+    console.log(JSON.stringify(employeeRecords));
+    alert(JSON.stringify(employeeRecords))
     try {
-        let res = await acceptUpdate("Manpower", "AddOrEdit_DeptAttendanceRecord1", formData);
-         if (res.success) {
-             recordlist();
-             resetModal();
-            Id = 0;
-            $('.modelalert').text(res.message);
-            closeModal('myModal');
-            MsgBox('Message', res.message, '');
-        }
-        else {
-            MsgBox('Error', res.message, '');
-        }
+
+        let result = await acceptUpdateMultiJData( 'Manpower', 'VerifyEmployeeImport', employeeRecords );
+        bindDatatable(result, '#myTable');
+
     }
-    catch (err) {
-        console.log(err);
-        $('.modelalert').text("Error : " + err);
+    catch (error) {
+
+        console.error(error);
+
+        MsgBox('Error', 'Verification failed.', '');
+    }
+}
+// Submit record when Click on btn
+$(".btnSubmitTableData").on("click", function () {
+    if (confirm("Are you sure you want to upload these records?")) {
+       submitEmployeeImport();
+    }
+});
+
+// Submit Employee Import
+async function submitEmployeeImport() {
+
+    if (employeeRecords.length == 0) {
+        MsgBox('Error', 'No records found for upload.', '');
+        return;
+    }
+
+    try {
+
+        let result = await acceptUpdateMultiJData(
+            'Manpower',
+            'SubmitEmployeeImport',
+            employeeRecords
+        );
+
+        MsgBox('Success', 'Records uploaded successfully.', '');
+
+    }
+    catch (error) {
+
+        console.error(error);
+        MsgBox('Error', 'Upload failed.', '');
+
     }
 }

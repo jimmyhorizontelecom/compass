@@ -633,6 +633,38 @@ function bindDependentDataToDdlToParent(controller, action, modalId,
         });
     });
 }
+
+//for upload excel file
+async function uploadExcelFile(controller, action, formData, tableId = '', loader = 'N') {
+
+    try {
+
+        if (loader === 'Y') {
+            //showModalLoader();
+        }
+
+        let response = await $.ajax({
+            url: '/' + controller + '/' + action,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false
+        });
+
+        return response;
+    }
+    catch (error) {
+
+        console.error(error);
+        throw error;
+    }
+    finally {
+
+        if (loader === 'Y') {
+            //hideModalLoader();
+        }
+    }
+}
 function encryptPassword(password) {
     var key = CryptoJS.enc.Utf8.parse('1234567890123456'); // 16-byte key
     var iv = CryptoJS.enc.Utf8.parse('1234567890123456');  // 16-byte IV
