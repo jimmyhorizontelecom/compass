@@ -28,7 +28,8 @@
         public string Description { get; set; }
         public string Narration { get; set; }
         public decimal AgencyBillAmt { get; set; }
-        public decimal AgencyBillAmtCgst { get; set; }
+        public decimal AdminAmt { get; set; }
+         public decimal AgencyBillAmtCgst { get; set; }
         public decimal AgencyBillAmtSgst { get; set; }
         public decimal BaseGSTTotal { get; set; }
         public decimal BaseTotal { get; set; }

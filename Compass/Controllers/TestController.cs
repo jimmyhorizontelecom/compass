@@ -44,5 +44,48 @@ namespace Compass.Controllers
         {
             return View();
         }
+
+        public IActionResult Test()
+        {
+            return View();
+        }
+        public IActionResult GetInvoiceData()
+        {
+            var data = new
+            {
+                invoiceNo = "INV-1001",
+                date = DateTime.Now.ToString("dd-MM-yyyy"),
+                customer = "Hassana Siddiqui",
+                items = new List<object>
+ {
+     new { name="Item A", qty=2, price=100, CGST=9, SGST=9 },
+     new { name="Item B", qty=1, price=200, CGST=18, SGST=18 },
+     new { name="Item A", qty=2, price=100, CGST=9, SGST=9 },
+     new { name="Item B", qty=1, price=200, CGST=18, SGST=18 },
+     new { name="Item A", qty=2, price=100, CGST=9, SGST=9 },
+     new { name="Item B", qty=1, price=200, CGST=18, SGST=18 },
+     new { name="Item A", qty=2, price=100, CGST=9, SGST=9 },
+     new { name="Item B", qty=1, price=200, CGST=18, SGST=18 },
+     new { name="Item A", qty=2, price=100, CGST=9, SGST=9 },
+     new { name="Item B", qty=1, price=200, CGST=18, SGST=18 },
+     new { name="Item A", qty=2, price=100, CGST=9, SGST=9 },
+     new { name="Item B", qty=1, price=200, CGST=18, SGST=18 },
+     new { name="Item A", qty=2, price=100, CGST=9, SGST=9 },
+     new { name="Item B", qty=1, price=200, CGST=18, SGST=18 },
+      new { name="Item A", qty=2, price=100, CGST=9, SGST=9 },
+     new { name="Item B", qty=1, price=200, CGST=18, SGST=18 },
+     new { name="Item A", qty=2, price=100, CGST=9, SGST=9 },
+     new { name="Item B", qty=1, price=200, CGST=18, SGST=18 },
+     new { name="Item A", qty=2, price=100, CGST=9, SGST=9 },
+     new { name="Item B", qty=1, price=200, CGST=18, SGST=18 },
+      new { name="Item A", qty=2, price=100, CGST=9, SGST=9 },
+     new { name="Item B", qty=1, price=200, CGST=18, SGST=18 },
+     new { name="Item A", qty=2, price=100, CGST=9, SGST=9 },
+     new { name="Item B", qty=1, price=200, CGST=18, SGST=18 }
+ }
+            };
+
+            return Ok(data);
+        }
     }
 }

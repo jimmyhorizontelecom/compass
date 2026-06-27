@@ -173,6 +173,7 @@ namespace Compass.Models.ManpowerViewModel
     public class PInvoiceFilter
     {
         public int Id { get; set; }
+        public int DeptBillId { get; set; }
         public int AgencyId { get; set; }
         public int MonthId { get; set; }
         public int MonthIdTo { get; set; }
@@ -189,6 +190,7 @@ namespace Compass.Models.ManpowerViewModel
     public class PInvoiceViewModel
     {
         public int Id { get; set; }
+        public int DeptBillId { get; set; }
         public int DeptId { get; set; }
         public string DepartmentName { get; set; }
         public int AgencyId { get; set; }
@@ -213,6 +215,8 @@ namespace Compass.Models.ManpowerViewModel
         public string BillDate { get; set; }
         public string WorkOrderId { get; set; }
         public string AgencyBillNo { get; set; }
+        public string DeptBillNo { get; set; }
+
         public string SaleBillNo { get; set; }
         public int AgencyId { get; set; }
         public string AgencyName { get; set; }

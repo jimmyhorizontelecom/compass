@@ -1,4 +1,6 @@
 ﻿var Id = 0;
+var DeptBillId = 0;
+
 $(document).ready(function () {
     resetModal();
     recordlist();
@@ -63,11 +65,12 @@ function bindDatatable(records, tableId) {
        // alert(JSON.stringify(value));
         tbody.append(`
             <tr 
-                data-id="${value.Id}">
+                data-id="${value.Id}"
+                data-id="${value.DeptBillId}">
                  <td>${SrNo}</td>
                 <td>${value.DepartmentName}</td>
-                <td>${value.AgencyName}<br> ${value.AgencyBillNo}</td>              
-               <!-- Attendance File -->
+                <td>${value.AgencyName}<br> ${value.AgencyBillNo}</td>   
+                <!-- Attendance File -->
                 <td class="text-center">
                 <span data-id="${value.Id}" >
                     <a href="javascript:void(0);" class="view-file" data-file="${value.AttendanceCertificate}" data-folder="Attendance" title="View Attendance">
@@ -88,8 +91,8 @@ function bindDatatable(records, tableId) {
                    <!--Verify Purchase Invoice -->
                <td class="text-center">             
                  ${  value.VerificationStatus === "V"
-                     ? `<i class="bi bi-pencil-square text-secondary"  title="Already Verified"   style="font-size:25px; cursor:not-allowed; opacity:0.6;"></i>`
-                     : `<i class="bi bi-pencil-square edit-PInvoiceUpdate edit-icon"  data-id="${value.Id}"  title="Edit Purchase Bill" style="cursor:pointer;font-size:25px;"></i>` }
+            ? `<i class="bi bi-receipt-cutoff text-secondary"  title="Already Verified"   style="font-size:25px; cursor:not-allowed; opacity:0.6;"></i>`
+                     : `<i class="bi bi-receipt-cutoff edit-PInvoiceUpdate edit-icon"  data-id="${value.Id}"  title="Edit Purchase Bill" style="cursor:pointer;font-size:25px;"></i>` }
                  </td>
                   <!-- Bill Verification Status -->
                  <td class="text-center">
@@ -99,21 +102,23 @@ function bindDatatable(records, tableId) {
                </td>
                   <!-- HPSEDC Bill Generate -->
                  <td class="text-center">
-                 ${value.BillStatus === "P"
-                ? `<i class="bi bi-pencil-square edit-HPSEDC_SInvoice edit-icon"  data-id="${value.Id}"   title="Generate Sale Bill"  style="cursor:pointer;font-size:25px;"></i>`
-                : `<i class="bi bi-pencil-square text-secondary" title="${value.BillStatus === 'S' ? 'Sale Bill Already Generated' : 'Sale Bill Cancelled'}"
+                 ${value.VerificationStatus === "V" && value.BillStatus === "P"
+                    ? `<i class="bi bi-receipt-cutoff edit-HPSEDC_SInvoice edit-icon"  data-id="${value.Id}"   title="Generate Sale Bill"  style="cursor:pointer;font-size:25px;"></i>`
+                 : `<i class="bi bi-receipt-cutoff text-secondary" title="${value.BillStatus === 'S' ? 'Sale Bill Already Generated' : 'Bill Not Verified'}"
                 style="font-size:25px;cursor:not-allowed;opacity:0.6;"></i>`
                 }
                    
                 </td>
                   <!-- E-Invoice -->
                 <td class="text-center">
-
+             
                  </td>
                   <!-- Invoice Print -->
                  <td class="text-center">
-                       <i class="bi bi-printer-fill edit-HPSEDC_Invoice_Print" data-id="${value.Id}" title="Print Invoice"
-                       style="cursor:pointer;font-size:25px;color:#0d6efd;">  </i>
+                  ${value.BillStatus === "S"
+                ?` <i class="bi bi-printer-fill edit-HPSEDC_Invoice_Print" data-id="${value.Id}" title="Print Invoice"
+                style="cursor:pointer;font-size:25px;color:#0d6efd;">  </i>`
+                : ` <i class="bi bi-printer-fill text-secondary"  title="Sale Bill Not Generated" style="font-size:25px;cursor:not-allowed;opacity:0.6;">  </i>`} 
                 </td>
                   <!-- Cancel Bill -->
                  <td class="text-center">
@@ -123,6 +128,7 @@ function bindDatatable(records, tableId) {
                  style="font-size:25px;cursor:not-allowed;opacity:0.6;"></i>`}
                 </td>
         `);
+        
     });
     $(tableId).DataTable({
         paging: true,
@@ -335,25 +341,25 @@ async function loadSInvoice(recordId) {
     //alert('Load Record function')
     var filterData = {
         Id: recordId,
-        AgencyId: 0,
-        DeptId: 0,
-        MonthId: 0,
-        MonthIdTo: 0,
-        PaymentStatus: 'A',
+        // AgencyId: 0,
+        // DeptId: 0,
+        // MonthId: 0,
+        // MonthIdTo: 0,
+        // PaymentStatus: 'A',
         // CreatedBy: 0,
         //UserRole: 39,
     };
 
     try {
 
-        let records = await getRecords('ManpowerInvoice', 'GetAgencyInvoiceVerifyRecord', filterData, '', 'N');
+        let records = await getRecords('ManpowerInvoice', 'GetHPSEDCBillRecord', filterData, '', 'N');
         console.log("Full Response:", records);
         if (records && records.length > 0) {
             let data = records[0];
             Id = data.Id;
 
             $("#txtWorkOrderNo2").val(data.WorkOrderId);
-            $("#txtPurchaseBillNo2").val(data.AgencyBillNo);
+            $("#txtPurchaseBillNo2").val(data.DeptBillNo);
             // $("#dateSaleBillDate").val(data.BillDate);
             $("#txtSaleBillNo").val(data.SaleBillNo);
             $("#hdnAgencyId2").val(data.AgencyId);
@@ -560,33 +566,20 @@ async function SubmitSInvoice() {
 
 // MsgBox on HPSCED Print Bill 
 $(document).on('click', '.edit-HPSEDC_Invoice_Print', async function () {
-
     var recordId = $(this).data("id");
     alert(recordId);
     console.log("Print Record Id:", recordId);
-
     if (!recordId) {
         toastr.error("Record Id not found");
         return;
     }
-
-
     var isConfirmed = await DeleteEditBox('Print', 'Do you want to Print Record?', 'question');
-
     if (isConfirmed) {
         //alert('Testing');
         printInvoice(recordId);
-        //await loadSInvoice(recordId);
-        // openModal('SInvoiceModal');
-        // Alternative if openModal not working
-        //$('#myModal_UploadFile').modal('show');
-
-    } else {
-
+      } else {
         console.log('Edit cancelled');
-
-    }
-
+   }
 });
 function printInvoice(id) {
     window.open(`/HardwareReport/DepartmentInvoice?Id=${id}`, '_blank');

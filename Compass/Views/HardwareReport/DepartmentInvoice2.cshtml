@@ -1,0 +1,895 @@
+﻿
+@using Compass.Report.ViewModels
+@model DeptInvoiceReportVM
+@{
+    Layout = null;
+}
+@if (Model == null)
+{
+    <h3>No Data Found</h3>
+    return;
+}
+
+<html>
+<head>
+    <title>Department Invoice</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    @* <style>
+            .invoice-box {
+                width: 210mm;
+                min-height: 297mm;
+                margin: auto;
+                padding: 20px;
+                background: #fff;
+            }
+
+            .logo {
+                height: 70px;
+            }
+
+            @@media print {
+                .no-print {
+                    display: none !important;
+                }
+
+                @@page {
+                    size: A4;
+                    margin: 5mm;
+                }
+
+                body {
+                    counter-reset: page;
+                }
+
+                .page-number:before {
+                    content: "Page " counter(page);
+                }
+
+                .page-header {
+                    position: fixed;
+                    top: 0;
+                    right: 20px;
+                    font-size: 12px;
+                }
+
+                #invoiceArea {
+                    width: 800px; /* fixed width helps jsPDF */
+                }
+
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+
+                tr {
+                    page-break-inside: avoid;
+                }
+
+                .invoice-box {
+                    page-break-after: auto;
+                }
+            }
+    </style> *@
+    <style>
+            .invoice-box {
+                width: 210mm;
+                margin: auto;
+                background: #fff;
+            }
+
+            .a4-page {
+                width: 210mm;
+                min-height: 297mm;
+                padding: 5mm;
+                box-sizing: border-box;
+                page-break-after: always;
+                background: white;
+            }
+
+                .a4-page:last-child {
+                    page-break-after: auto;
+                }
+
+            .logo {
+                height: 70px;
+            }
+
+            @@media print {
+
+                .no-print {
+                    display: none !important;
+                }
+
+                @@page {
+                    size: A4;
+                    margin: 5mm;
+                }
+
+                .a4-page {
+                    page-break-after: always;
+                }
+
+                tr {
+                    page-break-inside: avoid !important;
+                }
+
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+            }
+    </style>
+</head>
+<body>
+
+    <div class="container mt-3 no-print">
+        <button class="btn btn-primary" onclick="printInvoice()">Print</button>
+        <button class="btn btn-success" onclick="downloadPDF()">Download PDF</button>
+    </div>
+
+    <div class="invoice-box" id="invoiceArea">
+        <div class="page-header">
+            <span class="page-number"></span>
+        </div>
+        <!-- HEADER -->
+      @*   <div class="d-flex justify-content-between">
+            <img src="~/assets/images/logo.png" class="logo" />
+            <div class="text-end">
+                <h4>Invoice</h4>
+                <p>
+                    No: <span id="invoiceNo"></span><br>
+                    Date: <span id="invoiceDate"></span>
+                </p>
+            </div>
+        </div> *@
+        <div style="display:flex;align-items:center; border-style:solid; padding:5px">
+            <div>
+                <img style="width: 115px; " src="~/assets/images/picture1.png" />
+            </div>
+            <div style="flex:1; text-align:center">
+                <h6 class="text-center">
+                    Himachal Pradesh State Electronics Development Corporation Limited <br />IT BHAWAN,1st FLOOR,Beolia Road, Mehli Shimla 171013 H.P.
+                </h6>
+                <h6 class="text-center">
+                    GSTIN/UIN:02AAACH3904P2ZO <br />State Name: Himachal Pradesh, Code:02<br />Email: manpower@hpsedc.in
+                </h6>
+            </div>
+        </div>
+        <div style="padding:10px; border-style:solid; border-top:0px">
+        <span>IRN No:- </span><br />
+        <div style="display:flex">
+            <span style="width: 300px;">
+                    Ack Date: @Model.AckDt.ToString("dd/MM/yyyy")
+                   @*  Ack Date: @(Model?.AckDt.ToString("dd/MM/yyyy")) *@
+            </span>
+            <span style="width: 300px;">
+                Ack No: @Model.AcKNo
+            </span>
+            <span style="width: 400px;">
+                GST No: @Model.gstNo
+            </span>
+        </div>
+    </div>
+     <div style="display:flex; border-style:solid; border-top:0px">
+        <div style="width:60%">
+            <span>Consignee(Ship to)</span><br />
+            <span>
+                    @Model.departmentName /*  @(Model?.departmentName ?? "") */  <br />
+                    @(Model?.AgencyName ?? "") <br />
+                   </span>
+        </div>
+        <div style="width:40%; border-left:2px solid black">
+            <div style="padding:5px">
+                <span>Date:@Model.BillDate.ToString("dd/MM/yyyy")</span>
+            </div>
+            <div style="padding:5px; border-top:2px solid black">
+                <span>
+                    HPSEDC Invoice & WO.Ref No.
+                <br>
+                @Model.SaleBillNo <br />@Model.WorkOrderNo
+                </span>
+            </div>            
+        </div>
+    </div>
+    <div style="display:flex; border-style:solid; border-top:0px">
+        <div style="width:60%">
+            <span>Buyer (Bill to)</span><br />
+            <span>
+                @Model.departmentName <br />
+                @Model.DepartmentAddress <br />
+            </span>
+        </div>
+        <div style="width:40%;border-left:2px solid black">
+            <div style="padding:5px">
+                <span>
+                    Agency Invoice Ref. No.:<br>
+                    @Model.fvBillNo
+                </span>
+            </div>
+            <div style="padding:5px; border-top:2px solid black">
+                <span>Date:@Model.PurchaseBillDate.ToString("dd//yyyy")</span>
+            </div>  
+        </div>
+    </div>
+    <div style="border-style:solid; border-top:0px">
+            <table class="table table-bordered" style="text-align:center;">
+                <thead>
+                    <tr>
+                        <th>Sr. No</th>
+                        <th>Description</th>
+                        <th>No. Of Res.</th>
+                        <th>Rate</th>
+                        <th>Per</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>@Model.Description</td>
+                        <td>@Model.NoOfResource</td>
+                        <td></td>
+                        <td></td>
+                        <td>@Model.BaseTotal</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Administrative Charge</td>
+                        <td></td>
+                        <td>5</td>
+                        <td>%</td>
+                        <td>@Model.HpsedcCharges</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Output CGST</td>
+                        <td></td>
+                        <td>9</td>
+                        <td>%</td>
+                        <td>@Model.AdminAmtCgst</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Output SGST</td>
+                        <td></td>
+                        <td>9</td>
+                        <td>%</td>
+                        <td>@Model.AdminAmtSgst</td>
+                    </tr>
+                </tbody>
+                <tfoot class="tfoot">
+                    <tr>
+                        <td colspan="2"><strong>Total</strong></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><strong>@Model.Taxableamttotal</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    <div style="border-style:solid; border-top:0; margin:0;">
+        <strong> Amount Chargeable (In Words)</strong> @Model.TaxableamttotalWord <br />     
+    </div>
+    <div style="border-style:solid; border-top:0; margin:0;">
+            <table class="table table-bordered" style="text-align:center; ">
+                <thead>
+                    <tr>
+                        <th rowspan="2" style="vertical-align:middle;">HSN/SAC</th>
+                        <th rowspan="2" style="vertical-align:middle;">Taxable Value</th>
+                        <!-- Central Tax split into 2 columns -->
+                        <th colspan="2">Central Tax</th>
+                        <!-- State Tax split into 2 columns -->
+                        <th colspan="2">State Tax</th>
+                        <th rowspan="2" style="vertical-align:middle;">Total Tax Amount</th>
+                    </tr>
+                    <tr>
+                        <th>Rate</th>
+                        <th>Amount</th>
+                        <th>Rate</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>998513</td>
+                        <td>@Model.Taxableamttotal</td>
+                        <td>9%</td>
+                        <td>@Model.CGSTAmount</td>
+                        <td>9%</td>
+                        <td>@Model.SGSTAmount</td>
+                        <td>@Model.BillAmount</td>
+                    </tr>
+
+                    <tr>
+                        <td>998519</td>
+                        <td>@Model.Taxableamttotal</td>
+                        <td>9%</td>
+                        <td>@Model.CGSTAmount</td>
+                        <td>9%</td>
+                        <td>@Model.SGSTAmount</td>
+                        <td>@Model.BillAmount</td>
+                    </tr>
+                </tbody>
+                <tfoot class="tfoot">
+                    <tr>
+                        <td><strong>Total</strong></td>
+                        <td>Taxable Amount</td>
+                        <td></td>
+                        <td>CGST Amt</td>
+                        <td></td>
+                        <td>SGST Amt</td>
+                        <td><strong>@Model.GrandBillAmount</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div style="display:flex; border-style:solid; border-top:0px">
+            <div style="width:50%; padding:5px 5px 0px 5px;">
+                <span><strong> Amount (In Words)</strong></span><br />
+                @Model.GrandBillAmountWord <br />
+                <span><strong>Remarks:</strong></span><br /> @Model.Narration
+                   <div><strong>Declaration:</strong></div>
+                    <div style="line-height:1">
+                        We declare that this invoice shows the actual cost of manpower deployed and
+                        that all particulars are true and correct.
+                    </div>
+                    <div style="line-height:1;">
+                    <h6 style="margin:0;">HPSEDC VAT TIN : 02010300179</h6>
+                    <h6 style="margin:0;">HPSEDC CST No.   : CST-CSI-2831</h6>
+                    <h6 style="margin:0;">HPSEDC PAN         : AAACH3904P</h6>
+                    </div>
+            </div>
+            <div style="width:50%; border-left:2px solid black">
+                <div style="padding:5px ; ">
+                    <span> <strong> Bank : </strong> IDBI Bank LTD</span><br>
+                    <span> <strong> Branch Name :  </strong> Mehli Shimla, Himachal Pradesh  </span><br>
+                    <span> <strong> Account Name :  </strong>  MD HP STATE ELECTRONICS DEV CO LTD </span><br>
+                    <span> <strong> Account No. :  </strong>  1481102000000374 </span><br>
+                    <span> <strong> IFSC Code :  </strong>  IBKL0001481 </span><br>
+                </div>               
+                <div style="margin-top:30px;">
+                        <span><strong>Prepared By</strong></span>
+                        <span style="margin-left:20px;"><strong>Verified By</strong></span>
+                    <span style="margin-left:20px;"><strong>Authorised Signatory</strong></span>
+                    </div>             
+            </div>            
+        </div>
+      @*   <!--Page Break-->
+        <div style="page-break-after: always;">
+            <!-- Next content goes to new page -->
+        </div> *@
+        <!-- Letter -->
+        <div class="container-fluid">
+            <div style="display:flex">
+                <div style="width:30%">
+                    <h6> HIMACHAL PRADESH STATE ELECTRONICS DEVELOPMENT CORPORATION LIMITED</h6>
+                </div>
+                <div style="width:20%; margin-top:20px; padding:5px">
+                    <img style="width: 125px; " src="~/assets/images/picture1.png" />
+                </div>
+                <div style="width:50%">
+                    <h6>
+                        IT Bhawan, Ground & 1st Floor Beolia Road, Mehli Shimla, H.P. -171013 <br />
+                        Ph. 0177-2623513, 2628473,<br />
+                        GSTIN/UIN: 02AAACH3904P2ZO <br />
+                        State Name : Himachal Pradesh, Code : 02<br />
+                        E-Mail : hpsedc@hpsedc.in
+                    </h6>
+                </div>
+            </div>
+            <div style="display:flex">
+                <div style="width:50%">
+                    <h5>@Model.SaleBillNo</h5>
+                </div>
+                <div style="width:50% ; text-align:right">
+                    <h5><strong>Dispatch Date :</strong>@Model.BillDate.ToString("dd/MM/yyyy")</h5>
+                </div>
+            </div>
+            <div>
+                <h5 style="margin-left:50px">To </h5>
+                <h5 style="margin-left:100px">
+                    <span>
+                        @Model.departmentName <br />
+                        @Model.DepartmentAddress <br />
+                    </span>
+                </h5>
+            </div>
+            <div>
+                <span><strong>Subject :</strong></span> <span>Deployment of Manpower (outsource basis) final bill there of.</span>
+            </div>
+            <div style="margin-top:10px">
+                <h6>Dear Sir/Madam,</h6>
+                <p style="text-indent:40px">
+                    Please find enclosed herewith the sales bill(s) No. @Model.SaleBillNo  Dated: @Model.BillDate.ToString("dd/MM/yyyy")
+                    amounting to Rs. @Model.GrandBillAmount (@Model.GrandBillAmountWord) on account
+                    of deployment of manpower services on outsourced basis, <span>BILL FOR THE MONTH OF APRIL 2026</span>
+                </p>
+                <p style="text-indent:40px">
+                    It is therefore requested that necessary payment may kindly be released to this office through
+                    cheque, Demand Draft or RTGS in favour of <span>MD HP STATE ELECTRONICS DEV CO LTD MEHLI SHIMLA (MANPOWER).</span>
+                    The detail of Bank Account is as under:
+                </p>
+                <p style="margin-left:200px">
+                    <strong> i) Account No. :</strong> <span> 1481102000000374</span><br />
+                    <strong> ii) Bank Name : </strong> <span> IDBI Bank LTD</span><br />
+                    <strong> iii) IFSC Code : </strong> <span> IBKL0001481</span>
+                </p>
+                <strong>Important Note :-</strong>
+                <p style="margin-left:100px">
+                    1. Please share the details of payment i.e. UTR No. in case of Bank to Bank transfer or Payee code in
+                    case of Treasury payment to this office through official letter and/or e-mail :
+                    manpowerpayment@hpsedc.in
+                </p>
+                <p style="margin-left:100px">
+                    2. In case the payment being released has been clubbed for different bills generated by HPSEDC, then
+                    the bill-wise details of the payment is to be provided separately by your organisation so that proper
+                    reconciliation is done by HPSEDC with the bank statement.
+                </p>
+                <p style="margin-left:100px">
+                    3. Please note that in case Bill-wise payment details are not received in HPSEDC, it will be difficult to
+                    reconcile the payments and it will result in non-payment of wages to the deployed manpower on
+                    outsource basis for which HPSEDC may not be held responsible.
+                </p>
+                <p style="margin-left:100px">
+                    Thanking you and assuring our best service always.
+                </p>
+                <div style="text-align:right; ">
+                    <span> Yours faithfully</span>
+                </div>
+                <div style="text-align:right; margin-top:50px;">
+                    <span> Authorized Signatory</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        $(document).ready(function () {
+        loadInvoice();
+        });
+
+        function loadInvoice() {
+
+        $.ajax({
+        url: '/HardwarePurchase/GetInvoiceData',
+        type: 'GET',
+        success: function (res) {
+
+        $('#invoiceNo').text(res.invoiceNo);
+        $('#invoiceDate').text(res.date);
+        $('#customerName').text(res.customer);
+
+        let total = 0;
+        let rows = '';
+
+        $.each(res.items, function (i, item) {
+
+        let baseAmount = item.qty * item.price;
+
+        let gstPercent = (item.CGST || 0) + (item.SGST || 0);
+        let gst = baseAmount * gstPercent / 100;
+
+        let rowTotal = baseAmount + gst;
+
+        total += rowTotal;
+
+        rows += `<tr>
+        <td>${i + 1}</td>
+        <td>${item.name}</td>
+        <td>${item.qty}</td>
+        <td>₹ ${item.price}</td>
+        <td>₹ ${gst.toFixed(2)}</td>
+        <td>₹ ${rowTotal.toFixed(2)}</td>
+        </tr>`;
+        });
+
+        $('#invoiceTable').html(rows);
+        $('#grandTotal').text("₹ " + total.toFixed(2));
+        }
+        });
+        }
+        function printInvoice() {
+        window.print();
+        }
+        function downloadPDF() {
+
+        const { jsPDF } = window.jspdf;
+
+        let doc = new jsPDF('p', 'mm', 'a4');
+
+        let content = document.getElementById("invoiceArea");
+
+        doc.html(content, {
+        callback: function (doc) {
+
+        let pageCount = doc.internal.getNumberOfPages();
+
+        for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(10);
+
+        // Page number at TOP
+        doc.text("Page " + i + " of " + pageCount, 170, 5);
+        }
+
+        doc.save("Invoice.pdf");
+        },
+
+        x: 5,
+        y: 5,
+        width: 200,   // VERY IMPORTANT (fit A4 width)
+
+        windowWidth: 1000, // helps scaling
+
+        html2canvas: {
+        scale: 0.5,   // reduce size to fit page
+        useCORS: true
+        },
+
+        autoPaging: 'text'  // 🔥 THIS FIXES CUTTING ISSUE
+        });
+        }
+    </script>
+</body>
+</html>
+
+@* @using Compass.Report.ViewModels
+@model DeptInvoiceReportVM *@
+<h2 class="text-center">Tax Invoice</h2>
+<div class="d-flex justify-content-end mb-2 no-print">
+    <button onclick="window.print()" class="btn btn-primary">
+        🖨 Print Invoice
+    </button>
+</div>
+
+<!-- Tax Invoice -->
+<div>
+
+    <div style="display:flex;align-items:center; border-style:solid; padding:5px">
+        <div>
+            <img style="width: 115px; " src="~/assets/images/picture1.png" />
+        </div>
+        <div style="flex:1; text-align:center">
+            <h5 class="text-center">
+                Himachal Pradesh State Electronics Development Corporation Limited <br />IT BHAWAN,1st FLOOR,Beolia Road, Mehli Shimla 171013 H.P.
+            </h5>
+            <h6 class="text-center">
+                GSTIN/UIN:02AAACH3904P2ZO <br />State Name: Himachal Pradesh, Code:02<br />Email: manpower@hpsedc.in
+            </h6>
+        </div>
+    </div>
+    <div style="padding:10px; border-style:solid; border-top:0px">
+        <span>IRN No:- </span><br />
+        <div style="display:flex">
+            <span style="width: 300px;">
+                Ack Date: @Model.AckDt.ToString("dd/MM/yyyy")
+            </span>
+
+            <span style="width: 400px;">
+                Ack No: @Model.AcKNo
+            </span>
+
+            <span>
+                GST No: @Model.gstNo
+            </span>
+        </div>
+    </div>
+    <div style="display:flex; border-style:solid; border-top:0px">
+        <div style="width:75%">
+            <span>Consignee(Ship to)</span><br />
+            <span>
+                @Model.departmentName <br />
+                @Model.DepartmentAddress <br />
+
+            </span>
+        </div>
+        <div style="width:25%; border-left:2px solid black">
+            <div style="padding:5px">
+                <span>Date:@Model.BillDate.ToString("dd/MM/yyyy")</span>
+            </div>
+            <div style="padding:5px; border-top:2px solid black">
+                <span>
+                    HPSEDC Invoice & WO.Ref No.
+                    <br>
+                    @Model.SaleBillNo <br />@Model.WorkOrderNo
+                </span>
+            </div>
+
+        </div>
+    </div>
+    <div style="display:flex; border-style:solid; border-top:0px">
+        <div style="width:75%">
+            <span>Buyer (Bill to)</span><br />
+            <span>
+                @Model.departmentName <br />
+                @Model.DepartmentAddress <br />
+            </span>
+        </div>
+        <div style="width:25%;border-left:2px solid black">
+            <div style="padding:5px">
+                <span>
+                    Agency Invoice Ref. No.:<br>
+                    @Model.fvBillNo
+                </span>
+            </div>
+            <div style="padding:5px; border-top:2px solid black">
+                <span>Date:@Model.PurchaseBillDate.ToString("dd//yyyy")</span>
+            </div>
+
+        </div>
+    </div>
+    <div style="border-style:solid; border-top:0px">
+        <table class="table table-bordered" style="text-align:center;">
+            <thead>
+                <tr>
+                    <th>Sr. No</th>
+                    <th>Description</th>
+                    <th>No. Of Res.</th>
+                    <th>Rate</th>
+                    <th>Per</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>@Model.Description</td>
+                    <td>@Model.NoOfResource</td>
+                    <td></td>
+                    <td></td>
+                    <td>@Model.BaseTotal</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Administrative Charge</td>
+                    <td></td>
+                    <td>5</td>
+                    <td>%</td>
+                    <td>@Model.HpsedcCharges</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Output CGST</td>
+                    <td></td>
+                    <td>9</td>
+                    <td>%</td>
+                    <td>@Model.AdminAmtCgst</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Output SGST</td>
+                    <td></td>
+                    <td>9</td>
+                    <td>%</td>
+                    <td>@Model.AdminAmtSgst</td>
+                </tr>
+
+            </tbody>
+            <tfoot class="tfoot">
+                <tr>
+
+                    <td colspan="2"><strong>Total</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td><strong>@Model.Taxableamttotal</strong></td>
+
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div style="border-style:solid; border-top:0; margin:0;">
+        <strong> Amount Chargeable (In Words)</strong> @Model.TaxableamttotalWord <br />
+
+        
+    </div>
+    <div style="border-style:solid; border-top:0; margin:0;">
+        <table class="table table-bordered" style="text-align:center; ">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="vertical-align:middle;">HSN/SAC</th>
+                    <th rowspan="2" style="vertical-align:middle;">Taxable Value</th>
+                    <!-- Central Tax split into 2 columns -->
+                    <th colspan="2">Central Tax</th>
+                    <!-- State Tax split into 2 columns -->
+                    <th colspan="2">State Tax</th>
+                    <th rowspan="2" style="vertical-align:middle;">Total Tax Amount</th>
+                </tr>
+                <tr>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>998513</td>
+                    <td>@Model.Taxableamttotal</td>
+                    <td>9%</td>
+                    <td>@Model.CGSTAmount</td>
+                    <td>9%</td>
+                    <td>@Model.SGSTAmount</td>
+                    <td>@Model.BillAmount</td>
+                </tr>
+
+                <tr>
+                    <td>998519</td>
+                    <td>@Model.Taxableamttotal</td>
+                    <td>9%</td>
+                    <td>@Model.CGSTAmount</td>
+                    <td>9%</td>
+                    <td>@Model.SGSTAmount</td>
+                    <td>@Model.BillAmount</td>
+                </tr>
+            </tbody>
+            <tfoot class="tfoot">
+                <tr>
+
+                    <td><strong>Total</strong></td>
+                    <td><strong>Total</strong></td>
+                    <td></td>
+                    <td><strong>Total</strong></td>
+                    <td></td>
+                    <td><strong>Total</strong></td>
+                    <td><strong>@Model.GrandBillAmount</strong></td>
+
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div style="display:flex; border-style:solid; border-top:0px">
+        <div style="width:55%">
+            <span><strong> Amount (In Words)</strong></span><br />
+            @Model.GrandBillAmountWord <br />
+            <span><strong>Remarks:</strong></span><br /> @Model.Narration
+        </div>
+        <div style="width:45%; border-left:2px solid black">
+            <div style="padding:5px">
+                <span> <strong> Bank : </strong> IDBI Bank LTD</span><br>
+                <span> <strong> Branch Name :  </strong> Mehli Shimla, Himachal Pradesh  </span><br>
+                <span> <strong> Account Name :  </strong>  MD HP STATE ELECTRONICS DEV CO LTD </span><br>
+                <span> <strong> Account No. :  </strong>  1481102000000374 </span><br>
+                <span> <strong> IFSC Code :  </strong>  IBKL0001481 </span><br>
+
+            </div>
+
+        </div>
+    </div>
+    <div style="display:flex; border-style:solid; border-top:0px">
+        <div style="width:50%">
+            <span><strong>Declaration:</strong></span><br />
+            <span>
+                We declare that this invoice shows the
+                actual cost of manpower deployed and
+                that all particulars are true and correct.
+            </span><br />
+        </div>
+        @*  <div style="width:50%; border-left:2px solid black; display:flex; align-items:flex-end;">
+            <div style="padding:5px ;">
+                <span style="margin-left:50px"> <strong> Prepared By </strong> </span>
+                <span style="margin-left:150px"> <strong> Verified By </strong> </span>
+                <span style="margin-left:150px"> <strong> Authorised Signatory </strong></span>
+            </div>
+        </div> *@
+        <div style="width:50%; border-left:2px solid black;  position:relative;">
+
+            <div style="position:absolute; bottom:5px; width:100%; padding:5px; display:flex; justify-content:space-between;">
+                <span><strong>Prepared By</strong></span>
+                <span><strong>Verified By</strong></span><span><strong>Authorised Signatory</strong></span>
+            </div>
+
+        </div>
+    </div>
+    <div style="border-style:solid; border-top:0; margin:0;text-align:center">
+        <span>This is a Compass System Generated Bill.</span>
+    </div>
+
+</div>
+
+@* <div style="page-break-after: always;">
+    <!-- Next content goes to new page -->
+</div> *@
+
+@* <!-- Letter -->
+<div class="container-fluid">
+    <div style="display:flex">
+        <div style="width:40%">
+            <h4> HIMACHAL PRADESH STATE ELECTRONICS DEVELOPMENT CORPORATION LIMITED</h4>
+        </div>
+        <div style="width:20%; margin-top:20px; padding:5px">
+            <img style="width: 125px; " src="~/assets/images/picture1.png" />
+        </div>
+        <div style="width:40%">
+            <h4>
+                IT Bhawan, Ground & 1st Floor Beolia Road, Mehli Shimla, H.P. -171013 <br />
+                Ph. 0177-2623513, 2628473,<br />
+                GSTIN/UIN: 02AAACH3904P2ZO <br />
+                State Name : Himachal Pradesh, Code : 02<br />
+                E-Mail : hpsedc@hpsedc.in
+            </h4>
+        </div>
+
+
+
+
+    </div>
+    <div style="display:flex">
+        <div style="width:50%">
+            <h5>@Model.SaleBillNo</h5>
+        </div>
+        <div style="width:50% ; text-align:right">
+            <h5><strong>Dispatch Date :</strong>@Model.BillDate.ToString("dd/MM/yyyy")</h5>
+        </div>
+    </div>
+    <div>
+        <h5 style="margin-left:50px">To </h5>
+        <h5 style="margin-left:100px">
+            <span>
+                @Model.departmentName <br />
+                @Model.DepartmentAddress <br />
+            </span>
+        </h5>
+    </div>
+    <div>
+        <span><strong>Subject :</strong></span> <span>Deployment of Manpower (outsource basis) final bill there of.</span>
+    </div>
+    <div style="margin-top:10px">
+        <h6>Dear Sir/Madam,</h6>
+        <p style="text-indent:40px">
+            Please find enclosed herewith the sales bill(s) No. @Model.SaleBillNo  Dated: @Model.BillDate.ToString("dd/MM/yyyy")
+            amounting to Rs. @Model.GrandBillAmount (@Model.GrandBillAmountWord) on account
+            of deployment of manpower services on outsourced basis, <span>BILL FOR THE MONTH OF APRIL 2026</span>
+        </p>
+        <p style="text-indent:40px">
+            It is therefore requested that necessary payment may kindly be released to this office through
+            cheque, Demand Draft or RTGS in favour of <span>MD HP STATE ELECTRONICS DEV CO LTD MEHLI SHIMLA (MANPOWER).</span>
+            The detail of Bank Account is as under:
+        </p>
+        <p style="text-align:center">
+            <strong> i) Account No. :</strong> <span> 1481102000000374</span><br />
+            <strong> ii) Bank Name : </strong> <span> IDBI Bank LTD</span><br />
+            <strong> iii) IFSC Code : </strong> <span> IBKL0001481</span>
+        </p>
+        <strong>Important Note :-</strong>
+        <p style="margin-left:100px">
+            1. Please share the details of payment i.e. UTR No. in case of Bank to Bank transfer or Payee code in
+            case of Treasury payment to this office through official letter and/or e-mail :
+            manpowerpayment@hpsedc.in
+        </p>
+        <p style="margin-left:100px">
+            2. In case the payment being released has been clubbed for different bills generated by HPSEDC, then
+            the bill-wise details of the payment is to be provided separately by your organisation so that proper
+            reconciliation is done by HPSEDC with the bank statement.
+        </p>
+        <p style="margin-left:100px">
+            3. Please note that in case Bill-wise payment details are not received in HPSEDC, it will be difficult to
+            reconcile the payments and it will result in non-payment of wages to the deployed manpower on
+            outsource basis for which HPSEDC may not be held responsible.
+        </p>
+        <p style="margin-left:100px">
+            Thanking you and assuring our best service always.
+        </p>
+        <div style="text-align:right; ">
+            <span> Yours faithfully</span>
+        </div>
+        <div style="text-align:right; margin-top:50px;">
+            <span> Authorized Signatory</span>
+        </div>
+
+
+    </div>
+
+
+
+</div> *@
+
+
+
+

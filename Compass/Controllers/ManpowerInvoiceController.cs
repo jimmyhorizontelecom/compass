@@ -68,6 +68,7 @@ namespace Compass.Controllers
 
                 {
                     Id = Convert.ToInt32(row["AgencyBillId"]?.ToString()),
+                   // DeptBillId = Convert.ToInt32(row["DeptBillId"]?.ToString()),
                     DepartmentName = (row["departmentName"]?.ToString()),                 
                     AgencyName = (row["AgencyName"]?.ToString()),
                     AgencyBillNo = (row["Billno"]?.ToString()),
@@ -95,7 +96,7 @@ namespace Compass.Controllers
             }
         }
 
-        // Get record for Agency Bill Verification & HPSEDC Sale Bill
+        // Get record for Agency Bill Verification & HPSEDC Sale Bill TallyDeptBill_ListGet1
         [HttpGet]
         public async Task<IActionResult> GetAgencyInvoiceVerifyRecord([FromQuery] PInvoiceFilter filter)
 
@@ -164,7 +165,6 @@ namespace Compass.Controllers
             }
         }
 
-
         //Submit Agency Bill Verification Update Purchase Bill 
         [HttpPost]
         public async Task<IActionResult> AddOrEdit_UpdatePInvoiceRecord([FromForm] UpdatePInvoiceModel model)
@@ -209,6 +209,68 @@ namespace Compass.Controllers
                 });
             }
         }
+        // Get record for HPSEDC Sale Bill TallyDeptBill_ListGet1
+        [HttpGet]
+        public async Task<IActionResult> GetHPSEDCBillRecord([FromQuery] PInvoiceFilter filter)
+
+        {
+            //var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
+            //var roleId = Convert.ToInt32(User.FindFirst("RoleId")?.Value ?? "0");
+            try
+            {
+                // Access as object
+                SortedList parameters = new SortedList();
+                parameters.Add("@AgencyBillId", filter.Id);
+              
+                var dt = await _cn.FillDataTableAsync("TallyDeptBill_ListGet1", "", parameters);
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<PInvoiceVerifyViewModel>());
+
+                var list = dt.AsEnumerable().Select(row => new PInvoiceVerifyViewModel
+
+                {
+                    //Id = row["AgencyBillId"] != DBNull.Value ? Convert.ToInt32(row["AgencyBillId"]) : 0,
+                    Id = Convert.ToInt32(row["AgencyBillId"]?.ToString()),
+                    //BillDate = (row["BillDate"]?.ToString()),
+                    WorkOrderId = (row["WorkOrderNo"]?.ToString()),
+                    SaleBillNo = (row["Billno"]?.ToString()),
+                    DeptBillNo = (row["DeptBillNO"]?.ToString()),
+                    AgencyId = Convert.ToInt32(row["AgencyId"]?.ToString()),
+                    AgencyName = (row["AgencyName"]?.ToString()),
+                    DeptId = Convert.ToInt32(row["DeptId"]?.ToString()),
+                    DepartmentName = (row["departmentName"]?.ToString()),
+                    //NoofResource = row["NoofResources"] != DBNull.Value ? Convert.ToInt32(row["NoofResources"]) : 0,
+                    //NoofResource = Convert.ToInt32(row["NoOfResource"]?.ToString()),
+                    //BillingId = Convert.ToInt32(row["BillingId"]?.ToString()),
+                    DeptBillingAdd = (row["DepartmentAddress"]?.ToString()),
+                    BillMonth = (row["BillforMonth"]?.ToString()),
+                    Description = (row["Description"]?.ToString()),
+                    Narration = (row["Narration"]?.ToString()),
+                    BasicBillAmt = Convert.ToDecimal(row["AgencyBillAmt"]?.ToString()),
+                    AdminCharge = Convert.ToDecimal(row["AdminAmt"]?.ToString()),
+                    LiveryCharge = Convert.ToDecimal(row["LibaryAmt"]?.ToString()),
+                    InputCgst = Convert.ToDecimal(row["cgstAmt"]?.ToString()),
+                    InputSgst = Convert.ToDecimal(row["SGSTAtm"]?.ToString()),
+                    //InputIgst = Convert.ToDecimal(row["IGSTAmt"]?.ToString()),
+                    TotalAmt = Convert.ToDecimal(row["TotalAmt"]?.ToString()),
+
+
+                }).ToList();
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
 
         //Submit HPSEDC Bill Sale Bill 
         [HttpPost]
@@ -386,7 +448,7 @@ namespace Compass.Controllers
                     AgencyName = (row["AgencyName"]?.ToString()),
                     SaleBillNo = (row["SaleBillNo"]?.ToString()),
                     PurchaseBillNo = (row["Billno"]?.ToString()),
-                    SaleBillAmt = Convert.ToDecimal(row["TotalAmt"]??0),//.ToString()),
+                    SaleBillAmt = Convert.ToDecimal(row["AgencyBillAmt"] ??0),//.ToString()),
                     SaleBillDate = row["SaleBillDate"]?.ToString(),
                     //AgencyBillAmt = Convert.ToDecimal(row["AgencyBillAmt"] ?? 0),
 
