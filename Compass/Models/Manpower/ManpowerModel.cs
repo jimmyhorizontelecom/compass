@@ -34,6 +34,7 @@ namespace Compass.Models.ManpowerModel
    {
         public int Id { get; set; }    
         public string MonthYear { get; set; }    
+        public string BillType { get; set; }    
         public int WorkOrderNo { get; set; }
         public int UpladNoOfResource { get; set; }
         public int PresentResource { get; set; }
@@ -87,6 +88,7 @@ namespace Compass.Models.ManpowerModel
         public decimal InputSgst { get; set; }
         public decimal InputIgst { get; set; }
         public decimal TotalAmt { get; set; }
+        public char BillType { get; set; }
         
     }
 

@@ -92,17 +92,16 @@ function bindDatatable(records, tableId) {
         tbody.append(`
             <tr 
                 data-id="${value.AgencyBillId}">
-                <td>${SrNo}</td>
-                <td>${value.DeptName}</td>
-                <td>${value.DeptAdd}</td>
-                <td>${value.AgencyName}</td>
-                <td>${value.SaleBillNo} </td>
-                <td>${value.SaleBillAmt} </td>
-                <td>${value.SaleBillDate}</td>
-                 <td class="text-center align-middle">  
-                     <button type="button" class="btn  btn-coral txt-white edit-AgencyPayment" data-id="${value.AgencyBillId}">
-                         Agency Payment
-                     </button>          
+                <td class="text-center align-middle">${SrNo}</td>
+                <td class="text-center align-middle">${value.DeptName}</td>
+                <td class="text-center align-middle">${value.DeptAdd}</td>
+                <td class="text-center align-middle">${value.AgencyName}</td>
+                <td class="text-center align-middle">${value.SaleBillNo} </td>
+                <td class="text-center align-middle">${value.SaleBillAmt} </td>
+                <td class="text-center align-middle">${value.SaleBillDate}</td>
+                <!--Agency Payment Button-->
+                 <td class="text-center align-middle">    
+                      <button type="button"  class="btn btn-coral txt-white edit-AgencyPayment"  data-id="${value.AgencyBillId}"  ${value.IsDeptPaymentReceived === 'N' || value.IsDeptPaymentReceived == null ? 'disabled' : ''}> Agency Payment  </button>
                 </td>
                 <td class="text-center align-middle">
                      <button type="button" class="btn  btn-coral txt-white edit-PartialPayment" data-id="${value.AgencyBillId}">

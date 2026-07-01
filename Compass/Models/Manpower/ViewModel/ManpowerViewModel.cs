@@ -99,6 +99,8 @@ namespace Compass.Models.ManpowerViewModel
         public int AgencyId { get; set; }
         public int AttendaceId { get; set; }
         public int WorkOrderId { get; set; }
+        public int MonthYear { get; set; }
+        public char BillType { get; set; }
     }
 
     //Map no. of Resource Employee View Modal
@@ -122,6 +124,7 @@ namespace Compass.Models.ManpowerViewModel
         public int AttendaceId { get; set; }
         public int AgencyId { get; set; }
         public int WorkOrderAgencyId { get; set; }
+        public Char BillType { get; set; }
         public int DeptId { get; set; }
         public int MonthYear { get; set; }
        // public int CreatedBy { get; set; }
@@ -139,6 +142,7 @@ namespace Compass.Models.ManpowerViewModel
         public int AgencyId { get; set; }
         public string AgencyName { get; set; }
         public string WorkOrderId { get; set; }
+        public char BillType { get; set; }
         public string PurhaseInvNO { get; set; }
         public int BillingId { get; set; }
         public string BillingAddress { get; set; }
@@ -269,6 +273,7 @@ namespace Compass.Models.ManpowerViewModel
         public string PurchaseBillNo { get; set; }
         public decimal SaleBillAmt { get; set; }
         public string SaleBillDate { get; set; }
+        public Char IsDispatched { get; set; }
         //public decimal AgencyBillAmt { get; set; }
         
 
@@ -288,6 +293,7 @@ namespace Compass.Models.ManpowerViewModel
         public string DeptAdd { get; set; }
         public int AgencyId { get; set; }
         public string AgencyName { get; set; }
+        public Char IsDeptPaymentReceived { get; set; }
        
     }
 

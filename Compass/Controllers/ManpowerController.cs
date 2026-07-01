@@ -525,29 +525,23 @@ namespace Compass.Controllers
             try
             {
                 // Access as object
-                SortedList parameters = new SortedList();
-               
+                SortedList parameters = new SortedList();            
                 parameters.Add("@WorkorderId", filter.WorkOrderId);
                 parameters.Add("@AgencyId", filter.AgencyId);
-                
-
+                parameters.Add("@MonthYear", filter.MonthYear);
+                parameters.Add("@BillType", filter.BillType);
                 var dt = await _cn.FillDataTableAsync("TallyFetchEmployee_Get", "", parameters);
-
                 if (dt == null || dt.Rows.Count == 0)
                     return Ok(new List<MapEmployeeViewModel>());
-
                 var list = dt.AsEnumerable().Select(row => new MapEmployeeViewModel
-
                 {
                     EmpId = Convert.ToInt32(row["EmpId"]?.ToString()),
                     EmpName = (row["Empname"]?.ToString()),
                     EmpFatherName = (row["FatherName"]?.ToString()),
                     EmpAadharNo = (row["AADHARNO"]?.ToString()),
-                    EmpDesignation = (row["fvDesignationName"]?.ToString()),
-                    
+                    EmpDesignation = (row["fvDesignationName"]?.ToString()),                 
                 }).ToList();
-
-                return Ok(list);
+                 return Ok(list);
             }
             catch (Exception ex)
             {
@@ -671,36 +665,21 @@ namespace Compass.Controllers
         {
             try
             {
-                // =========================
                 // LOGIN USER DETAILS
-                // =========================
-
                 var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
                 var roleId = Convert.ToInt32(User.FindFirst("RoleId")?.Value ?? "0");
-
-
-                // =========================
                 // MODEL VALUES
-                // =========================
-
                 var Id = model.Id;
                 var MonthYear = model.MonthYear;
+                var BillType = model.BillType;
                 var WorkOrderNo = model.WorkOrderNo;
                 var UpladNoOfResource = model.UpladNoOfResource;
                 var PresentResource = model.PresentResource;
-
-                // =========================
                 // FILES
-                // =========================
-
                 IFormFile attachmentFile1 = model.AttendanceFile;
                 IFormFile attachmentFile2 = model.AnnexureFile;
                 IFormFile attachmentFile3 = model.AgencyBillFile;
-
-                // =========================
                 // ROLE BASED VALIDATION
-                // =========================
-
                 // Attendance file required for all users
                 if (attachmentFile1 == null || attachmentFile1.Length == 0)
                 {
@@ -710,7 +689,6 @@ namespace Compass.Controllers
                         message = "Attendance file is required."
                     });
                 }
-
                 // Agency Login
                 // RoleId = 48
                 if (roleId == 48)
@@ -723,7 +701,6 @@ namespace Compass.Controllers
                             message = "Annexure file is required."
                         });
                     }
-
                     if (attachmentFile3 == null || attachmentFile3.Length == 0)
                     {
                         return BadRequest(new
@@ -740,110 +717,78 @@ namespace Compass.Controllers
                     attachmentFile2 = null;
                     attachmentFile3 = null;
                 }
-
                 // SAVE ATTENDANCE FILE
-  
-
-                string AttendanceCertificate = "";
-
+                 string AttendanceCertificate = "";
                 if (attachmentFile1 != null && attachmentFile1.Length > 0)
                 {
                     string folderPath = Path.Combine(
                         Directory.GetCurrentDirectory(),
                         "wwwroot/Attachment/DeptAttendance/Attendance"
                     );
-
                     if (!Directory.Exists(folderPath))
                         Directory.CreateDirectory(folderPath);
-
                     string extension = Path.GetExtension(attachmentFile1.FileName);
-
                     AttendanceCertificate =
                         $"Attendance_{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid()}{extension}";
-
                     string filePath = Path.Combine(folderPath, AttendanceCertificate);
-
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await attachmentFile1.CopyToAsync(stream);
                     }
                 }
-
                 // SAVE ANNEXURE FILE
-
                 string AnnexureFile = "";
-
                 if (attachmentFile2 != null && attachmentFile2.Length > 0)
                 {
                     string folderPath = Path.Combine(
                         Directory.GetCurrentDirectory(),
                         "wwwroot/Attachment/DeptAttendance/Annexure"
                     );
-
                     if (!Directory.Exists(folderPath))
                         Directory.CreateDirectory(folderPath);
-
                     string extension = Path.GetExtension(attachmentFile2.FileName);
-
                     AnnexureFile =
                         $"Annexure_{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid()}{extension}";
-
                     string filePath = Path.Combine(folderPath, AnnexureFile);
-
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await attachmentFile2.CopyToAsync(stream);
                     }
                 }
-
-                // SAVE AGENCY BILL FILE
-         
+                // SAVE AGENCY BILL FILE      
                 string AgencyBillFile = "";
-
                 if (attachmentFile3 != null && attachmentFile3.Length > 0)
                 {
                     string folderPath = Path.Combine(
                         Directory.GetCurrentDirectory(),
                         "wwwroot/Attachment/DeptAttendance/AgencyBill"
                     );
-
                     if (!Directory.Exists(folderPath))
                         Directory.CreateDirectory(folderPath);
-
                     string extension = Path.GetExtension(attachmentFile3.FileName);
-
                     AgencyBillFile =
                         $"AgencyBill_{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid()}{extension}";
-
                     string filePath = Path.Combine(folderPath, AgencyBillFile);
-
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await attachmentFile3.CopyToAsync(stream);
                     }
                 }
-
                 // DATABASE PARAMETERS
                 if (roleId != 48)
                 {
                     AnnexureFile = "";
                     AgencyBillFile = "";
                 }
-
                 // TVP DATATABLE
                 List<EmployeeAttendanceModel> employeeList = new List<EmployeeAttendanceModel>();
-
                 if (!string.IsNullOrEmpty(model.EmployeeListJson))
                 {
                     employeeList = JsonConvert.DeserializeObject<List<EmployeeAttendanceModel>>(model.EmployeeListJson);
-
                 }
-
                 DataTable dt = new DataTable();
-
                 dt.Columns.Add("AgencyWorkOrderId", typeof(int));
                 dt.Columns.Add("EmpId", typeof(int));
-
                 // Selected employee list se data add karo
                 if (employeeList != null && employeeList.Count > 0)
                 {
@@ -851,58 +796,34 @@ namespace Compass.Controllers
                     {
                         int empId = 0;
                         int workOrder = 0;
-
                         int.TryParse(Convert.ToString(item.EmpId), out empId);
                         int.TryParse(Convert.ToString(WorkOrderNo), out workOrder);
-
                         if (empId > 0 && workOrder > 0)
                         {
                             dt.Rows.Add(workOrder, empId);
                         }
                     }
-                }
-               
-                // SQL PARAMETERS (FIXED TVP)
-                
-                //var tvpParam = new SqlParameter("@tempTallyEmployeeAttendance", SqlDbType.Structured)
-                //{
-                //    TypeName = "dbo.tempTallyEmployeeAttendance",
-                //    Value = dt
-                //};
-
-
+                }          
                 SortedList parameters = new SortedList
         {
             { "@Id", Id },
             { "@MonthYear", MonthYear },
+            { "@BillType", BillType },
             { "@WorkOrderId", WorkOrderNo },
             { "@UpladNoOfResource", UpladNoOfResource },
-            //{ "@AttendanceCertificate", AttendanceCertificate },
-            //{ "@AnnexureFile", AnnexureFile },
-            //{ "@AgencyBillFile", AgencyBillFile },
             { "@AttendanceCertificate", AttendanceCertificate ?? "" },
             { "@AnnexureFile", AnnexureFile ?? "" },
             { "@AgencyBillFile", AgencyBillFile ?? "" },
             { "@createdby", userId },
             { "@tempTallyEmployeeAttendance", dt  }
-
-
         };
-
-                // =========================
                 // SAVE TO DATABASE
-                // =========================
-
                 var result = _cn.ExecuteNonQueryWMessage(
-                    "tblTallyAttendance_AcceptUpdate",
+                    "tblTallyAttendanceEmpwise_AcceptUpdate",
                     "",
                     parameters
                 );
-
-                // =========================
                 // SUCCESS RESPONSE
-                // =========================
-
                 return Ok(new
                 {
                     success = true,
@@ -919,7 +840,6 @@ namespace Compass.Controllers
                 });
             }
         }
-
         // Delete Records from Table
         [HttpPost]
         public IActionResult Delete_DeptAttendanceRecord([FromForm] DeleteAttendanceModel model)
@@ -927,9 +847,7 @@ namespace Compass.Controllers
             try
             {
                 Console.WriteLine("Delete Id Received: " + model.AttendaceId);
-
                 var userId = User.FindFirst("UserId")?.Value;
-
                 SortedList parameters = new SortedList
         {
             { "@AttendaceId", model.AttendaceId },
@@ -937,13 +855,11 @@ namespace Compass.Controllers
             { "@CancelBy", userId },
             { "@CancelRemarks", model.CancelRemarks ?? "" }
         };
-
                 var result = _cn.ExecuteNonQueryWMessage(
                     "TallyAttendanceCancel_AcceptUpdate",
                     "",
                     parameters
                 );
-
                 return Ok(new
                 {
                     success = true,
@@ -960,11 +876,9 @@ namespace Compass.Controllers
                 });
             }
         }
-
         // Get record Upload Annexure & agency File
         [HttpGet]
         public async Task<IActionResult> GetUploadAnnexureBillRecord([FromQuery] DeptAttendanceFilter filter)
-
          {
             try
             {
@@ -972,14 +886,10 @@ namespace Compass.Controllers
                 SortedList parameters = new SortedList();
                 parameters.Add("@Id", filter.Id);
                 parameters.Add("@AttendaceId", filter.AttendaceId);
-
                 var dt = await _cn.FillDataTableAsync("tblTallyAttendance_Get", "", parameters);
-
                 if (dt == null || dt.Rows.Count == 0)
                     return Ok(new List<DeptAttendanceViewModel>());
-
                 var list = dt.AsEnumerable().Select(row => new DeptAttendanceViewModel
-
                 {
                     Id = Convert.ToInt32(row["Id"]?.ToString()),
                     AttendaceId = Convert.ToInt32(row["AttendaceId"]?.ToString()),
@@ -991,11 +901,7 @@ namespace Compass.Controllers
                     DeployedResource = Convert.ToInt32(row["DeployedResource"]?.ToString()),
                     UpladNoOfResource = Convert.ToInt32(row["UpladNoOfResource"]?.ToString()),
                     BillingAddress = (row["BillingAddress"]?.ToString()),
-                    //AttendanceCertificate = row["AttendanceCertificate"]?.ToString(),
-                    //AnnexureFile = row["AnnexureFile"]?.ToString(),
-                    //AgencyBillFile = row["UploadBill"]?.ToString(),
                 }).ToList();
-
                 return Ok(list);
             }
             catch (Exception ex)
@@ -1008,12 +914,9 @@ namespace Compass.Controllers
                 });
             }
         }
-
-
         // Get Map record marked by Department
         [HttpGet]
         public async Task<IActionResult> GetMapResourceRecord([FromQuery] DeptAttendanceFilter filter)
-
         {
             try
             {
@@ -1021,23 +924,17 @@ namespace Compass.Controllers
                 SortedList parameters = new SortedList();
                 parameters.Add("@Id", 0);
                 parameters.Add("@AttendaceId", filter.Id);
-
                 var dt = await _cn.FillDataTableAsync("tblTallyAttendance_Get", "", parameters);
-
                 if (dt == null || dt.Rows.Count == 0)
                     return Ok(new List<ViewMapResourceViewModel>());
-
                 var list = dt.AsEnumerable().Select(row => new ViewMapResourceViewModel
-
                 {
                     //Id = row["AttendaceId"]?.ToString(),
                     EmpId = Convert.ToInt32(row["EmpId"]?.ToString()),
                     EmpName = (row["Empname"]?.ToString()),
                     FatherName = (row["FatherName"]?.ToString()),
                     AadharNo = (row["AADHARNO"]?.ToString()),
-                    
                 }).ToList();
-
                 return Ok(list);
             }
             catch (Exception ex)
@@ -1050,24 +947,17 @@ namespace Compass.Controllers
                 });
             }
         }
-
         //Submit Annexure & Bill
         [HttpPost]
         public async Task<IActionResult> AddOrEdit_AnnexureBillRecord([FromForm] DeptAttendanceModel model)
         {
             try
             {
-
                 var Id = model.Id;
-
                 // ✅ Get uploaded file
-
                 IFormFile attachmentFile2 = model.AnnexureFile;
                 IFormFile attachmentFile3 = model.AgencyBillFile;
-
                 var userId = User.FindFirst("UserId")?.Value;
-
-
                 string AnnexureFile = "";
                 if (attachmentFile2 != null && attachmentFile2.Length > 0)
                 {
@@ -1075,22 +965,16 @@ namespace Compass.Controllers
                         Directory.GetCurrentDirectory(),
                         "wwwroot/Attachment/DeptAttendance/Annexure"
                     );
-
                     if (!Directory.Exists(folderPath))
                         Directory.CreateDirectory(folderPath);
-
                     string extension = Path.GetExtension(attachmentFile2.FileName);
-
                     AnnexureFile = $"Annexure_{DateTime.Now:yyyyMMdd}_{Guid.NewGuid()}{extension}";
-
                     string filePath = Path.Combine(folderPath, AnnexureFile);
-
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await attachmentFile2.CopyToAsync(stream);
                     }
                 }
-
                 string AgencyBillFile = "";
                 if (attachmentFile3 != null && attachmentFile3.Length > 0)
                 {
@@ -1098,23 +982,16 @@ namespace Compass.Controllers
                         Directory.GetCurrentDirectory(),
                         "wwwroot/Attachment/DeptAttendance/AgencyBill"
                     );
-
                     if (!Directory.Exists(folderPath))
                         Directory.CreateDirectory(folderPath);
-
                     string extension = Path.GetExtension(attachmentFile3.FileName);
-
                     AgencyBillFile = $"AgencyBill_{DateTime.Now:yyyyMMdd}_{Guid.NewGuid()}{extension}";
-
                     string filePath = Path.Combine(folderPath, AgencyBillFile);
-
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await attachmentFile3.CopyToAsync(stream);
                     }
                 }
-
-
                 SortedList parameters = new SortedList
                     {
                     { "@Id", Id },
@@ -1122,13 +999,11 @@ namespace Compass.Controllers
                     { "@AgencyBillFile", AgencyBillFile}, // save filename
                     { "@createdby", userId }
                 };
-
                 var result = _cn.ExecuteNonQueryWMessage(
                     "tblTallyAnnexture_AcceptUpdate",
                     "",
                     parameters
                 );
-
                 return Ok(new { success = true, message = result.ToString() });
             }
             catch (Exception ex)
@@ -1152,14 +1027,11 @@ namespace Compass.Controllers
                 // Access as object
                 SortedList parameters = new SortedList();
                 parameters.Add("@AttendaceId", filter.AttendaceId);
-
+                parameters.Add("@BillType", filter.BillType);
                 var dt = await _cn.FillDataTableAsync("tblTallyAttendanceDetails_Get", "", parameters);
-
                 if (dt == null || dt.Rows.Count == 0)
                     return Ok(new List<DeptAttendanceViewModel>());
-
                 var list = dt.AsEnumerable().Select(row => new DeptAttendanceViewModel
-
                 {
                     //Id = row["AgencyId"]?.ToString(),
                     MonthYear = Convert.ToInt32(row["MonthYear"]?.ToString()),
@@ -1168,16 +1040,13 @@ namespace Compass.Controllers
                     AgencyId = Convert.ToInt32(row["AgencyId"]?.ToString()),
                     AgencyName = (row["AgencyName"]?.ToString()),
                     WorkOrderId = (row["HpsedcWrokOrderNO"]?.ToString()),
+                    BillType = Convert.ToChar(row["BillType"]?.ToString()),
                     //PurhaseInvNO = (row["PurhaseInvNO"]?.ToString()),
                     //DeployedResource = Convert.ToInt32(row["DeployedResource"]?.ToString()),
                     UpladNoOfResource = Convert.ToInt32(row["UpladNoOfResource"]?.ToString()),
                     BillingId = Convert.ToInt32(row["BillingId"]?.ToString()),
                     BillingAddress = (row["BillingAddress"]?.ToString()),
-                    //AttendanceCertificate = row["AttendanceCertificate"]?.ToString(),
-                    //AnnexureFile = row["AnnexureFile"]?.ToString(),
-                    //AgencyBillFile = row["UploadBill"]?.ToString(),
                 }).ToList();
-
                 return Ok(list);
             }
             catch (Exception ex)
@@ -1197,7 +1066,6 @@ namespace Compass.Controllers
         {
             try
             {
-
                 //var Id = model.Id;
                 var AttendaceId = model.AttendaceId;
                 var PurchaseBillDate = model.PurchaseBillDate;
@@ -1218,9 +1086,8 @@ namespace Compass.Controllers
                 var InputSgst = model.InputSgst;
                 var InputIgst = model.InputIgst;
                 var ToatlAmt = model.TotalAmt;
-
+                var BillType = model.BillType;
                 var userId = User.FindFirst("UserId")?.Value;
-
                 SortedList parameters = new SortedList
                     {
                     { "@AgencyBillId", 0 },
@@ -1243,15 +1110,14 @@ namespace Compass.Controllers
                     { "@SGSTAtm", InputSgst },
                     { "@IGSTAmt", InputIgst },
                     { "@TotalAmt", ToatlAmt },
+                    { "@BillType", BillType },
                     { "@createdby", userId }
                 };
-
                 var result = _cn.ExecuteNonQueryWMessage(
                     "TallyAgencyBill_AcceptUpdate",
                     "",
                     parameters
                 );
-
                 return Ok(new { success = true, message = result.ToString() });
             }
             catch (Exception ex)
@@ -1354,7 +1220,11 @@ namespace Compass.Controllers
         #endregion
 
 
-
+        //tblTallyAttendanceEmpwise_AcceptUpdate Completed 
+        //TallyFetchEmployee_Get  Complted  
+        //tblTallyAttendanceDetails_Get Completed
+        //TallyAgencyBill_AcceptUpdate completed
+        //TallyAgencyBill1_List
 
     }
 }

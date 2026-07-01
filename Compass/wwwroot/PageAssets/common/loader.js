@@ -85,6 +85,35 @@ window.initCustomPicker = function (selector) {
         }
     });
 };
+
+//Convert MonthYear 62026 in June2026
+function formatMonthYear(monthYear) {
+    if (!monthYear) return "";
+    monthYear = monthYear.toString().trim();
+    let year = monthYear.slice(-4);
+    let month = parseInt(monthYear.slice(0, -4), 10);
+    const monthNames = [
+        "January", "February", "March", "April",
+        "May", "June", "July", "August",
+        "September", "October", "November", "December"
+    ];
+    return (month >= 1 && month <= 12)
+        ? `${monthNames[month - 1]} ${year}`
+        : monthYear;
+}
+
+//Set Previous Months
+function setPreviousMonth(selector) {
+    let date = new Date();
+
+    // Previous month
+    date.setMonth(date.getMonth() - 1);
+
+    let month = String(date.getMonth() + 1).padStart(2, '0');
+    let year = date.getFullYear();
+
+    $(selector).val(`${month}/${year}`);
+}
 function showModalLoader() {
     $(".modalLoader").css("display", "flex");
 }

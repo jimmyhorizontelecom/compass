@@ -96,10 +96,9 @@ function bindDatatable(records, tableId) {
                 <td>${value.SaleBillNo} <br> ${value.PurchaseBillNo}</td>
                 <td>${value.SaleBillAmt} </td>
                 <td>${value.SaleBillDate}</td>
-                 <td class="text-center align-middle">  
-                     <button type="button" class="btn  btn-coral txt-white edit-DeptPayment" data-id="${value.AgencyBillId}">
-                         Dept. Payment
-                     </button>          
+                <!--Dept. Payment Button--> 
+                <td class="text-center align-middle">  
+                  <button type="button"  class="btn btn-coral txt-white edit-DeptPayment"  data-id="${value.AgencyBillId}"  ${value.IsDispatched === 'N' ? 'disabled' : ''}> Dept. Payment </button>
                 </td>
                 <td class="text-center align-middle">
                      <button type="button" class="btn  btn-coral txt-white edit-PartialPayment" data-id="${value.AgencyBillId}">

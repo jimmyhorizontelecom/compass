@@ -2,24 +2,20 @@
 
 
 $(document).ready(function () {
-    resetModal();
-    //Get monthYear
+    alert('Dispatch Loading')
+     resetModal();
+    // Initialize Month Picker
     initCustomPicker('#MonthYear');
-    // Previous Month
-    var today = new Date();
-    today.setMonth(today.getMonth() - 1);
-
-    var month = String(today.getMonth() + 1).padStart(2, '0');
-    var year = today.getFullYear();
-    $("#MonthYear").val(month + "/" + year);
-    recordlist(); 
-    alert('Loading Dispatch')
-    // load data when MnothYear changes
-    $("#MonthYear").change(function () {
+    // Set Previous Month as Default
+    setPreviousMonth('#MonthYear');
+    // Load Records
+    recordlist();
+    // Reload records when Month changes
+    $("#MonthYear").on("change", function () {
         recordlist();
     });
-});
- 
+ });
+
 // Print Button
 $(".btnPrint").on("click", function () {
     alert('Print Button Works')
@@ -70,7 +66,7 @@ function bindDatatable(records, tableId) {
                 <td>${value.AgencyName}</td>
                 <td>${value.AgencyBillNo}</td>
                 <td>${value.SaleBillNo}</td>
-                <td>${value.BillFormonth}</td>
+                <td>${formatMonthYear(value.BillFormonth)}</td>
                 <td>${value.DeptAddress}</td>
                 <!-- Dispatch Status -->
                  <td class="text-center">

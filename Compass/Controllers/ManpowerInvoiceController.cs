@@ -115,14 +115,10 @@ namespace Compass.Controllers
                 parameters.Add("@PaymentStatus", filter.PaymentStatus);
                 parameters.Add("@EmpId", userId);
                 parameters.Add("@UserRole", roleId);
-
                 var dt = await _cn.FillDataTableAsync("TallyAgencyBill1_List", "", parameters);
-
                 if (dt == null || dt.Rows.Count == 0)
                     return Ok(new List<PInvoiceVerifyViewModel>());
-
                 var list = dt.AsEnumerable().Select(row => new PInvoiceVerifyViewModel
-
                 {
                     //Id = row["AgencyBillId"] != DBNull.Value ? Convert.ToInt32(row["AgencyBillId"]) : 0,
                     Id = Convert.ToInt32(row["AgencyBillId"]?.ToString()),
@@ -148,10 +144,7 @@ namespace Compass.Controllers
                     InputSgst = Convert.ToDecimal(row["SGSTAtm"]?.ToString()),
                     InputIgst = Convert.ToDecimal(row["IGSTAmt"]?.ToString()),
                     TotalAmt = Convert.ToDecimal(row["TotalAmt"]?.ToString()),
-
-
                 }).ToList();
-
                 return Ok(list);
             }
             catch (Exception ex)
@@ -450,6 +443,7 @@ namespace Compass.Controllers
                     PurchaseBillNo = (row["Billno"]?.ToString()),
                     SaleBillAmt = Convert.ToDecimal(row["AgencyBillAmt"] ??0),//.ToString()),
                     SaleBillDate = row["SaleBillDate"]?.ToString(),
+                    IsDispatched = Convert.ToChar(row["IsDispatched"]?.ToString()),
                     //AgencyBillAmt = Convert.ToDecimal(row["AgencyBillAmt"] ?? 0),
 
                 }).ToList();
@@ -801,6 +795,7 @@ namespace Compass.Controllers
                     DeptAdd = (row["DepartmentAddress"]?.ToString()),
                     AgencyId = Convert.ToInt32(row["AgencyId"]?.ToString()),
                     AgencyName = (row["AgencyName"]?.ToString()),
+                    IsDeptPaymentReceived = Convert.ToChar(row["IsDeptPaymentReceived"]?.ToString()),
 
                 }).ToList();
 
