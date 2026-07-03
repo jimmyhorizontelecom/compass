@@ -795,7 +795,7 @@ namespace Compass.Controllers
                     DeptAdd = (row["DepartmentAddress"]?.ToString()),
                     AgencyId = Convert.ToInt32(row["AgencyId"]?.ToString()),
                     AgencyName = (row["AgencyName"]?.ToString()),
-                    IsDeptPaymentReceived = Convert.ToChar(row["IsDeptPaymentReceived"]?.ToString()),
+                    IsDeptPaymentReceived = (row["IsDeptPaymentReceived"]?.ToString()),
 
                 }).ToList();
 

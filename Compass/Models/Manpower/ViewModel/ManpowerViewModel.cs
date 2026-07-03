@@ -293,7 +293,7 @@ namespace Compass.Models.ManpowerViewModel
         public string DeptAdd { get; set; }
         public int AgencyId { get; set; }
         public string AgencyName { get; set; }
-        public Char IsDeptPaymentReceived { get; set; }
+        public string IsDeptPaymentReceived { get; set; }
        
     }
 
