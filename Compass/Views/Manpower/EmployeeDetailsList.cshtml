@@ -1,0 +1,388 @@
+﻿@using System.Security.Claims
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    var roleId = User.FindFirst("RoleId")?.Value;
+    var userId = User.FindFirst("UserId")?.Value;
+    var deptId = User.FindFirst("DeptId")?.Value;
+}
+@{
+    Layout = "~/Views/Shared/_TestLayout.cshtml";
+}
+
+<div class="container-fluid ">
+    <div id="modalLoader1" class="modal-loader modalLoader">
+        <div class="spinner"></div>
+        <p class="loading-text">Please wait...</p>
+
+    </div>
+    <h4>Employee Details List</h4>
+
+    <div class="filter-panel mt-5 div-coral-base">
+        <div class="row">
+            <div class="col-md-2">
+                <label class="form-labelo">Agency<span class="text-danger">*</span></label>
+                <select id="ddlAgencyFilter" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                    <option selected value="0">Select</option>
+                </select>
+                <span class="error"></span>
+            </div>
+            <div class="col-md-2">
+                <label class="form-labelo">Department<span class="text-danger">*</span></label>
+                <select id="ddlDeptFilter" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                    <option selected value="0">Select</option>
+                </select>
+                <span class="error"></span>
+            </div>
+            <div class="col-md-2">
+                <label class="form-labelo">Work Order No<span class="text-danger">*</span></label>
+                <select id="ddlWorkOrderFilter" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                <option selected value="0">Select</option>
+                </select>
+                <span class="error"></span>
+            </div>
+            <div class="col-md-4"> </div>
+            <div class="col-md-2">
+                <label class="form-labelo"></label>
+                <button type="button" class="btn  btn-coral txt-white" data-bs-toggle="modal" data-bs-target="#myModal">
+                    Export Excel
+                </button>
+                @* <button type="button" class="btn  btn-coral txt-white" data-bs-toggle="modal" data-bs-target="#myModalTab">
+                    Open tab modal
+                </button> *@
+
+            </div>
+        </div>
+    </div>
+
+      <div class="container-fluid mt-5">
+        <div class="filter-panel mt-5 div-coral-base">
+            <table id="myTable" class="table orangeTh table-striped table-hover table-bordered">
+                <thead class="bg-d">
+                    <tr>
+                        <th>Sr.No</th>
+                        <th>Agency Name</th>
+                        <th>Department Name</th>
+                        <th>Employee Name.</th>
+                        <th>Father's Name <br /> Husband Name</th>
+                        <th>Designation</th>
+                        <th>Aadhar No.</th>
+                        <th>Basic Salary</th>
+                        <th>Is EPF</th>
+                        <th>Is ESIC</th>
+                        <th>Edit</th>
+                        <th>Remove</th>
+                    </tr>
+                </thead>
+                <tbody class="vertical-align: middle; ">
+                </tbody>
+                <tfoot class="tfoot bg-primary">
+                    <tr>
+                        @* <td>3</td>
+                    <td>Mike Brown</td>
+                    <td>mike@example.com</td>
+                    <td>Editor</td>
+                    <td>Editor</td> *@
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@section Modals {
+    <!-- The Modal -->
+    <!-- Add Employee Details-->
+    <div class="modal modal-lg" id="myModal_EditEmployee">
+        <div class="modal-dialog ">
+            <div class="modal-content position-relative">
+                <!-- 🔥 Loader Overlay -->
+                <div id="" class="modal-loader modalLoader">
+                    <div class="spinner"></div>
+                    <p class="loading-text">Please wait...</p>
+                </div>
+                <!-- Modal Header -->
+                <div class="modal-header  bg-ld ">
+                    <h4 class="modal-title txt-white" id="myModalLabel">Edit Employee Details</h4>
+                    <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div id="#toast-container"></div>
+                    <div class="filter-panel mt-2 div-coral-base">
+                        
+                            <div class="form-group row">
+                                <div class="col-md-4 mb-0">
+                                    <label class="form-label">Employee Name<span class="text-danger">*</span></label>
+                                    <input type="text" id="txtEmpName" class="form-control txtbx cleartxt" placeholder="Employee Name" />
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 mb-0">
+                                    <label class="form-label">Father/Husband Name<span class="text-danger">*</span></label>
+                                    <input type="text" id="txtFathersName" class="form-control txtbx cleartxt" placeholder="Father's/Husband Name'" />
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 mb-0">
+                                    <label class="form-label">Mobile No.<span class="text-danger">*</span></label>
+                                    <input type="number" id="numMobileNo" class="form-control txtbx cleartxt" placeholder="Mobile No." />
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-4 mb-0">
+                                    <label class="form-label">Email Id<span class="text-danger">*</span></label>
+                                    <input type="text" id="txtEmailId" class="form-control txtbx cleartxt" placeholder="Email Id" />
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 mb-0">
+                                    <label class="form-label">Adhaar No.<span class="text-danger">*</span></label>
+                                    <input type="number" id="numAdhaarNo" class="form-control txtbx cleartxt" placeholder="Adhaar No." />
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 mb-0">
+                                    <label class="form-labelo">Designation<span class="text-danger">*</span></label>
+                                    <select id="ddlDesignation" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                                        <option selected value="0"> -- Select --</option>
+                                    </select>
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-4 mb-0">
+                                    <label class="form-label">Bank Account no.<span class="text-danger">*</span></label>
+                                    <input type="number" id="numBankACNo" class="form-control txtbx cleartxt" placeholder="Bank Account no." />
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 mb-0">
+                                    <label class="form-label">IFSC Code<span class="text-danger">*</span></label>
+                                    <input type="text" id="txtIfscCode" class="form-control txtbx cleartxt" placeholder="IFSC Code" />
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 mb-0">
+                                    <label class="form-label">UAN No.<span class="text-danger">*</span></label>
+                                    <input type="number" id="numUanNo" class="form-control txtbx cleartxt" placeholder="UAN No." />
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-4 mb-0">
+                                    <label class="form-label">ESIC (IP No.)<span class="text-danger">*</span></label>
+                                    <input type="number" id="numEsiNo" class="form-control txtbx cleartxt" placeholder="ESIC No." />
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 mb-0">
+                                    <label class="form-labelo">Educational Level<span class="text-danger">*</span></label>
+                                    <select id="ddlEducation" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                                        <option selected value="0"> -- Select --</option>
+                                    </select>
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 mb-0">
+                                    <input class="form-check-input" type="checkbox" id="chkFullTimeEmp">
+                                    <label class="form-check-label" for="chkActive"> Is Full Time Employee </label>
+                                    <span class="error"></span>
+                                </div>
+                            </div>                     
+                    </div>
+                    <div class="filter-panel mt-2s div-coral-base">
+                        <div class="form-group row">
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">Basic Salary<span class="text-danger">*</span></label>
+                                <input type="number" id="numBasicSalary" class="form-control txtbx cleartxt" placeholder="Basic Salary" />
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <input class="form-check-input" type="checkbox" id="chkEPF">  <label class="form-check-label" for="chkActive"> EPF 13% </label>
+                                <input type="number" id="numEpf" class="form-control txtbx cleartxt" placeholder="EPF" />
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <input class="form-check-input" type="checkbox" id="chkESIC"> <label class="form-check-label" for="chkActive"> ESIC 3.25% </label>
+                                <input type="number" id="numEsic" class="form-control txtbx cleartxt" placeholder="ESIC" />
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">Other Allowance<span class="text-danger">*</span></label>
+                                <input type="number" id="numAllowance" class="form-control txtbx cleartxt" placeholder="Other Allowance" />
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">Total Amount<span class="text-danger">*</span></label>
+                                <input type="number" id="numTotalAmt" class="form-control txtbx cleartxt" placeholder="Total Amount" readonly />
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal footer -->
+                    <div class="modal-footer  bg-ld">
+                        <div class="me-auto">
+                            <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
+                        </div>
+                        <div class="flex-grow-1 text-center modelalert text-danger"></div>
+                        <button type="button" class="btn btnModel btnModalEditEmpSubmit">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Employee Details-->
+    <div class="modal modal-lg" id="myModal_DeleteEmployee">
+        <div class="modal-dialog ">
+            <div class="modal-content position-relative">
+                <!-- 🔥 Loader Overlay -->
+                <div id="" class="modal-loader modalLoader">
+                    <div class="spinner"></div>
+                    <p class="loading-text">Please wait...</p>
+                </div>
+                <!-- Modal Header -->
+                <div class="modal-header  bg-ld ">
+                    <h4 class="modal-title txt-white" id="myModalLabel">Delete Employee Details</h4>
+                    <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div id="#toast-container"></div>
+                    <div class="filter-panel mt-2 div-coral-base">
+
+                        <div class="form-group row">
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">Employee Name<span class="text-danger">*</span></label>
+                                <input type="text" id="txtEmpName1" class="form-control txtbx cleartxt" placeholder="Employee Name" />
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">Father/Husband Name<span class="text-danger">*</span></label>
+                                <input type="text" id="txtFathersName1" class="form-control txtbx cleartxt" placeholder="Father's/Husband Name'" />
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">Mobile No.<span class="text-danger">*</span></label>
+                                <input type="number" id="numMobileNo1" class="form-control txtbx cleartxt" placeholder="Mobile No." />
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">Email Id<span class="text-danger">*</span></label>
+                                <input type="text" id="txtEmailId1" class="form-control txtbx cleartxt" placeholder="Email Id" />
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">Adhaar No.<span class="text-danger">*</span></label>
+                                <input type="number" id="numAdhaarNo1" class="form-control txtbx cleartxt" placeholder="Adhaar No." />
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Designation<span class="text-danger">*</span></label>
+                                <select id="ddlDesignation1" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                                    <option selected value="0"> -- Select --</option>
+                                </select>
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">Bank Account no.<span class="text-danger">*</span></label>
+                                <input type="number" id="numBankACNo1" class="form-control txtbx cleartxt" placeholder="Bank Account no." />
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">IFSC Code<span class="text-danger">*</span></label>
+                                <input type="text" id="txtIfscCode1" class="form-control txtbx cleartxt" placeholder="IFSC Code" />
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">UAN No.<span class="text-danger">*</span></label>
+                                <input type="number" id="numUanNo1" class="form-control txtbx cleartxt" placeholder="UAN No." />
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">ESIC (IP No.)<span class="text-danger">*</span></label>
+                                <input type="number" id="numEsiNo1" class="form-control txtbx cleartxt" placeholder="ESIC No." />
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Educational Level<span class="text-danger">*</span></label>
+                                <select id="ddlEducation1" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                                    <option selected value="0"> -- Select --</option>
+                                </select>
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <input class="form-check-input" type="checkbox" id="chkFullTimeEmp1">
+                                <label class="form-check-label" for="chkActive"> Is Full Time Employee </label>
+                                <span class="error"></span>
+                            </div>
+                        </div>                      
+                    </div>
+                    <div class="filter-panel mt-2 div-coral-base">
+                        <div class="form-group row">
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">Basic Salary<span class="text-danger">*</span></label>
+                                <input type="number" id="numBasicSalary1" class="form-control txtbx cleartxt" placeholder="Basic Salary" />
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <input class="form-check-input" type="checkbox" id="chkEPF">  <label class="form-check-label" for="chkActive"> EPF 13% </label>
+                                <input type="number" id="numEpf1" class="form-control txtbx cleartxt" placeholder="EPF" />
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <input class="form-check-input" type="checkbox" id="chkESIC"> <label class="form-check-label" for="chkActive"> ESIC 3.25% </label>
+                                <input type="number" id="numEsic1" class="form-control txtbx cleartxt" placeholder="ESIC" />
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">Other Allowance<span class="text-danger">*</span></label>
+                                <input type="number" id="numAllowance1" class="form-control txtbx cleartxt" placeholder="Other Allowance" />
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">Total Amount<span class="text-danger">*</span></label>
+                                <input type="number" id="numTotalAmt1" class="form-control txtbx cleartxt" placeholder="Total Amount" readonly />
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="filter-panel mt-2 div-coral-base">
+                        <div class="form-group row">
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">Left Out date<span class="text-danger">*</span></label>
+                                <input type="date" id="dateLeftOut" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")">
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-8 mb-0">
+                                <label class="form-label">Left Out Remarks<span class="text-danger">*</span></label>
+                                <textarea id="txtNarration2" class="form-control" placeholder="Please enter remarks here"></textarea>
+                                <span class="error"></span>
+                            </div>
+                         </div>
+                        </div>
+                    <!-- Modal footer -->
+                    <div class="modal-footer  bg-ld">
+                        <div class="me-auto">
+                            <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
+                        </div>
+                        <div class="flex-grow-1 text-center modelalert text-danger"></div>
+                        <button type="button" class="btn btnModel btnModalDeleteEmpSubmit">Left Out</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@section Scripts {
+    
+    <script src="~/pageassets/manpower/js/employeedetailslist.js"></script>
+}

@@ -444,6 +444,7 @@ namespace Compass.Controllers
                     SaleBillAmt = Convert.ToDecimal(row["AgencyBillAmt"] ??0),//.ToString()),
                     SaleBillDate = row["SaleBillDate"]?.ToString(),
                     IsDispatched = Convert.ToChar(row["IsDispatched"]?.ToString()),
+                    IsDeptPaymentReceived = Convert.ToChar(row["IsDeptPaymentReceived"]?.ToString()),
                     //AgencyBillAmt = Convert.ToDecimal(row["AgencyBillAmt"] ?? 0),
 
                 }).ToList();

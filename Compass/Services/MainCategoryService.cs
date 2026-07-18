@@ -80,6 +80,23 @@ namespace Compass.Services
             return await _repository.GetAgencyDropdownAsync(agencyId, roleId, searchTerm);
         }
 
+       //Get Designation ddl
+        public async Task<List<DropdownDto>> GetDesignationDropdownAsync(
+        int designationId, 
+        string searchTerm
+        )
+        {
+            return await _repository.GetDesignationDropdownAsync(designationId, searchTerm);
+        }
+
+        //Get Educational ddl
+        public async Task<List<DropdownDto>> GetEducationalDropdownAsync(
+        int educationId,
+        string searchTerm
+        )
+        {
+            return await _repository.GetEducationalDropdownAsync(educationId, searchTerm);
+        }
 
         //Get Work Order ddl & Billing Address depends on Work Order based on Parent 1 & Parent 2
 

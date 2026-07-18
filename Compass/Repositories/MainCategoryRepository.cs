@@ -228,6 +228,50 @@ namespace Compass.Repositories
         }
 
 
+        //Get Designation ddl
+        public async Task<List<DropdownDto>> GetDesignationDropdownAsync(
+         int designationId,
+          string searchTerm
+            )
+        {
+
+            SortedList parameters = new SortedList();
+            parameters.Add("@DesignationId", designationId);
+            parameters.Add("@SearchTerm", string.IsNullOrEmpty(searchTerm) ? DBNull.Value : searchTerm);
+            var dt = await _cn.FillDataTableAsync(
+                    "TallyDesignation_ddlC",
+                    "",
+                    parameters
+                );
+            if (dt == null || dt.Rows.Count == 0)
+                return new List<DropdownDto>();
+
+            var result = CommonNew.ToList<DropdownDto>(dt);
+            return result;
+        }
+
+        //Get Educational ddl
+        public async Task<List<DropdownDto>> GetEducationalDropdownAsync(
+         int educationId,
+         string searchTerm
+            )
+        {
+
+            SortedList parameters = new SortedList();
+            parameters.Add("@EducationID", educationId);
+            parameters.Add("@SearchTerm", string.IsNullOrEmpty(searchTerm) ? DBNull.Value : searchTerm);
+            var dt = await _cn.FillDataTableAsync(
+                    "TallyEducation_List",
+                    "",
+                    parameters
+                );
+            if (dt == null || dt.Rows.Count == 0)
+                return new List<DropdownDto>();
+
+            var result = CommonNew.ToList<DropdownDto>(dt);
+            return result;
+        }
+
         //Get Work Order ddl & Billing Address depends on Work Order based on Parent 1 & Parent 2
         public async Task<List<DropdownDto>> GetWorkOredrDropdownAsync(
             int Id, 

@@ -12,8 +12,10 @@ namespace Compass.Models.ManpowerViewModel
         public int DeptId { get; set; }
         public int MonthYear { get; set; }
         public string WorkOrderId { get; set; }
+        public string IsActive { get; set; }
         public int CreatedBy { get; set; }
         public int UserRole { get; set; }
+        public string searchTerm { get; set; }
 
     }
 
@@ -88,6 +90,52 @@ namespace Compass.Models.ManpowerViewModel
 
 
     #endregion
+
+    #region EmployeeDetailsList
+
+    public class EmployeeFilter
+    {
+        public int EmpId { get; set; }
+        public int AgencyId { get; set; }
+        public int DeptId { get; set; }
+        public string WorkOrderId { get; set; }
+        public int CreatedBy { get; set; }
+        public int UserRole { get; set; }
+        public string searchTerm { get; set; }
+
+    }
+
+    public class EmployeeDetailsListViewModel
+    {
+        public int EmpId { get; set; }
+        public int AgencyId { get; set; }
+        public string AgencyName { get; set; }
+        public int DeptId { get; set; }
+        public string DepartmentName { get; set; }
+        public int DesignationId { get; set; }
+        public string DesignationName { get; set; }
+        public int EducationId { get; set; }
+        public string EducationName { get; set; }
+        public string EmpName { get; set; }
+        public string FathersName { get; set; }
+        public string MobileNo { get; set; }
+        public string Desigation { get; set; }
+        public string AADHARNO { get; set; }
+        public decimal Basics { get; set; }
+        public string IsFullTime { get; set; }
+        public string IsEPF { get; set; }
+        public decimal EpfAmt { get; set; }
+        public string IsESIC { get; set; }
+        public decimal EsicAmt { get; set; }
+        public decimal OthersAllowance { get; set; }
+        public string Error_Message { get; set; }
+        public string VerificationStatus { get; set; }
+        public string Isuploaded { get; set; }
+    }
+
+
+    #endregion
+
 
 
 
@@ -274,6 +322,7 @@ namespace Compass.Models.ManpowerViewModel
         public decimal SaleBillAmt { get; set; }
         public string SaleBillDate { get; set; }
         public Char IsDispatched { get; set; }
+        public Char IsDeptPaymentReceived { get; set; }
         //public decimal AgencyBillAmt { get; set; }
         
 

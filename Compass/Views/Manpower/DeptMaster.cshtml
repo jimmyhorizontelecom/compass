@@ -21,22 +21,38 @@
 
     <div class="filter-panel mt-5 div-coral-base">
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-labelo">Agency<span class="text-danger">*</span></label>
                 <select id="ddlAgencyFilter" class="form-select search_ddl select2" aria-label=".form-select-sm">
                     <option selected value="0">Select</option>
                 </select>
                 <span class="error"></span>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-labelo">Department<span class="text-danger">*</span></label>
                 <select id="ddlDeptFilter" class="form-select search_ddl select2" aria-label=".form-select-sm">
                     <option selected value="0">Select</option>
                 </select>
                 <span class="error"></span>
             </div>
-            <div class="col-md-3"> </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
+                <label class="form-labelo">Work Order Filter<span class="text-danger">*</span></label>
+                @* <select id="ddlWorkOrderFilter" class="form-select " aria-label=".form-select-sm">
+                    <option value="Y" selected>Active WorkOrder</option>
+                    <option  value="N">DeActive WorkOrder</option>
+                    <option  value="A">All</option>
+                </select> *@
+                <select id="ddlWorkOrderFilter"
+                        class="form-select"
+                        style="color:#000 !important; background-color:#fff !important;">
+                    <option value="Y" selected>Active WorkOrder</option>
+                    <option value="N">DeActive WorkOrder</option>
+                    <option value="A">All</option>
+                </select>
+                <span class="error"></span>
+            </div>
+            <div class="col-md-4"> </div>
+            <div class="col-md-2">
                 <label class="form-labelo"></label>
                 <button type="button" class="btn  btn-coral txt-white" data-bs-toggle="modal" data-bs-target="#myModal">
                     Add Work Order Details

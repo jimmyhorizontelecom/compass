@@ -21,7 +21,11 @@ namespace Compass.Repositories
         //Task<List<DropdownDto>> GetAgencyDropdownAsync(int deptId, string searchTerm);
         Task<List<DropdownDto>> GetAgencyDropdownAsync(int agencyId, int roleId, string searchTerm);
 
+        //Get Designation ddl
+        Task<List<DropdownDto>> GetDesignationDropdownAsync(int designationId , string searchTerm);
 
+        //Get Educational ddl
+        Task<List<DropdownDto>> GetEducationalDropdownAsync(int educationId, string searchTerm);
 
         //  //Get Work Order ddl & Billing Address depends on Work Order based on Parent 1 & Parent 2
         Task<List<DropdownDto>> GetWorkOredrDropdownAsync(int Id, int ParentId1, int ParentId2, int ParentId3, int userId, int roleId, string searchTerm);

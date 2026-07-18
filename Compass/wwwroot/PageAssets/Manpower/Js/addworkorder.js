@@ -41,10 +41,12 @@ async function recordlist() {
 
     var agencyId = parseInt($("#ddlAgencyFilter").val()) || 0;
     var deptId = parseInt($("#ddlDeptFilter").val()) || 0;
+    var workOrderFilter = parseInt($("#ddlWorkOrderFilter").val()) || "Y";
     var filterData = {
         AgencyId: agencyId,
         DeptId: deptId,
         WorkOrderId: 0,
+        IsActive: workOrderFilter,
      };
     console.log(filterData);
     try {

@@ -33,12 +33,12 @@ namespace Compass.Controllers
         //    return Ok(result);
         //}
         public async Task<IActionResult> MDepartment_ddl(
-         int deptId = 0,
-         int agencyId = 0,
+         int id = 0,
+        int mainCatgId = 0,
          string searchTerm = "")
         {
             var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
-            var result = await _service.GetDepartmentDropdownAsync(deptId, userId, agencyId, searchTerm);
+            var result = await _service.GetDepartmentDropdownAsync(id, userId, mainCatgId, searchTerm);
             return Ok(result);
         }
 
@@ -92,6 +92,30 @@ namespace Compass.Controllers
         {
             int roleId = Convert.ToInt32(User.FindFirst("RoleId")?.Value ?? "0");
             var result = await _service.GetAgencyDropdownAsync(agencyId, roleId, searchTerm);
+            return Ok(result);
+        }
+
+        //Get Designation ddl
+        [HttpGet]
+        public async Task<IActionResult> MDesignation_ddl(
+      int designationId = 0,
+      string searchTerm = ""
+       )
+        {
+           // int roleId = Convert.ToInt32(User.FindFirst("RoleId")?.Value ?? "0");
+            var result = await _service.GetDesignationDropdownAsync(designationId, searchTerm);
+            return Ok(result);
+        }
+
+        //Get Educational ddl
+        [HttpGet]
+        public async Task<IActionResult> MEducational_ddl(
+      int educationId = 0,
+      string searchTerm = ""
+       )
+        {
+            // int roleId = Convert.ToInt32(User.FindFirst("RoleId")?.Value ?? "0");
+            var result = await _service.GetEducationalDropdownAsync(educationId, searchTerm);
             return Ok(result);
         }
 
