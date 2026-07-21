@@ -11,8 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
-
-
 //using Newtonsoft.Json;
 using System.Collections;
 using System.Data;

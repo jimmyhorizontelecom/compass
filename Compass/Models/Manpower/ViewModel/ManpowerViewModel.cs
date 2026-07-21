@@ -98,7 +98,7 @@ namespace Compass.Models.ManpowerViewModel
         public int EmpId { get; set; }
         public int AgencyId { get; set; }
         public int DeptId { get; set; }
-        public string WorkOrderId { get; set; }
+        public int WorkOrderId { get; set; }
         public int CreatedBy { get; set; }
         public int UserRole { get; set; }
         public string searchTerm { get; set; }

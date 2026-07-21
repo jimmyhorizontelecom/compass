@@ -7,6 +7,7 @@ using Compass.Models.ManpowerViewModel;
 using Compass.Models.Test;
 using DocumentFormat.OpenXml.ExtendedProperties;
 using DocumentFormat.OpenXml.Office2010.Excel;
+using DocumentFormat.OpenXml.Office2019.Drawing.Model3D;
 using DocumentFormat.OpenXml.Wordprocessing;
 using ExcelDataReader;
 using Microsoft.AspNetCore.Authorization;
@@ -161,184 +162,6 @@ namespace Compass.Controllers
 
         #endregion
 
-
-        #region   EmployeeDetailsList
-        public IActionResult EmployeeDetailsList()
-        {
-            return View();
-        }
-
-        // Get record for the List
-        [HttpGet]
-        public async Task<IActionResult> GetEmployeeDetailsRecord([FromQuery] EmployeeFilter filter)
-
-        {
-            var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
-            var roleId = Convert.ToInt32(User.FindFirst("RoleId")?.Value ?? "0");
-            try
-            {
-                // Access as object
-                SortedList parameters = new SortedList();
-                
-                parameters.Add("@DeptId", filter.DeptId);
-                parameters.Add("@AgenyId", filter.AgencyId);
-                parameters.Add("@WorkOrderId", 0/*filter.WorkOrderId*/);
-                parameters.Add("@CreatedBy", userId);
-                parameters.Add("@RoleId",roleId);
-                parameters.Add("@PageNumber", 1/*filter.IsActive*/);
-                parameters.Add("@PageSize", 50/*filter.IsActive*/);
-                parameters.Add("@SearchTerm", filter.searchTerm);
-                var dt = await _cn.FillDataTableAsync("stpTallyEmployees_list1_Paginated", "", parameters);
-                if (dt == null || dt.Rows.Count == 0)
-                    return Ok(new List<EmployeeDetailsListViewModel>());
-                var list = dt.AsEnumerable().Select(row => new EmployeeDetailsListViewModel
-                {
-                    EmpId = (row["EmpId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["EmpId"].ToString()))
-                    ? 0 : Convert.ToInt32(row["EmpId"]),
-                    AgencyName = (row["AgencyName"]?.ToString()),
-                    //DeptId = (row["DeptId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["DeptId"].ToString()))
-                    //? 0 : Convert.ToInt32(row["DeptId"]),
-                    DepartmentName = (row["departmentName"]?.ToString()),
-                    EmpName = (row["Empname"]?.ToString()),
-                    FathersName = (row["FatherName"]?.ToString()),
-                    Desigation = (row["fvDesignationName"]?.ToString()),
-                    AADHARNO = (row["AADHARNO"]?.ToString()),
-                    Basics = Convert.ToDecimal (row["BasicSalary"]?.ToString()),
-                    IsEPF = (row["IsPf"]?.ToString()),
-                    IsESIC = (row["IsEsi"]?.ToString()),
-                }).ToList();
-
-                return Ok(list);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
-                {
-                    success = false,
-                    message = "Server error.",
-                    error = ex.Message
-                });
-            }
-        }
-
-
-        // Get record Edit Employee Details
-        [HttpGet]
-        public async Task<IActionResult> GetEditEmpDetails([FromQuery] EmployeeFilter filter)
-        {
-            try
-            {
-                // Access as object
-                SortedList parameters = new SortedList();
-                parameters.Add("@EmpId", filter.EmpId);
-               
-                var dt = await _cn.FillDataTableAsync("stpTallyEmployees_Get", "", parameters);
-                if (dt == null || dt.Rows.Count == 0)
-                    return Ok(new List<EmployeeDetailsListViewModel>());
-                var list = dt.AsEnumerable().Select(row => new EmployeeDetailsListViewModel
-                {
-                    EmpId = (row["EmpId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["EmpId"].ToString()))
-                    ? 0 : Convert.ToInt32(row["EmpId"]),
-                    DesignationId = (row["fiDesignationID"] == DBNull.Value || string.IsNullOrWhiteSpace(row["fiDesignationID"].ToString()))
-                    ? 0 : Convert.ToInt32(row["fiDesignationID"]),
-                    DesignationName = (row["fvDesignationName"]?.ToString()),
-                    EducationId = (row["EducationId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["EducationId"].ToString()))
-                    ? 0 : Convert.ToInt32(row["EducationId"]),
-                    AgencyId = (row["AgencyId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["AgencyId"].ToString()))
-                    ? 0 : Convert.ToInt32(row["AgencyId"]),
-                    AgencyName = (row["AgencyName"]?.ToString()),
-                    DeptId = (row["DeptId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["DeptId"].ToString()))
-                    ? 0 : Convert.ToInt32(row["DeptId"]),
-                    DepartmentName = (row["departmentName"]?.ToString()),
-                    EmpName = (row["Empname"]?.ToString()),
-                    FathersName = (row["FatherName"]?.ToString()),
-                    Desigation = (row["fvDesignationName"]?.ToString()),
-                    AADHARNO = (row["AADHARNO"]?.ToString()),
-                    Basics = Convert.ToDecimal(row["BasicSalary"]?.ToString()),
-                    IsFullTime = (row["IsFullTime"]?.ToString()),
-                    IsEPF = (row["IsPf"]?.ToString()),
-                    EpfAmt = Convert.ToDecimal(row["EpfAmt"]?.ToString()),
-                    IsESIC = (row["IsEsi"]?.ToString()),
-                    EsicAmt = Convert.ToDecimal(row["EsiAmt"]?.ToString()),
-                    OthersAllowance = Convert.ToDecimal(row["OthersAllowance"]?.ToString()),
-                }).ToList();
-                return Ok(list);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
-                {
-                    success = false,
-                    message = "Server error.",
-                    error = ex.Message
-                });
-            }
-        }
-
-        // Submit data 
-        [HttpPost]
-        public IActionResult AddOrEditEmpDetailsRecord(EmployeeDetails model)
-        {
-            try
-            { 
-                SortedList parameters = new SortedList();
-                parameters.Add("@EmpId", model.EmpId);
-                parameters.Add("@Empname", model.Empname);
-                parameters.Add("@FatherName", model.FatherName);
-                parameters.Add("@Email", model.Email);
-                parameters.Add("@ContactNo", model.ContactNo);
-                parameters.Add("@IsFullTime", model.IsFullTime);
-                parameters.Add("@DesigationId", model.DesigationId);
-                parameters.Add("@EducationId", model.EducationId);
-                parameters.Add("@AADHARNO", model.AADHARNO);
-                parameters.Add("@BasicSalary", model.BasicSalary);
-                parameters.Add("@OthersAllowance", model.OthersAllowance);
-                parameters.Add("@IsPf", model.IsPf);
-                parameters.Add("@IsEsi", model.IsEsi);
-                parameters.Add("@AcNO", model.AcNO);
-                parameters.Add("@Ifsc", model.Ifsc);
-                parameters.Add("@UANNo", model.UANNo);
-                parameters.Add("@ESICNo", model.ESICNo);
-
-                int userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
-                parameters.Add("@CreatedBy", userId);
-                //var userId = User.FindFirst("UserId")?.Value;
-                //parameters.Add("@CreatedBy", userId);
-
-                var result = _cn.ExecuteNonQueryWMessage(
-                    "stpTallyEmployees_AcceptUPdate",
-                    "",
-                    parameters
-                );
-
-                return Ok(new
-                {
-                    EmpId = model.EmpId,
-                    EmpName = model.Empname,
-                    IsFullTime = model.IsFullTime,
-                    IsPf = model.IsPf,
-                    IsEsi = model.IsEsi,
-                    success = true,
-                    message = result.ToString()
-                });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
-                {
-                    success = false,
-                    message = "Server error.",
-                    error = ex.Message
-                });
-            }
-        }
-
-
-
-
-
-        #endregion
-
         #region Employee Deatils Import
         public IActionResult EmployeeDetailImport()
         {
@@ -354,7 +177,7 @@ namespace Compass.Controllers
             try
             {
                 // Access as object
-               SortedList parameters = new SortedList();
+                SortedList parameters = new SortedList();
                 parameters.Add("@AgencyId", filter.AgencyId);
                 parameters.Add("@DeptId", filter.DeptId);
                 parameters.Add("@WorkOrderId", filter.WorkOrderId);
@@ -370,7 +193,7 @@ namespace Compass.Controllers
 
                 {
                     //AgencyId = (row["AgencyId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["AgencyId"].ToString()))
-                   // ? 0 : Convert.ToInt32(row["AgencyId"]),
+                    // ? 0 : Convert.ToInt32(row["AgencyId"]),
                     EmpName = (row["AgencyName"]?.ToString()),
                     FathersName = (row["AgencyName"]?.ToString()),
                     IsFullTimer = (row["AgencyName"]?.ToString()),
@@ -402,7 +225,7 @@ namespace Compass.Controllers
         public IActionResult DownloadDesignationCode()
         {
             string filePath = Path.Combine(Directory.GetCurrentDirectory(),
-                "wwwroot", "PageAssets","Manpower", "Templates", "Designation_List.xlsx");
+                "wwwroot", "PageAssets", "Manpower", "Templates", "Designation_List.xlsx");
             if (!System.IO.File.Exists(filePath))
             {
                 return NotFound("Template file not found.");
@@ -535,8 +358,8 @@ namespace Compass.Controllers
         [HttpPost]
         public async Task<IActionResult> VerifyEmployeeImport([FromBody] List<EmpImportExcelModel> employees)
         {
-             
-           try
+
+            try
             {
 
                 DataTable dtEmpDetails = new DataTable();
@@ -585,7 +408,7 @@ namespace Compass.Controllers
                     "stpTallyEmployeesImportMasterVerified",
                     "",
                     parameters);
-              
+
                 if (dt == null || dt.Rows.Count == 0)
                     return Ok(new List<EmpImportVerificationViewModel>());
 
@@ -608,7 +431,7 @@ namespace Compass.Controllers
                     }).ToList();
 
                 return Ok(list);
-               
+
             }
             catch (Exception ex)
             {
@@ -619,7 +442,7 @@ namespace Compass.Controllers
                     error = ex.Message
                 });
             }
-            }
+        }
 
         //Submit Import table data to database table
         [HttpPost]
@@ -690,6 +513,217 @@ namespace Compass.Controllers
         }
 
         #endregion
+
+
+        #region   EmployeeDetailsList
+        public IActionResult EmployeeDetailsList()
+        {
+            return View();
+        }
+
+        // Get record for the List
+        [HttpGet]
+        public async Task<IActionResult> GetEmployeeDetailsRecord([FromQuery] EmployeeFilter filter)
+
+        {
+            var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
+            var roleId = Convert.ToInt32(User.FindFirst("RoleId")?.Value ?? "0");
+            try
+            {
+                // Access as object
+                SortedList parameters = new SortedList();
+                
+                parameters.Add("@DeptId", filter.DeptId);
+                parameters.Add("@AgenyId", filter.AgencyId);
+                parameters.Add("@WorkOrderId", filter.WorkOrderId);
+                parameters.Add("@CreatedBy", userId);
+                parameters.Add("@RoleId",roleId);
+                parameters.Add("@PageNumber", 1/*filter.IsActive*/);
+                parameters.Add("@PageSize", 50/*filter.IsActive*/);
+                parameters.Add("@SearchTerm", filter.searchTerm);
+                var dt = await _cn.FillDataTableAsync("stpTallyEmployees_list1_Paginated", "", parameters);
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<EmployeeDetailsListViewModel>());
+                var list = dt.AsEnumerable().Select(row => new EmployeeDetailsListViewModel
+                {
+                    EmpId = (row["EmpId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["EmpId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["EmpId"]),
+                    AgencyName = (row["AgencyName"]?.ToString()),
+                    //DeptId = (row["DeptId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["DeptId"].ToString()))
+                    //? 0 : Convert.ToInt32(row["DeptId"]),
+                    DepartmentName = (row["departmentName"]?.ToString()),
+                    EmpName = (row["Empname"]?.ToString()),
+                    FathersName = (row["FatherName"]?.ToString()),
+                    Desigation = (row["fvDesignationName"]?.ToString()),
+                    AADHARNO = (row["AADHARNO"]?.ToString()),
+                    Basics = Convert.ToDecimal (row["BasicSalary"]?.ToString()),
+                    IsEPF = (row["IsPf"]?.ToString()),
+                    IsESIC = (row["IsEsi"]?.ToString()),
+                }).ToList();
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+
+        // Get record Edit Employee Details
+        [HttpGet]
+        public async Task<IActionResult> GetEditEmpDetails([FromQuery] EmployeeFilter filter)
+        {
+            try
+            {
+                // Access as object
+                SortedList parameters = new SortedList();
+                parameters.Add("@EmpId", filter.EmpId);
+               
+                var dt = await _cn.FillDataTableAsync("stpTallyEmployees_Get", "", parameters);
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<EmployeeDetailsListViewModel>());
+                var list = dt.AsEnumerable().Select(row => new EmployeeDetailsListViewModel
+                {
+                    EmpId = (row["EmpId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["EmpId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["EmpId"]),
+                    DesignationId = (row["fiDesignationID"] == DBNull.Value || string.IsNullOrWhiteSpace(row["fiDesignationID"].ToString()))
+                    ? 0 : Convert.ToInt32(row["fiDesignationID"]),
+                    DesignationName = (row["fvDesignationName"]?.ToString()),
+                    EducationId = (row["EducationId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["EducationId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["EducationId"]),
+                    AgencyId = (row["AgencyId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["AgencyId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["AgencyId"]),
+                    AgencyName = (row["AgencyName"]?.ToString()),
+                    DeptId = (row["DeptId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["DeptId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["DeptId"]),
+                    DepartmentName = (row["departmentName"]?.ToString()),
+                    EmpName = (row["Empname"]?.ToString()),
+                    FathersName = (row["FatherName"]?.ToString()),
+                    Desigation = (row["fvDesignationName"]?.ToString()),
+                    AADHARNO = (row["AADHARNO"]?.ToString()),
+                    Basics = Convert.ToDecimal(row["BasicSalary"]?.ToString()),
+                    IsFullTime = (row["IsFullTime"]?.ToString()),
+                    IsEPF = (row["IsPf"]?.ToString()),
+                    EpfAmt = Convert.ToDecimal(row["EpfAmt"]?.ToString()),
+                    IsESIC = (row["IsEsi"]?.ToString()),
+                    EsicAmt = Convert.ToDecimal(row["EsiAmt"]?.ToString()),
+                    OthersAllowance = Convert.ToDecimal(row["OthersAllowance"]?.ToString()),
+                }).ToList();
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+        // Submit data 
+        [HttpPost]
+        public IActionResult AddOrEditEmpDetailsRecord(EmployeeDetails model)
+        {
+            try
+            { 
+                SortedList parameters = new SortedList();
+                parameters.Add("@EmpId", model.EmpId);
+                parameters.Add("@Empname", model.Empname);
+                parameters.Add("@FatherName", model.FatherName);
+                parameters.Add("@Email", model.Email);
+                parameters.Add("@ContactNo", model.ContactNo);
+                parameters.Add("@IsFullTime", model.IsFullTime);
+                parameters.Add("@DesigationId", model.DesigationId);
+                parameters.Add("@EducationId", model.EducationId);
+                parameters.Add("@AADHARNO", model.AADHARNO);
+                parameters.Add("@BasicSalary", model.BasicSalary);
+                parameters.Add("@OthersAllowance", model.OthersAllowance);
+                parameters.Add("@IsPf", model.IsPf);
+                parameters.Add("@IsEsi", model.IsEsi);
+                parameters.Add("@AcNO", model.AcNO);
+                parameters.Add("@Ifsc", model.Ifsc);
+                parameters.Add("@UANNo", model.UANNo);
+                parameters.Add("@ESICNo", model.ESICNo);
+
+                int userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
+                parameters.Add("@CreatedBy", userId);
+                //var userId = User.FindFirst("UserId")?.Value;
+                //parameters.Add("@CreatedBy", userId);
+
+                var result = _cn.ExecuteNonQueryWMessage(
+                    "stpTallyEmployees_AcceptUPdate",
+                    "",
+                    parameters
+                );
+
+                return Ok(new
+                {
+                    success = true,
+                    message = result.ToString()
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+        // Delete Employee Records 
+        [HttpPost]
+        public IActionResult Delete_EmpDetailsRecord([FromForm] DeleteEmpDetails model)
+        {
+            try
+            {
+                Console.WriteLine("Emp Id Received: " + model.EmpId);
+                //var userId = User.FindFirst("UserId")?.Value;
+                SortedList parameters = new SortedList
+        {
+            { "@EmpId", model.EmpId },
+            { "@DroppedDate", model.DroppedDate },
+            { "@DroppedRemarks", model.DroppedRemarks},
+            
+        };
+                var result = _cn.ExecuteNonQueryWMessage(
+                    "Tallyemployee_Dropped",
+                    "",
+                    parameters
+                );
+                return Ok(new
+                {
+                    success = true,
+                    message = result.ToString()
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error",
+                    error = ex.Message
+                });
+            }
+        }
+
+
+
+
+        #endregion
+
+      
 
         #region Dept Attendance
         public IActionResult DeptAttendance()

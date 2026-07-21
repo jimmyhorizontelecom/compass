@@ -60,7 +60,7 @@
             </div>
             <div class="col-md-2 mb-0">
                 <label class="form-labelo">Work Order No<span class="text-danger">*</span></label>
-                <select id="ddlWorkOrder" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                <select id="ddlWorkOrderFilter" class="form-select search_ddl select2" aria-label=".form-select-sm">
                     <option selected value="0"> -- Select --</option>
                 </select>
                 <span class="error"></span>
@@ -80,8 +80,8 @@
         </div>
         <div class="form-group row">
             <div class="col-md-2 mb-0 d-flex justify-content-between">
-                <button type="button" id="btnViewExcel" class="btn btnModel btnViewFile mx-4" style="width:max-content">View</button>
-                <button type="button" class="btn btnModel btnVerifyFile mx-4" style="width:max-content">Verify</button>
+                <button type="button" id="btnViewExcel" class="btn btnModel btnViewFile mx-4" style="width:max-content" >View</button>
+                <button type="button" class="btn btnModel btnVerifyFile mx-4" style="width:max-content" >Verify</button>
             </div>
         </div>
     </div>
@@ -123,7 +123,7 @@
         </div>
         <div class="col-md-2 mb-0 d-flex justify-content-between">
             @* <button type="button" id="btnViewExcel" class="btn btnModel btnViewFile mx-4" style="width:max-content">View</button> *@
-            <button type="button" class="btn btnModel btnSubmitTableData mx-4" style="width:max-content">Submit</button>
+            <button type="button" class="btn btnModel btnSubmitTableData mx-4" style="width:max-content" >Submit</button>
         </div>
     </div>
 </div>
@@ -147,7 +147,7 @@
                 <!-- Modal body -->
                 <div class="modal-body">
                     <div id="#toast-container"></div>
-                    <div class="filter-panel mt-5 div-coral-base">
+                    <div class="filter-panel mt-2 div-coral-base">
                         <div class="form-group row">
                             <div class="col-md-4 mb-0">
                                 <label class="form-labelo">Agency<span class="text-danger">*</span></label>
@@ -165,7 +165,7 @@
                             </div>
                             <div class="col-md-4 mb-0">
                                 <label class="form-labelo">Work Order No<span class="text-danger">*</span></label>
-                                <select id="ddlWorkOrder1" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                                <select id="ddlWorkOrder" class="form-select search_ddl select2" aria-label=".form-select-sm">
                                     <option selected value="0"> -- Select --</option>
                                 </select>
                                 <span class="error"></span>
@@ -183,7 +183,7 @@
                                 </div>
                                 <div class="col-md-4 mb-0">
                                     <label class="form-label">Mobile No.<span class="text-danger">*</span></label>
-                                    <input type="number" id="numMobileNo" class="form-control txtbx cleartxt" placeholder="Mobile No."  />
+                                    <input type="number" id="numMobileNo" class="form-control txtbx cleartxt" placeholder="Mobile No." maxlength="10" />
                                     <span class="error"></span>
                                 </div>
                             </div>
@@ -195,7 +195,7 @@
                                 </div>
                                 <div class="col-md-4 mb-0">
                                     <label class="form-label">Adhaar No.<span class="text-danger">*</span></label>
-                                    <input type="number" id="numAdhaarNo" class="form-control txtbx cleartxt" placeholder="Adhaar No." />
+                                    <input type="text" id="numAdhaarNo" class="form-control txtbx cleartxt" placeholder="Adhaar No." maxlength="12" />
                                     <span class="error"></span>
                                 </div>
                                 <div class="col-md-4 mb-0">
@@ -209,25 +209,26 @@
                             <div class="form-group row">
                                 <div class="col-md-4 mb-0">
                                     <label class="form-label">Bank Account no.<span class="text-danger">*</span></label>
-                                    <input type="number" id="numBankACNo" class="form-control txtbx cleartxt" placeholder="Bank Account no." />
+                                    <input type="text" id="numBankACNo" class="form-control txtbx cleartxt" placeholder="Bank Account no." />
                                     <span class="error"></span>
                                 </div>
                                 <div class="col-md-4 mb-0">
                                     <label class="form-label">IIFSC Code<span class="text-danger">*</span></label>
-                                    <input type="text" id="txtIfscCode" class="form-control txtbx cleartxt" placeholder="IFSC Code" />
+                                    <input type="text" id="txtIfscCode" class="form-control txtbx cleartxt" placeholder="IFSC Code" maxlength="11"/>
                                     <span class="error"></span>
                                 </div>
                                 <div class="col-md-4 mb-0">
                                     <label class="form-label">UAN No.<span class="text-danger">*</span></label>
-                                    <input type="number" id="numUanNo" class="form-control txtbx cleartxt" placeholder="UAN No." />
+                                    <input type="text" id="numUanNo" class="form-control txtbx cleartxt" placeholder="UAN No."  maxlength="12"/>
                                     <span class="error"></span>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <div class="col-md-4 mb-0">
                                     <label class="form-label">ESIC (IP No.)<span class="text-danger">*</span></label>
-                                    <input type="number" id="numEsiNo" class="form-control txtbx cleartxt" placeholder="ESIC No." />
+                                    <input type="text" id="numEsiNo" class="form-control txtbx cleartxt" placeholder="ESIC No."  maxlength="10"/>
                                     <span class="error"></span>
+
                                 </div>
                                 <div class="col-md-4 mb-0">
                                     <label class="form-labelo">Educational Level<span class="text-danger">*</span></label>
@@ -243,35 +244,35 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="filter-panel mt-5 div-coral-base">
-                            <div class="form-group row">
-                                <div class="col-md-4 mb-0">
-                                    <label class="form-label">Basic Salary<span class="text-danger">*</span></label>
-                                    <input type="number" id="numBasicSalary" class="form-control txtbx cleartxt" placeholder="Basic Salary" />
-                                    <span class="error"></span>
-                                </div>
-                                <div class="col-md-4 mb-0">
-                                    <input class="form-check-input" type="checkbox" id="chkEPF">
-                                    <label class="form-check-label" for="chkActive"> EPF 13% </label>
-                                    <span class="error"></span>
-                                </div>
-                                <div class="col-md-4 mb-0">
-                                    <input class="form-check-input" type="checkbox" id="chkESIC">
-                                    <label class="form-check-label" for="chkActive"> ESIC 3.25% </label>
-                                    <span class="error"></span>
-                                </div>
+                    </div>
+                    <div class="filter-panel mt-2 div-coral-base">
+                        <div class="form-group row">
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">Basic Salary<span class="text-danger">*</span></label>
+                                <input type="number" id="numBasicSalary" class="form-control txtbx cleartxt" placeholder="Basic Salary" />
+                                <span class="error"></span>
                             </div>
-                            <div class="form-group row">
-                                <div class="col-md-4 mb-0">
-                                    <label class="form-label">Other Allowance<span class="text-danger">*</span></label>
-                                    <input type="number" id="numAllowance" class="form-control txtbx cleartxt" placeholder="Other Allowance" />
-                                    <span class="error"></span>
-                                </div>
-                                <div class="col-md-4 mb-0">
-                                    <label class="form-label">Total Amount<span class="text-danger">*</span></label>
-                                    <input type="number" id="numTotalAmt" class="form-control txtbx cleartxt" placeholder="Total Amount" readonly/>
-                                    <span class="error"></span>
-                                </div>
+                            <div class="col-md-4 mb-0">
+                                <input class="form-check-input" type="checkbox" id="chkEPF">  <label class="form-check-label" for="chkActive"> EPF 13% </label>
+                                <input type="number" id="numEpf" class="form-control txtbx cleartxt" placeholder="EPF" />
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <input class="form-check-input" type="checkbox" id="chkESIC"> <label class="form-check-label" for="chkActive"> ESIC 3.25% </label>
+                                <input type="number" id="numEsic" class="form-control txtbx cleartxt" placeholder="ESIC" />
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">Other Allowance<span class="text-danger">*</span></label>
+                                <input type="number" id="numAllowance" class="form-control txtbx cleartxt" placeholder="Other Allowance" />
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">Total Amount<span class="text-danger">*</span></label>
+                                <input type="number" id="numTotalAmt" class="form-control txtbx cleartxt" placeholder="Total Amount" readonly />
+                                <span class="error"></span>
                             </div>
                         </div>
                     </div>
@@ -281,7 +282,7 @@
                             <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
                         </div>
                         <div class="flex-grow-1 text-center modelalert text-danger"></div>
-                        <button type="button" class="btn btnModel btnModalAddEmpSubmit">Submit</button>
+                        <button type="button" class="btn btnModel btnModalAddEmpSubmit" >Submit</button>
                     </div>
                 </div>
             </div>

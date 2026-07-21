@@ -19,7 +19,7 @@ $(document).ready(function () {
         "ddlAgencyFilter", "ddlDeptFilter", "Select Department");
 
     bindDependentDataToDdlToParent("Dropdown", "MWorkOrder_ddl", null,// ❗ no modal
-        "ddlAgencyFilter", "ddlDeptFilter", null, "ddlWorkOrderFilter", "Select Work Order ");
+        "ddlDeptFilter", "ddlAgencyFilter", null, "ddlWorkOrderFilter", "Select Work Order ");
 
     //bind ddl to modal
     //bindDataToDdl("Dropdown", "MAgency_ddl", "myModal_EditEmployee", "ddlAgencyName", " Agency Name");
@@ -27,7 +27,7 @@ $(document).ready(function () {
     // bindDependentDataToDdl("Dropdown", "MAddWorkOrderBillingAddress_ddl", "myModal",//❗ With/Without modal
     //     "ddlDeptName", "ddlBillingAddress", "Select Billing Address");
     //Reload table when change
-    $(document).on('change', '#ddlAgencyFilter,#ddlDeptFilter', function () {
+    $(document).on('change', '#ddlAgencyFilter,#ddlDeptFilter, #ddlWorkOrderFilter', function () {
         recordlist();
         console.log("After Changing Table Refresh");
     });
@@ -187,13 +187,33 @@ async function loadEditEmpDetails(EmpId) {
     }
 }
 
+// function CalculateTotal() {
+//     var basic = parseFloat($("#numBasicSalary").val()) || 0;
+//     var epf = parseFloat($("#numEpf").val()) || 0;
+//     var esic = parseFloat($("#numEsic").val()) || 0;
+//     var allowance = parseFloat($("#numAllowance").val()) || 0;
+//     var total = basic + epf + esic + allowance;
+//     $("#numTotalAmt").val(total.toFixed(2));
+// }
 function CalculateTotal() {
-    var basic = parseFloat($("#numBasicSalary").val()) || 0;
-    var epf = parseFloat($("#numEpf").val()) || 0;
-    var esic = parseFloat($("#numEsic").val()) || 0;
-    var allowance = parseFloat($("#numAllowance").val()) || 0;
-    var total = basic + epf + esic + allowance;
-    $("#numTotalAmt").val(total.toFixed(2));
+    const basicSalary = Number($("#numBasicSalary").val()) || 0;
+    const allowance = Number($("#numAllowance").val()) || 0;
+
+    const isEPF = $("#chkEPF").is(":checked");
+    const isESIC = $("#chkESIC").is(":checked");
+
+    // EPF = 13%
+    const epf = isEPF ? (basicSalary * 13 / 100) : 0;
+
+    // ESIC = 3.25%
+    const esic = isESIC ? (basicSalary * 3.25 / 100) : 0;
+
+    const totalAmount = basicSalary + allowance + epf + esic;
+
+    // Show calculated values
+    $("#numEpf").val(epf.toFixed(2));
+    $("#numEsic").val(esic.toFixed(2));
+    $("#numTotalAmt").val(totalAmount.toFixed(2));
 }
 $("#numBasicSalary, #numEpf, #numEsic, #numAllowance").on("input", function () {
     CalculateTotal();
@@ -250,7 +270,7 @@ async function SubmitRecord() {
     if (!$("#chkFullTimeEmp").is(":checked")) {
         alert("Please select Full Time Employee.");
         $("#chkFullTimeEmp").siblings(".error").text("Please Select Full Time Empoyee");
-        return;
+        isValid = false;
     }
     if (contactNo === "") {
         $("#numMobileNo").addClass("is-invalid");
@@ -285,12 +305,12 @@ async function SubmitRecord() {
     if (!$("#chkEPF").is(":checked")) {
         alert("Please select Full Time Employee.");
         $("#chkEPF").siblings(".error").text("Please checked IsEpf?");
-        return;
+        isValid = false;
     }
     if (!$("#chkESIC").is(":checked")) {
         alert("Please select Full Time Employee.");
         $("#chkESIC").siblings(".error").text("Please checked IsESIC?");
-        return;
+        isValid = false;
     }
     if (acNo === "") {
         $("#numBankACNo").addClass("is-invalid");
@@ -393,10 +413,10 @@ async function loadDeleteEmpDetails(EmpId) {
             //EPF
             if (data.IsEPF === "Y") {
                 $("#chkEPF1").prop("checked", true);
-              //  $("#numEpf1").val(parseFloat(data.EpfAmt).toFixed(2));
+                $("#numEpf1").val(parseFloat(data.EpfAmt).toFixed(2));
             } else {
                 $("#chkEPF1").prop("checked", false);
-                //$("#numEpf1").val("");
+                $("#numEpf1").val("");
             }
             //IsFullTime
             if (data.IsFullTime === "Y") {
@@ -407,10 +427,10 @@ async function loadDeleteEmpDetails(EmpId) {
             // ESIC
             if (data.IsESIC === "Y") {
                 $("#chkESIC1").prop("checked", true);
-                //$("#numEsic").val(parseFloat(data.EsicAmt).toFixed(2));
+                $("#numEsic1").val(parseFloat(data.EsicAmt).toFixed(2));
             } else {
                 $("#chkESIC1").prop("checked", false);
-                //$("#numEsic").val("");
+                $("#numEsic1").val("");
             }
             $("#numAllowance1").val(parseFloat(data.OthersAllowance).toFixed(2));
             var basic1 = parseFloat($("#numBasicSalary1").val()) || 0;
@@ -440,5 +460,48 @@ async function loadDeleteEmpDetails(EmpId) {
 
 // Submit Delete Employee Details Data
 $(".btnModalDeleteEmpSubmit").on("click", function () {
-    SubmitRecord();
+    alert('Delte button works');
+    DeleteEmpRecord();
 });
+
+async function DeleteEmpRecord() {
+    alert('Delete function calling');
+    console.log("Global EmpId:", EmpId);
+    let isValid = true;
+    let leftOutDate = $("#dateLeftOut").val();
+    let leftRemarks = $("#txtRemarks").val().trim();
+     $(".error").text("");
+    $(".is-invalid").removeClass("is-invalid");
+    if (leftOutDate === "") {
+        $("#dateLeftOut").addClass("is-invalid");
+        $("#dateLeftOut").siblings(".error").text("Left Out Date required");
+        isValid = false;
+    }
+    if (leftRemarks === "") {
+        $("#txtRemarks").addClass("is-invalid");
+        $("#txtRemarks").siblings(".error").text("Remarks required");
+        isValid = false;
+    }
+   
+    if (!isValid) return;
+    //Prepare data
+    var formData = new FormData();
+    formData.append("EmpId", EmpId);
+    formData.append("DroppedDate", leftOutDate);
+    formData.append("DroppedRemarks", leftRemarks);
+    
+    try {
+        //$("#ModalProgress").show();
+        let res = await acceptUpdate("Manpower", "Delete_EmpDetailsRecord", formData);
+        if (res.success) {
+            //recordlist();
+            resetModal();
+            EmpId = 0;
+            $('.modelalert').text(res.message);
+            closeModal('myModal_DeleteEmployee');
+            MsgBox('Message', res.message, '');
+        }
+    } catch (err) {
+        $('.modelalert').text("Error: " + err);
+    }
+}

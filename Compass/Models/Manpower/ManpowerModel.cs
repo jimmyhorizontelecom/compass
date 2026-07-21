@@ -209,10 +209,7 @@ namespace Compass.Models.ManpowerModel
 
     public class EmployeeDetails
     {
-        // @Empname varchar(100),
-        //     @FatherName  varchar(100),   @Email varchar(50),   @ContactNo  varchar(12),    @IsFullTime  char(1),   @DesigationId int,  @EducationId int,
-        //     @AADHARNO varchar(12), @BasicSalary numeric(16, 2), @OthersAllowance numeric(16, 2), @IsPf char(1), @IsEsi char(1), @AcNO varchar(50),
-        //         @Ifsc varchar(50),   @UANNo varchar(50), @ESICNo  varchar(50), @CreatedBy int,  @mes varchar(Max) out 
+        
         public int EmpId { get; set; }
         public string Empname { get; set; }
         public string FatherName { get; set; }
@@ -231,6 +228,13 @@ namespace Compass.Models.ManpowerModel
         public string UANNo { get; set; }
         public string ESICNo { get; set; }
        
+    }
+
+    public class DeleteEmpDetails
+    {
+        public int EmpId { get; set; }
+        public DateOnly? DroppedDate { get; set; }
+        public string DroppedRemarks { get; set; }
     }
 
     #endregion

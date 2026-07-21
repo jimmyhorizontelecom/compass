@@ -19,7 +19,7 @@
     </div>
     <h4>Employee Details List</h4>
 
-    <div class="filter-panel mt-5 div-coral-base">
+    <div class="filter-panel mt-2 div-coral-base">
         <div class="row">
             <div class="col-md-2">
                 <label class="form-labelo">Agency<span class="text-danger">*</span></label>
@@ -126,7 +126,7 @@
                                 </div>
                                 <div class="col-md-4 mb-0">
                                     <label class="form-label">Mobile No.<span class="text-danger">*</span></label>
-                                    <input type="number" id="numMobileNo" class="form-control txtbx cleartxt" placeholder="Mobile No." />
+                                    <input type="text" id="numMobileNo" class="form-control txtbx cleartxt" placeholder="Mobile No."  maxlength="10"/>
                                     <span class="error"></span>
                                 </div>
                             </div>
@@ -138,7 +138,7 @@
                                 </div>
                                 <div class="col-md-4 mb-0">
                                     <label class="form-label">Adhaar No.<span class="text-danger">*</span></label>
-                                    <input type="number" id="numAdhaarNo" class="form-control txtbx cleartxt" placeholder="Adhaar No." />
+                                    <input type="text" id="numAdhaarNo" class="form-control txtbx cleartxt" placeholder="Adhaar No."  maxlength="12"/>
                                     <span class="error"></span>
                                 </div>
                                 <div class="col-md-4 mb-0">
@@ -152,24 +152,24 @@
                             <div class="form-group row">
                                 <div class="col-md-4 mb-0">
                                     <label class="form-label">Bank Account no.<span class="text-danger">*</span></label>
-                                    <input type="number" id="numBankACNo" class="form-control txtbx cleartxt" placeholder="Bank Account no." />
+                                    <input type="text" id="numBankACNo" class="form-control txtbx cleartxt" placeholder="Bank Account no." />
                                     <span class="error"></span>
                                 </div>
                                 <div class="col-md-4 mb-0">
                                     <label class="form-label">IFSC Code<span class="text-danger">*</span></label>
-                                    <input type="text" id="txtIfscCode" class="form-control txtbx cleartxt" placeholder="IFSC Code" />
+                                    <input type="text" id="txtIfscCode" class="form-control txtbx cleartxt" placeholder="IFSC Code" maxlength="11"/>
                                     <span class="error"></span>
                                 </div>
                                 <div class="col-md-4 mb-0">
                                     <label class="form-label">UAN No.<span class="text-danger">*</span></label>
-                                    <input type="number" id="numUanNo" class="form-control txtbx cleartxt" placeholder="UAN No." />
+                                    <input type="text" id="numUanNo" class="form-control txtbx cleartxt" placeholder="UAN No."  maxlength="12"/>
                                     <span class="error"></span>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <div class="col-md-4 mb-0">
                                     <label class="form-label">ESIC (IP No.)<span class="text-danger">*</span></label>
-                                    <input type="number" id="numEsiNo" class="form-control txtbx cleartxt" placeholder="ESIC No." />
+                                    <input type="text" id="numEsiNo" class="form-control txtbx cleartxt" placeholder="ESIC No."  maxlength="10"/>
                                     <span class="error"></span>
                                 </div>
                                 <div class="col-md-4 mb-0">
@@ -262,24 +262,24 @@
                             </div>
                             <div class="col-md-4 mb-0">
                                 <label class="form-label">Mobile No.<span class="text-danger">*</span></label>
-                                <input type="number" id="numMobileNo1" class="form-control txtbx cleartxt" placeholder="Mobile No." />
+                                <input type="text" id="numMobileNo1" class="form-control txtbx cleartxt" placeholder="Mobile No." readonly />
                                 <span class="error"></span>
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-md-4 mb-0">
                                 <label class="form-label">Email Id<span class="text-danger">*</span></label>
-                                <input type="text" id="txtEmailId1" class="form-control txtbx cleartxt" placeholder="Email Id" />
+                                <input type="text" id="txtEmailId1" class="form-control txtbx cleartxt" placeholder="Email Id"  readonly/>
                                 <span class="error"></span>
                             </div>
                             <div class="col-md-4 mb-0">
                                 <label class="form-label">Adhaar No.<span class="text-danger">*</span></label>
-                                <input type="number" id="numAdhaarNo1" class="form-control txtbx cleartxt" placeholder="Adhaar No." />
+                                <input type="text" id="numAdhaarNo1" class="form-control txtbx cleartxt" placeholder="Adhaar No."  readonly/>
                                 <span class="error"></span>
                             </div>
                             <div class="col-md-4 mb-0">
                                 <label class="form-labelo">Designation<span class="text-danger">*</span></label>
-                                <select id="ddlDesignation1" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                                <select id="ddlDesignation1" class="form-select search_ddl select2" aria-label=".form-select-sm" disabled>
                                     <option selected value="0"> -- Select --</option>
                                 </select>
                                 <span class="error"></span>
@@ -288,36 +288,36 @@
                         <div class="form-group row">
                             <div class="col-md-4 mb-0">
                                 <label class="form-label">Bank Account no.<span class="text-danger">*</span></label>
-                                <input type="number" id="numBankACNo1" class="form-control txtbx cleartxt" placeholder="Bank Account no." />
+                                <input type="text" id="numBankACNo1" class="form-control txtbx cleartxt" placeholder="Bank Account no."  readonly/>
                                 <span class="error"></span>
                             </div>
                             <div class="col-md-4 mb-0">
                                 <label class="form-label">IFSC Code<span class="text-danger">*</span></label>
-                                <input type="text" id="txtIfscCode1" class="form-control txtbx cleartxt" placeholder="IFSC Code" />
+                                <input type="text" id="txtIfscCode1" class="form-control txtbx cleartxt" placeholder="IFSC Code"  readonly/>
                                 <span class="error"></span>
                             </div>
                             <div class="col-md-4 mb-0">
                                 <label class="form-label">UAN No.<span class="text-danger">*</span></label>
-                                <input type="number" id="numUanNo1" class="form-control txtbx cleartxt" placeholder="UAN No." />
+                                <input type="text" id="numUanNo1" class="form-control txtbx cleartxt" placeholder="UAN No."  readonly/>
                                 <span class="error"></span>
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-md-4 mb-0">
                                 <label class="form-label">ESIC (IP No.)<span class="text-danger">*</span></label>
-                                <input type="number" id="numEsiNo1" class="form-control txtbx cleartxt" placeholder="ESIC No." />
+                                <input type="text" id="numEsiNo1" class="form-control txtbx cleartxt" placeholder="ESIC No." readonly />
                                 <span class="error"></span>
                             </div>
                             <div class="col-md-4 mb-0">
                                 <label class="form-labelo">Educational Level<span class="text-danger">*</span></label>
-                                <select id="ddlEducation1" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                                <select id="ddlEducation1" class="form-select search_ddl select2" aria-label=".form-select-sm" disabled>
                                     <option selected value="0"> -- Select --</option>
                                 </select>
                                 <span class="error"></span>
                             </div>
                             <div class="col-md-4 mb-0">
-                                <input class="form-check-input" type="checkbox" id="chkFullTimeEmp1">
-                                <label class="form-check-label" for="chkActive"> Is Full Time Employee </label>
+                                <input class="form-check-input" type="checkbox" id="chkFullTimeEmp1" disabled>
+                                <label class="form-check-label" for="chkActive" > Is Full Time Employee </label>
                                 <span class="error"></span>
                             </div>
                         </div>                      
@@ -326,24 +326,24 @@
                         <div class="form-group row">
                             <div class="col-md-4 mb-0">
                                 <label class="form-label">Basic Salary<span class="text-danger">*</span></label>
-                                <input type="number" id="numBasicSalary1" class="form-control txtbx cleartxt" placeholder="Basic Salary" />
+                                <input type="number" id="numBasicSalary1" class="form-control txtbx cleartxt" placeholder="Basic Salary"  readonly/>
                                 <span class="error"></span>
                             </div>
                             <div class="col-md-4 mb-0">
-                                <input class="form-check-input" type="checkbox" id="chkEPF">  <label class="form-check-label" for="chkActive"> EPF 13% </label>
-                                <input type="number" id="numEpf1" class="form-control txtbx cleartxt" placeholder="EPF" />
+                                <input class="form-check-input" type="checkbox" id="chkEPF1" disabled>  <label class="form-check-label" for="chkActive"> EPF 13% </label>
+                                <input type="number" id="numEpf1" class="form-control txtbx cleartxt" placeholder="EPF" readonly />
                                 <span class="error"></span>
                             </div>
                             <div class="col-md-4 mb-0">
-                                <input class="form-check-input" type="checkbox" id="chkESIC"> <label class="form-check-label" for="chkActive"> ESIC 3.25% </label>
-                                <input type="number" id="numEsic1" class="form-control txtbx cleartxt" placeholder="ESIC" />
+                                <input class="form-check-input" type="checkbox" id="chkESIC1" disabled> <label class="form-check-label" for="chkActive"> ESIC 3.25% </label>
+                                <input type="number" id="numEsic1" class="form-control txtbx cleartxt" placeholder="ESIC" readonly />
                                 <span class="error"></span>
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-md-4 mb-0">
                                 <label class="form-label">Other Allowance<span class="text-danger">*</span></label>
-                                <input type="number" id="numAllowance1" class="form-control txtbx cleartxt" placeholder="Other Allowance" />
+                                <input type="number" id="numAllowance1" class="form-control txtbx cleartxt" placeholder="Other Allowance" readonly />
                                 <span class="error"></span>
                             </div>
                             <div class="col-md-4 mb-0">
@@ -362,7 +362,7 @@
                             </div>
                             <div class="col-md-8 mb-0">
                                 <label class="form-label">Left Out Remarks<span class="text-danger">*</span></label>
-                                <textarea id="txtNarration2" class="form-control" placeholder="Please enter remarks here"></textarea>
+                                <textarea id="txtRemarks" class="form-control" placeholder="Please enter remarks here"></textarea>
                                 <span class="error"></span>
                             </div>
                          </div>

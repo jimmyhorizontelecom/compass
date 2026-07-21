@@ -640,6 +640,7 @@ function bindDependentDataToDdlToParent(controller, action, modalId,
                         };
                     },
                     processResults: function (data) {
+                        console.log(data);
                         return {
                             results: $.map(data, function (item) {
                                 return {
