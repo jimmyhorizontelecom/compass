@@ -366,7 +366,7 @@ namespace Compass.Repositories
         {
 
             SortedList parameters = new SortedList();
-            parameters.Add("@AgencyId", userId);
+            parameters.Add("@AgencyId", ParentId1);
           //parameters.Add("@AgencyId", userId);
             parameters.Add("@DeptId", ParentId2);
             parameters.Add("@WorkOrderAgencyId", ParentId3);

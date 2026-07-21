@@ -286,7 +286,7 @@ namespace Compass.Controllers
         public async Task<IActionResult> UploadExcel(IFormFile file)
         {
             if (file == null || file.Length == 0)
-                return BadRequest("Please select a file.");
+                return BadRequest("Please select Excel file.");
 
             var employees = new List<EmpImportExcelModel>();
 

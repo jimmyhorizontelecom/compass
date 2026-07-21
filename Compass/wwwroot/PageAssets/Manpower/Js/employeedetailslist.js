@@ -14,19 +14,11 @@ $(document).ready(function () {
     recordlist();
     //bind ddl to filter
     bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyFilter", " Select Agency");
-    //bindDataToDdl("Dropdown", "MDepartment_ddl", "", "ddlDeptFilter", " Department Name");
     bindDependentDataToDdl("Dropdown", "MDepartment_ddl", "",//❗ With/Without modal
         "ddlAgencyFilter", "ddlDeptFilter", "Select Department");
-
     bindDependentDataToDdlToParent("Dropdown", "MWorkOrder_ddl", null,// ❗ no modal
         "ddlDeptFilter", "ddlAgencyFilter", null, "ddlWorkOrderFilter", "Select Work Order ");
-
-    //bind ddl to modal
-    //bindDataToDdl("Dropdown", "MAgency_ddl", "myModal_EditEmployee", "ddlAgencyName", " Agency Name");
-    //bindDataToDdl("Dropdown", "MDepartment_ddl", "myModal_EditEmployee", "ddlDeptName", " Department Name");
-    // bindDependentDataToDdl("Dropdown", "MAddWorkOrderBillingAddress_ddl", "myModal",//❗ With/Without modal
-    //     "ddlDeptName", "ddlBillingAddress", "Select Billing Address");
-    //Reload table when change
+    //Reload table list when change ddl filters
     $(document).on('change', '#ddlAgencyFilter,#ddlDeptFilter, #ddlWorkOrderFilter', function () {
         recordlist();
         console.log("After Changing Table Refresh");
@@ -44,7 +36,6 @@ async function recordlist() {
         DeptId: deptId,
         WorkOrderId: workOrderId,
         searchTerm:"",
-        //IsActive: workOrderId,
      };
     console.log(filterData);
     try {
@@ -118,11 +109,9 @@ $(document).on('click', '.edit-empDetails', async function () {
         console.log('Edit cancelled');
     }
 });
-
 // get Record to fill Employee details data in Edit Modal
 async function loadEditEmpDetails(EmpId) {
-    // alert('Load Record function')
-    var filterData = {
+       var filterData = {
         EmpId: EmpId,      
     };
    try {
@@ -132,12 +121,9 @@ async function loadEditEmpDetails(EmpId) {
             alert(JSON.stringify(data));
             $("#txtEmpName").val(data.EmpName);
             $("#txtFathersName").val(data.FathersName);
-            // $("#numMobileNo").val(data.);
-            // $("#txtEmailId").val(data.);
             $("#numMobileNo").val(data.ContactNo);
             $("#txtEmailId").val(data.EmailId);
             $("#numAdhaarNo").val(data.AADHARNO);
-            //$("#numBankACNo").val(data.);
             $("#numBasicSalary").val(parseFloat(data.Basics).toFixed(2));
             //EPF
             if (data.IsEPF === "Y") {
@@ -168,48 +154,29 @@ async function loadEditEmpDetails(EmpId) {
             var allowance = parseFloat($("#numAllowance").val()) || 0;
             var total = basic + esi + epf + allowance;
             $("#numTotalAmt").val(total.toFixed(2));
+            //bind ddl in Modal
             bindDataToDdl("Dropdown", "MDesignation_ddl", "myModal_EditEmployee", "ddlDesignation", " Select Designation");
             var option = new Option(data.DesignationName, data.DesignationId, true, true);
             $('#ddlDesignation').append(option).trigger('change');
             bindDataToDdl("Dropdown", "MDesignation_ddl", "myModal_EditEmployee", "ddlEducation", " Select Designation");
             var option = new Option(data.DesignationName, data.DesignationId, true, true);
-            $('#ddlEducation').append(option).trigger('change');
-            // bindDataToDdl("Dropdown", "MEducational_ddl", "myModal_EditEmployee", "ddlEducation", " Select Designation");
-            // var option = new Option(data.EducationName, data.EducationId, true, true);
-            // $('#ddlEducation').append(option).trigger('change');       
-            // bindDataToDdl("Dropdown", "MEducational_ddl", "myModal_EditEmployee", "ddlEducation", " Select Education", data.EducationID, 0);
-            // var option = new Option(data.EducationID, data.EducationName, true, true);
-            // $('#ddlEducation').append(option).trigger('change');
+            $('#ddlEducation').append(option).trigger('change');   
          }
     }
     catch (error) {
         console.error("Error loading record:", error);
     }
 }
-
-// function CalculateTotal() {
-//     var basic = parseFloat($("#numBasicSalary").val()) || 0;
-//     var epf = parseFloat($("#numEpf").val()) || 0;
-//     var esic = parseFloat($("#numEsic").val()) || 0;
-//     var allowance = parseFloat($("#numAllowance").val()) || 0;
-//     var total = basic + epf + esic + allowance;
-//     $("#numTotalAmt").val(total.toFixed(2));
-// }
 function CalculateTotal() {
-    const basicSalary = Number($("#numBasicSalary").val()) || 0;
-    const allowance = Number($("#numAllowance").val()) || 0;
-
+    const basicSalary = parseInt($("#numBasicSalary").val()) || 0;
+    const allowance = parseInt($("#numAllowance").val()) || 0;
     const isEPF = $("#chkEPF").is(":checked");
     const isESIC = $("#chkESIC").is(":checked");
-
     // EPF = 13%
     const epf = isEPF ? (basicSalary * 13 / 100) : 0;
-
     // ESIC = 3.25%
     const esic = isESIC ? (basicSalary * 3.25 / 100) : 0;
-
     const totalAmount = basicSalary + allowance + epf + esic;
-
     // Show calculated values
     $("#numEpf").val(epf.toFixed(2));
     $("#numEsic").val(esic.toFixed(2));
@@ -218,12 +185,10 @@ function CalculateTotal() {
 $("#numBasicSalary, #numEpf, #numEsic, #numAllowance").on("input", function () {
     CalculateTotal();
 });
-
 // Submit Update Employee Details Data
 $(".btnModalEditEmpSubmit").on("click", function () {
      SubmitRecord();
 });
-
 async function SubmitRecord() {
     console.log("Global EmpId:", EmpId);
     let isValid = true;
@@ -368,12 +333,9 @@ async function SubmitRecord() {
          $('.modelalert').text("Error: " + err);
      }
 }
-
-
 // MsgBox on Delete Employee Details
 $(document).on('click', '.delete-empDetails', async function () {
     EmpId = $(this).data("empid");
-    //alert(EmpId);
     console.log("Edit Record Id:", EmpId);
     if (!EmpId) {
         toastr.error("Record Id not found");
@@ -403,12 +365,9 @@ async function loadDeleteEmpDetails(EmpId) {
             alert(JSON.stringify(data));
             $("#txtEmpName1").val(data.EmpName);
             $("#txtFathersName1").val(data.FathersName);
-            // $("#numMobileNo").val(data.);
-            // $("#txtEmailId").val(data.);
             $("#numMobileNo1").val(data.ContactNo);
             $("#txtEmailId1").val(data.EmailId);
             $("#numAdhaarNo1").val(data.AADHARNO);
-            //$("#numBankACNo").val(data.);
             $("#numBasicSalary1").val(parseFloat(data.Basics).toFixed(2));
             //EPF
             if (data.IsEPF === "Y") {
@@ -445,19 +404,12 @@ async function loadDeleteEmpDetails(EmpId) {
             bindDataToDdl("Dropdown", "MDesignation_ddl", "myModal_EditEmployee", "ddlEducation1", " Select Designation");
             var option = new Option(data.DesignationName, data.DesignationId, true, true);
             $('#ddlEducation1').append(option).trigger('change');
-            // bindDataToDdl("Dropdown", "MEducational_ddl", "myModal_EditEmployee", "ddlEducation", " Select Designation");
-            // var option = new Option(data.EducationName, data.EducationId, true, true);
-            // $('#ddlEducation').append(option).trigger('change');       
-            // bindDataToDdl("Dropdown", "MEducational_ddl", "myModal_EditEmployee", "ddlEducation", " Select Education", data.EducationID, 0);
-            // var option = new Option(data.EducationID, data.EducationName, true, true);
-            // $('#ddlEducation').append(option).trigger('change');
-        }
+         }
     }
     catch (error) {
         console.error("Error loading record:", error);
     }
 }
-
 // Submit Delete Employee Details Data
 $(".btnModalDeleteEmpSubmit").on("click", function () {
     alert('Delte button works');
@@ -494,7 +446,6 @@ async function DeleteEmpRecord() {
         //$("#ModalProgress").show();
         let res = await acceptUpdate("Manpower", "Delete_EmpDetailsRecord", formData);
         if (res.success) {
-            //recordlist();
             resetModal();
             EmpId = 0;
             $('.modelalert').text(res.message);
