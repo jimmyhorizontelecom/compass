@@ -736,6 +736,7 @@ async function SubmitRecord() {
         let res = await acceptUpdate("Manpower", "AddOrEdit_DeptAttendanceRecord", formData);
         if (res.success) {
             recordlist();
+            setPreviousMonth('#monthYear1');
             resetModal();
             Id = 0;
             $('.modelalert').text(res.message);

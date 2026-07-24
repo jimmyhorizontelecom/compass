@@ -31,6 +31,7 @@ namespace Compass.Models.ManpowerViewModel
         public int NoDeployedRes { get; set; }
         public string IsResourceUploaded { get; set; }
         public int NoOfUploadedResource { get; set; }
+        public char DeactivateWorkOrder { get; set; }
         public string BillingAddEmail { get; set; }
         public string searchTerm { get; set; }
     }

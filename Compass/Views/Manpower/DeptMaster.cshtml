@@ -6,11 +6,32 @@
     var roleId = User.FindFirst("RoleId")?.Value;
     var userId = User.FindFirst("UserId")?.Value;
     var deptId = User.FindFirst("DeptId")?.Value;
+    var agencyId = User.FindFirst("AgencyId")?.Value;
+
 }
 @{
     Layout = "~/Views/Shared/_TestLayout.cshtml";
 }
-
+<div class="alert alert-info">
+    Agency Id: @agencyId
+</div>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Claim Type</th>
+            <th>Claim Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var claim in User.Claims)
+        {
+            <tr>
+                <td>@claim.Type</td>
+                <td>@claim.Value</td>
+            </tr>
+        }
+    </tbody>
+</table>
 <div class="container-fluid ">
     <div id="modalLoader1" class="modal-loader modalLoader">
         <div class="spinner"></div>
@@ -21,7 +42,7 @@
 
     <div class="filter-panel mt-5 div-coral-base">
         <div class="row">
-            <div class="col-md-2">
+            @* <div class="col-md-2">
                 <label class="form-labelo">Agency<span class="text-danger">*</span></label>
                 <select id="ddlAgencyFilter" class="form-select search_ddl select2" aria-label=".form-select-sm">
                     <option selected value="0">Select</option>
@@ -34,28 +55,21 @@
                     <option selected value="0">Select</option>
                 </select>
                 <span class="error"></span>
-            </div>
+            </div> *@
             <div class="col-md-2">
                 <label class="form-labelo">Work Order Filter<span class="text-danger">*</span></label>
-                @* <select id="ddlWorkOrderFilter" class="form-select " aria-label=".form-select-sm">
-                    <option value="Y" selected>Active WorkOrder</option>
-                    <option  value="N">DeActive WorkOrder</option>
-                    <option  value="A">All</option>
-                </select> *@
-                <select id="ddlWorkOrderFilter"
-                        class="form-select"
-                        style="color:#000 !important; background-color:#fff !important;">
-                    <option value="Y" selected>Active WorkOrder</option>
+                <select id="ddlWorkOrderFilter" class="form-select" aria-label=".form-select-sm">
+                    @* <option selected value="0">Select</option> *@
+                    <option selected="" value="Y">Active WorkOrder</option>
                     <option value="N">DeActive WorkOrder</option>
-                    <option value="A">All</option>
-                </select>
-                <span class="error"></span>
+                    <option value="A"> All </option>
+                     </select>
+                 <span class="error"></span>
             </div>
-            <div class="col-md-4"> </div>
-            <div class="col-md-2">
-                <label class="form-labelo"></label>
-                <button type="button" class="btn  btn-coral txt-white" data-bs-toggle="modal" data-bs-target="#myModal">
-                    Add Work Order Details
+            <div class="col-md-8"> </div>
+            <div class="col-md-2 align-content-center">
+                     <button type="button" class="btn  btn-coral txt-white " data-bs-toggle="modal" data-bs-target="#myModal" >
+                    <i class="bi bi-plus-circle-fill" style="margin-right:5px"></i>Add Work Order Details
                 </button>
                 @* <button type="button" class="btn  btn-coral txt-white" data-bs-toggle="modal" data-bs-target="#myModalTab">
                     Open tab modal
@@ -79,6 +93,7 @@
                         <th>Is Employees Uploaded</th>
                         <th>No. Of Uploaded Resource</th>
                         <th>Edit</th>
+                        <th>Deactivate Work Order</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -182,7 +197,6 @@
  
    
 }
-
 
 @section Scripts {
     

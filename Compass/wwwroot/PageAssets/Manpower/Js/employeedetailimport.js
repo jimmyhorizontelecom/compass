@@ -242,10 +242,6 @@ async function SubmitRecord() {
     }
 }
 
-
-
-
-
 //Download Designation Code Excel Sheet
 $(document).on('click', '.btnDownloadDesignationSheet', function () {
     window.location.href = '/Manpower/DownloadDesignationCode';
@@ -272,6 +268,7 @@ async function readExcelRecord() {
     }
     let formData = new FormData();
     formData.append("file", file);
+    formData.append("totalManpower", $("#txtNoofResources").val());
     try {
         let records = await uploadExcelFile('Manpower', 'ReadExcel', formData);
         employeeRecords = records;
@@ -279,6 +276,14 @@ async function readExcelRecord() {
     }
     catch (error) {
         console.error("Error loading records:", error);
+        console.log(error);
+        console.log(error.responseJSON);
+
+        MsgBox(
+            'Error',
+            error.responseJSON?.message ?? error.message ?? 'Upload failed.',
+            ''
+        );
     }
 }
 //Bind get record  in a table
@@ -303,9 +308,15 @@ function bindDatatable(records, tableId) {
                 <td>${value.Others}</td>
                 <td>${value.IsPF}</td>
                 <td>${value.IsESI}</td>
-                 <td class="${value.VerificationStatus === 'Green' ? 'text-success fw-bold' : 'text-danger fw-bold'}">
+                <td class="text-center">
+                   ${value.VerificationStatus === "Green"
+                ? '<i class="bi bi-check-circle-fill text-success" title="Verified" style="font-size:25px;"></i>'
+                : '<i class="bi bi-x-circle-fill text-danger" title="Not Verified" style="font-size:25px;"></i>'}
+               </td>
+               <!--
+               <td class="${value.VerificationStatus === 'Green' ? 'text-success fw-bold' : 'text-danger fw-bold'}">
                     ${value.VerificationStatus}
-                </td>
+                </td>-->
                 <td>${value.Error_Message ?? ''}</td>
                 <td class="text-center">
                      <button type="button"  class="btn btn-link text-danger btnRemoveRow" title="Remove"> ✖  </button>
@@ -327,10 +338,6 @@ function bindDatatable(records, tableId) {
 $(document).on('click', '.btnRemoveRow', function () {
     $(this).closest('tr').remove();
 });
-//Clcik event on View Uploaded excel file
-// $(document).on('click', '.btnViewFile', function () {
-//     readExcelRecord();
-// });
 //Click event on Verify Button after Uplaod Excel file
 $(".btnVerifyFile").on("click", function () {
     alert('Verify');
@@ -342,11 +349,34 @@ async function verifyEmployeeImport() {
         MsgBox('Error', 'Please view excel first.', '');
         return;
     }
+    // let totalManpower = parseInt($("#txtNoofResources").val()) || 0;
+    // let workOrderId = $("#ddlWorkOrderFilter").val();
+
+    // // Already uploaded count
+    // let uploadedCount = await $.get(
+    //     "/Manpower/GetUploadedResource",
+    //     { workOrderId: workOrderId }
+    // );
+
+    // let excelCount = employeeRecords.length;
+
+    // if ((uploadedCount + excelCount) > totalManpower) {
+
+    //     MsgBox(
+    //         'Error',
+    //         `Already uploaded ${uploadedCount} employees.\nYou can upload only ${totalManpower - uploadedCount} more employees.`,
+    //         ''
+    //     );
+
+    //     return;
+    // }
+
     console.log(employeeRecords);
+
     employeeRecords.forEach(item => {
         item.DeptId = parseInt($("#ddlDeptFilter").val()) || 0;
         item.AgencyId = parseInt($("#ddlAgencyFilter").val()) || 0;
-        item.WorkOrderNo = $("#ddlWorkOrder").val() || "";
+        item.WorkOrderNo = $("#ddlWorkOrderFilter").val() || "";
         item.TotalManpower = parseInt($("#txtNoofResources").val()) || 0;
 
     });
@@ -362,7 +392,15 @@ async function verifyEmployeeImport() {
 
         console.error(error);
 
-        MsgBox('Error', 'Verification failed.', '');
+        // MsgBox('Error', 'Verification failed.', '');
+        MsgBox(
+            'Error',
+            error.responseJSON?.message || 'Maximum manpower exceeded.',
+            ''
+        );
+
+        return;
+
     }
 }
 // Submit record when Click on btn
@@ -371,7 +409,6 @@ $(".btnSubmitTableData").on("click", function () {
        submitEmployeeImport();
     }
 });
-
 // Submit Employee Import
 async function submitEmployeeImport() {
 
@@ -390,6 +427,10 @@ async function submitEmployeeImport() {
 
         MsgBox('Success', 'Records uploaded successfully.', '');
 
+        // 2 second baad page reload
+        setTimeout(function () {
+            location.reload();
+        }, 2000);
     }
     catch (error) {
 

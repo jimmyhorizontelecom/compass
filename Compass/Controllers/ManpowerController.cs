@@ -64,10 +64,10 @@ namespace Compass.Controllers
                 SortedList parameters = new SortedList();
                 parameters.Add("@AgencyId", filter.AgencyId);
                 parameters.Add("@DeptId", filter.DeptId);
-                parameters.Add("@WorkOrderId", filter.WorkOrderId);
+                parameters.Add("@WorkOrderId",0/* filter.WorkOrderId*/);
                 parameters.Add("@CreatedBy", userId);
                 parameters.Add("@RoleId", roleId);
-                parameters.Add("@IsActive", "Y"/*filter.IsActive*/);
+                parameters.Add("@IsActive", filter.IsActive);
                 var dt = await _cn.FillDataTableAsync("TallyAgencyDeptWorkOrder_List1", "", parameters);
                 if (dt == null || dt.Rows.Count == 0)
                     return Ok(new List<WorkOrderListModel>());
@@ -90,7 +90,7 @@ namespace Compass.Controllers
                     BillingAddEmail = (row["BillAddressEmail"]?.ToString()),
                     NoOfUploadedResource = (row["NoOfUploadedResource"] == DBNull.Value || string.IsNullOrWhiteSpace(row["NoOfUploadedResource"].ToString()))
                     ? 0 : Convert.ToInt32(row["NoOfUploadedResource"]),
-                    //NoOfUploadedResource = Convert.ToInt32(row["NoOfUploadedResource"]?.ToString()),
+                    DeactivateWorkOrder = Convert.ToChar(row["IsActive"]?.ToString()),
                 }).ToList();
 
                 return Ok(list);
@@ -112,18 +112,7 @@ namespace Compass.Controllers
         {
             try
             {
-                //if (string.IsNullOrWhiteSpace(model.WorkOrderNo) ||
-                //    string.IsNullOrWhiteSpace(model.BillAddressEmail)
-
-                //    )
-                //{
-                //    return BadRequest(new
-                //    {
-                //        success = false,
-                //        message = "WorkOrderNo and BillAddressEmail are required."
-                //    });
-                //}
-
+                
                 SortedList parameters = new SortedList();
                 parameters.Add("@WorkOrderAgencyId", model.WorkOrderAgencyId);
                 parameters.Add("@AgencyId", model.AgencyId);
@@ -317,8 +306,46 @@ namespace Compass.Controllers
         }
 
         //Read data from Excel File
+        //[HttpPost]
+        //public IActionResult ReadExcel(IFormFile file)
+        //{
+        //    try
+        //    {
+        //        List<EmpImportExcelModel> list = new();
+
+        //        using var stream = file.OpenReadStream();
+        //        using var workbook = new XLWorkbook(stream);
+
+        //        var ws = workbook.Worksheet(1);
+
+        //        foreach (var row in ws.RowsUsed().Skip(1))
+        //        {
+        //            list.Add(new EmpImportExcelModel
+        //            {
+        //                EmpName = row.Cell(2).GetString(),
+        //                FathersName = row.Cell(3).GetString(),
+        //                IsFullTimer = row.Cell(4).GetString(),
+        //                DesigationId = row.Cell(5).GetString(),
+        //                AADHARNO = row.Cell(6).GetString(),
+        //                Basics = Convert.ToDecimal(row.Cell(7).GetString()),
+        //                Others = Convert.ToDecimal(row.Cell(8).GetString()),
+        //                IsPF = row.Cell(9).GetString(),
+        //                IsESI = row.Cell(10).GetString()
+        //            });
+        //        }
+
+        //        return Ok(list);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
+
+
+        //Verify Employee Import
         [HttpPost]
-        public IActionResult ReadExcel(IFormFile file)
+        public IActionResult ReadExcel(IFormFile file, int totalManpower)
         {
             try
             {
@@ -344,6 +371,15 @@ namespace Compass.Controllers
                         IsESI = row.Cell(10).GetString()
                     });
                 }
+                Console.WriteLine("Total Manpower : " + totalManpower);
+                if (list.Count > totalManpower)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = $"Excel contains {list.Count} records. Maximum allowed is {totalManpower}."
+                    });
+                }
 
                 return Ok(list);
             }
@@ -354,14 +390,13 @@ namespace Compass.Controllers
         }
 
 
-        //Verify Employee Import
         [HttpPost]
         public async Task<IActionResult> VerifyEmployeeImport([FromBody] List<EmpImportExcelModel> employees)
         {
 
             try
             {
-
+                
                 DataTable dtEmpDetails = new DataTable();
                 dtEmpDetails.Columns.Add("DeptId", typeof(int));
                 dtEmpDetails.Columns.Add("AgencyId", typeof(int));
@@ -397,6 +432,25 @@ namespace Compass.Controllers
                         item.IsPF,
                         item.IsESI
                     );
+                }
+                if (employees == null || employees.Count == 0)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "No employee records found."
+                    });
+                }
+
+                int maxManpower = employees.First().TotalManpower;
+
+                if (employees.Count > maxManpower)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = $"Only {maxManpower} employees are allowed. Excel contains {employees.Count} employees."
+                    });
                 }
 
                 SortedList parameters = new SortedList();
@@ -451,8 +505,27 @@ namespace Compass.Controllers
             var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
             try
             {
+                if (employees == null || employees.Count == 0)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "No employee records found."
+                    });
+                }
+                // Maximum manpower from WorkOrder
+                int maxManpower = employees.First().TotalManpower;
+                // Excel me jitne record hain
+                int excelCount = employees.Count;
+                if (excelCount > maxManpower)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = $"Only {maxManpower} employees are allowed. You are trying to upload {excelCount} employees."
+                    });
+                }
                 DataTable dtEmpDetails = new DataTable();
-
                 dtEmpDetails.Columns.Add("DeptId", typeof(int));
                 dtEmpDetails.Columns.Add("AgencyId", typeof(int));
                 dtEmpDetails.Columns.Add("WorkOrderNo", typeof(string));

@@ -10,47 +10,47 @@ toastr.options = {
 };
 //ready
 $(document).ready(function () {
+    alert('Loadig');
     resetModal();
     recordlist();
     //bind ddl to filter
-    bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyFilter", " Agency Name");
-    bindDataToDdl("Dropdown", "MDepartment_ddl", "", "ddlDeptFilter", " Department Name");
-
+    // bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyFilter", " Agency Name");
+    // bindDataToDdl("Dropdown", "MDepartment_ddl", "", "ddlDeptFilter", " Department Name");
+  
     //bind ddl to modal
     bindDataToDdl("Dropdown", "MAgency_ddl", "myModal", "ddlAgencyName", " Agency Name");
     bindDataToDdl("Dropdown", "MDepartment_ddl", "myModal", "ddlDeptName", " Department Name");
     bindDependentDataToDdl("Dropdown", "MAddWorkOrderBillingAddress_ddl", "myModal",//❗ With/Without modal
         "ddlDeptName", "ddlBillingAddress", "Select Billing Address");
-    //Reload table when change
-    // $("#ddlAgencyFilter, #ddlDeptFilter").change(function () {
-    //     recordlist();
-
-    //   });
-    $(document).on('change', '#ddlAgencyFilter,#ddlDeptFilter', function () {
-
-        console.log("Agency:", $("#ddlAgencyFilter").val());
-        console.log("Dept:", $("#ddlDeptFilter").val());
-
+   
+    $(document).on('change', '#ddlWorkOrderFilter', function () {
+        console.log("WorkOrderFilter:", $("#ddlWorkOrderFilter").val());
         recordlist();
     });
-       
+    setTimeout(function () {
+       $("#ddlWorkOrderFilter").val("Y").trigger("change");
+    }, 500);
 });
+
 
 //Get Record for A table 
 async function recordlist() {
-
-    var agencyId = parseInt($("#ddlAgencyFilter").val()) || 0;
-    var deptId = parseInt($("#ddlDeptFilter").val()) || 0;
-    var workOrderFilter = parseInt($("#ddlWorkOrderFilter").val()) || "Y";
+   //var agencyId = parseInt($("#ddlAgencyFilter").val()) || 0;
+    //var deptId = parseInt($("#ddlDeptFilter").val()) || 0;
+    //var workOrderFilter = parseInt($("#ddlWorkOrderFilter").val()) || "0";
+    var workOrderStatus = $("#ddlWorkOrderFilter").val();
+    if (!workOrderStatus || workOrderStatus === "Y") {
+        workOrderStatus = "Y";
+    }
+    workOrderStatus = workOrderStatus.trim().toUpperCase();
     var filterData = {
-        AgencyId: agencyId,
-        DeptId: deptId,
+        AgencyId: 0, /* agencyId, */
+        DeptId: 0,/* deptId, */
         WorkOrderId: 0,
-        IsActive: workOrderFilter,
+        IsActive: workOrderStatus,
      };
     console.log(filterData);
     try {
-
         let records = await getRecords('Manpower', 'GetDeptMasterRecord', filterData, '#myTable', 'N');
         bindDatatable(records, '#myTable');
     }
@@ -61,22 +61,17 @@ async function recordlist() {
 }
 //Bind get record  in a table 
 function bindDatatable(records, tableId) {
-
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().clear().destroy();
     }
-
     var tbody = $(tableId + " tbody");
     tbody.empty();
-
     $.each(records, function (i, value) {
         let SrNo = i + 1;
-
         tbody.append(`
             <tr 
                 data-id="${value.Id}"
-                data-id="${value.WorkOrderId}">
-                
+               data-id="${value.WorkOrderId}">              
                 <td>${SrNo}</td>
                 <td>${value.AgencyName}</td>
                 <td>${value.DepartmentName}</td>
@@ -89,6 +84,12 @@ function bindDatatable(records, tableId) {
                     <span data-id="${value.Id}" >
                        <i class="bi bi-pencil-square edit-workOrder edit-icon" data-id="${value.WorkOrderId}"></i>
                     </span>
+                </td>
+                 <td class="text-center">
+                 <div class="form-check form-switch d-flex justify-content-center">
+                    <input class="form-check-input statusToggle" type="checkbox" data-id="${value.Id}"
+                        ${value.DeactivateWorkOrder == 'Y' ? 'checked' : ''}>
+                 </div>
                 </td>
             </tr>
         `);
@@ -174,9 +175,9 @@ async function SubmitRecord() {
         //$("#ModalProgress").show();
         let res = await acceptUpdate("Manpower", "AddOrEditRecord", formData);
         if (res.success) {
-
-            recordlist();
-            resetModal();
+            //resetModal();
+            //recordlist();
+           
             WorkOrderId = 0;
             $('.modelalert').text(res.message);
             closeModal('myModal');

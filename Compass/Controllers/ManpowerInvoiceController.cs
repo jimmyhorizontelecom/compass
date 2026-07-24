@@ -358,26 +358,20 @@ namespace Compass.Controllers
                 //var Id = model.Id;
                 var Id = model.Id;
                 var IsCancelBill = model.IsCancelBill ? "Y" : "N";
-                var VerificationRemarks = model.VerificationRemarks;
-                
-                var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
-               
-                
+                var VerificationRemarks = model.VerificationRemarks;            
+                var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");               
                 SortedList parameters = new SortedList
                     {
                     { "@AgencyBillId", Id },
                     { "@IsCancel", IsCancelBill },
                     { "@CancelBy", userId },
-                    { "@CancelRemarks", VerificationRemarks },
-                    
+                    { "@CancelRemarks", VerificationRemarks },                 
                 };
-
                 var result = _cn.ExecuteNonQueryWMessage(
                     "TallySaleBillCancel_AcceptUpdate",
                     "",
                     parameters
                 );
-
                 return Ok(new { success = true, message = result.ToString() });
             }
             catch (Exception ex)

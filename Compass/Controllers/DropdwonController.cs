@@ -75,16 +75,24 @@ namespace Compass.Controllers
 
 
         //Get Agency ddl
-        //[HttpGet]
-        //public async Task<IActionResult> MAgency_ddl(
-        //        int deptId = 0,
-        //        int mainCatgId = 0,
+        //    [HttpGet]
+        //    public async Task<IActionResult> MAgency_ddl(
+        //int agencyId = 0,
+        //string searchTerm = "")
+        //    {
+        //        int roleId = Convert.ToInt32(User.FindFirst("RoleId")?.Value ?? "0");
+        //        int loginAgencyId = Convert.ToInt32(User.FindFirst("AgencyId")?.Value ?? "0");
 
-        //        string searchTerm = "")
-        //{
-        //    var result = await _service.GetAgencyDropdownAsync(deptId, searchTerm);
-        //    return Ok(result);
-        //}
+        //        // Agar Agency user hai to login agency hi use karo
+        //        if (roleId == 48)   // <-- Apna Agency RoleId
+        //        {
+        //            agencyId = roleId;
+        //        }
+
+        //        var result = await _service.GetAgencyDropdownAsync(agencyId, roleId, searchTerm);
+
+        //        return Ok(result);
+        //    }
         [HttpGet]
         public async Task<IActionResult> MAgency_ddl(
         int agencyId = 0,
