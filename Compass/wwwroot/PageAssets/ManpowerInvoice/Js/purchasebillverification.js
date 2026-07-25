@@ -102,11 +102,10 @@ function bindDatatable(records, tableId) {
                </td>
                   <!-- HPSEDC Bill Generate -->
                  <td class="text-center">
-                 ${value.VerificationStatus === "V" && value.BillStatus === "P"
+                 ${value.VerificationStatus === "V" && value.IsSaleBIllGenerated !='Y'
+                
                     ? `<i class="bi bi-receipt-cutoff edit-HPSEDC_SInvoice edit-icon"  data-id="${value.Id}"   title="Generate Sale Bill"  style="cursor:pointer;font-size:25px;"></i>`
-                 : `<i class="bi bi-receipt-cutoff text-secondary" title="${value.BillStatus === 'S' ? 'Sale Bill Already Generated' : 'Bill Not Verified'}"
-                style="font-size:25px;cursor:not-allowed;opacity:0.6;"></i>`
-                }
+            : `<i class="bi bi-receipt-cutoff text-secondary"   style="font-size:25px;cursor:not-allowed;opacity:0.6;"></i>` }
                    
                 </td>
                   <!-- E-Invoice -->
@@ -128,7 +127,7 @@ function bindDatatable(records, tableId) {
                  style="font-size:25px;cursor:not-allowed;opacity:0.6;"></i>`}
                 </td>
         `);
-        
+       
     });
     $(tableId).DataTable({
         paging: true,

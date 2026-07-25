@@ -66,8 +66,6 @@ async function recordlist() {
     var filterData = {
         Id: 0,
         AgencyId: 0,
-        //DeptId: roleId != "48" ,
-        // DeptId: roleId == "48" ? 0 : deptId,
         DeptId: (roleId === "48") ? 0 : deptId,
         MonthYear: finalMonthId,
     };
@@ -143,7 +141,7 @@ function bindDatatable(records, tableId) {
             </td>
                <!--View Employee-->
             <td class="admin-col text-center">
-             <i class="bi bi-people-fill text-primary "  data-id="${value.Id}"
+             <i class="bi bi-people-fill text-primary  edit-ViewMappedEmp"  data-id="${value.Id}"
              data-attendaceId="${value.AttendaceId} " title="Viwew Employee" style="cursor:pointer;font-size:25px;"></i> </td>
             <!--Agency Invoice-->
             <td class="admin-col text-center">
@@ -771,17 +769,17 @@ $(document).on('click', '.view-file', function (e) {
 // MsgBox on Click event on Upload Annexure & Bill 
 $(document).on('click', '.upload-Bill', async function () {
     Id = $(this).data("id");
-    var recordId = $(this).data("attendaceid");
+    AttendaceId = $(this).data("attendaceid");
     console.log("Upload Bill Id:", Id);
-    console.log("Upload Bill Id:", recordId);
-    if (!recordId) {
+    console.log("Upload AttendaceId Id:", AttendaceId);
+    if (!AttendaceId) {
         toastr.error("Record Id not found");
         return;
     }
     var isConfirmed = await DeleteEditBox('Upload File', 'Do you want to upload Annexure/Bill?', 'question');
     if (isConfirmed) {
-        await loadRecordUploadFile(Id, recordId);
-        await recordMarkedEpmlist(Id, recordId);
+        await loadRecordUploadFile(Id, AttendaceId);
+        await recordMarkedEpmlist(Id, AttendaceId);
         openModal('myModal_UploadFile');
     } else {
         console.log('Upload cancelled');
@@ -789,11 +787,11 @@ $(document).on('click', '.upload-Bill', async function () {
 
 });
 // get Record to fill upload Annexure & Bill File
-async function loadRecordUploadFile(Id, recordId) {
+async function loadRecordUploadFile(Id, AttendaceId) {
     // alert('Load Record function')
     var filterData = {
         Id: Id,
-        AttendaceId: recordId,
+        AttendaceId: AttendaceId,
     };
     alert(filterData);
     try {
@@ -818,10 +816,10 @@ async function loadRecordUploadFile(Id, recordId) {
     }
 }
 //Get Record mapped No of Resource marked by department 
-async function recordMarkedEpmlist(Id, recordId) {
+async function recordMarkedEpmlist(Id, AttendaceId) {
     var filterData = {
         Id: Id,
-        AttendaceId: recordId,
+        AttendaceId: AttendaceId,
     };
     try {
         let records = await getRecords('Manpower', 'GetMarkedEmpRsourceRecord', filterData, '#myTable_ViewMapResource', 'N');
@@ -905,13 +903,7 @@ async function SubmitUploadFile() {
     }
     if (!isValid) return;
     var formData = new FormData();
-    //monthYear = $(".monthYearPicker").val(); // 03-2026
-    //let finalMonthYear = monthYear.replace("-", ""); // 032026
     formData.append("Id", Id);
-    //formData.append("WorkOrderNo", workOrderNo);
-    //formData.append("UpladNoOfResource", noOfResources);
-    //formData.append("PresentResource", presentResources);
-
     if (files_Annexure.length > 0) {
         formData.append("AnnexureFile", files_Annexure[0]);
     }
@@ -935,25 +927,25 @@ async function SubmitUploadFile() {
 }
 // MsgBox on Click event on Delete Icon 
 $(document).on('click', '.delete-Records', async function () {
-    var recordId = $(this).data("attendaceid");
-    alert(recordId);
-    console.log("Delete Id:", recordId);
-    if (!recordId) {
+    AttendaceId = $(this).data("attendaceid");
+    alert(AttendaceId);
+    console.log("Delete Id:", AttendaceId);
+    if (!AttendaceId) {
         toastr.error("Attendance Id not found");
         return;
     }
     var isConfirmed = await DeleteEditBox("Delete Record", "Do you want to delete this record?", "question");
     if (isConfirmed) {
-        await deleteAttendanceRecord(recordId);
+        await deleteAttendanceRecord(AttendaceId);
     }
 });
 // Delete Records Function
-async function deleteAttendanceRecord(recordId) {
+async function deleteAttendanceRecord(AttendaceId) {
     try {
         let formData = new FormData();
-        formData.append("AttendaceId", recordId);
+        formData.append("AttendaceId", AttendaceId);
         formData.append("CancelRemarks", "Deleted by user");
-        console.log("Sending Delete Data:", recordId);
+        console.log("Sending Delete Data:", AttendaceId);
         let res = await acceptUpdate("Manpower", "Delete_DeptAttendanceRecord", formData);
         if (res.success) {
             toastr.success(res.message);
@@ -975,6 +967,46 @@ $("#flexCheckDefault").change(function () {
     }
     calculateBillAmounts();
 });
+
+//Msgbox on View Mapped Employee
+$(document).on('click', '.edit-ViewMappedEmp', async function () {
+    Id = $(this).data("id");
+    AttendaceId = $(this).data("attendaceid");
+    console.log("Upload Bill Id:", Id);
+    console.log("Upload AttendaceId Id:", AttendaceId);
+    alert(AttendaceId);
+    //console.log("Edit Record Id:", AttendaceId);
+    if (!AttendaceId) {
+        toastr.error("Record Id not found");
+        return;
+    }
+    var isConfirmed = await DeleteEditBox('Edit Field', 'Do you want to edit Record?', 'question');
+    if (isConfirmed) {
+        await ViewMarkedEpmlist(Id, AttendaceId);
+        openModal('myModal_ViewMappedEmployee');
+        // Alternative if openModal not working
+        //$('#myModal_UploadFile').modal('show');
+    } else {
+        console.log('Edit cancelled');
+    }
+});
+
+//Get Record mapped No of Resource marked by department 
+async function ViewMarkedEpmlist(Id, AttendaceId) {
+    var filterData = {
+        Id: Id,
+        AttendaceId: AttendaceId,
+    };
+    try {
+        let records = await getRecords('Manpower', 'GetMarkedEmpRsourceRecord', filterData, '#myTable_ViewMapResource1', 'N');
+        bindMarkedDatatable(records, '#myTable_ViewMapResource1');
+    }
+    catch (error) {
+        console.error("Error loading records:", error);
+        //hideModalLoader();
+    }
+}
+
 
 //Msgbox on Agency Invoice Entry 
 $(document).on('click', '.edit-AgencyInvoice', async function () {

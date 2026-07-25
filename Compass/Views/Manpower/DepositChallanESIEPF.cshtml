@@ -36,8 +36,11 @@
             </div>
             <div class="col-md-3 mb-0">
                 <label class="form-labelo">Challan Type<span class="text-danger">*</span></label>
-                <select id="ddlChallanType" class="form-select form-select-sm search_ddl select2" aria-label=".form-select-sm">
+                @* <select id="ddlChallanType" class="form-select form-select-sm search_ddl select2" aria-label=".form-select-sm"> *@
+                <select id="ddlChallanType" class="form-select " aria-label=".form-select-sm">
                     <option selected value="0"> -- Select --</option>
+                    <option  value="1"> ESIC Challan</option>
+                    <option  value="2"> EPF Challan</option>
                 </select>
                 <span class="error"></span>
             </div>
@@ -130,6 +133,9 @@
                     <th>View Payment Receipt & ECR</th>
                     <th>View Employee Details</th>
                     <th>Edit</th>
+                    <th>Status</th>
+                    <th>Verification Remarks </th>
+                    <th>Reject</th>
                    
 
                 </tr>

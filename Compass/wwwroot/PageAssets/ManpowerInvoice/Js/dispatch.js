@@ -34,7 +34,7 @@ async function recordlist() {
         monthId = m.toString() + y.toString(); // "42026"
     }
     var filterData = {
-        DeptBillId: 0,
+        DeptBillId: 16523,
         MonthYear: monthId,
         PageNumber: 1,
         PageSize: 50,

@@ -919,10 +919,7 @@ namespace Compass.Controllers
 
                 var list = dt.AsEnumerable().Select(row => new MapEmployeeViewModel
                 {
-                    EmpId = row["EmpId"] != DBNull.Value
-                                ? Convert.ToInt32(row["EmpId"])
-                                : 0,
-
+                    EmpId = row["EmpId"] != DBNull.Value ? Convert.ToInt32(row["EmpId"]) : 0,
                     EmpName = row["Empname"]?.ToString(),
                     EmpFatherName = row["FatherName"]?.ToString(),
                     EmpAadharNo = row["AADHARNO"]?.ToString(),
