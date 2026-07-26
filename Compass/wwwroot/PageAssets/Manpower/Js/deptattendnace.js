@@ -48,7 +48,7 @@ $(document).ready(function () {
 
 $('#ddlBillingAddress')
     .on('select2:select', function (e) {
-        $('#txtNoOfResources').val(e.params.data.noDeployedRes || 0);
+        $('#txtNoOfResources').val(e.params.data.NoOfResource || 0);
     })
     .on('select2:clear', function () {
         $('#txtNoOfResources').val('');

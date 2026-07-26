@@ -40,8 +40,15 @@ namespace Compass.Services
         // Get Work Order ddl based on Parent 1 & Parent 2 for Employee Detail Import
         Task<List<DropdownDto>> GetEMPImportWorkOrderDropdownAsync(int Id, int ParentId1, int ParentId2, int ParentId3, int userId, int roleId, string searchTerm);
 
-        // Get PPayment Mode ddl
+        // Get Challan Type  ddl
         Task<List<DropdownDto>> GetChallanTypeDropdownAsync(int Id, string searchTerm);
+        
+        // Get Challan Number  ddl
+        Task<List<DropdownDto>> GetChallanNumberDropdownAsync(int Id, int ParentId1, int ParentId2, int ParentId3,  string searchTerm);
+
+        // Get Total Resource on  Challan Number  ddl
+        Task<List<DropdownDto>> GetChallanResourceDropdownAsync(int Id, int ParentId1, int ParentId2, int ParentId3/*, string searchTerm*/);
+
     }
 
 }

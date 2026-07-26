@@ -41,7 +41,11 @@ namespace Compass.Repositories
         //Get Challan Type ddl
         Task<List<DropdownDto>> GetChallanTypeDropdownAsync(int Id, string searchTerm);
 
+        //Get Challan Number ddl
+        Task<List<DropdownDto>> GetChallanNumberDropdownAsync(int Id, int ParentId1, int ParentId2, int ParentId3, string searchTerm);
 
+        //Get Total Resource on  Challan Number  ddl
+        Task<List<DropdownDto>> GetChallanResourceDropdownAsync(int Id, int ParentId1, int ParentId2, int ParentId3/*, string searchTerm*/);
 
     }
 }

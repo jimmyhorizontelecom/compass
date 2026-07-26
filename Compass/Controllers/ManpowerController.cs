@@ -1612,7 +1612,7 @@ namespace Compass.Controllers
 
         // Get record for the List
         [HttpGet]
-        public async Task<IActionResult> GetMapChallanInvoiceRecord([FromQuery] DepositeChallanFilter filter)
+        public async Task<IActionResult> GetMapChallanInvoiceRecord([FromQuery] MapChallanFilter filter)
 
         {
             var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
@@ -1621,32 +1621,100 @@ namespace Compass.Controllers
             {
                 // Access as object
                 SortedList parameters = new SortedList();
-                parameters.Add("@ChallanId", filter.ChallanId);
                 parameters.Add("@AgencyId", filter.AgencyId);
-                parameters.Add("@ChallanType", filter.ChallanType);
                 parameters.Add("@MonthYear", filter.MonthYear);
+                parameters.Add("@ChallanId", filter.ChallanId);
+                parameters.Add("@ChallanType", filter.ChallanType);
                 parameters.Add("@CreatedBy", userId);
-                parameters.Add("@Userrole", roleId);
-                var dt = await _cn.FillDataTableAsync("TallyEsiEpfChallan_List", "", parameters);
+                parameters.Add("@RoleId", roleId);
+                var dt = await _cn.FillDataTableAsync("TallyEsiEpfChallanVsBill_List", "", parameters);
                 if (dt == null || dt.Rows.Count == 0)
-                    return Ok(new List<DepositeChallanListModel>());
-                var list = dt.AsEnumerable().Select(row => new DepositeChallanListModel
+                    return Ok(new List<MapChallanViewModel>());
+                var list = dt.AsEnumerable().Select(row => new MapChallanViewModel
                 {
+                    AgencyBillId = (row["AgencyId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["AgencyId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["AgencyId"]),
+                    AgencyBillNo = (row["Billno"]?.ToString()),
                     AgencyId = (row["AgencyId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["AgencyId"].ToString()))
                     ? 0 : Convert.ToInt32(row["AgencyId"]),
                     AgencyName = (row["AgencyName"]?.ToString()),
-                    ChallanId = (row["ChallanId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["ChallanId"].ToString()))
-                    ? 0 : Convert.ToInt32(row["ChallanId"]),
-                    ChallanType = (row["ChallanType"]?.ToString()),
-                    ChallanNumber = (row["ChallanNumber"]?.ToString()),
-                    ChallanDate = (row["ChallanDate"]?.ToString()),
-                    NoOfHPSEDCResource = (row["NoOfResource"] == DBNull.Value || string.IsNullOrWhiteSpace(row["NoOfResource"].ToString()))
-                    ? 0 : Convert.ToInt32(row["NoOfResource"]),
-                    ChallanAmount = Convert.ToDecimal(row["Amount"]?.ToString()),
-                    VerificationRemarks = (row["VerificationRemarks"]?.ToString()),
+                    BillForMonth = Convert.ToInt32(row["BillforMonth"]?.ToString()),
+                    TotalResource = Convert.ToInt32(row["NoOfResource"]?.ToString()),
+                   
                 }).ToList();
 
                 return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+        //Submit Data
+        [HttpPost]
+        public async Task<IActionResult> AddOrEdit_MapChallanInvoiceRecord([FromForm] DeptPurchaseInvoiceModel model)
+        {
+            try
+            {
+                //var Id = model.Id;
+                var AttendaceId = model.AttendaceId;
+                var PurchaseBillDate = model.PurchaseBillDate;
+                var WorkOrderNo = model.WorkOrderNo;
+                var AgencyBillNo = model.AgencyBillNo;
+                var AgencyId = model.AgencyId;
+                var DeptId = model.DeptId;
+                var NoOfResources = model.NoOfResources;
+                var BillingId = model.BillingId;
+                var BillingAdd = model.BillingAdd;
+                var MonthYear = model.MonthYear;
+                var Description = model.Description;
+                var Narration = model.Narration;
+                var BasicBillAmt = model.BasicBillAmt;
+                var AdminCharge = model.AdminCharge;
+                var LiveryCharge = model.LiveryCharge;
+                var InputCgst = model.InputCgst;
+                var InputSgst = model.InputSgst;
+                var InputIgst = model.InputIgst;
+                var ToatlAmt = model.TotalAmt;
+                var BillType = model.BillType;
+                var userId = User.FindFirst("UserId")?.Value;
+                SortedList parameters = new SortedList
+                    {
+                    { "@AgencyBillId", 0 },
+                    { "@BillDate", PurchaseBillDate },
+                    { "@WorkOrderNo", WorkOrderNo },
+                    { "@NoOfResource", NoOfResources },
+                    { "@BillforMonth", MonthYear },
+                    { "@AttendanceId", AttendaceId },
+                    { "@Billno", AgencyBillNo },
+                    { "@AgencyId", AgencyId },
+                    { "@DeptId", DeptId },
+                    { "@BillingId", BillingId },
+                    { "@DepartmentAddress", BillingAdd },
+                    { "@Description", Description },
+                    { "@Narration", Narration },
+                    { "@AgencyBillAmt", BasicBillAmt },
+                    { "@AdminAmt", AdminCharge },
+                    { "@LibaryAmt", LiveryCharge },
+                    { "@cgstAmt", InputCgst },
+                    { "@SGSTAtm", InputSgst },
+                    { "@IGSTAmt", InputIgst },
+                    { "@TotalAmt", ToatlAmt },
+                    { "@BillType", BillType },
+                    { "@createdby", userId }
+                };
+                var result = _cn.ExecuteNonQueryWMessage(
+                    "TallyAgencyBill_AcceptUpdate",
+                    "",
+                    parameters
+                );
+                return Ok(new { success = true, message = result.ToString() });
             }
             catch (Exception ex)
             {

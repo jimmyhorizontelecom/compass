@@ -150,6 +150,33 @@ namespace Compass.Services
             return await _repository.GetChallanTypeDropdownAsync(Id, searchTerm);
         }
 
+        // Get Challan Number ddl
+           public async Task<List<DropdownDto>> GetChallanNumberDropdownAsync(
+           int Id,
+           int ParentId1,
+           int ParentId2,
+           int ParentId3,
+           //int userId,
+           //int roleId,
+           string searchTerm)
+        {
+            return await _repository.GetChallanNumberDropdownAsync(Id, ParentId1, ParentId2, ParentId3, /*userId, roleId, */searchTerm);
+        }
+
+        // Get Total Resource on  Challan Number  ddl
+        public async Task<List<DropdownDto>> GetChallanResourceDropdownAsync(
+        int Id,
+        int ParentId1,
+        int ParentId2,
+        int ParentId3
+        //int userId,
+        //int roleId,
+       //string searchTerm
+       )
+        {
+            return await _repository.GetChallanResourceDropdownAsync(Id, ParentId1, ParentId2, ParentId3 /*userId, roleId, searchTerm*/);
+        }
+
 
     }
 }

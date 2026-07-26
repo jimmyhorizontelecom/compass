@@ -407,7 +407,63 @@ namespace Compass.Repositories
             return result;
         }
 
+        //Get Challan Number ddl
+           public async Task<List<DropdownDto>> GetChallanNumberDropdownAsync(
+           int Id,
+           int ParentId1,
+           int ParentId2,
+           int ParentId3,
+           //int userId,
+           //int roleId,
+           string searchTerm)
+        {
 
+            SortedList parameters = new SortedList();
+            parameters.Add("@ChallanId", 0);
+            parameters.Add("@MonthYear", ParentId1);
+            //parameters.Add("@AgencyId", userId);
+            parameters.Add("@AgencyId", ParentId2);
+            parameters.Add("@ChallanTypeId", ParentId3);
+            //parameters.Add("@UserId", userId);
+            //parameters.Add("@RoleId", roleId);
+            // parameters.Add("@SearchTerm", searchTerm);
+           parameters.Add("@SearchTerm", string.IsNullOrEmpty(searchTerm) ? DBNull.Value : searchTerm);
+            var dt = await _cn.FillDataTableAsync(
+                    "TallyEsiEpfChallan_dllC",
+                    "",
+                    parameters
+                );
+            if (dt == null || dt.Rows.Count == 0)
+                return new List<DropdownDto>();
+
+            var result = CommonNew.ToList<DropdownDto>(dt);
+            return result;
+        }
+
+        //Get Total Resource on  Challan Number  ddl
+        public async Task<List<DropdownDto>> GetChallanResourceDropdownAsync(
+    int Id,
+    int ParentId1,
+    int ParentId2,
+    int ParentId3)
+        {
+            SortedList parameters = new SortedList();
+
+            parameters.Add("@ChallanId", Id);
+            parameters.Add("@MonthYear", ParentId1);
+            parameters.Add("@AgencyId", ParentId2);
+            parameters.Add("@ChallanTypeId", ParentId3);
+
+            var dt = await _cn.FillDataTableAsync(
+                "TallyEsiEpfChallan_dll",
+                "",
+                parameters);
+
+            if (dt == null || dt.Rows.Count == 0)
+                return new List<DropdownDto>();
+
+            return CommonNew.ToList<DropdownDto>(dt);
+        }
 
 
     }

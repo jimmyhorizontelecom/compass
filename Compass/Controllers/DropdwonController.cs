@@ -204,6 +204,46 @@ namespace Compass.Controllers
             return Ok(result);
         }
 
+        //Get Challan Number ddl
+         [HttpGet]
+        public async Task<IActionResult> MChallanNumber_ddl(
+           int Id,
+           int ParentId1 = 0,
+           int ParentId2 = 0,
+           int ParentId3 = 0,
+
+           string searchTerm = ""
+           )
+        {
+            //var userId = User.FindFirst("UserId")?.Value;
+            //var roleId = User.FindFirst("RoleId")?.Value;
+            //int userId = 0;
+            //int roleId = 0;
+
+            //int.TryParse(User.FindFirst("UserId")?.Value, out userId);
+            //int.TryParse(User.FindFirst("RoleId")?.Value, out roleId);
+
+            var result = await _service.GetChallanNumberDropdownAsync(Id, ParentId1, ParentId2, ParentId3, /*userId, roleId,*/ searchTerm);
+            return Ok(result);
+        }
+
+        //Get Total Resource on  Challan Number  ddl
+        [HttpGet]
+        [HttpGet]
+        public async Task<IActionResult> MChallanResourceNumber_ddl(
+    int Id,
+    int ParentId1 = 0,
+    int ParentId2 = 0,
+    int ParentId3 = 0)
+        {
+            var result = await _service.GetChallanResourceDropdownAsync(
+                Id,
+                ParentId1,
+                ParentId2,
+                ParentId3);
+
+            return Ok(result);
+        }
 
         public IActionResult Index()
         {

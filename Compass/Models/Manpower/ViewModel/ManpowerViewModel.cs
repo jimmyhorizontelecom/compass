@@ -461,11 +461,13 @@ namespace Compass.Models.ManpowerViewModel
        public int MonthYear { get; set; }
         public int AgencyId { get; set; }
         public int ChallanId { get; set; }
+        public int ChallanType { get; set; }
         public int ChallanNumber { get; set; }
     }
 
     public class MapChallanViewModel
     {
+        public int AgencyBillId { get; set; }
         public string AgencyBillNo { get; set; }
         public int AgencyId { get; set; }
         public string AgencyName { get; set; }

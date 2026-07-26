@@ -9,9 +9,60 @@ $(document).ready(function () {
     // Parent Dropdown
     bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyName", " Agency Name");
     bindDataToDdl("Dropdown", "MChallanType_ddl", "", "ddlChallanType", " Challan Type");
-    bindDataToDdl("Dropdown", "MChallanType_ddl", "", "ddlChallanNumber", " Challan Number");
+    //bindDataToDdl("Dropdown", "MChallanNumber_ddl", "", "ddlChallanNumber", " Challan Number");
+    $("#monthYear").on("change", function () {
+        let value = $(this).val(); // 06/2025
+        if (value) {
+            let arr = value.split('/');
+            let monthYear = parseInt(parseInt(arr[0], 10).toString() + arr[1], 10);
+            $("#hdnMonthYear").val(monthYear).trigger("change");
+        }
+    });
+    // Dependent Dropdown on multiple parents
+    bindDependentDataToDdlToParent("Dropdown", "MChallanNumber_ddl", null,// ❗ no modal
+        "hdnMonthYear", "ddlAgencyName", "ddlChallanType", "ddlChallanNumber", "Challan Number ",);
+    
 });
+$(document).on("change", "#ddlChallanNumber", async function () {
 
+    let challanId = parseInt($(this).val()) || 0;
+
+    // Agar koi Challan select nahi hua
+    if (challanId === 0) {
+        $("#txtTotalResources").val("");
+        $("#txtAllocatedResource").val("");
+        return;
+    }
+
+    let filterData = {
+        Id: challanId,
+        ParentId1: parseInt($("#hdnMonthYear").val()) || 0,
+        ParentId2: parseInt($("#ddlAgencyName").val()) || 0,
+        ParentId3: parseInt($("#ddlChallanType").val()) || 0
+    };
+
+    try {
+        let records = await getRecords(
+            "Dropdown",
+            "MChallanResourceNumber_ddl",
+            filterData,
+            "",
+            "N"
+        );
+
+        if (records.length > 0) {
+            $("#txtTotalResources").val(records[0].NoOfResource);
+            $("#txtAllocatedResource").val(records[0].InvoicePerson);
+        } else {
+            $("#txtTotalResources").val("");
+            $("#txtAllocatedResource").val("");
+        }
+        recordlist();
+    }
+    catch (e) {
+        console.log(e);
+    }
+});
 //Get Record for A table 
 async function recordlist() {
     var monthYear = $("#monthYear").val(); 
@@ -28,11 +79,10 @@ async function recordlist() {
     var challanType = parseInt($("#ddlChallanType").val()) || 0;
     var challanNumber = parseInt($("#ddlChallanNumber").val()) || 0;
      var filterData = {
-        AgencyBillId: 1754,
-        //AgencyId: agencyId,
-        //MonthId: monthYearId,
-        //PageNo: 1,
-        //PageSize: 10,
+         AgencyId: agencyId,
+         ChallanId:0,
+         MonthYear: monthYearId,
+         ChallanType: challanType,
     };
     console.log("Filter", filterData);
     try {
@@ -59,10 +109,10 @@ function bindDatatable(records, tableId) {
                 data-id="${value.AgencyBillId}">
                 <td>${SrNo}</td>
                 <td class="text-center"> <input type="checkbox" class="rowCheckbox" value="${value.EmpId}"></td>
-                <td>${value.DeptAdd}</td>
+                <td>${value.AgencyBillNo}</td>
                 <td>${value.AgencyName}</td>
-                <td>${value.SaleBillNo} </td>
-                <td>${value.SaleBillAmt} </td>
+                <td>${value.BillForMonth} </td>
+                <td>${value.TotalResource} </td>
                <td class="text-center"> <input type="number" class="inputNoOfResource"  style="width:100px;"></td>
                 
                  
