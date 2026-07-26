@@ -194,7 +194,15 @@ namespace Compass.Controllers
             return Ok(result);
         }
 
-
+        //Get Challan type ddl
+        [HttpGet]
+        public async Task<IActionResult> MChallanType_ddl(
+                int Id = 0,
+                string searchTerm = "")
+        {
+            var result = await _service.GetChallanTypeDropdownAsync(Id,searchTerm);
+            return Ok(result);
+        }
 
 
         public IActionResult Index()

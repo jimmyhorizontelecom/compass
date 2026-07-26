@@ -386,5 +386,29 @@ namespace Compass.Repositories
             return result;
         }
 
+        //Get Challan type ddl
+        public async Task<List<DropdownDto>> GetChallanTypeDropdownAsync(
+          int Id,
+          string searchTerm)
+        {
+
+            SortedList parameters = new SortedList();
+            parameters.Add("@TypeId", Id);
+            parameters.Add("@SearchTerm", string.IsNullOrEmpty(searchTerm) ? DBNull.Value : searchTerm);
+            var dt = await _cn.FillDataTableAsync(
+                    "TallyChallanType_List",
+                    "",
+                    parameters
+                );
+            if (dt == null || dt.Rows.Count == 0)
+                return new List<DropdownDto>();
+
+            var result = CommonNew.ToList<DropdownDto>(dt);
+            return result;
+        }
+
+
+
+
     }
 }

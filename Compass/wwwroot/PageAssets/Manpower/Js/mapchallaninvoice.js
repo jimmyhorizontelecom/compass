@@ -8,6 +8,8 @@ $(document).ready(function () {
     initCustomPicker('#monthYear');
     // Parent Dropdown
     bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyName", " Agency Name");
+    bindDataToDdl("Dropdown", "MChallanType_ddl", "", "ddlChallanType", " Challan Type");
+    bindDataToDdl("Dropdown", "MChallanType_ddl", "", "ddlChallanNumber", " Challan Number");
 });
 
 //Get Record for A table 
@@ -23,22 +25,19 @@ async function recordlist() {
         monthYearId = m.toString() + y.toString(); // "42026"
     }
     var agencyId = parseInt($("#ddlAgencyName").val()) || 0;
-   
-
-    var filterData = {
-
+    var challanType = parseInt($("#ddlChallanType").val()) || 0;
+    var challanNumber = parseInt($("#ddlChallanNumber").val()) || 0;
+     var filterData = {
         AgencyBillId: 1754,
         //AgencyId: agencyId,
         //MonthId: monthYearId,
         //PageNo: 1,
         //PageSize: 10,
-
-
     };
     console.log("Filter", filterData);
     try {
 
-        let records = await getRecords('Manpower', 'GetAgencyPaymentReceivedRecord', filterData, '#myTable', 'N');
+        let records = await getRecords('Manpower', 'GetMapChallanInvoiceRecord', filterData, '#myTable', 'N');
         bindDatatable(records, '#myTable');
     }
     catch (error) {
@@ -48,28 +47,23 @@ async function recordlist() {
 }
 //Bind get record  in a table 
 function bindDatatable(records, tableId) {
-
-
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().clear().destroy();
     }
-
     var tbody = $(tableId + " tbody");
     tbody.empty();
-
     $.each(records, function (i, value) {
         let SrNo = i + 1;
-
         tbody.append(`
             <tr 
                 data-id="${value.AgencyBillId}">
                 <td>${SrNo}</td>
-                <td>${value.DeptName}</td>
+                <td class="text-center"> <input type="checkbox" class="rowCheckbox" value="${value.EmpId}"></td>
                 <td>${value.DeptAdd}</td>
                 <td>${value.AgencyName}</td>
                 <td>${value.SaleBillNo} </td>
                 <td>${value.SaleBillAmt} </td>
-                <td>${value.SaleBillDate}</td>
+               <td class="text-center"> <input type="number" class="inputNoOfResource"  style="width:100px;"></td>
                 
                  
         `);
@@ -86,5 +80,20 @@ function bindDatatable(records, tableId) {
     //hideModalLoader();
 }
 
+
+// Select All checkbox
+$(document).on('change', '#selectAll', function () {
+    $('.rowCheckbox').prop('checked', $(this).prop('checked'));
+});
+$(document).on('change', '.rowCheckbox', function () {
+    if (!$(this).prop('checked')) {
+        $('#selectAll').prop('checked', false);
+    } else {
+        // Check if all checkboxes are checked
+        if ($('.rowCheckbox:checked').length === $('.rowCheckbox').length) {
+            $('#selectAll').prop('checked', true);
+        }
+    }
+});
 
 

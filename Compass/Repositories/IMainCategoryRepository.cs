@@ -38,7 +38,8 @@ namespace Compass.Repositories
         // Get Work Order ddl based on Parent 1 & Parent 2 for Employee Detail Import
         Task<List<DropdownDto>> GetEMPImportWorkOrderDropdownAsync(int Id, int ParentId1, int ParentId2, int ParentId3, int userId, int roleId, string searchTerm);
 
-
+        //Get Challan Type ddl
+        Task<List<DropdownDto>> GetChallanTypeDropdownAsync(int Id, string searchTerm);
 
 
 

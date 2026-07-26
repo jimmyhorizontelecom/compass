@@ -425,6 +425,57 @@ namespace Compass.Models.ManpowerViewModel
     #endregion
 
 
+    #region Deposit Challan ESIEPF
+
+    public class DepositeChallanFilter
+    {
+        public int ChallanId { get; set; }
+        public int AgencyId { get; set; }
+        public int ChallanType { get; set; }
+        public int MonthYear { get; set; }
+    }
+
+    public class DepositeChallanListModel
+    {
+        public int MonthYear { get; set; }
+        public int AgencyId { get; set; }
+        public string AgencyName { get; set; }
+        public int ChallanId { get; set; }
+        public string ChallanType { get; set; }
+        public string ChallanNumber { get; set; }
+        public string ChallanDate { get; set; }
+        public int NoOfHPSEDCResource { get; set; }
+        public decimal ChallanAmount { get; set; }
+        public string VerificationRemarks { get; set; }
+    }
+
+
+
+
+    #endregion
+
+
+    #region MapChallanInvoice
+    public class MapChallanFilter
+    {
+       public int MonthYear { get; set; }
+        public int AgencyId { get; set; }
+        public int ChallanId { get; set; }
+        public int ChallanNumber { get; set; }
+    }
+
+    public class MapChallanViewModel
+    {
+        public string AgencyBillNo { get; set; }
+        public int AgencyId { get; set; }
+        public string AgencyName { get; set; }
+        public int BillForMonth { get; set; }
+        public int TotalResource { get; set; }
+    }
+
+
+
+    #endregion
 
 
 

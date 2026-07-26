@@ -238,6 +238,44 @@ namespace Compass.Models.ManpowerModel
     }
 
     #endregion
+
+    #region DepositeChallan ESI EPF
+
+    public class DepositeChallanSubmitModel
+    {
+        public int ChallanId { get; set; }
+        public int ChallanFor { get; set; }
+        public String ChallanNumber { get; set; }
+        public int BankName { get; set; }
+        public int AgencyId { get; set; }
+        public int BillForMonth { get; set; }
+        public DateOnly ChallanDate { get; set; }
+        public decimal ChallanAmount { get; set; }
+        public IFormFile AttacheChallan { get; set; }   // For File upload
+        public IFormFile AttacheChallanDetails { get; set; }
+        public int NoOfResource { get; set; }
+        public char IsDeclaration { get; set; }
+    
+    }
+
+
+    #endregion
+
+    #region MapChallanInvoice
+    public class MapChallanSubmitModel
+    {
+        public string AgencyBillNo { get; set; }
+        public int AgencyId { get; set; }
+        public string AgencyName { get; set; }
+        public int BillForMonth { get; set; }
+        public int TotalResource { get; set; }
+        public int NoofResourceInput { get; set; }
+    }
+
+
+
+    #endregion
+
 }
 
 

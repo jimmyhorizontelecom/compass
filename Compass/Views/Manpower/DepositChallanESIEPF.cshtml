@@ -21,12 +21,10 @@
 
         <div class="form-group row">
             <div class="col-md-3 ">
-                <label class="form-labelo">Month Year <span class="text-danger">*</span></label>
-                <select id="ddlMonthYear" class="form-select form-select-sm search_ddl select2" aria-label=".form-select-sm">
-                    <option selected value="0"> -- Select --</option>
-                </select>
-                <span class="error"></span>
-            </div>
+                <label class="form-label">Month & Year</label>
+                <input type="text" id="monthYear" class="form-control" placeholder="MM/YYYY">
+                <span class="error text-danger"></span>
+             </div>
             <div class="col-md-3 mb-0">
                 <label class="form-labelo">Agency Name<span class="text-danger">*</span></label>
                 <select id="ddlAgencyName" class="form-select form-select-sm search_ddl select2" aria-label=".form-select-sm">
@@ -36,11 +34,9 @@
             </div>
             <div class="col-md-3 mb-0">
                 <label class="form-labelo">Challan Type<span class="text-danger">*</span></label>
-                @* <select id="ddlChallanType" class="form-select form-select-sm search_ddl select2" aria-label=".form-select-sm"> *@
-                <select id="ddlChallanType" class="form-select " aria-label=".form-select-sm">
+                <select id="ddlChallanType" class="form-select form-select-sm search_ddl select2" aria-label=".form-select-sm">
+               @*  <select id="ddlChallanType" class="form-select " aria-label=".form-select-sm"> *@
                     <option selected value="0"> -- Select --</option>
-                    <option  value="1"> ESIC Challan</option>
-                    <option  value="2"> EPF Challan</option>
                 </select>
                 <span class="error"></span>
             </div>
@@ -63,7 +59,7 @@
             </div>
             <div class="col-md-3 mb-0">
                 <label class="form-label">Challan Amount<span class="text-danger">*</span></label>
-                <input type="text" id="txtChallanAmt" class="form-control txtbx cleartxt" placeholder="Challan Amount" />
+                <input type="number" id="numChallanAmt" class="form-control txtbx cleartxt" placeholder="Challan Amount" />
                 <span class="error"></span>
             </div>
 
@@ -72,7 +68,7 @@
             <div class="col-md-3 mb-0">
                 <label class="form-label">Upload Challan Payment Confirmation Receipt<span class="text-danger">*</span></label>
                 <div class="input-group mb-0">
-                    <input type="file" class="form-control" id="inputGroupFile02">
+                    <input type="file" class="form-control" id="inputGroupFile01">
                     @*  <label class="input-group-text" for="inputGroupFile02">Upload</label> *@
                 </div>
                 <span class="error">Only PDF File are allowed</span>
@@ -89,10 +85,11 @@
 
             <div class="col-md-6 mb-0">
                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="flexCheckBoxDefault" id="">
-                    <label class="form-check-label" for="flexCheckboxDefault1">
+                    <input class="form-check-input" type="checkbox" name="flexCheckBoxDefault" id="chkConsent">
+                      <label class="form-check-label" for="flexCheckboxDefault1">
                         Declaration
                     </label>
+                    <span class="error"></span>
                     <div>
                         I/We hereby declare that the submitted ESIC and EPF challan details and the corresponding 
                         uploaded documents are genuine, accurate, and in full compliance with all statutory requirements.
@@ -105,7 +102,7 @@
             </div>
             <div class="col-md-9 mb-0"> </div>
                <div class="col-md-3 mb-0">
-                     <button type="button" class="btn  btn-coral txt-white" data-bs-toggle="modal" data-bs-target="#myModal">
+                <button type="button" class="btn  btn-coral txt-white btnModalSubmit" data-bs-toggle="modal" data-bs-target="#myModal">
                     Submit
                     </button>
                 </div>

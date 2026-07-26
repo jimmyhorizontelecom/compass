@@ -141,5 +141,15 @@ namespace Compass.Services
         {
             return await _repository.GetEMPImportWorkOrderDropdownAsync(Id, ParentId1, ParentId2, ParentId3, userId, roleId, searchTerm);
         }
+
+        // Get Challan Type ddl
+        public async Task<List<DropdownDto>> GetChallanTypeDropdownAsync(
+           int Id,
+           string searchTerm)
+        {
+            return await _repository.GetChallanTypeDropdownAsync(Id, searchTerm);
+        }
+
+
     }
 }

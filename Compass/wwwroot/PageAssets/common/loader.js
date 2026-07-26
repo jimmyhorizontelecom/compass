@@ -236,7 +236,8 @@ function resetModal() {
 
     // 🔹 Clear file inputs
     $container.find("input[type='file']").val("");
-
+    // 🔹 Uncheck all checkboxes
+    $container.find("input[type='checkbox']").prop("checked", false);
     // 🔹 Clear validation
     $container.find(".error").text("");
     $container.find(".is-invalid").removeClass("is-invalid");

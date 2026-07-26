@@ -1434,57 +1434,40 @@ namespace Compass.Controllers
             return View();
         }
 
-
-        #endregion
-
-        #region Map Challan Invoice
-        public IActionResult MapChallanInvoice()
-        {
-            return View();
-        }
-
-
-        // Get record for Payment list for Table in Partial Payment
+        // Get record for the List
         [HttpGet]
-        public async Task<IActionResult> GetAgencyPaymentReceivedRecord([FromQuery] AgencyInvFilter filter)
+        public async Task<IActionResult> GetChallanListRecord([FromQuery] DepositeChallanFilter filter)
 
         {
+            var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
+            var roleId = Convert.ToInt32(User.FindFirst("RoleId")?.Value ?? "0");
             try
             {
-
-
                 // Access as object
                 SortedList parameters = new SortedList();
-                parameters.Add("@AgencyBillId", filter.AgencyBillId);
-
-
-                var dt = await _cn.FillDataTableAsync("TallyAgencyParymentTransaction_get", "", parameters);
-
+                parameters.Add("@ChallanId", filter.ChallanId);
+                parameters.Add("@AgencyId", filter.AgencyId);
+                parameters.Add("@ChallanType", filter.ChallanType);
+                parameters.Add("@MonthYear", filter.MonthYear);
+                parameters.Add("@CreatedBy", userId);
+                parameters.Add("@Userrole", roleId);
+                var dt = await _cn.FillDataTableAsync("TallyEsiEpfChallan_List", "", parameters);
                 if (dt == null || dt.Rows.Count == 0)
-                    return Ok(new List<AgencyPartialPayListViewModel>());
-
-                var list = dt.AsEnumerable().Select(row => new AgencyPartialPayListViewModel
-
+                    return Ok(new List<DepositeChallanListModel>());
+                var list = dt.AsEnumerable().Select(row => new DepositeChallanListModel
                 {
-
-                    AgencyBillId = Convert.ToInt32(row["AgencyBillId"]?.ToString()),
-                    TransactionId = (row["TransactionId"]?.ToString()),
-                    PaymentMode = (row["ModeOfPayment"]?.ToString()),
-                    ReceivedDate = (row["PaymentDate"]?.ToString()),
-                    GstTds = decimal.TryParse(row["GSTTds2"]?.ToString(), out var gst) ? gst : 0,
-                    //Convert.ToDecimal(row["GSTTds2"]?.ToString()),
-                    Tds1 = decimal.TryParse(row["Tds1"]?.ToString(), out var tds1) ? tds1 : 0,
-                    //Convert.ToDecimal(row["Tds1"]?.ToString()),
-                    Tds2 = decimal.TryParse(row["Tds2"]?.ToString(), out var tds2) ? tds2 : 0,
-                    //Convert.ToDecimal(row["Tds2"]?.ToString()),
-                    PaymentAmt = decimal.TryParse(row["PaymentAmt"]?.ToString(), out var pay) ? pay : 0,
-                    //Convert.ToDecimal(row["PaymentAmt"]?.ToString()),
-                    DueBalance = decimal.TryParse(row["BalanceAmt"]?.ToString(), out var bal) ? bal : 0,
-                    //Convert.ToDecimal(row["BalanceAmt"]?.ToString()),
-                    Narration = (row["Narration"]?.ToString()),
-
-
-
+                    AgencyId = (row["AgencyId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["AgencyId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["AgencyId"]),
+                    AgencyName = (row["AgencyName"]?.ToString()),
+                    ChallanId = (row["ChallanId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["ChallanId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["ChallanId"]),
+                    ChallanType = (row["ChallanType"]?.ToString()),
+                    ChallanNumber = (row["ChallanNumber"]?.ToString()),
+                    ChallanDate = (row["ChallanDate"]?.ToString()),
+                    NoOfHPSEDCResource = (row["NoOfResource"] == DBNull.Value || string.IsNullOrWhiteSpace(row["NoOfResource"].ToString()))
+                    ? 0 : Convert.ToInt32(row["NoOfResource"]),
+                    ChallanAmount= Convert.ToDecimal(row["Amount"]?.ToString()),
+                    VerificationRemarks = (row["VerificationRemarks"]?.ToString()),
                 }).ToList();
 
                 return Ok(list);
@@ -1499,6 +1482,184 @@ namespace Compass.Controllers
                 });
             }
         }
+
+        // Submit data
+        [HttpPost]
+        public async Task<IActionResult> AddOrEdit_ESIEPFChallanDepositeRecord([FromForm] DepositeChallanSubmitModel model)
+        {
+            try
+            {
+                // LOGIN USER DETAILS
+                var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
+                var roleId = Convert.ToInt32(User.FindFirst("RoleId")?.Value ?? "0");
+                // MODEL VALUES
+                var ChallanId = model.ChallanId;
+                var ChallanFor = model.ChallanFor;
+                var ChallanNumber = model.ChallanNumber;
+                var BankName = model.BankName;
+                var AgencyId = model.AgencyId;
+                var BillForMonth = model.BillForMonth;
+                var ChallanDate = model.ChallanDate;
+                var ChallanAmount = model.ChallanAmount;
+                var NoOfResource = model.NoOfResource;
+                var IsDeclaration = model.IsDeclaration;
+                // FILES
+                IFormFile attachmentFile1 = model.AttacheChallan;
+                IFormFile attachmentFile2 = model.AttacheChallanDetails;
+
+                // Attache Challan Payment file 
+                if (attachmentFile1 == null || attachmentFile1.Length == 0)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Challan Payment file is required."
+                    });
+                }
+                if (attachmentFile2 == null || attachmentFile2.Length == 0)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = " Emp Details file is required."
+                    });
+                }
+                // SAVE AttacheChallan FILE
+                string AttacheChallan = "";
+                if (attachmentFile1 != null && attachmentFile1.Length > 0)
+                {
+                    string folderPath = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot/Attachment/ESIEPFChallan"
+                    );
+                    if (!Directory.Exists(folderPath))
+                        Directory.CreateDirectory(folderPath);
+                    string extension = Path.GetExtension(attachmentFile1.FileName);
+                    AttacheChallan =
+                        $"AttacheChallan{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid()}{extension}";
+                    string filePath = Path.Combine(folderPath, AttacheChallan);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await attachmentFile1.CopyToAsync(stream);
+                    }
+                }
+                // SAVE AttacheChallanDetails FILE
+                string AttacheChallanDetails = "";
+                if (attachmentFile2 != null && attachmentFile2.Length > 0)
+                {
+                    string folderPath = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot/Attachment/AttacheChallanDetails"
+                    );
+                    if (!Directory.Exists(folderPath))
+                        Directory.CreateDirectory(folderPath);
+                    string extension = Path.GetExtension(attachmentFile2.FileName);
+                    AttacheChallanDetails =
+                        $"AttacheChallanDetails_{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid()}{extension}";
+                    string filePath = Path.Combine(folderPath, AttacheChallanDetails);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await attachmentFile2.CopyToAsync(stream);
+                    }
+                }
+                SortedList parameters = new SortedList
+        {
+            { "@ChallanId", ChallanId },
+            { "@ChallanFor", ChallanFor },
+            { "@ChallanNumber",  ChallanNumber},
+            { "@BankName",  BankName},
+            { "@AgencyId", AgencyId },
+            { "@BillForMonth",  BillForMonth},
+            { "@ChallanDate", ChallanDate  },
+            { "@Amount",  ChallanAmount},
+            { "@AttacheChallan",  AttacheChallan},
+            { "@AttacheChallanDetails",  AttacheChallanDetails },
+            { "@NoOfResource",  NoOfResource},
+            { "@UploadedBy", userId },
+            { "@IsDeclaration", IsDeclaration },
+        };
+                // SAVE TO DATABASE
+                var result = _cn.ExecuteNonQueryWMessage(
+                    "TallyEsiEpfChallan_AcceptUpdate",
+                    "",
+                    parameters
+                );
+                // SUCCESS RESPONSE
+                return Ok(new
+                {
+                    success = true,
+                    message = result.ToString()
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+        #endregion
+
+        #region Map Challan Invoice
+        public IActionResult MapChallanInvoice()
+        {
+            return View();
+        }
+
+        // Get record for the List
+        [HttpGet]
+        public async Task<IActionResult> GetMapChallanInvoiceRecord([FromQuery] DepositeChallanFilter filter)
+
+        {
+            var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
+            var roleId = Convert.ToInt32(User.FindFirst("RoleId")?.Value ?? "0");
+            try
+            {
+                // Access as object
+                SortedList parameters = new SortedList();
+                parameters.Add("@ChallanId", filter.ChallanId);
+                parameters.Add("@AgencyId", filter.AgencyId);
+                parameters.Add("@ChallanType", filter.ChallanType);
+                parameters.Add("@MonthYear", filter.MonthYear);
+                parameters.Add("@CreatedBy", userId);
+                parameters.Add("@Userrole", roleId);
+                var dt = await _cn.FillDataTableAsync("TallyEsiEpfChallan_List", "", parameters);
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<DepositeChallanListModel>());
+                var list = dt.AsEnumerable().Select(row => new DepositeChallanListModel
+                {
+                    AgencyId = (row["AgencyId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["AgencyId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["AgencyId"]),
+                    AgencyName = (row["AgencyName"]?.ToString()),
+                    ChallanId = (row["ChallanId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["ChallanId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["ChallanId"]),
+                    ChallanType = (row["ChallanType"]?.ToString()),
+                    ChallanNumber = (row["ChallanNumber"]?.ToString()),
+                    ChallanDate = (row["ChallanDate"]?.ToString()),
+                    NoOfHPSEDCResource = (row["NoOfResource"] == DBNull.Value || string.IsNullOrWhiteSpace(row["NoOfResource"].ToString()))
+                    ? 0 : Convert.ToInt32(row["NoOfResource"]),
+                    ChallanAmount = Convert.ToDecimal(row["Amount"]?.ToString()),
+                    VerificationRemarks = (row["VerificationRemarks"]?.ToString()),
+                }).ToList();
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+
 
         #endregion
 
