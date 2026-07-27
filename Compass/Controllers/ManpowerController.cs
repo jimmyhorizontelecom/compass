@@ -1656,77 +1656,67 @@ namespace Compass.Controllers
             }
         }
 
-        //Submit Data
         [HttpPost]
-        public async Task<IActionResult> AddOrEdit_MapChallanInvoiceRecord([FromForm] DeptPurchaseInvoiceModel model)
+        public IActionResult SubmitMapChallanInvoice([FromBody] List<MapChallanSubmitModel> mapChallanDetails)
         {
             try
             {
-                //var Id = model.Id;
-                var AttendaceId = model.AttendaceId;
-                var PurchaseBillDate = model.PurchaseBillDate;
-                var WorkOrderNo = model.WorkOrderNo;
-                var AgencyBillNo = model.AgencyBillNo;
-                var AgencyId = model.AgencyId;
-                var DeptId = model.DeptId;
-                var NoOfResources = model.NoOfResources;
-                var BillingId = model.BillingId;
-                var BillingAdd = model.BillingAdd;
-                var MonthYear = model.MonthYear;
-                var Description = model.Description;
-                var Narration = model.Narration;
-                var BasicBillAmt = model.BasicBillAmt;
-                var AdminCharge = model.AdminCharge;
-                var LiveryCharge = model.LiveryCharge;
-                var InputCgst = model.InputCgst;
-                var InputSgst = model.InputSgst;
-                var InputIgst = model.InputIgst;
-                var ToatlAmt = model.TotalAmt;
-                var BillType = model.BillType;
-                var userId = User.FindFirst("UserId")?.Value;
-                SortedList parameters = new SortedList
+                if (mapChallanDetails == null || mapChallanDetails.Count == 0)
+                {
+                    return BadRequest(new
                     {
-                    { "@AgencyBillId", 0 },
-                    { "@BillDate", PurchaseBillDate },
-                    { "@WorkOrderNo", WorkOrderNo },
-                    { "@NoOfResource", NoOfResources },
-                    { "@BillforMonth", MonthYear },
-                    { "@AttendanceId", AttendaceId },
-                    { "@Billno", AgencyBillNo },
-                    { "@AgencyId", AgencyId },
-                    { "@DeptId", DeptId },
-                    { "@BillingId", BillingId },
-                    { "@DepartmentAddress", BillingAdd },
-                    { "@Description", Description },
-                    { "@Narration", Narration },
-                    { "@AgencyBillAmt", BasicBillAmt },
-                    { "@AdminAmt", AdminCharge },
-                    { "@LibaryAmt", LiveryCharge },
-                    { "@cgstAmt", InputCgst },
-                    { "@SGSTAtm", InputSgst },
-                    { "@IGSTAmt", InputIgst },
-                    { "@TotalAmt", ToatlAmt },
-                    { "@BillType", BillType },
-                    { "@createdby", userId }
-                };
+                        success = false,
+                        message = "No Record Found."
+                    });
+                }
+
+                DataTable dt = new DataTable();
+
+                dt.Columns.Add("AgencyBIllId", typeof(int));
+                dt.Columns.Add("ChallanFor", typeof(int));
+                dt.Columns.Add("NoOfResource", typeof(int));
+                dt.Columns.Add("ChallanId", typeof(int));
+                dt.Columns.Add("MonthYearId", typeof(int));
+
+                foreach (var item in mapChallanDetails)
+                {
+                    dt.Rows.Add(
+                        item.AgencyBIllId,
+                        item.ChallanFor,
+                        item.NoOfResource,
+                        item.ChallanId,
+                        item.MonthYearId
+                    );
+                }
+                SortedList parameters = new SortedList();
+                parameters.Add("@ChallanId", mapChallanDetails.First().ChallanId);
+                parameters.Add("@TallyEsiEpfMap", dt);
+                //parameters.Add("@mes", "");
                 var result = _cn.ExecuteNonQueryWMessage(
-                    "TallyAgencyBill_AcceptUpdate",
+                    "tallyESiEPInvoiceMap_AcceptUpdate",
+
                     "",
+
                     parameters
+
                 );
-                return Ok(new { success = true, message = result.ToString() });
+
+                return Ok(new
+                {
+                    success = result.ToString() == "Mapped successfully",
+                    message = result.ToString()
+                });
+
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
+                return BadRequest(new
                 {
                     success = false,
-                    message = "Server error.",
-                    error = ex.Message
+                    message = ex.Message
                 });
             }
         }
-
 
 
         #endregion

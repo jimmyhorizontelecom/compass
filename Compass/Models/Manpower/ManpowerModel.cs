@@ -262,17 +262,28 @@ namespace Compass.Models.ManpowerModel
     #endregion
 
     #region MapChallanInvoice
+    //public class MapChallanSubmitModel
+    //{
+    //    public string AgencyBillNo { get; set; }
+    //    public int AgencyId { get; set; }
+    //    public string AgencyName { get; set; }
+    //    public int BillForMonth { get; set; }
+    //    public int TotalResource { get; set; }
+    //    public int NoofResourceInput { get; set; }
+    //}
+
     public class MapChallanSubmitModel
     {
-        public string AgencyBillNo { get; set; }
-        public int AgencyId { get; set; }
-        public string AgencyName { get; set; }
-        public int BillForMonth { get; set; }
-        public int TotalResource { get; set; }
-        public int NoofResourceInput { get; set; }
+        public int AgencyBIllId { get; set; }
+
+        public int ChallanFor { get; set; }
+
+        public int NoOfResource { get; set; }
+
+        public int ChallanId { get; set; }
+
+        public int MonthYearId { get; set; }
     }
-
-
 
     #endregion
 
