@@ -287,6 +287,17 @@ namespace Compass.Models.ManpowerModel
 
     #endregion
 
+    #region VerifyESIEPF
+    public class VerifyESIEPFChallanModel
+    {
+        public int ChallanId { get; set; }
+        public string IsVarified { get; set; }
+        public string? VerificationRemarks { get; set; }
+    }
+
+
+    #endregion
+
 }
 
 

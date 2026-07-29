@@ -433,6 +433,7 @@ namespace Compass.Models.ManpowerViewModel
         public int AgencyId { get; set; }
         public int ChallanType { get; set; }
         public int MonthYear { get; set; }
+        public char Status { get; set; }
     }
 
     public class DepositeChallanListModel
@@ -442,11 +443,16 @@ namespace Compass.Models.ManpowerViewModel
         public string AgencyName { get; set; }
         public int ChallanId { get; set; }
         public string ChallanType { get; set; }
+        public string BillForMonth { get; set; }
         public string ChallanNumber { get; set; }
         public string ChallanDate { get; set; }
         public int NoOfHPSEDCResource { get; set; }
+        public int MappedResource { get; set; }
         public decimal ChallanAmount { get; set; }
         public string VerificationRemarks { get; set; }
+        public char IsVarified { get; set; }
+        public string AttacheChallan { get; set; }
+        public string AttacheChallanDetails { get; set; }
     }
 
 

@@ -1,0 +1,247 @@
+﻿@using System.Security.Claims
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    var roleId = User.FindFirst("RoleId")?.Value;
+    var userId = User.FindFirst("UserId")?.Value;
+    var deptId = User.FindFirst("DeptId")?.Value;
+}
+@{
+    Layout = "~/Views/Shared/_TestLayout.cshtml";
+}
+
+<div class="container ">
+    <div id="modalLoader1" class="modal-loader modalLoader">
+        <div class="spinner"></div>
+        <p class="loading-text">Please wait...</p>
+    </div>
+    <h4>Map Challan Invoice </h4>
+    <div class="filter-panel mt-2 div-coral-base">
+
+        <div class="form-group row">
+            <div class="col-md-3">
+                <label class="form-label">Month & Year</label>
+                <input type="hidden" id="hdnMonthYear" />
+                <input type="text" id="monthYear" class="form-control" placeholder="MM/YYYY">
+                <span class="error text-danger"></span>
+
+            </div>
+            <div class="col-md-3 mb-0">
+                <label class="form-labelo">Agency Name<span class="text-danger">*</span></label>
+                <select id="ddlAgencyName" class="form-select form-select-sm search_ddl select2" aria-label=".form-select-sm">
+                    <option selected value="0"> -- Select --</option>
+                </select>
+                <span class="error"></span>
+            </div>
+            <div class="col-md-3 mb-0">
+                <label class="form-labelo">Challan Type<span class="text-danger">*</span></label>
+                <select id="ddlChallanType" class="form-select form-select-sm search_ddl select2" aria-label=".form-select-sm">
+                    <option selected value="0"> -- Select --</option>
+                </select>
+                <span class="error"></span>
+            </div>
+            <div class="col-md-3 mb-0">
+                <label class="form-labelo">Verification Status<span class="text-danger">*</span></label>
+                <select id="ddlStatus" class="form-select " aria-label=".form-select-sm">
+                    <option selected value="0"> -- Select --</option>
+                    <option value="P"> Pending Challan</option>
+                    <option value="Y"> Verified Challan</option>
+                    <option value="R"> Rejected Challan</option>
+                    <option value="A"> All Challan</option>
+                </select>
+                <span class="error"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container mt-2">
+    @* <h2 class="mb-4">User List</h2> *@
+    <div class="filter-panel mt-2 div-coral-base">
+        <table id="myTable" class="table orangeTh table-striped table-hover table-bordered">
+            <thead class="bg-d">
+                <tr>
+                    <th>Sr.No</th>
+                    <th>Agency Name</th>
+                    <th>Month Year </th>
+                    <th>Challan No </th>
+                    <th>Challan Type </th>
+                    <th>Challan Amount </th>
+                    <th>No. of HPSEDC Resources</th>
+                    <th>Verify EPF ESIC</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot class="tfoot bg-primary">
+                <tr>
+                    @* <td>3</td>
+                    <td>Mike Brown</td>
+                    <td>mike@example.com</td>
+                    <td>Editor</td>
+                    <td>Editor</td> *@
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+}
+
+@section Modals {
+    <!-- The Modal -->
+    <div class="modal modal-lg" id="myModal">
+        <div class="modal-dialog ">
+            <div class="modal-content position-relative">
+                <!-- 🔥 Loader Overlay -->
+                <div id="" class="modal-loader modalLoader">
+                    <div class="spinner"></div>
+                    <p class="loading-text">Please wait...</p>
+                </div>
+                <!-- Modal Header -->
+                <div class="modal-header  bg-ld ">
+                    <h4 class="modal-title txt-white" id="myModalLabel">Add EPF ESI</h4>
+                    <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div id="#toast-container"></div>
+                    <div class="filter-panel mt-2 div-coral-base">
+                        <div class="form-group row">
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Agency<span class="text-danger">*</span></label>
+                                <input type="text" id="txtAgencyName" class="form-control txtbx cleartxt" placeholder="Agency Name" readonly />
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Month Year<span class="text-danger">*</span></label>
+                                <input type="text" id="txtMonthYear" class="form-control txtbx cleartxt" placeholder="Month Year" readonly />
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Challan Type<span class="text-danger">*</span></label>
+                                <input type="text" id="txtChallaType" class="form-control txtbx cleartxt" placeholder="Challan Type" readonly />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Challan No.<span class="text-danger">*</span></label>
+                                <input type="text" id="txtChallanNo" class="form-control txtbx cleartxt" placeholder="Challan No." readonly />
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Challan Amount<span class="text-danger">*</span></label>
+                                <input type="text" id="txtChallanAmt" class="form-control txtbx cleartxt" placeholder="Challan Amount" readonly />
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">No. of HPSEDC Resources<span class="text-danger">*</span></label>
+                                <input type="text" id="txtHpsedcResources" class="form-control txtbx cleartxt" placeholder="HPSEDC Resources" readonly />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Mapped Resources<span class="text-danger">*</span></label>
+                                <input type="text" id="txtMappedResource" class="form-control txtbx cleartxt" placeholder="Mapped Resource" readonly />
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Upload Challan Copy<span class="text-danger">*</span></label>
+                                @*  <button type="button" id="btnViewChallan" class="btn btnModel "> <i class="bi bi-eye me-1"></i>View</button> *@
+                                <button type="button" id="btnViewChallan" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-file-earmark-pdf-fill me-1"></i>
+                                    View Challan Copy
+                                </button>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Upload Employee Details<span class="text-danger">*</span></label>
+                                <button type="button" id="btnChallanDetails" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-file-earmark-pdf-fill me-1"></i>
+                                    View Challan Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="filter-panel mt-2 div-coral-base">
+                        <table id="myTable1" class="table orangeTh table-striped table-hover table-bordered">
+                            <thead class="bg-d">
+                                <tr>
+                                    <th>Sr.No</th>
+                                    <th>Invoice No.</th>
+                                    <th>Bill For Month </th>
+                                    <th>No. of Resources on Bill </th>
+                                    <th>EPF Deposited (No. of Resources) </th>
+                                    <th>ESIC Deposited (No. of Resources) </th>
+                                    <th>Challan Type </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                            <tfoot class="tfoot bg-primary">
+                                <tr>
+                                    @* <td>3</td>
+                    <td>Mike Brown</td>
+                    <td>mike@example.com</td>
+                    <td>Editor</td>
+                    <td>Editor</td> *@
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="filter-panel mt-2 div-coral-base">
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold"> Verification Status <span class="text-danger">*</span> </label>
+                                <div class="d-flex gap-4">
+                                    <!-- Verify -->
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="VerificationStatus" id="rdoVerify" value="Y">
+                                        <label class="form-check-label text-success fw-semibold" for="rdoVerify">
+                                            <i class="bi bi-check-circle-fill me-1"></i> Verify
+                                        </label>
+                                    </div>
+                                    <!-- Reject -->
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="VerificationStatus" id="rdoReject" value="R">
+                                        <label class="form-check-label text-danger fw-semibold" for="rdoReject">
+                                            <i class="bi bi-x-circle-fill me-1"></i> Reject
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Reject Remarks -->
+                        <div class="form-group row" id="rejectRemarksSection" style="display:none;">
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold"> Reject Remarks <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="txtRejectRemarks" rows="3" maxlength="200" placeholder="Enter reason for rejection..."></textarea>
+                                <small class="text-danger error"></small>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <button type="button" id="btnSubmitVerification" class="btn btnModel ">
+                                  <i class="bi bi-check2-circle me-1"></i> Verify 
+                            </button>
+                           
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer  bg-ld">
+                    <div class="me-auto">
+                        <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
+                    </div>
+                    <div class="flex-grow-1 text-center modelalert text-danger"></div>
+                    <button type="button" class="btn btnModel btnModalSubmit">Submit</button>
+                    <button type="button" data-bs-dismiss="modal" class="btn btnModel">Close</button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+ 
+}
+
+@section Scripts {
+    <script src="~/PageAssets/Manpower/Js/verifyepfesi.js" asp-append-version="true"></script>
+}

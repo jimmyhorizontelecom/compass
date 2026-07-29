@@ -21,6 +21,7 @@ using System.Data;
 using System.Net.Mail;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using wfms_ddl;
 
 
@@ -1462,12 +1463,17 @@ namespace Compass.Controllers
                     ChallanId = (row["ChallanId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["ChallanId"].ToString()))
                     ? 0 : Convert.ToInt32(row["ChallanId"]),
                     ChallanType = (row["ChallanType"]?.ToString()),
+                    BillForMonth = (row["BillForMonth"]?.ToString()),
                     ChallanNumber = (row["ChallanNumber"]?.ToString()),
                     ChallanDate = (row["ChallanDate"]?.ToString()),
                     NoOfHPSEDCResource = (row["NoOfResource"] == DBNull.Value || string.IsNullOrWhiteSpace(row["NoOfResource"].ToString()))
                     ? 0 : Convert.ToInt32(row["NoOfResource"]),
+                    MappedResource = (row["InvoicePerson"] == DBNull.Value || string.IsNullOrWhiteSpace(row["InvoicePerson"].ToString()))
+                    ? 0 : Convert.ToInt32(row["InvoicePerson"]),
                     ChallanAmount= Convert.ToDecimal(row["Amount"]?.ToString()),
                     VerificationRemarks = (row["VerificationRemarks"]?.ToString()),
+                    AttacheChallan = (row["AttacheChallan"].ToString()),
+                    AttacheChallanDetails = (row["AttacheChallanDetails"].ToString()),
                 }).ToList();
 
                 return Ok(list);
@@ -1524,39 +1530,112 @@ namespace Compass.Controllers
                         message = " Emp Details file is required."
                     });
                 }
+                //// SAVE AttacheChallan FILE
+                //string AttacheChallan = "";
+                //if (attachmentFile1 != null && attachmentFile1.Length > 0)
+                //{
+                //    string folderPath = Path.Combine(
+                //        Directory.GetCurrentDirectory(),
+                //        "wwwroot/Attachment/ESIEPF/ChallanFile"
+                //        //"wwwroot/Attachment/DeptAttendance/Attendance"
+                //    );
+                //    if (!Directory.Exists(folderPath))
+                //        Directory.CreateDirectory(folderPath);
+                //    string extension = Path.GetExtension(attachmentFile1.FileName);
+                //    AttacheChallan =
+                //        $"AttacheChallan{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid()}{extension}";
+                //    string filePath = Path.Combine(folderPath, AttacheChallan);
+                //    using (var stream = new FileStream(filePath, FileMode.Create))
+                //    {
+                //        await attachmentFile1.CopyToAsync(stream);
+                //    }
+                //}
+                //// SAVE AttacheChallanDetails FILE
+                //string AttacheChallanDetails = "";
+                //if (attachmentFile2 != null && attachmentFile2.Length > 0)
+                //{
+                //    string folderPath = Path.Combine(
+                //        Directory.GetCurrentDirectory(),
+                //       // "wwwroot/Attachment/AttacheChallanDetails"
+                //        "wwwroot/Attachment/ESIEPF/ChallanDetails"
+                //    );
+                //    if (!Directory.Exists(folderPath))
+                //        Directory.CreateDirectory(folderPath);
+                //    string extension = Path.GetExtension(attachmentFile2.FileName);
+                //    AttacheChallanDetails =
+                //        $"AttacheChallanDetails_{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid()}{extension}";
+                //    string filePath = Path.Combine(folderPath, AttacheChallanDetails);
+                //    using (var stream = new FileStream(filePath, FileMode.Create))
+                //    {
+                //        await attachmentFile2.CopyToAsync(stream);
+                //    }
+                //}
                 // SAVE AttacheChallan FILE
                 string AttacheChallan = "";
+
                 if (attachmentFile1 != null && attachmentFile1.Length > 0)
                 {
                     string folderPath = Path.Combine(
                         Directory.GetCurrentDirectory(),
-                        "wwwroot/Attachment/ESIEPFChallan"
+                        "wwwroot",  "Attachment",  "ESIEPF", "AttacheChallan"
                     );
+
                     if (!Directory.Exists(folderPath))
                         Directory.CreateDirectory(folderPath);
+
+                    // Challan Type
+                    string challanType = ChallanFor == 1 ? "ESI" : "EPF";
+
+                    // Remove special characters from Challan Number
+                    //string challanNo = ChallanNumber
+                    //    .Replace("/", "_")
+                    //    .Replace("\\", "_")
+                    //    .Replace("-", "_")
+                    //    .Replace(" ", "_");
+                    string challanNo = Regex.Replace(ChallanNumber ?? "", @"[^\w]", "_");
+
+                    // Extension
                     string extension = Path.GetExtension(attachmentFile1.FileName);
-                    AttacheChallan =
-                        $"AttacheChallan{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid()}{extension}";
+
+                    // File Name
+                    AttacheChallan = $"{challanType}_{challanNo}_{DateTime.Now:yyyyMMdd_HHmmss}{extension}";
+
                     string filePath = Path.Combine(folderPath, AttacheChallan);
+
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await attachmentFile1.CopyToAsync(stream);
                     }
                 }
                 // SAVE AttacheChallanDetails FILE
-                string AttacheChallanDetails = "";
+                string ChallanDetails = "";
+
                 if (attachmentFile2 != null && attachmentFile2.Length > 0)
                 {
                     string folderPath = Path.Combine(
                         Directory.GetCurrentDirectory(),
-                        "wwwroot/Attachment/AttacheChallanDetails"
+                        "wwwroot", "Attachment",  "ESIEPF", "ChallanDetails"
                     );
+
                     if (!Directory.Exists(folderPath))
                         Directory.CreateDirectory(folderPath);
+
+                    string challanType = ChallanFor == 1 ? "ESI" : "EPF";
+
+                    //string challanNo = ChallanNumber
+                    //    .Replace("/", "_")
+                    //    .Replace("\\", "_")
+                    //    .Replace("-", "_")
+                    //    .Replace(" ", "_");
+                    string challanNo = Regex.Replace(ChallanNumber ?? "", @"[^\w]", "_");
+
                     string extension = Path.GetExtension(attachmentFile2.FileName);
-                    AttacheChallanDetails =
-                        $"AttacheChallanDetails_{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid()}{extension}";
-                    string filePath = Path.Combine(folderPath, AttacheChallanDetails);
+
+                    ChallanDetails =
+                        $"{challanType}_{challanNo}_EmployeeDetails_{DateTime.Now:yyyyMMdd_HHmmss}{extension}";
+
+                    string filePath = Path.Combine(folderPath, ChallanDetails);
+
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await attachmentFile2.CopyToAsync(stream);
@@ -1573,7 +1652,7 @@ namespace Compass.Controllers
             { "@ChallanDate", ChallanDate  },
             { "@Amount",  ChallanAmount},
             { "@AttacheChallan",  AttacheChallan},
-            { "@AttacheChallanDetails",  AttacheChallanDetails },
+            { "@AttacheChallanDetails",  ChallanDetails },
             { "@NoOfResource",  NoOfResource},
             { "@UploadedBy", userId },
             { "@IsDeclaration", IsDeclaration },
@@ -1721,7 +1800,113 @@ namespace Compass.Controllers
 
         #endregion
 
+        #region VerifyEPFESI
+        public IActionResult VerifyEPFESI()
+        {
+            return View();
+        }
 
+        // Get record for the List
+        [HttpGet]
+        public async Task<IActionResult> GetChallanListforVerification([FromQuery] DepositeChallanFilter filter)
+
+        {
+            var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
+            var roleId = Convert.ToInt32(User.FindFirst("RoleId")?.Value ?? "0");
+            try
+            {
+              
+                // Access as object
+                SortedList parameters = new SortedList();
+                parameters.Add("@ChallanId", filter.ChallanId);
+                parameters.Add("@AgencyId", filter.AgencyId);
+                parameters.Add("@ChallanType", filter.ChallanType);
+                parameters.Add("@MonthYear", filter.MonthYear);
+                parameters.Add("@CreatedBy", userId);
+                parameters.Add("@Userrole", roleId);
+                parameters.Add("@Status", filter.Status);
+
+                Console.WriteLine($"ChallanId={filter.ChallanId}");
+                Console.WriteLine($"AgencyId={filter.AgencyId}");
+                Console.WriteLine($"ChallanType={filter.ChallanType}");
+                Console.WriteLine($"MonthYear={filter.MonthYear}");
+                Console.WriteLine($"CreatedBy={userId}");
+                Console.WriteLine($"RoleId={roleId}");
+                Console.WriteLine($"Status=A");
+                var dt = await _cn.FillDataTableAsync("TallyEsiEpfChallan_List_Test", "", parameters);
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<DepositeChallanListModel>());
+                var list = dt.AsEnumerable().Select(row => new DepositeChallanListModel
+                {
+                    AgencyId = (row["AgencyId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["AgencyId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["AgencyId"]),
+                    AgencyName = (row["AgencyName"]?.ToString()),
+                    ChallanId = (row["ChallanId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["ChallanId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["ChallanId"]),
+                    ChallanType = (row["ChallanType"]?.ToString()),
+                    BillForMonth = (row["BillForMonth"]?.ToString()),
+                    ChallanNumber = (row["ChallanNumber"]?.ToString()),
+                    ChallanDate = (row["ChallanDate"]?.ToString()),
+                    NoOfHPSEDCResource = (row["NoOfResource"] == DBNull.Value || string.IsNullOrWhiteSpace(row["NoOfResource"].ToString()))
+                    ? 0 : Convert.ToInt32(row["NoOfResource"]),
+                    ChallanAmount = Convert.ToDecimal(row["Amount"]?.ToString()),
+                    IsVarified = (row["IsVarified"] == DBNull.Value ||  string.IsNullOrWhiteSpace(row["IsVarified"].ToString()))
+                    ? 'N'  : Convert.ToChar(row["IsVarified"].ToString()),
+                }).ToList();
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+        // Verify / Reject ESI EPF Challan
+        [HttpPost]
+        public IActionResult Verify_ESIEPFChallan([FromForm] VerifyESIEPFChallanModel model)
+        {
+            try
+            {
+                // Login User
+                var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
+
+                SortedList parameters = new SortedList
+        {
+            { "@ChallanId", model.ChallanId },
+            { "@CreatedBy", userId },
+            { "@IsVarified", model.IsVarified },
+            { "@VerificationRemarks", model.VerificationRemarks ?? "" }
+        };
+
+                var result = _cn.ExecuteNonQueryWMessage(
+                    "TallyEsiEpfChallanVerified_AcceptUPdate",
+                    "@mes",
+                    parameters
+                );
+
+                return Ok(new
+                {
+                    success = true,
+                    message = result.ToString()
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Unable to verify challan.",
+                    error = ex.Message
+                });
+            }
+        }
+        #endregion
         //tblTallyAttendanceEmpwise_AcceptUpdate Completed 
         //TallyFetchEmployee_Get  Complted  
         //tblTallyAttendanceDetails_Get Completed

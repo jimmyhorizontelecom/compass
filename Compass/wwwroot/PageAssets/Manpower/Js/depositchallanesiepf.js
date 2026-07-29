@@ -1,5 +1,5 @@
 ﻿var ChallanId = 0;
-
+var challanFilePath = "";
 
 $(document).ready(function () {
     
@@ -68,7 +68,7 @@ function bindDatatable(records, tableId) {
         let SrNo = i + 1;
 
         tbody.append(`
-            <tr data-id="${value.Id}" >
+            <tr data-challanid="${value.ChallanId}"  data-attachchallan="${value.AttacheChallan}">
              <td>${SrNo}</td>
             <td>${value.ChallanDate ?? ""}</td>
             <td>${value.AgencyName ?? ""}</td>
@@ -77,9 +77,28 @@ function bindDatatable(records, tableId) {
             <td>${value.ChallanDate ?? ""}</td>
             <td>${value.NoOfHPSEDCResource ?? 0}</td>
             <td>${value.ChallanAmount ?? 0}</td>
-            <td> <i class="bi bi-download"></i> </td>
-            <td> <i class="bi bi-download"></i> </td>
-            <td> <i class="bi bi-download"></i> </td>
+           <!--Challan File-->
+            <td class="text-center">
+                 <a href="javascript:void(0)" class="view-file" data-file="${value.AttacheChallan}" data-folder="AttacheChallan" title="View Attendance File">
+                 <i class="bi bi-file-earmark-arrow-down-fill text-danger" style="font-size:25px;"></i>  </a>
+            </td>
+           <!--Challan Details File-->
+            <td class="text-center">
+                 <a href="javascript:void(0)" class="view-file" data-file="${value.AttacheChallanDetails}" data-folder="ChallanDetails" title="View Attendance File">
+                 <i class="bi bi-file-earmark-arrow-down-fill text-danger" style="font-size:25px;"></i>  </a>
+            </td>
+            
+            <td class="text-center">
+    <button type="button"
+            class="btn btn-sm btn-outline-primary view-file"
+            data-file="${value.AttacheChallan}"
+            data-folder="ESIEPF/ChallanFile"
+            title="View Uploaded Challan">
+        <i class="bi bi-file-earmark-pdf-fill me-1"></i>
+        <i class="bi bi-download me-1"></i>
+        View
+    </button>
+</td>
             <td> <i class="bi bi-download"></i> </td>
             <td> <i class="bi bi-download"></i> </td>
             <td> <i class="bi bi-download"></i> </td>
@@ -96,6 +115,20 @@ function bindDatatable(records, tableId) {
     });
 }
 
+//View Uploaded file
+$(document).on('click', '.view-file', function (e) {
+    e.preventDefault(); // Prevent default <a> behavior
+    var fileName = $(this).data('file');
+    var folder = $(this).data('folder');
+    if (!fileName || fileName === 'undefined' || fileName === '') {
+        toastr.error('File not uploaded');
+        return;
+    }
+    // Construct URL
+    var url = `/Attachment/ESIEPF/${folder}/${fileName}`;
+    // Open in new tab
+    window.open(url, '_blank');
+});
 
 // Submit record when Click on btn
 $(".btnModalSubmit").on("click", function () {
