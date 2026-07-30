@@ -12,17 +12,7 @@ $(document).ready(function () {
     // Parent Dropdown
     bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyName", " Agency Name");
     bindDataToDdl("Dropdown", "MChallanType_ddl", "", "ddlChallanType", " Challan Type");
-    //bindDataToDdl("Dropdown", "MChallanNumber_ddl", "", "ddlChallanNumber", " Challan Number");
-    // $("#monthYear").on("change", function () {
-    //     let value = $(this).val(); // 06/2025
-    //     if (value) {
-    //         let arr = value.split('/');
-    //         let monthYear = parseInt(parseInt(arr[0], 10).toString() + arr[1], 10);
-    //         $("#hdnMonthYear").val(monthYear).trigger("change");
-    //     }
-    // });
-
-    // load data when changes on ddl
+      // load data when changes on ddl
     $("#monthYear, #ddlAgencyName, #ddlChallanType,#ddlStatus").change(function () {
         recordlist();
     });

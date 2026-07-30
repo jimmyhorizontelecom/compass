@@ -1711,8 +1711,8 @@ namespace Compass.Controllers
                     return Ok(new List<MapChallanViewModel>());
                 var list = dt.AsEnumerable().Select(row => new MapChallanViewModel
                 {
-                    AgencyBillId = (row["AgencyId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["AgencyId"].ToString()))
-                    ? 0 : Convert.ToInt32(row["AgencyId"]),
+                    AgencyBillId = (row["AgencyBillId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["AgencyBillId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["AgencyBillId"]),
                     AgencyBillNo = (row["Billno"]?.ToString()),
                     AgencyId = (row["AgencyId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["AgencyId"].ToString()))
                     ? 0 : Convert.ToInt32(row["AgencyId"]),

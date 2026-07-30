@@ -1,16 +1,21 @@
 ﻿var ChallanId = 0;
-var challanFilePath = "";
+var AttacheChallan = "";
+var AttacheChallanDetails = "";
 
 $(document).ready(function () {
-    
+    $(".btnModalSubmit").prop("disabled", !$("#chkConsent").is(":checked"));
+
+    $("#chkConsent").on("change", function () {
+        $(".btnModalSubmit").prop("disabled", !$(this).is(":checked"));
+    });
     resetModal();
     recordlist();
     initCustomPicker('#monthYear');
     bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyName", "Select Agency Name");
     bindDataToDdl("Dropdown", "MChallanType_ddl", "", "ddlChallanType", "Select Challan Type");
-   
+
     // Initialize Month Picker
-   
+
     alert('Deposit Challan ESI EPF Loading');
 });
 
@@ -28,7 +33,7 @@ async function recordlist() {
     let monthYear = parseInt((d.getMonth() + 1).toString() + d.getFullYear());
 
     // var monthYearVal = setPreviousMonth('#monthYear');
-    
+
     // var finalMonthId = "0";
     // if (monthYearVal && monthYearVal.includes('/')) {
     //     var parts = monthYearVal.split('/');
@@ -36,7 +41,7 @@ async function recordlist() {
     //     var y = parts[1];
     //     finalMonthId = m.toString() + y.toString(); // Result: "42026"
     // }
-    
+
     var filterData = {
         ChallanId: 0,
         AgencyId: agencyId,
@@ -77,31 +82,33 @@ function bindDatatable(records, tableId) {
             <td>${value.ChallanDate ?? ""}</td>
             <td>${value.NoOfHPSEDCResource ?? 0}</td>
             <td>${value.ChallanAmount ?? 0}</td>
-           <!--Challan File-->
+           <!--Attach Challan File-->
             <td class="text-center">
                  <a href="javascript:void(0)" class="view-file" data-file="${value.AttacheChallan}" data-folder="AttacheChallan" title="View Attendance File">
                  <i class="bi bi-file-earmark-arrow-down-fill text-danger" style="font-size:25px;"></i>  </a>
             </td>
-           <!--Challan Details File-->
+           <!--Attach Challan Details File-->
             <td class="text-center">
                  <a href="javascript:void(0)" class="view-file" data-file="${value.AttacheChallanDetails}" data-folder="ChallanDetails" title="View Attendance File">
                  <i class="bi bi-file-earmark-arrow-down-fill text-danger" style="font-size:25px;"></i>  </a>
             </td>
-            
+             <!--Edit ESIEPF Challan Details-->
+             <td class="text-center align-middle">
+                    <i class="bi bi-pencil-square edit-ChallanDetails edit-icon" data-ChallanId="${value.ChallanId}" style="cursor:pointer;font-size:25px;"></i>
+                </td>
+             <!-- Challan Status -->
+                 <td class="text-center">
+                   ${value.VerificationRemarks === "V"
+                ? '<i class="bi bi-check-circle-fill text-success" title="Verified" style="font-size:25px;"></i>'
+                : '<i class="bi bi-x-circle-fill text-danger" title="Not Verified" style="font-size:25px;"></i>'}
+               </td>
+            <td> ${value.VerificationRemarks}</td>
+            <!--Reject Challan-->
             <td class="text-center">
-    <button type="button"
-            class="btn btn-sm btn-outline-primary view-file"
-            data-file="${value.AttacheChallan}"
-            data-folder="ESIEPF/ChallanFile"
-            title="View Uploaded Challan">
-        <i class="bi bi-file-earmark-pdf-fill me-1"></i>
-        <i class="bi bi-download me-1"></i>
-        View
-    </button>
-</td>
-            <td> <i class="bi bi-download"></i> </td>
-            <td> <i class="bi bi-download"></i> </td>
-            <td> <i class="bi bi-download"></i> </td>
+                 ${(!value.AnnexureFile && !value.AgencyBillFile)
+                ? `<i class="bi bi-trash-fill text-danger delete-Records" data-attendaceid="${value.AttendaceId}" style="cursor:pointer;font-size:25px;"></i>`
+                : `<i class="bi bi-trash-fill text-muted" title="Cannot delete after upload" style="font-size:25px;opacity:0.4;cursor:not-allowed;"></i>`}
+                </td>
 </tr>
 `);
 
@@ -114,27 +121,11 @@ function bindDatatable(records, tableId) {
         responsive: true
     });
 }
-
-//View Uploaded file
-$(document).on('click', '.view-file', function (e) {
-    e.preventDefault(); // Prevent default <a> behavior
-    var fileName = $(this).data('file');
-    var folder = $(this).data('folder');
-    if (!fileName || fileName === 'undefined' || fileName === '') {
-        toastr.error('File not uploaded');
-        return;
-    }
-    // Construct URL
-    var url = `/Attachment/ESIEPF/${folder}/${fileName}`;
-    // Open in new tab
-    window.open(url, '_blank');
-});
-
 // Submit record when Click on btn
 $(".btnModalSubmit").on("click", function () {
     SubmitRecord();
 });
-
+//Submit Records
 async function SubmitRecord() {
     alert('Testing');
     let isValid = true;
@@ -173,7 +164,7 @@ async function SubmitRecord() {
         $("#ddlChallanType").siblings(".error").text("Challan Type required");
         isValid = false;
     }
-    
+
     if (challanNo === "") {
         $("#txtChallanNumber").addClass("is-invalid");
         $("#txtChallanNumber").siblings(".error").text("Please select Challan Date");
@@ -219,25 +210,25 @@ async function SubmitRecord() {
             isValid = false;
         }
     }
-    
-        // Employee Details File
+
+    // Employee Details File
     if (files_EmpDetails.length === 0) {
         $("#inputGroupFile02").addClass("is-invalid");
         $("#inputGroupFile02")
-                .closest(".col-md-3")
-                .find(".error")
-                .text("Emp Details file required");
+            .closest(".col-md-3")
+            .find(".error")
+            .text("Emp Details file required");
+        isValid = false;
+    }
+    else {
+        if (!fileSizeValidation('inputGroupFile02', fileSize)) {
             isValid = false;
         }
-        else {
-        if (!fileSizeValidation('inputGroupFile02', fileSize)) {
-                isValid = false;
-            }
         if (!fileExtensionValidation('inputGroupFile02', allowedExtensions)) {
-                isValid = false;
-            }
+            isValid = false;
         }
-    
+    }
+
     // STOP IF VALIDATION FAILED
     if (!isValid) {
         return;
@@ -268,16 +259,16 @@ async function SubmitRecord() {
     // AttacheChallanDetails FILES
     if (files_EmpDetails.length > 0) {
         formData.append("AttacheChallanDetails", files_EmpDetails[0]);
-     }
-   
+    }
+
     // SUBMIT
     try {
         let res = await acceptUpdate("Manpower", "AddOrEdit_ESIEPFChallanDepositeRecord", formData);
         if (res.success) {
             resetModal();
             recordlist();
-           // setPreviousMonth('#monthYear1');
-          
+            // setPreviousMonth('#monthYear1');
+
             ChallanId = 0;
             $('.modelalert').text(res.message);
             // closeModal('myModal');
@@ -292,4 +283,124 @@ async function SubmitRecord() {
         $('.modelalert').text("Error : " + err);
     }
 }
+//View Uploaded file in a NewTab
+$(document).on('click', '.view-file', function (e) {
+    e.preventDefault(); // Prevent default <a> behavior
+    var fileName = $(this).data('file');
+    var folder = $(this).data('folder');
+    if (!fileName || fileName === 'undefined' || fileName === '') {
+        toastr.error('File not uploaded');
+        return;
+    }
+    // Construct URL
+    var url = `/Attachment/ESIEPF/${folder}/${fileName}`;
+    // Open in new tab
+    window.open(url, '_blank');
+});
 
+// MsgBox on Edit Verify Challan
+$(document).on('click', '.edit-ChallanDetails', async function () {
+
+    let row = $(this).closest("tr");
+    ChallanId = row.data("challanid");
+    console.log("Selected ChallanId:", ChallanId);
+    let filterData = {
+        ChallanId: row.data("challanid"),
+        AgencyId: row.data("agencyid"),
+        ChallanType: row.data("challantype"),
+        MonthYear: row.data("monthyear")
+    };
+
+    console.log("Selected Challan:", filterData);
+
+
+    if (!filterData.ChallanId) {
+        toastr.error("Record Id not found.");
+        return;
+    }
+    let isConfirmed = await DeleteEditBox('Edit Challan', 'Do you want to edit this challan?', 'question');
+    if (!isConfirmed) {
+        return;
+    }
+    resetModal();
+    recordlist();
+    await loadEditESIEPFRecord(filterData);
+
+});
+
+//get Record to Add EPF ESI Model
+async function loadEditESIEPFRecord(filterData) {
+    try {
+        let records = await getRecords('Manpower', 'GetChallanListRecord', filterData, 'myModal', 'N');
+        console.log("Response:", records);
+        if (!records || records.length === 0) {
+            toastr.error("Record not found");
+            return;
+        }
+        let data = records[0];
+        $("#monthYear").val(data.BillForMonth || "");
+        $("#txtChallanNumber").val(data.ChallanNumber || "");
+        if (data.ChallanDate) {
+
+            let d = new Date(data.ChallanDate);
+
+            let year = d.getFullYear();
+            let month = String(d.getMonth() + 1).padStart(2, '0');
+            let day = String(d.getDate()).padStart(2, '0');
+
+            $("#dateChallanDate").val(`${year}-${month}-${day}`);
+
+        }
+        else {
+            $("#dateChallanDate").val("");
+        }
+        //$("#dateChallanDate").val(data.ChallanDate || "");
+        $("#txtNoOfHPSEDECResources").val(data.NoOfHPSEDCResource || "");
+        $("#numChallanAmt").val(data.ChallanAmount || 0);
+
+        bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyName", " Agency Name", data.AgencyId, 0);
+        var option = new Option(data.AgencyName, data.AgencyId, true, true);
+        $('#ddlAgencyName').append(option).trigger('change');
+        // bindDataToDdl("Dropdown", "MChallanType_ddl", "", "ddlChallanType", "Select Challan Type");
+        bindDataToDdl("Dropdown", "MChallanType_ddl", "", "ddlChallanType", " Challan Type", data.ChallanId, 0);
+        var option = new Option(data.ChallanType, data.ChallanId, true, true);
+        $('#ddlChallanType').append(option).trigger('change');
+
+        AttacheChallan = data.AttacheChallan || "";
+        AttacheChallanDetails = data.AttacheChallanDetails || "";
+
+        // Challan File
+        if (AttacheChallan) {
+            $("#uploadedChallanFile").html(`<button type="button"  class="btn btn-outline-primary btn-sm btnViewChallan">
+            <i class="bi bi-file-earmark-pdf-fill"></i>  View Uploaded Challan </button>`);
+        } else {
+            $("#uploadedChallanFile").html(`<span class="text-danger">No Challan File Uploaded</span> `);
+        }
+        // Employee Details File
+        if (AttacheChallanDetails) {
+            $("#uploadedEmployeeFile").html(`<button type="button" class="btn btn-outline-success btn-sm btnViewEmployee">
+            <i class="bi bi-file-earmark-excel-fill"></i>  View Employee Details </button> `);
+        } else {
+            $("#uploadedEmployeeFile").html(`<span class="text-danger">No Employee File Uploaded</span>`);
+        }
+    }
+    catch (error) {
+        console.error("Load Challan Error:", error);
+    }
+}
+//View Challan file with Button when Edit Challan
+$(document).on("click", ".btnViewChallan", function () {
+    if (!AttacheChallan) {
+        toastr.error("File not found");
+        return;
+    }
+    window.open("/Attachment/ESIEPF/AttacheChallan/" + AttacheChallan, "_blank");
+});
+//View Challan details file with Button when Edit Challan
+$(document).on("click", ".btnViewEmployee", function () {
+    if (!AttacheChallanDetails) {
+        toastr.error("File not found");
+        return;
+    }
+    window.open("/Attachment/ESIEPF/ChallanDetails/" + AttacheChallanDetails, "_blank");
+});

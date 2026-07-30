@@ -212,7 +212,7 @@ async function SubmitMapChallanInvoice() {
             }
             enteredTotal += noOfResource;
             mapChallanRecords.push({
-                AgencyBIllId: parseInt($(this).attr("data-id")) || 0,
+                AgencyBIllId: parseInt($(this).attr("data-agencybillid")) || 0,
                 ChallanFor: parseInt($("#ddlChallanType").val()) || 0,
                 NoOfResource: noOfResource,
                 ChallanId: parseInt($("#ddlChallanNumber").val()) || 0,

@@ -486,5 +486,40 @@ namespace Compass.Models.ManpowerViewModel
     #endregion
 
 
+    #region Invoice Report
+    public class DepartmentBillFilter
+    {
+        public int DeptId { get; set; }
+        public int MonthYear { get; set; }
+        public int AgencyId { get; set; }
+        public string SaleBillNo { get; set; }
+        public string PReceived { get; set; }
+        public string PReleased { get; set; }
+        public string Balance { get; set; }
+    }
+
+    public class DepartmentBillReportViewModel
+    {
+        public int DepartmentBillId { get; set; }
+        public int AgencyBillId { get; set; }
+        public string AgencyName { get; set; }
+        public string DepartmentName { get; set; }
+        public string DepartmentAddress {get; set; }
+        public string AgencyBillNo { get; set; }
+        public string AgencyBillDate { get; set; }
+        public string HPSEDCBillNo { get; set; }
+        public string SaleBillNo { get; set; }
+        public string BillDate { get; set; }
+        public decimal HPSEDCBillAmount { get; set; }
+        public decimal DeptReceivedAmount { get; set; }
+        public decimal AgencyPaymentReleased { get; set; }
+        public decimal AgencyBalanceAmount { get; set; }
+        public string PaymentStatus { get; set; }
+        public string Narration { get; set; }
+    }
+
+
+    #endregion
+
 
 }
