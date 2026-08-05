@@ -1471,6 +1471,7 @@ namespace Compass.Controllers
                     MappedResource = (row["InvoicePerson"] == DBNull.Value || string.IsNullOrWhiteSpace(row["InvoicePerson"].ToString()))
                     ? 0 : Convert.ToInt32(row["InvoicePerson"]),
                     ChallanAmount= Convert.ToDecimal(row["Amount"]?.ToString()),
+                    Status = (row["IsVarified"]?.ToString()),
                     VerificationRemarks = (row["VerificationRemarks"]?.ToString()),
                     AttacheChallan = (row["AttacheChallan"].ToString()),
                     AttacheChallanDetails = (row["AttacheChallanDetails"].ToString()),
@@ -1907,6 +1908,7 @@ namespace Compass.Controllers
             }
         }
         #endregion
+
         //tblTallyAttendanceEmpwise_AcceptUpdate Completed 
         //TallyFetchEmployee_Get  Complted  
         //tblTallyAttendanceDetails_Get Completed

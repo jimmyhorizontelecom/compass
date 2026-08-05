@@ -449,6 +449,7 @@ namespace Compass.Models.ManpowerViewModel
         public int NoOfHPSEDCResource { get; set; }
         public int MappedResource { get; set; }
         public decimal ChallanAmount { get; set; }
+        public string Status { get; set; }
         public string VerificationRemarks { get; set; }
         public char IsVarified { get; set; }
         public string AttacheChallan { get; set; }
@@ -517,6 +518,59 @@ namespace Compass.Models.ManpowerViewModel
         public string PaymentStatus { get; set; }
         public string Narration { get; set; }
     }
+
+
+    #endregion
+
+
+
+    #region Debit Notes
+    public class DebitNotesFilter
+    {
+        public int AgencyId { get; set; }
+        public int MonthYear { get; set; }
+        public int AgencyBillId { get; set; }
+        public char Status { get; set; }
+        
+    }
+    //Table Data
+    public class DebitNotesViewModel
+    {
+        public int AgencyBillId { get; set; }
+        public int AgencyId { get; set; }
+        public string AgencyName { get; set; }
+        public string InvoiceNo { get; set; }
+        public DateTime InvoiceDate { get; set; }
+        public decimal BillAmount { get; set; }
+        public string DebitNotesNo { get; set; }
+        public decimal DebitAmount { get; set; }
+        
+    }
+
+    //Modal Data
+    public class DebitNotesBillViewModel
+    {
+        public int AgencyBillId { get; set; }
+        public int AgencyId { get; set; }
+        public string AgencyName { get; set; }
+        public int DeptId { get; set; }
+        public string DeptName { get; set; }
+        public string DeptAddress { get; set; }
+        public string DebitNoteNo { get; set; }
+        public string AgencyCNoteNo { get; set; }
+        public string PurchaseBillNo { get; set; }
+        public string PurchaseBillDate { get; set; }
+        public string SaleBillNo { get; set; }
+        public decimal PurchaseBillAmt { get; set; }
+        public decimal AdminChg { get; set; }
+        public decimal LibraryChg { get; set; }
+        public decimal OutCgst { get; set; }
+        public decimal OutSgst { get; set; }
+        public decimal GTotal { get; set; }
+       
+
+    }
+
 
 
     #endregion

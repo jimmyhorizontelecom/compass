@@ -296,6 +296,39 @@ namespace Compass.Models.ManpowerModel
     }
 
 
+    #endregion Debit Notes
+    public class DebitNotesModel
+    {
+        public int DebitNotesId { get; set; }
+        public int AgencyBillId { get; set; }
+        public int AgencyId { get; set; }
+        public string AgencyName { get; set; }
+        public int DeptId { get; set; }
+        public string DeptName { get; set; }
+        public string DeptAddress { get; set; }
+        public string DebitNoteNo { get; set; }
+        public string DebitNoteDate { get; set; }
+        public string AgencyCNoteNo { get; set; }
+        public string PurchaseBillNo { get; set; }
+        public string PurchaseBillDate { get; set; }
+        public string SaleBillNo { get; set; }
+        public decimal PurchaseBillAmt { get; set; }
+        public decimal AdminChg { get; set; }
+        public decimal LibraryChg { get; set; }
+        public decimal OutCgst { get; set; }
+        public decimal OutSgst { get; set; }
+        public decimal OutIgst { get; set; }
+        public decimal GTotal { get; set; }
+        public IFormFile Attachment { get; set; }
+        public string Remarks { get; set; }
+    }
+
+    #region Debit Notes
+
+
+
+
+
     #endregion
 
 }

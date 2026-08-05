@@ -32,16 +32,6 @@ async function recordlist() {
 
     let monthYear = parseInt((d.getMonth() + 1).toString() + d.getFullYear());
 
-    // var monthYearVal = setPreviousMonth('#monthYear');
-
-    // var finalMonthId = "0";
-    // if (monthYearVal && monthYearVal.includes('/')) {
-    //     var parts = monthYearVal.split('/');
-    //     var m = parseInt(parts[0], 10);
-    //     var y = parts[1];
-    //     finalMonthId = m.toString() + y.toString(); // Result: "42026"
-    // }
-
     var filterData = {
         ChallanId: 0,
         AgencyId: agencyId,
@@ -83,12 +73,12 @@ function bindDatatable(records, tableId) {
             <td>${value.NoOfHPSEDCResource ?? 0}</td>
             <td>${value.ChallanAmount ?? 0}</td>
            <!--Attach Challan File-->
-            <td class="text-center">
+            <td class="text-center align-middle">
                  <a href="javascript:void(0)" class="view-file" data-file="${value.AttacheChallan}" data-folder="AttacheChallan" title="View Attendance File">
                  <i class="bi bi-file-earmark-arrow-down-fill text-danger" style="font-size:25px;"></i>  </a>
             </td>
            <!--Attach Challan Details File-->
-            <td class="text-center">
+            <td class="text-center align-middle">
                  <a href="javascript:void(0)" class="view-file" data-file="${value.AttacheChallanDetails}" data-folder="ChallanDetails" title="View Attendance File">
                  <i class="bi bi-file-earmark-arrow-down-fill text-danger" style="font-size:25px;"></i>  </a>
             </td>
@@ -97,14 +87,15 @@ function bindDatatable(records, tableId) {
                     <i class="bi bi-pencil-square edit-ChallanDetails edit-icon" data-ChallanId="${value.ChallanId}" style="cursor:pointer;font-size:25px;"></i>
                 </td>
              <!-- Challan Status -->
-                 <td class="text-center">
-                   ${value.VerificationRemarks === "V"
+                 <td class="text-center align-middle">
+                   ${value.Status === "Y"
                 ? '<i class="bi bi-check-circle-fill text-success" title="Verified" style="font-size:25px;"></i>'
                 : '<i class="bi bi-x-circle-fill text-danger" title="Not Verified" style="font-size:25px;"></i>'}
                </td>
-            <td> ${value.VerificationRemarks}</td>
+           <td> ${value.VerificationRemarks}</td>
+
             <!--Reject Challan-->
-            <td class="text-center">
+            <td class="text-center align-middle">
                  ${(!value.AnnexureFile && !value.AgencyBillFile)
                 ? `<i class="bi bi-trash-fill text-danger delete-Records" data-attendaceid="${value.AttendaceId}" style="cursor:pointer;font-size:25px;"></i>`
                 : `<i class="bi bi-trash-fill text-muted" title="Cannot delete after upload" style="font-size:25px;opacity:0.4;cursor:not-allowed;"></i>`}
@@ -371,14 +362,14 @@ async function loadEditESIEPFRecord(filterData) {
 
         // Challan File
         if (AttacheChallan) {
-            $("#uploadedChallanFile").html(`<button type="button"  class="btn btn-outline-primary btn-sm btnViewChallan">
+            $("#uploadedChallanFile").html(`<button type="button"  class="btn  btn-coral txt-white btn-sm btnViewChallan">
             <i class="bi bi-file-earmark-pdf-fill"></i>  View Uploaded Challan </button>`);
         } else {
             $("#uploadedChallanFile").html(`<span class="text-danger">No Challan File Uploaded</span> `);
         }
         // Employee Details File
         if (AttacheChallanDetails) {
-            $("#uploadedEmployeeFile").html(`<button type="button" class="btn btn-outline-success btn-sm btnViewEmployee">
+            $("#uploadedEmployeeFile").html(`<button type="button" class="btn  btn-coral txt-white btn-sm btnViewEmployee">
             <i class="bi bi-file-earmark-excel-fill"></i>  View Employee Details </button> `);
         } else {
             $("#uploadedEmployeeFile").html(`<span class="text-danger">No Employee File Uploaded</span>`);

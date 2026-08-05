@@ -1,13 +1,10 @@
 ﻿var ChallanId = 0;
 var AttacheChallan = "";
 var AttacheChallanDetails = "";
-
 $(document).ready(function () {
-
-    alert('verifyepfesi loadig');
     resetModal();
     recordlist();
-    alert('Map Challan Loading');
+    // Initialise MonthYear Picker
     initCustomPicker('#monthYear');
     // Parent Dropdown
     bindDataToDdl("Dropdown", "MAgency_ddl", "", "ddlAgencyName", " Agency Name");
@@ -16,7 +13,6 @@ $(document).ready(function () {
     $("#monthYear, #ddlAgencyName, #ddlChallanType,#ddlStatus").change(function () {
         recordlist();
     });
- 
 });
 
 //Get Record for A table 
@@ -67,10 +63,10 @@ function bindDatatable(records, tableId) {
         let SrNo = i + 1;
         let verifyIcon = "";
 
-        if (value.IsEsiVerified === "Y") {
+        if (value.IsVarified === "Y") {
             verifyIcon = `<i class="bi bi-patch-check-fill text-success vertifyChallan" data-challanid="${value.ChallanId}" title="Verified" style="cursor:pointer; font-size:30px"></i>`;
         }
-        else if (value.IsEsiVerified === "P") {
+        else if (value.IsVarified === "P") {
             verifyIcon = `<i class="bi bi-patch-check-fill text-warning vertifyChallan" data-challanid="${value.ChallanId}" title="Pending" style="cursor:pointer; font-size:30px"></i>`;
         }
         else {
@@ -81,14 +77,14 @@ function bindDatatable(records, tableId) {
             data-agencyid="${value.AgencyId}"
             data-challantype="${value.ChallanTypeId}"
             data-monthyear="${value.BillForMonthId}" >
-                <td>${SrNo}</td>
-                <td>${value.AgencyName}</td>
-                <td>${value.BillForMonth} </td>
-                <td>${value.ChallanNumber} </td>
-                <td>${value.ChallanType} </td>
-                <td>${value.ChallanAmount} </td>
-                 <td>${value.NoOfHPSEDCResource} </td>
-               <td class="text-center">${verifyIcon}</td>
+                <td class="align-middle">${SrNo}</td>
+                <td class="align-middle">${value.AgencyName}</td>
+                <td class="text-center align-middle">${value.BillForMonth} </td>
+                <td class="align-middle">${value.ChallanNumber} </td>
+                <td class="text-center align-middle">${value.ChallanType} </td>
+                <td class="text-center align-middle">${value.ChallanAmount} </td>
+                 <td class="text-center align-middle">${value.NoOfHPSEDCResource} </td>
+               <td class="text-center align-middle">${verifyIcon}</td>
              
         `);
     });
@@ -131,7 +127,6 @@ $(document).on('click', '.vertifyChallan', async function () {
      await loadVerifyESIEPFModel(filterData);
      openModal('myModal');
 });
-
 //get Record to Add EPF ESI Model
 async function loadVerifyESIEPFModel(filterData) {
     try {
@@ -158,7 +153,7 @@ async function loadVerifyESIEPFModel(filterData) {
         console.error( "Load Challan Error:", error );
     }
 }
-
+//Vie Challan  File
 $(document).on("click", "#btnViewChallan", function () {
     console.log("View Challan button clicked");
     console.log("File Path:", AttacheChallan);
@@ -169,6 +164,7 @@ $(document).on("click", "#btnViewChallan", function () {
     let url = "/Attachment/ESIEPF/AttacheChallan/" + AttacheChallan;
     window.open(url, "_blank");
 });
+//Vie Challan Details File
 $(document).on("click", "#btnChallanDetails", function () {
     console.log("View Challan Details button clicked");
     console.log("File Path:", AttacheChallanDetails);
@@ -179,6 +175,7 @@ $(document).on("click", "#btnChallanDetails", function () {
     let url = "/Attachment/ESIEPF/ChallanDetails/" + AttacheChallanDetails;
     window.open(url, "_blank");
 });
+//View Uploaded file on a New Tab
 $(document).on('click', '.view-file', function () {
     let fileName = $(this).data('file');
     let folder = $(this).data('folder');
@@ -192,7 +189,6 @@ $(document).on('click', '.view-file', function () {
 
 // Show/Hide Reject Remarks
 $("input[name='VerificationStatus']").change(function () {
-
     if ($("#rdoReject").is(":checked")) {
         $("#rejectRemarksSection").slideDown(200);
     }
@@ -200,63 +196,29 @@ $("input[name='VerificationStatus']").change(function () {
         $("#rejectRemarksSection").slideUp(200);
         $("#txtRejectRemarks").val("");
     }
-
 });
 
-// $("#btnSubmitVerification").click(function () {
-//     let status = $("input[name='VerificationStatus']:checked").val();
-//     if (!status) {
-//         toastr.error("Please select Verify or Reject.");
-//         return;
-//     }
-//     if (status === "R") {
-//         let remarks = $("#txtRejectRemarks").val().trim();
-//         if (remarks === "") {
-//             toastr.error("Please enter reject remarks.");
-//             $("#txtRejectRemarks").focus();
-//             return;
-//         }
-//     }
-//     // API Call
-//     // SubmitRecord(status, $("#txtRejectRemarks").val());
-
-// });
-
+//Verify/Rejct Submit Button in Verify Model
 $("#btnSubmitVerification").click(async function () {
-
     let status = $("input[name='VerificationStatus']:checked").val();
-
     if (!status) {
         toastr.error("Please select Verify or Reject.");
         return;
     }
-
     let remarks = "";
-
     if (status === "R") {
-
         remarks = $("#txtRejectRemarks").val().trim();
-
         if (remarks === "") {
             toastr.error("Please enter reject remarks.");
             return;
         }
     }
-
     let formData = new FormData();
-
     formData.append("ChallanId", ChallanId);
     formData.append("IsVarified", status);
     formData.append("VerificationRemarks", remarks);
-
     try {
-
-        let res = await acceptUpdate(
-            "Manpower",
-            "Verify_ESIEPFChallan",
-            formData
-        );
-
+        let res = await acceptUpdate( "Manpower",  "Verify_ESIEPFChallan",  formData );
         if (res.success) {
             toastr.success(res.message);
             closeModal("myModal");
@@ -270,5 +232,4 @@ $("#btnSubmitVerification").click(async function () {
         console.log(e);
         toastr.error("Something went wrong.");
     }
-
 });

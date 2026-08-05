@@ -60,80 +60,13 @@ async function recordlist() {
     }
 }
 
-// function bindDatatable(records, tableId) {
-
-//     if ($.fn.DataTable.isDataTable(tableId)) {
-//         $(tableId).DataTable().clear().destroy();
-//     }
-
-//     var tbody = $(tableId + " tbody");
-//     tbody.empty();
-
-//     $.each(records, function (i, value) {
-
-//         tbody.append(`
-// <tr>
-//     <td class="text-center">
-//         <input type="checkbox"
-//                class="form-check-input rowCheckbox"
-//                data-id="${value.AgencyBillId ?? 0}">
-//     </td>
-
-//     <td>${i + 1}</td>
-//      <td>
-//         <strong>GST :- </strong>${value.GSTAmt ?? "0.00"}
-//     </td>
-//      <td>
-//         <strong>GST :- </strong>${value.GSTAmt ?? "0.00"}
-//     </td>
-//      <td>
-//         <strong>GST :- </strong>${value.GSTAmt ?? "0.00"}
-//     </td>
-//      <td>
-//         <strong>GST :- </strong>${value.GSTAmt ?? "0.00"}
-//     </td>
-//      <td>
-//         <strong>GST :- </strong>${value.GSTAmt ?? "0.00"}
-//     </td>
-//      <td>
-//         <strong>GST :- </strong>${value.GSTAmt ?? "0.00"}
-//     </td>
-//      <td>
-//         <strong>GST :- </strong>${value.GSTAmt ?? "0.00"}
-//     </td>
-//      <td>
-//         <strong>GST :- </strong>${value.GSTAmt ?? "0.00"}
-//     </td>
-//      <td>
-//         <strong>GST :- </strong>${value.GSTAmt ?? "0.00"}
-//     </td>
-
-
-// </tr>
-// `);
-
-//     });
-
-//     $(tableId).DataTable({
-//         paging: true,
-//         searching: true,
-//         ordering: true,
-//         info: true,
-//         responsive: true
-//     });
-// }
-
 function bindDatatable(records, tableId) {
-
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().clear().destroy();
     }
-
     var tbody = $(tableId + " tbody");
     tbody.empty();
-
     if (!records || records.length === 0) {
-
         tbody.append(`
             <tr>
                 <td class="text-center">
@@ -238,3 +171,32 @@ function bindDatatable(records, tableId) {
         responsive: true
     });
 }
+
+
+// // MsgBox on Print Button
+// $(document).on('click', '.vertifyChallan', async function () {
+//     let row = $(this).closest("tr");
+//     ChallanId = row.data("challanid");
+//     console.log("Selected ChallanId:", ChallanId);
+//     let filterData = {
+//         ChallanId: row.data("challanid"),
+//         AgencyId: row.data("agencyid"),
+//         ChallanType: row.data("challantype"),
+//         MonthYear: row.data("monthyear")
+//     };
+
+//     console.log("Selected Challan:", filterData);
+
+
+//     if (!filterData.ChallanId) {
+//         toastr.error("Record Id not found.");
+//         return;
+//     }
+//     let isConfirmed = await DeleteEditBox('Verify Challan', 'Do you want to verify this challan?', 'question');
+//     if (!isConfirmed) {
+//         return;
+//     }
+//     resetModal();
+//     await loadVerifyESIEPFModel(filterData);
+//     openModal('myModal');
+// });

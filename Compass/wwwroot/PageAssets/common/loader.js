@@ -105,13 +105,17 @@ function formatMonthYear(monthYear) {
 //Set Previous Months
 function setPreviousMonth(selector) {
     let date = new Date();
-
     // Previous month
     date.setMonth(date.getMonth() - 1);
-
     let month = String(date.getMonth() + 1).padStart(2, '0');
     let year = date.getFullYear();
-
+    $(selector).val(`${month}/${year}`);
+}
+// Set Current Month
+function setCurrentMonth(selector) {
+    let date = new Date();
+    let month = String(date.getMonth() + 1).padStart(2, '0');
+    let year = date.getFullYear();
     $(selector).val(`${month}/${year}`);
 }
 function showModalLoader() {
@@ -1018,3 +1022,20 @@ function openFile(fileName, fileType) {
     window.open(url, '_blank');
 }
 
+//Common function for ShowError in Input Error
+function showError(id, message) {
+    let control = $("#" + id);
+    control.addClass("is-invalid");
+    // Agar error pehle se nahi hai to banaye
+    if (control.next(".error").length === 0) {
+        control.after('<span class="error text-danger">' + message + '</span>');
+    } else {
+        control.next(".error").text(message);
+    }
+}
+//Common function for HideError in Input Error
+function hideError(id) {
+    let control = $("#" + id);
+    control.removeClass("is-invalid");
+    control.next(".error").remove();   // DOM se hata dega
+}

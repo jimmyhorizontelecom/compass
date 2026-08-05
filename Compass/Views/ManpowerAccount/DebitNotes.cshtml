@@ -1,0 +1,227 @@
+﻿@using System.Security.Claims
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    var roleId = User.FindFirst("RoleId")?.Value;
+    var userId = User.FindFirst("UserId")?.Value;
+    var deptId = User.FindFirst("DeptId")?.Value;
+}
+@{
+    Layout = "~/Views/Shared/_TestLayout.cshtml";
+}
+
+<div class="container ">
+    <div id="modalLoader1" class="modal-loader modalLoader">
+        <div class="spinner"></div>
+        <p class="loading-text">Please wait...</p>
+    </div>
+    <h4>Debit Notes </h4>
+    <div class="filter-panel mt-5 div-coral-base">
+
+        <div class="form-group row">
+            <div class="col-md-3 mb-0">
+                <label class="form-label">Month & Year</label>
+                <input type="text" id="monthYear" class="form-control" placeholder="MM/YYYY">
+                <span class="error text-danger"></span>
+            </div>
+            <div class="col-md-3 mb-0">
+                <label class="form-labelo">Agency Name<span class="text-danger">*</span></label>
+                <select id="ddlAgencyName" class="form-select form-select-sm search_ddl select2" aria-label=".form-select-sm">
+                    <option selected value="0"> -- Select --</option>
+                </select>
+                <span class="error"></span>
+            </div>
+            <div class="col-md-3 mb-0">
+                <label class="form-labelo">Debit Note Status <span class="text-danger">*</span></label>
+                <select id="ddlStatus" class="form-select" aria-label=".form-select-sm">
+                @* <select id="ddlStatus" class="form-select form-select-sm search_ddl select2" aria-label=".form-select-sm"> *@
+                    <option selected value="0"> -- Select --</option>
+                    <option value="N"> Debit Note Pending</option>
+                    <option value="Y"> Debit Note Done</option>
+                    <option value="A"> All</option>
+                </select>
+                <span class="error"></span>
+            </div>
+            <div class="col-md-3 mb-0">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container mt-5">
+    @* <h2 class="mb-4">User List</h2> *@
+    <div class="filter-panel mt-5 div-coral-base">
+        <table id="myTable" class="table orangeTh table-striped table-hover table-bordered">
+            <thead class="bg-d">
+                <tr>
+                    <th>Sr.No</th>
+                    <th>Invoice No.</th>
+                    <th>Agency Name</th>
+                    <th>Invoice Date </th>
+                    <th>Bill Amount </th>
+                    <th>Debit Note No. <br> Debit Amt.  </th>
+                    <th>Debit Notes</th>
+                    <th>View Details</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot class="tfoot bg-primary">
+                <tr>
+                    @* <td>3</td>
+                    <td>Mike Brown</td>
+                    <td>mike@example.com</td>
+                    <td>Editor</td>
+                    <td>Editor</td> *@
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+}
+
+@section Modals {
+    <!-- The Modal -->
+    <div class="modal modal-lg" id="myModal_DebitNote">
+        <div class="modal-dialog ">
+            <div class="modal-content position-relative">
+                <!-- 🔥 Loader Overlay -->
+                <div id="" class="modal-loader modalLoader">
+                    <div class="spinner"></div>
+                    <p class="loading-text">Please wait...</p>
+                </div>
+                <!-- Modal Header -->
+                <div class="modal-header  bg-ld ">
+                    <h4 class="modal-title txt-white" id="myModalLabel">Enter Debit Note Record</h4>
+                    <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div id="#toast-container"></div>
+                    <div class="filter-panel mt-2 div-coral-base">
+                        <div class="form-group row">
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Debit Note No.<span class="text-danger">*</span></label>
+                                <input type="text" id="txtDebitNoteNo" class="form-control txtbx cleartxt" placeholder="Debit Note No" />
+                               @*  <span class="error" style="display:none;color:red;"></span> *@
+                            </div>
+                            <div class="col-md-4 mt-0">
+                                <label class="form-label">Debit Note Date<span class="text-danger">*</span></label>
+                                <input type="date" id="dateDebitNote" class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                                @* <span class="error" style="display:none;color:red;"></span> *@
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">Agency Credit Note No.<span class="text-danger">*</span></label>
+                                <input type="text" id="txtAgencyCNoteNo" class="form-control txtbx cleartxt" placeholder="Agency Credit Note No." />
+                                @* <span class="error" style="display:none;color:red;"></span> *@
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Purchase Bill No.<span class="text-danger">*</span></label>
+                                <input type="text" id="txtPurchaseBillNo" class="form-control txtbx cleartxt" placeholder="Purchase Bill No." readonly />
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mt-0">
+                                <label class="form-label">Purchase Bill Date<span class="text-danger">*</span></label>
+                                <input type="text" id="txtPurchaseBillDate" class="form-control txtbx cleartxt" placeholder="Purchase Bill Date" readonly />
+                                <span class="error mb-0"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">Agency Name<span class="text-danger">*</span></label>
+                                <input type="text" id="txtAgencyName" class="form-control txtbx cleartxt" placeholder="Agency Name" readonly />
+                                <span class="error"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Department Name<span class="text-danger">*</span></label>
+                                <input type="text" id="txtDeptName" class="form-control txtbx cleartxt" placeholder="Department Name" readonly />
+                                <span class="error"></span>
+                            </div>
+                            <div class="col-md-4 mt-0">
+                                <label class="form-label">Department Address<span class="text-danger">*</span></label>
+                                <input type="text" id="txtDeptAddress" class="form-control txtbx cleartxt" placeholder="Department Address" readonly />
+                                <span class="error mb-0"></span>
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">Sale Bill No.<span class="text-danger">*</span></label>
+                                <input type="text" id="txtSaleBillNo" class="form-control txtbx cleartxt" placeholder="Sale Bill No." readonly />
+                                <span class="error"></span>
+                            </div>
+                        </div>              
+                    </div>
+                    <div class="filter-panel mt-2 div-coral-base">
+                        <div class="form-group row">
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Purchase Bill Amt.<span class="text-danger">*</span></label>
+                                <input type="text" id="txtPurchaseBillAmt" class="form-control txtbx cleartxt" placeholder="Purchase Bili Amount" readonly />
+                               </div>
+                            <div class="col-md-4 mt-0">
+                                <label class="form-label">Admin Charge (2%) <span class="text-danger">*</span></label>
+                                <input type="text" id="txtAdminCharge" class="form-control txtbx cleartxt" placeholder="Admin Charge (2%)" readonly />
+                           
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">Library Charge<span class="text-danger">*</span></label>
+                                <input type="text" id="txtLibraryChg" class="form-control txtbx cleartxt" placeholder="Library Charge" readonly />
+                               
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4 mb-0">
+                                <label class="form-labelo">Output CGST 9% <span class="text-danger">*</span></label>
+                                <input type="text" id="txtOCgst" class="form-control txtbx cleartxt" placeholder="Output CGST 9%" readonly />
+                              
+                            </div>
+                            <div class="col-md-4 mt-0">
+                                <label class="form-label">Output SGST 9% <span class="text-danger">*</span></label>
+                                <input type="text" id="txtOSgst" class="form-control txtbx cleartxt" placeholder="Output SGST 9%" readonly />
+                             
+                            </div>
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">Grand Total<span class="text-danger">*</span></label>
+                                <input type="text" id="txtGTotal" class="form-control txtbx cleartxt" placeholder="Grand Total" readonly />
+                          
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-8 mb-0">
+                                <label class="form-labelo">Remarks<span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="txtRemarks" rows="2" maxlength="200" placeholder="Enter Remarks"></textarea>
+                                <span class="error"></span>
+                            </div>
+
+                            <div class="col-md-4 mb-0">
+                                <label class="form-label">Agency Credit Note Document<span class="text-danger">*</span></label>
+                                <div class="input-group mb-0">
+                                    <input type="file" class="form-control" id="inputCreditNoteFile01">
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                 
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer  bg-ld">
+                    <div class="me-auto">
+                        <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
+                    </div>
+                    <div class="flex-grow-1 text-center modelalert text-danger"></div>
+                    <button type="button" class="btn btnModel btnModalSubmit">Submit</button>
+                    <button type="button" data-bs-dismiss="modal" class="btn btnModel">Close</button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+ 
+}
+
+@section Scripts {
+    <script src="~/PageAssets/ManpowerAccount/Js/debitnotes.js" asp-append-version="true"></script>
+}
