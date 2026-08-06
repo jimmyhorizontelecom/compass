@@ -69,9 +69,11 @@ namespace Compass.Controllers
                     AgencyName = (row["AgencyName"]?.ToString()),
                     InvoiceNo = (row["SaleBillNo"]?.ToString()),
                     InvoiceDate =Convert.ToDateTime (row["SBillDAte"]?.ToString()),
-                    BillAmount = Convert.ToDecimal(row["SaleBillAmt"]?.ToString()),
+                    BillAmount = (row["SaleBillAmt"]?.ToString()),
                     DebitNotesNo = (row["DebitNotesNo"]?.ToString()),
-                    DebitAmount = Convert.ToDecimal(row["DebitNotesAmtDr"]?.ToString()),
+                    DebitAmount = (row["DebitNotesAmtDr"]?.ToString()),
+                    IsDebitNotes = Convert.ToChar(row["IsDebitNotes"]?.ToString()),
+
                     
                 }).ToList();
 
@@ -233,5 +235,205 @@ namespace Compass.Controllers
 
         #endregion
 
+
+        #region Credit Notes
+        public IActionResult CreditNotes()
+        {
+            return View();
+        }
+
+        // Get record for the Table List
+        [HttpGet]
+        public async Task<IActionResult> GetCreditNotesRecord([FromQuery] CreditNotesFilter filter)
+
+        {
+            try
+            {
+                // Access as object
+                SortedList parameters = new SortedList();
+                // parameters.Add("@Id", filter.Id);
+                parameters.Add("@DeptId", filter.DeptId);
+                parameters.Add("@MonthYear", filter.MonthYear);
+                parameters.Add("@AgencyBillId", filter.AgencyBillId);
+                parameters.Add("@Filter", filter.Status);
+
+                var dt = await _cn.FillDataTableAsync("tallyDeptBillDebitList_List", "", parameters);
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<CreditNotesViewModel>());
+
+                var list = dt.AsEnumerable().Select(row => new CreditNotesViewModel
+
+                {
+                    AgencyBillId = (row["AgencyBillId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["AgencyBillId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["AgencyBillId"]),
+                    DeptBillId = (row["DeptBillId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["DeptBillId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["DeptBillId"]),
+                    DeptId = (row["departmentID"] == DBNull.Value || string.IsNullOrWhiteSpace(row["departmentID"].ToString()))
+                    ? 0 : Convert.ToInt32(row["departmentID"]),
+                    DeptName = (row["departmentName"]?.ToString()),
+                    DebitNotesNo = (row["DebitNotesNo"]?.ToString()),
+                    Remarks = (row["DebitNoteRemarks"]?.ToString()),
+                    AgenycBillNo = (row["Billno"]?.ToString()),
+                    HPSEDCBillNo = (row["SaleBillNo"]?.ToString()),
+                    BillAmt = (row["SaleBillAmt"]?.ToString()),
+                    CreditNoteNo =(row["CreditNotesNo"]?.ToString()),
+                    CreditAmt = (row["CreditNotesAmtDr"]?.ToString()),
+                    IsCreditNotes = Convert.ToChar(row["IsCreditNotes"]?.ToString()),
+
+                }).ToList();
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+
+        // Get record for the Debit Note Modal
+        [HttpGet]
+        public async Task<IActionResult> GetCreditNoteBillRecord([FromQuery] CreditNotesFilter filter)
+
+        {
+            try
+            {
+                // Access as object
+                SortedList parameters = new SortedList();
+                //parameters.Add("@AgencyBillId", filter.AgencyBillId);
+                parameters.Add("@DeptId", filter.DeptId);
+                parameters.Add("@MonthYear", filter.MonthYear);
+                parameters.Add("@AgencyBillId", filter.AgencyBillId);
+                parameters.Add("@Filter", filter.Status);
+                var dt = await _cn.FillDataTableAsync("tallyDeptBillDebitList_List", "", parameters);
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<CreditNotesBillViewModel>());
+                var list = dt.AsEnumerable().Select(row => new CreditNotesBillViewModel
+                {
+                    AgencyBillId = (row["AgencyBillId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["AgencyBillId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["AgencyBillId"]),
+                    DeptBillId = (row["DeptBillId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["DeptBillId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["DeptBillId"]),
+                    DeptId = (row["DeptId"] == DBNull.Value || string.IsNullOrWhiteSpace(row["DeptId"].ToString()))
+                    ? 0 : Convert.ToInt32(row["DeptId"]),
+                    //AgencyId = Convert.ToInt32(row["AgencyId"]?.ToString()),
+                    DeptName = (row["departmentName"]?.ToString()),
+                    DeptAddress = (row["BillingAddress"]?.ToString()),
+                    CreditNoteNo = (row["AutoDebitNoteNo"]?.ToString()),
+                    SaleBillNo = (row["Billno"]?.ToString()),
+                    CreditNoteDate = (row["BillDate"]?.ToString()),
+                   PurchaseBillAmt = (row["AgencyBillAmt"] == DBNull.Value || string.IsNullOrWhiteSpace(row["AgencyBillAmt"].ToString()))
+                    ? 0 : Convert.ToInt32(row["AgencyBillAmt"]),
+                    AdminChg = (row["AdminAmt"] == DBNull.Value || string.IsNullOrWhiteSpace(row["AdminAmt"].ToString()))
+                    ? 0 : Convert.ToInt32(row["AdminAmt"]),
+                    LibraryChg = (row["LibaryAmt"] == DBNull.Value || string.IsNullOrWhiteSpace(row["LibaryAmt"].ToString()))
+                    ? 0 : Convert.ToInt32(row["LibaryAmt"]),
+                    OutCgst = (row["cgstAmt"] == DBNull.Value || string.IsNullOrWhiteSpace(row["cgstAmt"].ToString()))
+                    ? 0 : Convert.ToInt32(row["cgstAmt"]),
+                    OutSgst = (row["SGSTAtm"] == DBNull.Value || string.IsNullOrWhiteSpace(row["SGSTAtm"].ToString()))
+                    ? 0 : Convert.ToInt32(row["SGSTAtm"]),
+                    GTotal = (row["STotal"] == DBNull.Value || string.IsNullOrWhiteSpace(row["STotal"].ToString()))
+                    ? 0 : Convert.ToInt32(row["STotal"]),
+
+                }).ToList();
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+        // Submit data 
+        [HttpPost]
+        public async Task<IActionResult> AddOrEditCreditNote([FromForm] CreditNotesModel model)
+        {
+            var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
+            // var roleId = Convert.ToInt32(User.FindFirst("RoleId")?.Value ?? "0");
+            try
+            {
+                //IFormFile attachmentFile1 = model.Attachment;
+                //// File Required Validation
+                //if (attachmentFile1 == null || attachmentFile1.Length == 0)
+                //{
+                //    return BadRequest(new
+                //    {
+                //        success = false,
+                //        message = "Agency Credit Note file is required."
+                //    });
+                //}
+                //string agencyCreditNoteFile = "";
+                //if (attachmentFile1.Length > 0)
+                //{
+                //    string folderPath = Path.Combine(Directory.GetCurrentDirectory(),
+                //        "wwwroot", "Attachment", "DebitNote", "AgencyCreditNote"
+                //    );
+                //    if (!Directory.Exists(folderPath))
+                //    {
+                //        Directory.CreateDirectory(folderPath);
+                //    }
+                //    string extension = Path.GetExtension(attachmentFile1.FileName);
+                //    // File Name
+                //    agencyCreditNoteFile =
+                //        $"{DateTime.Now:yyyyMMddHHmmss}{extension}";
+                //    string filePath = Path.Combine(folderPath, agencyCreditNoteFile);
+                //    using (var stream = new FileStream(filePath, FileMode.Create))
+                //    {
+                //        await attachmentFile1.CopyToAsync(stream);
+                //    }
+                //}
+
+                SortedList parameters = new SortedList();
+                parameters.Add("@CreditNotesId", model.CreditNotesId);
+                parameters.Add("@DeptBillId", model.DeptBillId);
+                parameters.Add("@CreditNotesNo", model.CreditNotesNo);
+                parameters.Add("@CreditNoteDate", model.CreditNoteDate);
+                parameters.Add("@SaleBillAmt", model.SaleBillAmt);
+                parameters.Add("@AdminCharge", model.AdminChg);
+                parameters.Add("@CgstAmt", model.OutCgst);
+                parameters.Add("@SgstAmt", model.OutSgst);
+                parameters.Add("@IgstAmt", model.OutIgst);
+                parameters.Add("@LibraryAmt", model.LibraryChg);
+                parameters.Add("@CrAmount", model.GTotal);
+                parameters.Add("@CreditNoteRemarks", model.Remarks);
+
+                parameters.Add("@CreatedBy", userId);
+
+                var result = _cn.ExecuteNonQueryWMessage(
+                    "TallCreditNotes_AcceptUpdate",
+                    "",
+                    parameters
+                );
+
+                return Ok(new
+                {
+                    success = true,
+                    message = result.ToString()
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+
+        #endregion
     }
 }

@@ -323,8 +323,23 @@ namespace Compass.Models.ManpowerModel
         public string Remarks { get; set; }
     }
 
-    #region Debit Notes
-
+    #region Credit Notes
+    public class CreditNotesModel
+    {
+        public int CreditNotesId { get; set; }
+        public int AgencyBillId { get; set; }
+        public int DeptBillId { get; set; }
+        public string CreditNotesNo { get; set; }
+        public string CreditNoteDate { get; set; }
+         public decimal SaleBillAmt { get; set; }
+        public decimal AdminChg { get; set; }
+        public decimal LibraryChg { get; set; }
+        public decimal OutCgst { get; set; }
+        public decimal OutSgst { get; set; }
+        public decimal OutIgst { get; set; }
+        public decimal GTotal { get; set; }
+        public string Remarks { get; set; }
+    }
 
 
 
