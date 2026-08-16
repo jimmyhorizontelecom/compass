@@ -103,5 +103,64 @@ namespace Compass.Classes
 
 
     }
-    
+
 }
+
+//using HashidsNet;
+//using System.Data;
+//using System.Reflection;
+
+//namespace Compass.Classes
+//{
+//    public static class CommonNew
+//    {
+//        public static List<T> ToList<T>(DataTable dt) where T : new()
+//        {
+//            var list = new List<T>();
+
+//            foreach (DataRow row in dt.Rows)
+//            {
+//                T obj = new T();
+
+//                foreach (DataColumn col in dt.Columns)
+//                {
+//                    PropertyInfo prop = typeof(T).GetProperty(col.ColumnName);
+
+//                    if (prop != null && row[col] != DBNull.Value)
+//                    {
+//                        prop.SetValue(obj, row[col]);
+//                    }
+//                }
+
+//                list.Add(obj);
+//            }
+
+//            return list;
+//        }
+//        //public static string GenerateKeyField(int key)
+//        //{
+//        //    var hashids = new Hashids("my Htis", 8); // "my salt" keeps encoding safe
+
+//        //    int dbId = key;
+
+//        //    // Encode for client
+//        //    string publicCode = hashids.Encode(dbId);
+//        //    Console.WriteLine(publicCode); // e.g., "NkK9L0Bq"
+
+
+//        //    return publicCode;
+//        //}
+//        //public static int getKeyField(string publicKey)
+//        //{
+//        //    //var hashids = new Hashids("my Htis", 8);
+
+//        //    // Decode when client sends back
+//        //    int[] numbers = hashids.Decode(publicKey);
+//        //    int originalId = numbers[0];
+//        //    Console.WriteLine(originalId); // 102
+//        //    return originalId;
+//        //}
+
+//    }
+
+//}

@@ -1023,19 +1023,220 @@ function openFile(fileName, fileType) {
 }
 
 //Common function for ShowError in Input Error
+// function showError(id, message) {
+//     let control = $("#" + id);
+//     control.addClass("is-invalid");
+//     // Agar error pehle se nahi hai to banaye
+//     if (control.next(".error").length === 0) {
+//         control.after('<span class="error text-danger">' + message + '</span>');
+//     } else {
+//         control.next(".error").text(message);
+//     }
+// }
 function showError(id, message) {
+
     let control = $("#" + id);
-    control.addClass("is-invalid");
-    // Agar error pehle se nahi hai to banaye
-    if (control.next(".error").length === 0) {
-        control.after('<span class="error text-danger">' + message + '</span>');
-    } else {
-        control.next(".error").text(message);
+
+    if (control.length === 0) {
+        console.warn("Control not found: #" + id);
+        return;
     }
+
+    // Remove previous error first
+    hideError(id);
+
+    // Add Bootstrap invalid class
+    control.addClass("is-invalid");
+
+    // ---------------------------------------------
+    // Select2
+    // ---------------------------------------------
+    if (control.hasClass("select2-hidden-accessible")) {
+
+        let select2Container = control
+            .next(".select2-container");
+
+        select2Container.addClass("is-invalid");
+
+        select2Container.after(
+            '<span class="error text-danger d-block mt-1">' +
+            message +
+            '</span>'
+        );
+
+        return;
+    }
+
+    // ---------------------------------------------
+    // Checkbox / Radio
+    // ---------------------------------------------
+    if (control.is(":checkbox") || control.is(":radio")) {
+
+        let group = control.closest(".form-check");
+
+        if (group.length > 0) {
+
+            group.after(
+                '<span class="error text-danger d-block mt-1">' +
+                message +
+                '</span>'
+            );
+
+        } else {
+
+            control.after(
+                '<span class="error text-danger d-block mt-1">' +
+                message +
+                '</span>'
+            );
+        }
+
+        return;
+    }
+
+    // ---------------------------------------------
+    // Default Controls
+    // ---------------------------------------------
+    control.after(
+        '<span class="error text-danger d-block mt-1">' +
+        message +
+        '</span>'
+    );
 }
 //Common function for HideError in Input Error
+// function hideError(id) {
+//     let control = $("#" + id);
+//     control.removeClass("is-invalid");
+//     control.next(".error").remove();   // DOM se hata dega
+// }
 function hideError(id) {
+
     let control = $("#" + id);
+
+    if (control.length === 0) {
+        return;
+    }
+
+    // Remove invalid class
     control.removeClass("is-invalid");
-    control.next(".error").remove();   // DOM se hata dega
+
+    // ---------------------------------------------
+    // Select2
+    // ---------------------------------------------
+    if (control.hasClass("select2-hidden-accessible")) {
+
+        control
+            .next(".select2-container")
+            .removeClass("is-invalid");
+
+        control
+            .next(".select2-container")
+            .next(".error")
+            .remove();
+
+        return;
+    }
+
+    // ---------------------------------------------
+    // Checkbox / Radio
+    // ---------------------------------------------
+    if (control.is(":checkbox") || control.is(":radio")) {
+
+        let group = control.closest(".form-check");
+
+        if (group.length > 0) {
+            group.next(".error").remove();
+        } else {
+            control.next(".error").remove();
+        }
+
+        return;
+    }
+
+    // ---------------------------------------------
+    // Default Controls
+    // ---------------------------------------------
+    control.next(".error").remove();
 }
+
+// =====================================================
+// Automatically Hide Error When User Corrects Input
+// Supports:
+// Textbox, Textarea, Select, Select2,
+// Checkbox, Radio, Date, Number, File etc.
+// =====================================================
+
+$(document).on(
+    "input change",
+    "input, textarea, select",
+    function () {
+
+        let control = $(this);
+        let id = control.attr("id");
+
+        if (!id) return;
+
+        // ---------------------------------------------
+        // Checkbox
+        // ---------------------------------------------
+        if (control.is(":checkbox")) {
+
+            if (control.is(":checked")) {
+                hideError(id);
+            }
+
+            return;
+        }
+
+        // ---------------------------------------------
+        // Radio
+        // ---------------------------------------------
+        if (control.is(":radio")) {
+
+            let name = control.attr("name");
+
+            if ($("input[name='" + name + "']:checked").length > 0) {
+                hideError(id);
+            }
+
+            return;
+        }
+
+        // ---------------------------------------------
+        // Select / Dropdown
+        // ---------------------------------------------
+        if (control.is("select")) {
+
+            if (control.val() != null &&
+                control.val().toString().trim() !== "") {
+
+                hideError(id);
+            }
+
+            return;
+        }
+
+        // ---------------------------------------------
+        // Textbox / Textarea / Date / Number etc.
+        // ---------------------------------------------
+        if (control.val() != null &&
+            control.val().toString().trim() !== "") {
+
+            hideError(id);
+        }
+    }
+);
+
+// Clear Validation when Close model without enter data
+function clearValidation(container = document) {
+    let parent = $(container);
+    parent.find(".error").remove();
+    parent.find(".is-invalid")
+        .removeClass("is-invalid");
+    parent.find(".select2-container")
+        .removeClass("is-invalid");
+}
+// Automatically clear validation when modal closes
+$(document).on("hidden.bs.modal", ".modal", function () {
+    clearValidation(this);
+});

@@ -1,17 +1,22 @@
 ﻿var Id = 0;
 $(document).ready(function () {
+    alert('Hardware Sale Order Loading');
     resetModal();
     companylist();
 });
+
 //Get Record for A table 
 async function companylist() {
+
     var filterata = {
         FilterId1: 0,
         FilterId2: 0,
         FilterId3: 0,
         FilterName1: '',
     };
+
     try {
+
         let records = await getRecords('HardwareMaster', 'GetCompanyRecord', filterata, '#myTable', 'N');
         bindDatatable(records, '#myTable');
     }
@@ -22,13 +27,17 @@ async function companylist() {
 }
 //Bind get record  in a table 
 function bindDatatable(records, tableId) {
+
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().clear().destroy();
     }
+
     var tbody = $(tableId + " tbody");
     tbody.empty();
+
     $.each(records, function (i, value) {
         let SrNo = i + 1;
+
         tbody.append(`
             <tr 
                  data-id="${value.Id}" 
@@ -48,6 +57,7 @@ function bindDatatable(records, tableId) {
             </tr>
         `);
     });
+
     $(tableId).DataTable({
         paging: true,
         searching: true,
@@ -55,45 +65,60 @@ function bindDatatable(records, tableId) {
         info: true,
         responsive: true
     });
+
     //hideModalLoader();
 }
-// Submit record when Click on btn
+
+// Submi record when Click on btn
 $(".btnModalSubmit").on("click", function () {
     SubmitRecord();
 });
+
 async function SubmitRecord() {
-    let isValid = true;
-    $(".error").remove();
+    let isValid = true; 
+   
+
+    $(".error").text("");
     $(".is-invalid").removeClass("is-invalid");
+
+ 
     let BrandName = $("#BrandName").val().trim();
-    let IsActive = $("#IsActive").is(":checked") ? "Y" : "N";
+    var IsActive = $('#IsActive').is(':checked') ? 'Y' : 'N';
+
     $(".error").text("");
     $(".is-invalid").removeClass("is-invalid");
 
     if (BrandName === "") {
-        showError("BrandName", "Please enter user name.");
+        $("#BrandName").addClass("is-invalid");
+        $("#BrandName").siblings(".error").text("BrandName is required.");
         isValid = false;
-    } else {
-        hideError("BrandName");
     }
-    if (!$("#IsActive").is(":checked")) {
-        showError("IsActive", "Please select Active.");
-        isValid = false;
-    } else {
-        hideError("IsActive");
-    }
- if (!isValid) return; // stop if validation fails
-// Prepare data
+
+
+
+    if (!isValid) return; // stop if validation fails
+
+
+
+    // Prepare data
+
     var formData = new FormData();
     formData.append("Id", Id);
     formData.append("CompanyName", BrandName);
     formData.append("IsActive", IsActive);
-   try {
-    let res = await acceptUpdate("HardwareMaster", "AddOrEditCompany", formData);
-       if (res.success) {
-           companylist();
+
+    try {
+        //$("#ModalProgress").show();
+
+        let res = await acceptUpdate("HardwareMaster", "AddOrEditCompany", formData);
+
+        
+
+        if (res.success) {
+
+            companylist();
             resetModal();
-            Id = 0;
+            Id = 0; 
             $('.modelalert').text(res.message);
             closeModal('myModal');
             MsgBox('Company', res.message, '');
@@ -102,18 +127,24 @@ async function SubmitRecord() {
     } catch (err) {
         $('.modelalert').text("Error: " + err);
     }
+
 }
+
+
 //Edit Record From Table
 $(document).on('click', '.edit-test', async function () {
+
     var row = $(this).closest('tr');
     Id = row.data('id');
+
     var isConfirmed = await DeleteEditBox('Company', 'Do you want to edit Record?', 'question', Id);
+    
     if (isConfirmed) {
         console.log('Edit');
         // User clicked Yes
         await loadRecordById(row);
         openModal('myModal');
-        // $('#myModal').modal('show');
+       // $('#myModal').modal('show');
     } else {
         // User clicked Cancel
         console.log('Edit cancelled');
@@ -121,24 +152,31 @@ $(document).on('click', '.edit-test', async function () {
 });
 // get Record to fill
 async function loadRecordById(row) {
+    
     var filterata = {
         FilterId1: row.data('id'),
         FilterId2: 0,
         FilterId3: 0,
         FilterName1: '',
     };
+
     try {
+
         let records = await getRecords('HardwareMaster', 'GetRecord', filterata, '#myTable', 'N');
+
         if (records && records.length > 0) {
+
             let data = records[0];
             Id = data.Id;
             $("#BrandName").val(data.CompanyName);
             if (data.IsActive) {
                 $('#IsActive').prop('checked', true);
             }
-            else {
+            else
+            {
                 $('#IsActive').prop('checked', false);
             }
+            
             //$('#myModal').modal('show');
         }
     }

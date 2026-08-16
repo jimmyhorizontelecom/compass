@@ -33,38 +33,30 @@ namespace Compass.Controllers
         {
             return View();
         }
-        #region ProductCategory
-        public IActionResult HardwareProductCategory()
+        #region Company
+        public IActionResult Company()
         {
             return View();
         }
         [HttpGet]
-        public async Task<IActionResult> GetProductCatg([FromQuery] TestFilterData filter)
-        { 
+        // get Record Company List
+        public async Task<IActionResult> GetCompanyRecord([FromQuery] TestFilterData filter)
+        {
             try
             {
                 // Access as object
                 int id = filter.FilterId1;
-                int MainCatgId = filter.FilterId2;
-
                 SortedList parameters = new SortedList();
                 parameters.Add("@Id", id);
-                parameters.Add("@MainCatgId", MainCatgId);
-             
-                var dt = await _cn.FillDataTableAsync("HardwareProductategory_List", "", parameters);
-
+                var dt = await _cn.FillDataTableAsync("PiCompany_List", "", parameters);
                 if (dt == null || dt.Rows.Count == 0)
-                    return Ok(new List<ProductModal>());
-
-                var list = dt.AsEnumerable().Select(row => new ProductModal
+                    return Ok(new List<Company>());
+                var list = dt.AsEnumerable().Select(row => new Company
                 {
-                    Id = row["Id"] == DBNull.Value ? 0 : Convert.ToInt32(row["Id"]),
-                    MainCategory = row["MainCatgName"]?.ToString(),
-                    Title = row["Title"]?.ToString(),
-                    IsActive = row["IsActive"] == DBNull.Value? 'N': Convert.ToChar(row["IsActive"]),
-                    FileName = row["Attachement"] == DBNull.Value? null: row["Attachement"].ToString()
+                    Id = Convert.ToInt32(row["Id"]),
+                    CompanyName = row["CompanyName"]?.ToString(),
+                    IsActive = row["IsActive"] != DBNull.Value ? row["IsActive"].ToString()[0] : 'N'
                 }).ToList();
-
                 return Ok(list);
             }
             catch (Exception ex)
@@ -77,7 +69,38 @@ namespace Compass.Controllers
                 });
             }
         }
+        
+        [HttpPost]
+        public IActionResult AddOrEditCompany(Company model)
+        {
+            try
+            {
+               
+                SortedList parameters = new SortedList();
+                parameters.Add("@Id", model.Id);
+                parameters.Add("@CompanyName", model.CompanyName);
+                parameters.Add("@Description", "");
+                parameters.Add("@IsActive", model.IsActive);
+                var result = _cn.ExecuteNonQueryWMessage("PiCompany_AcceptUpdate", "", parameters);
+                return Ok(new { success = true, message = result.ToString() });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+        #endregion
 
+        #region ProductCategory
+        public IActionResult HardwareProductCategory()
+        {
+            return View();
+        }
         [HttpPost]
         public async Task<IActionResult> AddOrEditProductSubCatg()
         {
@@ -87,7 +110,6 @@ namespace Compass.Controllers
                 var MainCatgId = Request.Form["MainCatgId"].ToString();
                 var Title = Request.Form["Title"].ToString();
                 var IsActive = Request.Form["IsActive"].ToString();
-                var UploadFolder=Request.Form["UploadFolder"].ToString();
 
                 // ✅ Get uploaded file
                 IFormFile attachmentFile = Request.Form.Files["Attachment"];
@@ -107,7 +129,7 @@ namespace Compass.Controllers
                     fileName = Guid.NewGuid() + Path.GetExtension(attachmentFile.FileName);
                     var filePath = Path.Combine(
                         Directory.GetCurrentDirectory(),
-                        "wwwroot/Attachment/"+ "UploadFolder",
+                        "wwwroot/Attachment/ProductCatg",
                         fileName
                     );
 
@@ -146,7 +168,7 @@ namespace Compass.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProductCatg1(int Id, int MainCatgId)
+        public async Task<IActionResult> GetProductCatg(int Id, int MainCatgId)
         {
             try
             {
@@ -180,6 +202,339 @@ namespace Compass.Controllers
         }
 
 
+        #endregion
+     
+        
+        #region Add Product
+        public IActionResult AddProduct()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> getProductList([FromQuery] TestFilterData filter)
+        {
+            try
+            {
+                // Access as object
+                int id = filter.FilterId1;
+
+                SortedList parameters = new SortedList();
+                parameters.Add("@Id", filter.FilterId1);
+                parameters.Add("@MainCategoryId", filter.FilterId2);
+
+                var dt = await _cn.FillDataTableAsync("HardwareMasterProduct_List", "", parameters);
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<ProductDetailView>());
+
+                var list = dt.AsEnumerable().Select(row => new ProductDetailView
+                {
+                    Id = Convert.ToInt32(row["Id"]),
+                    //PublicProductId = CommonNew.GenerateKeyField(Convert.ToInt32(row["Id"])),
+                    MainCategoryName = row["MainCatgName"]?.ToString(),
+                    CompanyName = row["CompanyName"]?.ToString(),
+                    Title = row["Title"]?.ToString(),
+                    ModalNo = row["ModelNo"]?.ToString(),
+                    ProductNewPrice = row["ProductPriceNew"]?.ToString(),
+                    GrandTotal = row["GrandTotal"] == DBNull.Value ? 0.0 : Convert.ToDouble(row["GrandTotal"]),
+                    GrandTotalNew = row["GrandTotalNew"] == DBNull.Value ? 0.0 : Convert.ToDouble(row["GrandTotalNew"]),
+
+
+                    Specification = row["Sepcification"]?.ToString(),
+                    TenderNo = row["TenderNo"]?.ToString(),
+                    IsActive = row["IsActive"] == DBNull.Value ? '0' : Convert.ToChar(row["IsActive"]),
+
+
+
+                }).ToList();
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> getProductListEdit([FromQuery] TestFilterData filter)
+        {
+            try
+            {
+                SortedList parameters = new SortedList();
+               parameters.Add("@Id", filter.FilterName1);
+              var dt = await _cn.FillDataTableAsync("HardwareMasterProduct_Edit", "", parameters);
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<ProductDetailEditView>());
+                var list = dt.AsEnumerable().Select(row => new ProductDetailEditView
+                {
+                    Id = Convert.ToInt32(row["Id"]),
+                    //PublicProductId = CommonNew.GenerateKeyField(Convert.ToInt32(row["Id"])),
+                    MainCatgNameId = Convert.ToInt32(row["MainCatgName"]),
+                    PCatgId = Convert.ToInt32(row["PCatgId"]),
+                    CompanyId = Convert.ToInt32(row["CompanyId"]),
+                    MainCatgName = row["CatgName"]?.ToString(),
+                    ModelNo = row["ModelNo"]?.ToString(),
+                    Sepcification = row["Sepcification"]?.ToString(),
+                    HPSEDCCharges = Convert.ToDecimal(row["HPSEDCCharges"]),
+                    ProductPrice =Convert.ToDecimal(row["ProductPrice"]),
+                    GrandTotal = Convert.ToDecimal(row["GrandTotal"]),
+                    Gst = Convert.ToDecimal(row["Gst"]),
+                    IsActive = row["IsActive"] == DBNull.Value ? '0' : Convert.ToChar(row["IsActive"]),
+                    CompanyName = row["CompanyName"]?.ToString(),
+                    Title = row["Title"]?.ToString(),
+                    TenderNo = row["TenderNo"]?.ToString(),
+                    ValidTo = row["ValidTo"]?.ToString(),
+                    ValidFrom = row["ValidFrom"]?.ToString(),
+                    //RulerPenaltyDays = Convert.ToInt32(row["RulerPenaltyDays"]),
+                    //UrbenPenaltyDays = Convert.ToInt32(row["UrbenPenaltyDays"]),
+                    //OrderEnterStatus = row["OrderEnterStatus"] == DBNull.Value ? '0' : Convert.ToChar(row["OrderEnterStatus"]),
+                    //Gst2 = Convert.ToDecimal(row["Gst2"]),
+                    //GrandTotal2 = Convert.ToDecimal(row["GrandTotal2"]),
+                }).ToList();
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+        //Submit Record add Product
+        [HttpPost]
+        public IActionResult AddOrEditProduct(ProductDetail model)
+        {
+            try
+            {
+                //if (string.IsNullOrWhiteSpace(model.CompanyName) || string.IsNullOrWhiteSpace(model.CompanyName))
+                //{
+                //    return BadRequest(new { success = false, message = "Company Name are required." });
+                //}
+
+                SortedList parameters = new SortedList();
+
+                parameters.Add("@ProductId", model.ProductId);
+                parameters.Add("@MainCategoryId", model.MainCategoryId);
+                parameters.Add("@PCategoryId", model.PCategoryId);
+                parameters.Add("@CompanyId", model.CompanyId);
+                parameters.Add("@ModelNo", model.ModelNo);
+                parameters.Add("@ProductPrice", model.ProductPrice);
+                parameters.Add("@Sepcification", model.Sepcification);
+                parameters.Add("@ImageFile", "");
+                parameters.Add("@CurrentStorck", 0);
+                parameters.Add("@HSNCode", model.HSNCode);
+                parameters.Add("@Gst", model.Gst);
+                parameters.Add("@HPSEDCCharges", model.HPSEDCCharges);
+                parameters.Add("@GrandTotal", model.GrandTotal);
+                parameters.Add("@IsActive", "Y");
+                parameters.Add("@TenderNo", model.TenderNo);
+                parameters.Add("@ValidFrom", model.ValidTo);
+                parameters.Add("@ValidTo", model.ValidFrom);
+                parameters.Add("@RularPenaltyDays", model.RularPenaltyDays);
+                parameters.Add("@UrbanPenaltyDays", model.UrbanPenaltyDays);
+
+                var userId = User.FindFirst("UserId")?.Value;
+                parameters.Add("@CreatedBy", userId);
+
+                var result = _cn.ExecuteNonQueryWMessage("HardwareProduct_AcceptUpdate", "", parameters);
+
+                return Ok(new { success = true, message = result.ToString() });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+        //Submit Record for Update Product
+        [HttpPost]
+        public IActionResult UpdateProduct(ProductDetailEditView model)
+        {
+
+
+            try
+            {
+
+                //if (string.IsNullOrWhiteSpace(model.CompanyName) || string.IsNullOrWhiteSpace(model.CompanyName))
+                //{
+                //    return BadRequest(new { success = false, message = "Company Name are required." });
+                //}
+
+                SortedList parameters = new SortedList();
+                parameters.Add("@ProductId", model.Id);
+                if (model.TabIdNo == 1)
+                {
+                    parameters.Add("@ProductId", model.Id);
+
+                    var result1 = _cn.ExecuteNonQueryWMessage("HardwareProduct_AcceptUpdate", "", parameters);
+
+                    return Ok(new { success = true, message = result1.ToString() });
+                }
+                else if (model.TabIdNo == 2)
+                {
+                    parameters.Add("@ProductId", model.Id);
+                    var result1 = _cn.ExecuteNonQueryWMessage("HardwareProduct_AcceptUpdate", "", parameters);
+
+                    return Ok(new { success = true, message = result1.ToString() });
+
+                }
+                else if (model.TabIdNo == 3)
+                {
+                    parameters.Add("@ProductId", model.Id);
+                    var result1 = _cn.ExecuteNonQueryWMessage("HardwareProduct_AcceptUpdate", "", parameters);
+
+                    return Ok(new { success = true, message = result1.ToString() });
+
+                }
+                else if (model.TabIdNo == 4)
+                {
+                    parameters.Add("@ProductId", model.Id);
+                    var result1 = _cn.ExecuteNonQueryWMessage("HardwareProduct_AcceptUpdate", "", parameters);
+
+                    return Ok(new { success = true, message = result1.ToString() });
+
+                }
+                else if (model.TabIdNo == 5)
+                {
+                    parameters.Add("@ProductId", model.Id);
+                    var result1 = _cn.ExecuteNonQueryWMessage("HardwareProduct_AcceptUpdate", "", parameters);
+
+                    return Ok(new { success = true, message = result1.ToString() });
+
+                }
+
+                //parameters.Add("@ProductId", model.ProductId);
+                //parameters.Add("@MainCategoryId", model.MainCategoryId);
+                //parameters.Add("@PCategoryId", model.PCategoryId);
+                //parameters.Add("@CompanyId", model.CompanyId);
+                //parameters.Add("@ModelNo", model.ModelNo);
+                //parameters.Add("@ProductPrice", model.ProductPrice);
+                //parameters.Add("@Sepcification", model.Sepcification);
+                //parameters.Add("@ImageFile", "");
+                //parameters.Add("@CurrentStorck", 0);
+                //parameters.Add("@HSNCode", model.HSNCode);
+                //parameters.Add("@Gst", model.Gst);
+                //parameters.Add("@HPSEDCCharges", model.HPSEDCCharges);
+                //parameters.Add("@GrandTotal", model.GrandTotal);
+                //parameters.Add("@IsActive", "Y");
+                //parameters.Add("@TenderNo", model.TenderNo);
+                //parameters.Add("@ValidFrom", model.ValidTo);
+                //parameters.Add("@ValidTo", model.ValidFrom);
+                //parameters.Add("@RularPenaltyDays", model.RularPenaltyDays);
+                //parameters.Add("@UrbanPenaltyDays", model.UrbanPenaltyDays);
+
+                var userId = User.FindFirst("UserId")?.Value;
+                parameters.Add("@CreatedBy", userId);
+
+                var result = _cn.ExecuteNonQueryWMessage("HardwareProduct_AcceptUpdate", "", parameters);
+
+                return Ok(new { success = true, message = result.ToString() });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+        #endregion
+        #region Department Billing Address
+        public IActionResult DepartmentBillingAddress()
+        {
+            return View();
+
+        }
+
+        // get Record Billing Address
+        [HttpGet]
+        public async Task<IActionResult> getDepartmentAddressList([FromQuery] TestFilterData filter)
+        {
+            try
+            {
+                SortedList parameters = new SortedList();
+                parameters.Add("@BillingAddressId", filter.FilterId1);
+                parameters.Add("@DeptId", filter.FilterId2);
+                parameters.Add("@DistrictId", filter.FilterId3);
+
+                var dt = await _cn.FillDataTableAsync("HardwareBillingAddress_List", "", parameters);
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<object>());
+
+                // var countries = CommonMethod.ToList(dt);
+                var list = dt.AsEnumerable().Select(row => new BillingAddressDetailViewModal
+                {
+                    BillingId = Convert.ToInt32(row["BillingAddressId"]),
+                    DepartmentName = row["departmentName"]?.ToString(),
+                    District = row["DistrictName"]?.ToString(),
+                    DistrictId = row["DistrictId"] == DBNull.Value ? 0 : Convert.ToInt32(row["DistrictId"]),
+                    BillingAddress = row["BillingAddress"]?.ToString(),
+                    NodalOfficerName = row["NodalOfficerName"]?.ToString(),
+                    Email = row["EmailId"]?.ToString(),
+                    ContactNo = row["ContactNo"] == DBNull.Value ? "N/A" : row["ContactNo"].ToString(),
+
+
+
+
+                }).ToList();
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = "Server error.", error = ex.Message });
+            }
+        }
+        // Submit record Billing Address
+        [HttpPost]
+        public IActionResult AddOrEditBillingAddress(BillingDetailModel model)
+        {
+            try
+            {
+
+
+                //if (string.IsNullOrWhiteSpace(ProductName) || string.IsNullOrWhiteSpace(ProductName))
+                //{
+                //    return BadRequest(new { success = false, message = "ProductName   are required." });
+                //}
+                SortedList parameters = new SortedList();
+                parameters.Add("@BillingAddressId", model.BillingId);
+                parameters.Add("@DeptId", model.DeptId);
+                parameters.Add("@DistrictId", model.DistrictId);
+                parameters.Add("@BillingAddress", model.BillingAddress);
+                parameters.Add("@NodalOfficerName", model.NodalOfficerName);
+                parameters.Add("@EmailId", model.Email);
+                parameters.Add("@ContactNo", model.ContactNo);
+
+
+
+                var result = _cn.ExecuteNonQueryWMessage("HardwareBillingAddress_AcceptUpdate", "", parameters);
+                var returnMsg = result.ToString();
+
+                return Ok(new { success = true, message = returnMsg });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = "Server error.", error = ex.Message });
+            }
+        }
         #endregion
     }
 }

@@ -1,4 +1,4 @@
-﻿var  Id=0;
+﻿var Id = 0;
 //common
 toastr.options = {
     closeButton: true,
@@ -15,7 +15,7 @@ $(document).ready(function () {
     alert('dfdf');
     recordlist();
     //modalSelect2('myModal', 'Catg');
-    bindDataToDdl("HardwareDropdown", "HMainCategory_ddl", "myModal","ddlMcategory", " Category");
+    bindDataToDdl("HardwareDropdown", "HMainCategory_ddl", "myModal", "ddlMcategory", " Category");
 });
 
 //Get Record for A table 
@@ -41,25 +41,22 @@ async function recordlist() {
 }
 //Bind get record  in a table 
 function bindDatatable(records, tableId) {
-    alert(records);
+    alert(JSON.stringify(records));
     //var tableId = document.getElementById(tableId1);
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().clear().destroy();
     }
-
     var tbody = $(tableId + " tbody");
     tbody.empty();
-
     $.each(records, function (i, value) {
         let SrNo = i + 1;
-
         tbody.append(`
             <tr
                         data-id="${value.Id}" 
-                        data-name="${value.MainCategory}" 
+                        data-name="${value.MainCatgName}" 
                         data-code="${value.Title}">
                         <td>${SrNo}</td>
-                        <td>${value.MainCategory}</td>
+                        <td>${value.MainCatgName}</td>
                         <td>${value.Title}</td>
                         <td class="text-center align-middle">
                             <div class="form-check form-switch d-flex justify-content-center">
@@ -67,10 +64,8 @@ function bindDatatable(records, tableId) {
                             </div>
                         </td>
                         <td class="text-center">
-                           <span onclick="FillFrom(${value.Id})"> <i class="bi bi-pencil-square edit-icon"></i></span>
-                           
+                           <span onclick="FillFrom(${value.Id})"> <i class="bi bi-pencil-square edit-icon"></i></span>                        
                         </td>
-
             </tr>
         `);
     });
@@ -85,21 +80,21 @@ function bindDatatable(records, tableId) {
 
     //hideModalLoader();
 }
-    //$(document).ready(function () {
-    //    $('#myTable').DataTable({
-    //        pageLength: 10,
-    //        lengthChange: false
-    //    });
-    //    // Clear error message when typing
-    //    $("#myModal").on("input", function () {
-    //       // $(this).removeClass("is-invalid");          // remove red border
-    //        //$(this).siblings(".error").text("");        // clear error text
-    //        $(".modelalert").text("");                  // clear global error
-    //    });
-    //    //Get data in main table
-    //    PMainCategory_ddl();
-    //    ProductCatglist();
-    //});
+//$(document).ready(function () {
+//    $('#myTable').DataTable({
+//        pageLength: 10,
+//        lengthChange: false
+//    });
+//    // Clear error message when typing
+//    $("#myModal").on("input", function () {
+//       // $(this).removeClass("is-invalid");          // remove red border
+//        //$(this).siblings(".error").text("");        // clear error text
+//        $(".modelalert").text("");                  // clear global error
+//    });
+//    //Get data in main table
+//    PMainCategory_ddl();
+//    ProductCatglist();
+//});
 //function ProductCatglist() {
 //    $.ajax({
 //        url: '/HardwareMaster/GetProductCatg',
@@ -107,7 +102,7 @@ function bindDatatable(records, tableId) {
 //        data: {
 //            Id: Id,
 //            MainCatgId:0,
-           
+
 //        },
 //        success: function (data) {
 //            if ($.fn.DataTable.isDataTable('#myTable')) {
@@ -116,7 +111,7 @@ function bindDatatable(records, tableId) {
 
 //            var tbody = $("#myTable tbody");
 //            tbody.empty();
-            
+
 //            $.each(data, function (i, value) {
 //                let SrNo = i + 1;
 //                tbody.append(`
@@ -134,7 +129,7 @@ function bindDatatable(records, tableId) {
 //                        </td>
 //                        <td class="text-center">
 //                           <span onclick="FillFrom(${value.Id})"> <i class="bi bi-pencil-square edit-icon"></i></span>
-                           
+
 //                        </td>
 //                    </tr>
 //                `);
@@ -172,16 +167,15 @@ function OpenAddModel() {
     const myModal = new bootstrap.Modal("#myModal");
     myModal.show();
 }
-function FillFrom(id)
-{
+function FillFrom(id) {
     MsgBox('Invormation', 'Success ful', '', '');
-//    var result = DeleteEditBox('Edit Field', 'Do you want to edit Reocrd?', 'question', id);
-    
-//    if (result) {
-//        // open modal / load data
-//        $('#myModal').modal('show');
-//        // loadRecordById(id); // your function
-//    }
+    //    var result = DeleteEditBox('Edit Field', 'Do you want to edit Reocrd?', 'question', id);
+
+    //    if (result) {
+    //        // open modal / load data
+    //        $('#myModal').modal('show');
+    //        // loadRecordById(id); // your function
+    //    }
 }
 function FillFrom2(id) {
     Swal.fire({
@@ -305,7 +299,7 @@ $(".btnModalSubmit").on("click", function () {
 
 //}
 //function SubmitRecord1() {
-    
+
 //    let isValid = true;
 //    let Attachment = $("#fileAttached").get(0);
 //    let files = Attachment.files;
@@ -388,7 +382,7 @@ $(".btnModalSubmit").on("click", function () {
 //            toastr.error("Error: " + error);
 //        }
 //    });
- 
+
 //}
 //function SubmitRecord() {
 
