@@ -101,6 +101,7 @@ namespace Compass.Controllers
         {
             return View();
         }
+        //Submit 
         [HttpPost]
         public async Task<IActionResult> AddOrEditProductSubCatg()
         {
@@ -202,6 +203,7 @@ namespace Compass.Controllers
         }
 
 
+
         #endregion
      
         
@@ -211,6 +213,7 @@ namespace Compass.Controllers
             return View();
         }
 
+        //Table Data
         [HttpGet]
         public async Task<IActionResult> getProductList([FromQuery] TestFilterData filter)
         {
@@ -237,6 +240,7 @@ namespace Compass.Controllers
                     Title = row["Title"]?.ToString(),
                     ModalNo = row["ModelNo"]?.ToString(),
                     ProductNewPrice = row["ProductPriceNew"]?.ToString(),
+                    Gst = Convert.ToInt32(row["Gst"]),
                     GrandTotal = row["GrandTotal"] == DBNull.Value ? 0.0 : Convert.ToDouble(row["GrandTotal"]),
                     GrandTotalNew = row["GrandTotalNew"] == DBNull.Value ? 0.0 : Convert.ToDouble(row["GrandTotalNew"]),
 
@@ -262,6 +266,7 @@ namespace Compass.Controllers
             }
         }
 
+        //Fill Data in Modal
         [HttpGet]
         public async Task<IActionResult> getProductListEdit([FromQuery] TestFilterData filter)
         {
@@ -285,15 +290,17 @@ namespace Compass.Controllers
                     HPSEDCCharges = Convert.ToDecimal(row["HPSEDCCharges"]),
                     ProductPrice =Convert.ToDecimal(row["ProductPrice"]),
                     GrandTotal = Convert.ToDecimal(row["GrandTotal"]),
+                    GrandTotal2 = Convert.ToDecimal(row["GrandTotal2"]),
                     Gst = Convert.ToDecimal(row["Gst"]),
+                    Gst2 = Convert.ToDecimal(row["Gst2"]),
                     IsActive = row["IsActive"] == DBNull.Value ? '0' : Convert.ToChar(row["IsActive"]),
                     CompanyName = row["CompanyName"]?.ToString(),
                     Title = row["Title"]?.ToString(),
                     TenderNo = row["TenderNo"]?.ToString(),
                     ValidTo = row["ValidTo"]?.ToString(),
                     ValidFrom = row["ValidFrom"]?.ToString(),
-                    //RulerPenaltyDays = Convert.ToInt32(row["RulerPenaltyDays"]),
-                    //UrbenPenaltyDays = Convert.ToInt32(row["UrbenPenaltyDays"]),
+                    RulerPenaltyDays = Convert.ToInt32(row["RulerPenaltyDays"]),
+                    UrbenPenaltyDays = Convert.ToInt32(row["UrbenPenaltyDays"]),
                     //OrderEnterStatus = row["OrderEnterStatus"] == DBNull.Value ? '0' : Convert.ToChar(row["OrderEnterStatus"]),
                     //Gst2 = Convert.ToDecimal(row["Gst2"]),
                     //GrandTotal2 = Convert.ToDecimal(row["GrandTotal2"]),
@@ -313,15 +320,10 @@ namespace Compass.Controllers
 
         //Submit Record add Product
         [HttpPost]
-        public IActionResult AddOrEditProduct(ProductDetail model)
+        public async Task<IActionResult> AddOrEditProduct([FromForm]  ProductDetail model)
         {
             try
             {
-                //if (string.IsNullOrWhiteSpace(model.CompanyName) || string.IsNullOrWhiteSpace(model.CompanyName))
-                //{
-                //    return BadRequest(new { success = false, message = "Company Name are required." });
-                //}
-
                 SortedList parameters = new SortedList();
 
                 parameters.Add("@ProductId", model.ProductId);
@@ -361,6 +363,105 @@ namespace Compass.Controllers
                 });
             }
         }
+
+        //Update GST
+        [HttpPost]
+        public async Task<IActionResult> UpdateProductGst([FromForm]  ProductDetail model)
+        {
+            try
+            {
+                SortedList parameters = new SortedList();
+
+                parameters.Add("@ProductId", model.ProductId);
+                parameters.Add("@ProductPrice", model.ProductPrice);
+                parameters.Add("@Gst", model.Gst);
+                parameters.Add("@HPSEDCCharges", model.HPSEDCCharges);
+                parameters.Add("@GrandTotal", model.GrandTotal);
+                parameters.Add("@PenaltyDays", model.PenaltyDays);
+                parameters.Add("@PenaltyRate", model.PenaltyRate);
+                parameters.Add("@IsActive", "Y");
+
+                var userId = User.FindFirst("UserId")?.Value;
+                parameters.Add("@CreatedBy", userId);
+
+                var result = _cn.ExecuteNonQueryWMessage("HardwareProductGST2_AcceptUpdate", "", parameters);
+
+                return Ok(new { success = true, message = result.ToString() });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+        //Update Target Days
+        [HttpPost]
+        public async Task<IActionResult> UpdateProductTargetDays([FromForm] ProductDetail model)
+        {
+            try
+            {
+                SortedList parameters = new SortedList();
+
+                parameters.Add("@ProductId", model.ProductId);
+                parameters.Add("@RulerPenaltyDays", model.RularPenaltyDays);
+                parameters.Add("@UrbenPenaltyDays", model.UrbanPenaltyDays);
+              
+                var userId = User.FindFirst("UserId")?.Value;
+                parameters.Add("@CreatedBy", userId);
+
+                var result = _cn.ExecuteNonQueryWMessage("HardwareProductTargetDays_AcceptUpdate", "", parameters);
+
+                return Ok(new { success = true, message = result.ToString() });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+        //Update Tender
+        [HttpPost]
+        public async Task<IActionResult> UpdateProductTender([FromForm] ProductDetail model)
+        {
+            try
+            {
+                SortedList parameters = new SortedList();
+
+                parameters.Add("@ProductId", model.ProductId);
+                parameters.Add("@TenderNo", model.TenderNo);
+                parameters.Add("@ValidFrom", model.ValidFrom);
+                parameters.Add("@ValidTo", model.ValidTo);
+            
+
+                var userId = User.FindFirst("UserId")?.Value;
+                parameters.Add("@CreatedBy", userId);
+
+                var result = _cn.ExecuteNonQueryWMessage("HardwareProductTender_AcceptUpdate", "", parameters);
+
+                return Ok(new { success = true, message = result.ToString() });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+
         //Submit Record for Update Product
         [HttpPost]
         public IActionResult UpdateProduct(ProductDetailEditView model)
@@ -460,9 +561,7 @@ namespace Compass.Controllers
         public IActionResult DepartmentBillingAddress()
         {
             return View();
-
         }
-
         // get Record Billing Address
         [HttpGet]
         public async Task<IActionResult> getDepartmentAddressList([FromQuery] TestFilterData filter)
@@ -475,14 +574,13 @@ namespace Compass.Controllers
                 parameters.Add("@DistrictId", filter.FilterId3);
 
                 var dt = await _cn.FillDataTableAsync("HardwareBillingAddress_List", "", parameters);
-
                 if (dt == null || dt.Rows.Count == 0)
                     return Ok(new List<object>());
-
                 // var countries = CommonMethod.ToList(dt);
                 var list = dt.AsEnumerable().Select(row => new BillingAddressDetailViewModal
                 {
                     BillingId = Convert.ToInt32(row["BillingAddressId"]),
+                    DeptId = Convert.ToInt32(row["DeptId"]),
                     DepartmentName = row["departmentName"]?.ToString(),
                     District = row["DistrictName"]?.ToString(),
                     DistrictId = row["DistrictId"] == DBNull.Value ? 0 : Convert.ToInt32(row["DistrictId"]),
@@ -490,6 +588,7 @@ namespace Compass.Controllers
                     NodalOfficerName = row["NodalOfficerName"]?.ToString(),
                     Email = row["EmailId"]?.ToString(),
                     ContactNo = row["ContactNo"] == DBNull.Value ? "N/A" : row["ContactNo"].ToString(),
+                    IsActive = row["IsActive"] == DBNull.Value ? "N/A" : row["IsActive"].ToString(),
 
 
 
@@ -508,12 +607,6 @@ namespace Compass.Controllers
         {
             try
             {
-
-
-                //if (string.IsNullOrWhiteSpace(ProductName) || string.IsNullOrWhiteSpace(ProductName))
-                //{
-                //    return BadRequest(new { success = false, message = "ProductName   are required." });
-                //}
                 SortedList parameters = new SortedList();
                 parameters.Add("@BillingAddressId", model.BillingId);
                 parameters.Add("@DeptId", model.DeptId);
@@ -522,8 +615,6 @@ namespace Compass.Controllers
                 parameters.Add("@NodalOfficerName", model.NodalOfficerName);
                 parameters.Add("@EmailId", model.Email);
                 parameters.Add("@ContactNo", model.ContactNo);
-
-
 
                 var result = _cn.ExecuteNonQueryWMessage("HardwareBillingAddress_AcceptUpdate", "", parameters);
                 var returnMsg = result.ToString();

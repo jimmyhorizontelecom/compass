@@ -69,7 +69,7 @@ function bindDatatable(records, tableId) {
                         <td>${value.ModalNo}</td>
                         <td>${value.ProductNewPrice}</td>
                         <td>${value.GrandTotal}</td>
-                        <td>${value.GrandTotalNew}</td>
+                        <td>${value.Gst} <br> ${value.GrandTotalNew}</td>
                         <td>${value.Specification}</td>
                         <td>${value.TenderNo}</td>                                                     
                         <td class="text-center align-middle">
@@ -331,16 +331,20 @@ async function getProductDetails(productId) {
             $("#txtHPSEDCCharge2").val(data.HPSEDCCharges ?? "");
             $("#txtOldGST").val(data.Gst ?? "");
             $("#txtOldGTotal").val(data.GrandTotal ?? "");
-           // $("#txtNewGST").val(data.PenaltyRate);
-            $("#txtOldGTotal").val(data.GrandTotal);
-           // $("#txtNewGTotal").val(data.Gst);
+            $("#txtNewGST").val(data.Gst2 ?? "");
+            //$("#txtOldGTotal").val(data.GrandTotal);
+            $("#txtNewGTotal").val(data.GrandTotal2 ?? "");
             // Add Target Days
-            $("#txtNonTribaltxtNonTribal").val( data.RulerPenaltyDays ?? "" );
+            $("#txtNonTribal").val( data.RulerPenaltyDays ?? "" );
             $("#txtTribal").val(data.UrbenPenaltyDays ?? "");
             // Add Tender Details
             $("#txtTender").val(data.TenderNo ?? "");
-            $("#txtValidFrom").val(data.ValidFrom ?? "");
-            $("#txtValidTo").val(data.ValidTo ?? "");
+            // $("#txtValidFrom").val(data.ValidFrom ?? "");
+            // $("#txtValidTo").val(data.ValidTo ?? "");
+            $("#txtValidFrom").val(formatDateForInput(data.ValidFrom));
+            $("#txtValidTo").val(formatDateForInput(data.ValidTo));
+            console.log("ValidFrom:", data.ValidFrom);
+            console.log("ValidFrom type:", typeof data.ValidFrom);
 
             // Update Space
             $("#txtAreaSpecs").val(data.Sepcification ?? "");
@@ -354,25 +358,25 @@ async function getProductDetails(productId) {
         return false;
     }
 }
+//Convert string Date 16-Aug-2026 to date formate 16-08-2026 
+function formatDateForInput(dateString) {
+    if (!dateString) return "";
+    const parts = dateString.split("-");
+    if (parts.length === 3) {
+        const day = parts[0];
+        const month = new Date(`${parts[1]} 1, 2000`).getMonth() + 1;
+        const year = parts[2];
+        return `${year}-${String(month).padStart(2, "0")}-${day.padStart(2, "0")}`;
+    }
+    return "";
+}
 
-// $('#Price, #HPSEDCCharge, #GST').on('input', function () {
-//     calculateGrandTotal();
-// });
 // apply Price calulation formula
 $('#Price1, #HPSEDCCharge1, #GST1').on('input', function () {
     calculateGrandTotal( '#Price1', '#HPSEDCCharge1', '#GST1', '#GrandTotal1'
     );
 });
-// calculate Grand Total
-// function calculateGrandTotal() {
-//     let Price = parseFloat($('#Price').val()) || 0;
-//     let Admincharge = parseFloat($('#HPSEDCCharge').val()) || 0;
-//     let GST = parseFloat($('#GST').val()) || 0;
-//     Admincharge = (Price * Admincharge) / 100;
-//     GST = (Price + Admincharge) * GST / 100;
-//     let GrandTotal = Price + GST + Admincharge;
-//     $('#GrandTotal').val(GrandTotal.toFixed(2));
-// }
+
 $('#txtPrice, #txtHPSEDCCharge2, #txtNewGST').on('input', function () {
     calculateGrandTotal('#txtPrice', '#txtHPSEDCCharge2', '#txtNewGST', '#txtNewGTotal'
     );
@@ -412,45 +416,14 @@ async function updateDetails() {
         let isValid = true;
         $(".error").remove();
         $(".is-invalid").removeClass("is-invalid");
-        let mainCategoryId = $("#ddlmaincategory1").val();
-        let productId = $("#ddlProduct1").val();
-        let companyId = $("#ddlBrand1").val();
-
-        let modelNo = $("#ModelNo1").val().trim();
         let price = $("#Price1").val().trim();
         let hpsedcCharge = $("#HPSEDCCharge1").val().trim();
         let gst = $("#GST1").val().trim();
         let grandTotal = $("#GrandTotal1").val().trim();
 
-        let nonTribalTargetDays = $("#NonTribalTargetDays1").val();
-        let tribalTargetDays = $("#TribalTargetDays1").val();
-
-        let tenderName = $("#TenderName1").val().trim();
-        let validFrom = $("#ValidFrom1").val();
-        let validTo = $("#ValidTo1").val();
-        let specification = $("#Specification1").val().trim();
-
+       
 
         // Validation
-        if (!mainCategoryId || mainCategoryId === "0") {
-            showError("ddlmaincategory1", "Select Main Category.");
-            return;
-        }
-
-        if (!productId || productId === "0") {
-            showError("ddlProduct1", "Select Product.");
-            return;
-        }
-
-        if (!companyId || companyId === "0") {
-            showError("ddlBrand1", "Select Brand.");
-            return;
-        }
-
-        if (modelNo === "") {
-            showError("ModelNo1", "Please enter Model No");
-            isValid = false;
-        }
         if (price === "") {
             showError("Price1", "Please enter Price");
             isValid = false;
@@ -463,51 +436,20 @@ async function updateDetails() {
             showError("GST1", "Please enter GST");
             isValid = false;
         }
-        if (nonTribalTargetDays === "") {
-            showError("NonTribalTargetDays1", "Please enter Target Days");
-            isValid = false;
-        }
-        if (tribalTargetDays === "") {
-            showError("TribalTargetDays1", "Please enter Target Days");
-            isValid = false;
-        }
-        if (tenderName === "") {
-            showError("TenderName1", "Please enter Tender Name");
-            isValid = false;
-        }
-        if (validFrom === "") {
-            showError("ValidFrom1", "Please enter Valid From");
-            isValid = false;
-        }
-        if (validTo === "") {
-            showError("ValidTo1", "Please enter Valid To");
-            isValid = false;
-        }
-        if (specification === "") {
-            showError("Specification1", "Please enter Specification");
-            isValid = false;
-        } 
+       
         if (!isValid) return; // stop if validation fails
 
         // Prepare FormData
         let formData = new FormData();
         formData.append("ProductId", Id);
-        formData.append("MainCategoryId", mainCategoryId);
-        formData.append("PCategoryId", productId);
-        formData.append("CompanyId", companyId);
-        formData.append("ModelNo", modelNo);
         formData.append("ProductPrice", price);
         formData.append("HPSEDCCharges", hpsedcCharge);
         formData.append("Gst", gst);
         formData.append("GrandTotal", grandTotal);
-        formData.append("UrbanPenaltyDays", nonTribalTargetDays);
-        formData.append("RularPenaltyDays", tribalTargetDays);
-        formData.append("TenderNo", tenderName);
-        formData.append("ValidFrom", validFrom);
-        formData.append("ValidTo", validTo);
-        formData.append("Sepcification", specification);
-        try {
-            let res = await acceptUpdate( "HardwareMaster",  "", formData);
+        formData.append("PenaltyDays", 0);
+        formData.append("PenaltyRate", 0);
+       try {
+            let res = await acceptUpdate("HardwareMaster",  "UpdateProductGst", formData);
             if (res.success) {
             toastr.success(res.message);
                 await recordlist();
@@ -528,26 +470,44 @@ $(document).on('click', '.btn-update-gst', function () {
     updateGst();
 });
 async function updateGst() {
-    alert('Test update gst');
+    alert('Test update details');
     let isValid = true;
     $(".error").remove();
     $(".is-invalid").removeClass("is-invalid");
-    let newGst = $("#txtNewGST").val().trim();
-     // Validation
-    if (newGst === "") {
-        showError("txtNewGST", "Please enter New GST");
+    let price = $("#txtPrice").val().trim();
+    let hpsedcCharge = $("#txtHPSEDCCharge2").val().trim();
+    let gst = $("#txtNewGST").val().trim();
+    let grandTotal = $("#txtNewGTotal").val().trim();
+
+
+
+    // Validation
+    // if (price === "") {
+    //     showError("txtPrice", "Please enter Price");
+    //     isValid = false;
+    // }
+    // if (hpsedcCharge === "") {
+    //     showError("HPSEDCCharge1", "Please enter HPSEDC Charge");
+    //     isValid = false;
+    // }
+    if (gst === "") {
+        showError("GST1", "Please enter GST");
         isValid = false;
     }
-   
+
     if (!isValid) return; // stop if validation fails
 
     // Prepare FormData
     let formData = new FormData();
-
     formData.append("ProductId", Id);
-    
+    formData.append("ProductPrice", price);
+    formData.append("HPSEDCCharges", hpsedcCharge);
+    formData.append("Gst", gst);
+    formData.append("GrandTotal", grandTotal);
+    formData.append("PenaltyDays", 0);
+    formData.append("PenaltyRate", 0);
     try {
-        let res = await acceptUpdate("HardwareMaster", "", formData);
+        let res = await acceptUpdate("HardwareMaster", "UpdateProductGst", formData);
         if (res.success) {
             toastr.success(res.message);
             await recordlist();
@@ -564,9 +524,9 @@ async function updateGst() {
     }
 }
 $(document).on('click', '.btn-update-target', function () {
-    addTarget();
+    updateTargetDays();
 });
-async function addTarget() {
+async function updateTargetDays() {
     alert('Test add target days');
     let isValid = true;
     $(".error").remove();
@@ -574,12 +534,12 @@ async function addTarget() {
     let nonTribalDays = $("#txtNonTribal").val().trim();
     let tribalDays = $("#txtTribal").val().trim();
     // Validation
-    if (nonTribalDays === "") {
-        showError("txtNonTribal", "Please enter Days");
+    if (nonTribalDays === "" || parseFloat(nonTribalDays) <= 0) {
+        showError("txtNonTribal", "Days must be greater than 0");
         isValid = false;
     }
-    if (tribalDays === "") {
-        showError("txtTribal", "Please enter Days");
+    if (tribalDays === "" || parseFloat(nonTribalDays) <= 0) {
+        showError("txtTribal", "Days must be greater than 0");
         isValid = false;
     }
 
@@ -587,11 +547,12 @@ async function addTarget() {
 
     // Prepare FormData
     let formData = new FormData();
-
     formData.append("ProductId", Id);
+    formData.append("RularPenaltyDays", tribalDays);
+    formData.append("UrbanPenaltyDays", nonTribalDays);
 
     try {
-        let res = await acceptUpdate("HardwareMaster", "", formData);
+        let res = await acceptUpdate("HardwareMaster", "UpdateProductTargetDays", formData);
         if (res.success) {
             toastr.success(res.message);
             await recordlist();
@@ -608,9 +569,9 @@ async function addTarget() {
     }
 }
 $(document).on('click', '.btn-add-tender', function () {
-    addTender();
+    updateTender();
 });
-async function addTender() {
+async function updateTender() {
     alert('Test Add Tender details');
     let isValid = true;
     $(".error").remove();
@@ -618,6 +579,7 @@ async function addTender() {
     let tenderNo = $("#txtTender").val().trim();
     let validFrom = $("#txtValidFrom").val().trim();
     let validTo = $("#txtValidTo").val().trim();
+
     // Validation
     if (tenderNo === "") {
         showError("txtTender", "Please enter Tender No.");
@@ -638,9 +600,12 @@ async function addTender() {
     let formData = new FormData();
 
     formData.append("ProductId", Id);
+    formData.append("TenderNo", tenderNo);
+    formData.append("ValidFrom", validFrom);
+    formData.append("ValidTo", validTo);
 
     try {
-        let res = await acceptUpdate("HardwareMaster", "", formData);
+        let res = await acceptUpdate("HardwareMaster", "UpdateProductTender", formData);
         if (res.success) {
             toastr.success(res.message);
             await recordlist();

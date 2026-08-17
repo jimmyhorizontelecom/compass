@@ -75,6 +75,7 @@ namespace Compass.Models.Hardware
         public string Title { get; set; }
         public string ModalNo { get; set; }
         public string ProductNewPrice { get; set; }
+        public int Gst { get; set; }
         public double GrandTotal { get; set; }
         public double GrandTotalNew { get; set; }
         public string Specification { get; set; }
@@ -97,7 +98,9 @@ namespace Compass.Models.Hardware
         public decimal HPSEDCCharges { get; set; }
         public decimal ProductPrice { get; set; }
         public decimal GrandTotal { get; set; }
+        //public decimal NewGrandTotal { get; set; }
         public decimal Gst { get; set; }
+        //public decimal NewGst { get; set; }
         public char IsActive { get; set; }
         public string CompanyName { get; set; }
         public string Title { get; set; }
@@ -124,6 +127,7 @@ namespace Compass.Models.Hardware
         public string NodalOfficerName { get; set; }
         public string Email { get; set; }
         public string ContactNo { get; set; }
+        public string IsActive { get; set; }
 
     }
     public class ProductPriceViewModal

@@ -204,7 +204,7 @@
                     </div>
                     <div class="flex-grow-1 text-center modelalert text-danger"></div>
                     <button type="button" class="btn btnModel btnModalSubmit">Submit</button>
-                    <button type="button" data-bs-dismiss="modal" class="btn btnModel">OK</button>
+                    <button type="button" data-bs-dismiss="modal" class="btn btnModel">Close</button>
                 </div>
             </div>
         </div>
@@ -431,12 +431,12 @@
                                 </div>
                                 <div class="col-md-4 ">
                                     <label class="form-label mb-0">Tender Valid From<span class="text-danger">*</span></label>
-                                    <input type="text" id="txtValidFrom" class="form-control txtbx mt-0 cleartxt" placeholder="Tender Valid From" />
+                                    <input type="date" id="txtValidFrom" class="form-control txtbx mt-0 cleartxt" placeholder="Tender Valid From" />
                                   @*   <span class="error"></span> *@
                                 </div>
                                 <div class="col-md-4 ">
                                     <label class="form-label mb-0">Tender Valid To<span class="text-danger">*</span></label>
-                                    <input type="text" id="txtValidTo" class="form-control txtbx mt-0 cleartxt" placeholder="Tender Valid To" />
+                                    <input type="date" id="txtValidTo" class="form-control txtbx mt-0 cleartxt" placeholder="Tender Valid To" />
                                      @* <input type="date" id="ValidFrom" class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")" /> *@
                                  @*    <span class="error"></span> *@
                                 </div>
@@ -469,8 +469,8 @@
 
                 <!-- Modal Footer -->
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button class="btn btn-primary update_tab">Save</button>
+                    <button class="btn btnModel" data-bs-dismiss="modal">Close</button>
+                   @*  <button class="btn btn-primary update_tab">Save</button> *@
                 </div>
 
             </div>

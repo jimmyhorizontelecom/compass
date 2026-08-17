@@ -63,7 +63,10 @@ namespace Compass.Models.Hardware
         public DateOnly ValidFrom { get; set; }
         public DateOnly ValidTo { get; set; }
         public int RularPenaltyDays { get; set; }
+      
         public int UrbanPenaltyDays { get; set; }
+        public int PenaltyDays { get; set; }
+        public decimal PenaltyRate { get; set; }
     }
     public class BillingDetailModel
     {
