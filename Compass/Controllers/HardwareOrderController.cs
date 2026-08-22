@@ -72,16 +72,16 @@ namespace Compass.Controllers
 
                 var list = dt.AsEnumerable().Select(row => new ProductPriceViewModal
                 {
-                    HSNCode = row["HSNCode"]?.ToString(),
+                    //HSNCode = row["HSNCode"]?.ToString(),
                     Sepcification = row["Sepcification"]?.ToString(),
-                    ProductPrice = row["ProductPrice"] != DBNull.Value ? Convert.ToDouble(row["ProductPrice"]) : 0.0,
-                    TotalPrice = row["TotalPrice"] != DBNull.Value ? Convert.ToDouble(row["TotalPrice"]) : 0.0,
-                    Cgst = row["Cgst"] != DBNull.Value ? Convert.ToDouble(row["Cgst"]) : 0.0,
-                    Sgst = row["Sgst"] != DBNull.Value ? Convert.ToDouble(row["Sgst"]) : 0.0,
-                    Gst = row["Gst"] != DBNull.Value ? Convert.ToDouble(row["Gst"]) : 0.0,
-                    HPSEDCCharges = row["HPSEDCCharges"] != DBNull.Value ? Convert.ToDouble(row["HPSEDCCharges"]) : 0.0,
-                    GrandTotal = row["GrandTotal"] != DBNull.Value ? Convert.ToDouble(row["GrandTotal"]) : 0.0,
-                    Total = row["Total"] != DBNull.Value ? Convert.ToDouble(row["Total"]) : 0.0,
+                    ProductPrice = Convert.ToDecimal(row["ProductPrice"]),
+                    TotalPrice = Convert.ToDecimal(row["TotalPrice"]),
+                    //Cgst = Convert.ToDecimal(row["Cgst"]),
+                    //Sgst = row["Sgst"] != DBNull.Value ? Convert.ToDouble(row["Sgst"]) : 0.0,
+                    Gst = Convert.ToDecimal(row["Gst"]),
+                    HPSEDCCharges = Convert.ToDecimal(row["HPSEDCCharges"]),
+                    GrandTotal = Convert.ToDecimal(row["GrandTotal"]),
+                    Total = Convert.ToDecimal(row["Total"]),
 
                 }).ToList();
 

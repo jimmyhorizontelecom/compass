@@ -145,7 +145,8 @@ namespace Compass.Controllers
                 int id = 0, int ParentId1 = 0, int ParentId2 = 0, int ParentId3 = 0,
                 string searchTerm = "")
         {
-            var result = await _service.HProductNameWithModel_ddl(id, ParentId1, ParentId2, ParentId3, searchTerm);
+            //var result = await _service.HProductNameWithModel_ddl(id, ParentId1, ParentId2, ParentId3, searchTerm);
+            var result = await _service.GetProductNameWithModelDdlAsync(id, ParentId1, ParentId2, ParentId3, searchTerm);
             return Ok(result);
         }
         // get Consignee Name With Model No. ddl

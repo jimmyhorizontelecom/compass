@@ -135,15 +135,15 @@ namespace Compass.Models.Hardware
 
         public string HSNCode { get; set; }
         public string Sepcification { get; set; }
-        public double ProductPrice { get; set; }
+        public decimal ProductPrice { get; set; }
 
-        public double TotalPrice { get; set; }
-        public double Cgst { get; set; }
-        public double Sgst { get; set; }
-        public double Gst { get; set; }
-        public double HPSEDCCharges { get; set; }
-        public double GrandTotal { get; set; }
-        public double Total { get; set; }
+        public decimal TotalPrice { get; set; }
+        public decimal Cgst { get; set; }
+        public decimal Sgst { get; set; }
+        public decimal Gst { get; set; }
+        public decimal HPSEDCCharges { get; set; }
+        public decimal GrandTotal { get; set; }
+        public decimal Total { get; set; }
 
 
     }

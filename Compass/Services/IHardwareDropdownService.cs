@@ -31,7 +31,8 @@ namespace Compass.Services
         // get Billing Address ddl 
         Task<List<DropdownElement>> GetBillingAddressPISaleDdlAsync(int Id, int ParentId, string searchTerm);
         // get Product Name with modal ddl 
-        Task<List<DropdownElement>> HProductNameWithModel_ddl(int Id, int ParentId1, int ParentId2, int ParentId3, string searchTerm);
+        //Task<List<DropdownElement>> HProductNameWithModel_ddl(int Id, int ParentId1, int ParentId2, int ParentId3, string searchTerm);
+        Task<List<DropdownElement>> GetProductNameWithModelDdlAsync(int Id, int ParentId1, int ParentId2, int ParentId3, string searchTerm);
         // get Bank Name ddl
         Task<List<DropdownElement>> GetBankDdlAsync(int Id, int MainCatgId, string searchTerm);
         // get Payment mode ddl

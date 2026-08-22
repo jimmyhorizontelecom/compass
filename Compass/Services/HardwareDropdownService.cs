@@ -78,7 +78,8 @@ namespace Compass.Services
             return await _repository.GetBillingAddressDdlAsync(Id, ParentId, searchTerm);
         }
         // get Product Name With Model No. ddl
-        public async Task<List<DropdownElement>> HProductNameWithModel_ddl(int Id, int ParentId1, int ParentId2, int ParentId3, string searchTerm)
+        //public async Task<List<DropdownElement>> HProductNameWithModel_ddl(int Id, int ParentId1, int ParentId2, int ParentId3, string searchTerm)
+        public async Task<List<DropdownElement>> GetProductNameWithModelDdlAsync(int Id, int ParentId1, int ParentId2, int ParentId3, string searchTerm)
         {
             return await _repository.GetProductNameWithModelDdlAsync(Id, ParentId1, ParentId2, ParentId3, searchTerm);
         }
