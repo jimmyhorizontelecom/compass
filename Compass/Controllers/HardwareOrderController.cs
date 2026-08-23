@@ -715,18 +715,11 @@ namespace Compass.Controllers
                 parameters.Add("@AgencyId", filter.FilterId2);
                 parameters.Add("@DeptId", filter.FilterId3);
                 parameters.Add("@CreatedBy", userId);
-
                 var dt = await _cn.FillDataTableAsync("HardwareSaleOrder_List", "", parameters);
-
                 if (dt == null || dt.Rows.Count == 0)
                     return Ok(new List<SaleOrderListViewModal>());
-
                 var list = dt.AsEnumerable().Select(row => new SaleOrderListViewModal
-
-
                 {
-
-
                     SaleOrderId = row["SaleOrderId"]?.ToString(),
                     SaleOrder = row["HWSaleOrderNo"]?.ToString(),
                     ReferenceNo = row["LetterReferenceNo"]?.ToString(),
@@ -736,7 +729,6 @@ namespace Compass.Controllers
                     DepartmentName = row["departmentName"]?.ToString(),
                     BillingAddress = row["BillingAddress"]?.ToString(),
                     //ItemDescription = row["ItemDescription"]?.ToString(),
-
                     DeliveryLocationDoc = row["DeliveryAttachement"]?.ToString(),
                     // AddLocation = row["AddLocation"]?.ToString(),
                     GrandTotalAmt = row["Gtotal"] == DBNull.Value ? 0m : Convert.ToDecimal(row["Gtotal"]),
@@ -744,13 +736,6 @@ namespace Compass.Controllers
                     DeptReceivedAmt = row["PaymentAmt"] == DBNull.Value ? 0 : Convert.ToDecimal(row["PaymentAmt"]),
                     PurchaseIssued = row["IsPurchaseOrderIssue"] == DBNull.Value ? 'N' : Convert.ToChar(row["IsPurchaseOrderIssue"]),
                     CancelSaleOrder = row["IsCancel"] == DBNull.Value ? 'N' : Convert.ToChar(row["IsCancel"]),
-
-
-
-
-
-
-
                 }).ToList();
 
                 return Ok(list);
@@ -778,33 +763,19 @@ namespace Compass.Controllers
                 SortedList parameters = new SortedList();
                 parameters.Add("@SaleOrderId", filter.FilterId1);
                 parameters.Add("@PurchaseOrderId", filter.FilterId2);
-                parameters.Add("@UserRole", roleId);
+                parameters.Add("@UserRole", userId);
                 parameters.Add("@SaleOrderType", filter.FilterName1 ?? "");
-
-
                 var dt = await _cn.FillDataTableAsync("HardwareProductSaleOrderExportPIssue_list", "", parameters);
-
-                if (dt == null || dt.Rows.Count == 0)
+               if (dt == null || dt.Rows.Count == 0)
                     return Ok(new List<ItemDescriptionViewModal>());
-
                 var list = dt.AsEnumerable().Select(row => new ItemDescriptionViewModal
-
-
                 {
-
                     ItemDescription = row["ProductName"]?.ToString(),
                     Quantity = row["OrderQty"] == DBNull.Value ? 0m : Convert.ToDecimal(row["OrderQty"]),
                     BasePrice = row["Price"] == DBNull.Value ? 0m : Convert.ToDecimal(row["Price"]),
                     GST = row["Gst"] == DBNull.Value ? 0m : Convert.ToDecimal(row["Gst"]),
                     UnitRate = row["ProductGrandTotal"] == DBNull.Value ? 0m : Convert.ToDecimal(row["ProductGrandTotal"]),
                     TotalAmount = row["Gtotal"] == DBNull.Value ? 0m : Convert.ToDecimal(row["Gtotal"]),
-
-
-
-
-
-
-
                 }).ToList();
 
                 return Ok(list);
@@ -833,35 +804,18 @@ namespace Compass.Controllers
                 SortedList parameters = new SortedList();
                 parameters.Add("@PurchaseOrderNo", filter.FilterId2);
                 parameters.Add("@SaleOrderId", filter.FilterId1);
-
-
-
                 var dt = await _cn.FillDataTableAsync("HardwareDeliveryAddressItemWise_List", "", parameters);
-
                 if (dt == null || dt.Rows.Count == 0)
                     return Ok(new List<AddLocationViewModal>());
-
                 var list = dt.AsEnumerable().Select(row => new AddLocationViewModal
-
-
-                {
-
+               {
                     ItemDetailsId = row["OrderDetailsId"] == DBNull.Value ? 0 : Convert.ToInt32(row["OrderDetailsId"]),
                     ProductId = row["ProductId"] == DBNull.Value ? 0 : Convert.ToInt32(row["ProductId"]),
                     ProductName = row["ProductName"]?.ToString(),
                     OrderQty = row["OrderQty"] == DBNull.Value ? 0m : Convert.ToDecimal(row["OrderQty"]),
                     AvailableQuantity = row["Restqty"] == DBNull.Value ? 0m : Convert.ToDecimal(row["Restqty"]),
                     DeliveryQuantity = row["DeliveryQty"] == DBNull.Value ? 0m : Convert.ToDecimal(row["DeliveryQty"]),
-
-
-
-
-
-
-
-
                 }).ToList();
-
                 return Ok(list);
             }
             catch (Exception ex)
@@ -888,17 +842,10 @@ namespace Compass.Controllers
                 SortedList parameters = new SortedList();
                 parameters.Add("@SaleOrderId", filter.FilterId1);
                 parameters.Add("@PurchaseOrderId", filter.FilterId2);
-
-
-
                 var dt = await _cn.FillDataTableAsync("HardwareEnterDeliveryAddress_List1", "", parameters);
-
                 if (dt == null || dt.Rows.Count == 0)
                     return Ok(new List<AddDeliveryAddressViewModal>());
-
                 var list = dt.AsEnumerable().Select(row => new AddDeliveryAddressViewModal
-
-
                 {
 
                     OrderDetailsId = row["OrderDetailsId"] == DBNull.Value ? 0 : Convert.ToInt32(row["OrderDetailsId"]),
@@ -908,17 +855,7 @@ namespace Compass.Controllers
                     ContactNo = row["ConsigneeContactNo"]?.ToString(),
                     ConsigneeAddress = row["consigneeAddress"]?.ToString(),
                     AddressType = row["AreaType"]?.ToString(),
-
-
-
-
-
-
-
-
-
                 }).ToList();
-
                 return Ok(list);
             }
             catch (Exception ex)
@@ -933,60 +870,174 @@ namespace Compass.Controllers
         }
 
         // Store data in one to many relation form consignee Address
-        public async Task<IActionResult> SaveConsigneeAddress([FromForm] string consigneeAddress)
-        {
-            var model = JsonConvert.DeserializeObject<DeliveryLocationModal>(consigneeAddress);
+        //public async Task<IActionResult> SaveConsigneeAddress([FromForm] string consigneeAddress)
+        //{
+        //    var model = JsonConvert.DeserializeObject<DeliveryLocationModal>(consigneeAddress);
 
-            if (model == null)
-            {
-                return BadRequest("Model is null");
-            }
+        //    if (model == null)
+        //    {
+        //        return BadRequest("Model is null");
+        //    }
 
-            var userId = User.FindFirst("UserId")?.Value;
-            using SqlConnection con = new SqlConnection(_connectionString);
-            using SqlCommand cmd = new SqlCommand("HardwareEnterDeliveryAddress_AcceptUpdate1", con);
+        //    var userId = User.FindFirst("UserId")?.Value;
+        //    using SqlConnection con = new SqlConnection(_connectionString);
+        //    using SqlCommand cmd = new SqlCommand("HardwareEnterDeliveryAddress_AcceptUpdate1", con);
 
-            cmd.CommandType = CommandType.StoredProcedure;
+        //    cmd.CommandType = CommandType.StoredProcedure;
 
-            cmd.Parameters.AddWithValue("@OrderDeliveryId", model.OrderDeliveryId);
-            cmd.Parameters.AddWithValue("@AreaType", model.AreaType);
-
-
-
-            // Convert child list to DataTable
-            System.Data.DataTable dt = new System.Data.DataTable();
-            dt.Columns.Add("ItemDetailsId", typeof(int));
-            dt.Columns.Add("SaleOrderId", typeof(int));
-            dt.Columns.Add("ProductId", typeof(int));
-            dt.Columns.Add("DeliveryQty", typeof(double));
-            dt.Columns.Add("ConsigneeName", typeof(string));
-            dt.Columns.Add("ConsigneeContactNo", typeof(string));
-            dt.Columns.Add("consigneeAddress", typeof(string));
-            dt.Columns.Add("DistrictId", typeof(int));
-            dt.Columns.Add("DeliveredQty", typeof(int));
+        //    cmd.Parameters.AddWithValue("@OrderDeliveryId", model.OrderDeliveryId);
+        //    cmd.Parameters.AddWithValue("@AreaType", model.AreaType);
 
 
 
-            foreach (var item in model.Items)
-            {
-                dt.Rows.Add(item.ItemDetailsId, item.SaleOrderId, item.ProductId, item.DeliveryQty, item.ConsigneeName, item.ConsigneeContactNo, item.consigneeAddress, item.DistrictId, 0);
-            }
+        //    // Convert child list to DataTable
+        //    System.Data.DataTable dt = new System.Data.DataTable();
+        //    dt.Columns.Add("ItemDetailsId", typeof(int));
+        //    dt.Columns.Add("SaleOrderId", typeof(int));
+        //    dt.Columns.Add("ProductId", typeof(int));
+        //    dt.Columns.Add("DeliveryQty", typeof(double));
+        //    dt.Columns.Add("ConsigneeName", typeof(string));
+        //    dt.Columns.Add("ConsigneeContactNo", typeof(string));
+        //    dt.Columns.Add("consigneeAddress", typeof(string));
+        //    dt.Columns.Add("DistrictId", typeof(int));
+        //    dt.Columns.Add("DeliveredQty", typeof(int));
 
-            SqlParameter tvpParam = cmd.Parameters.AddWithValue("@TemptblHardwarSaleOrder3", dt);
-            tvpParam.SqlDbType = SqlDbType.Structured;
-            tvpParam.TypeName = "TemptblHardwarSaleOrder3";
-            // ✅ Correct Output Parameter
-            SqlParameter mesParam = new SqlParameter("@mes", SqlDbType.VarChar, -1);
-            mesParam.Direction = ParameterDirection.Output;
-            cmd.Parameters.Add(mesParam);
 
-            await con.OpenAsync();
-            await cmd.ExecuteNonQueryAsync();
-            string message = mesParam.Value?.ToString();
-            return Ok(new { success = true, message = message });
 
-        }
+        //    foreach (var item in model.Items)
+        //    {
+        //        dt.Rows.Add(item.ItemDetailsId, item.SaleOrderId, item.ProductId, item.DeliveryQty, item.ConsigneeName, item.ConsigneeContactNo, item.consigneeAddress, item.DistrictId, 0);
+        //    }
+
+        //    SqlParameter tvpParam = cmd.Parameters.AddWithValue("@TemptblHardwarSaleOrder3", dt);
+        //    tvpParam.SqlDbType = SqlDbType.Structured;
+        //    tvpParam.TypeName = "TemptblHardwarSaleOrder3";
+        //    // ✅ Correct Output Parameter
+        //    SqlParameter mesParam = new SqlParameter("@mes", SqlDbType.VarChar, -1);
+        //    mesParam.Direction = ParameterDirection.Output;
+        //    cmd.Parameters.Add(mesParam);
+
+        //    await con.OpenAsync();
+        //    await cmd.ExecuteNonQueryAsync();
+        //    string message = mesParam.Value?.ToString();
+        //    return Ok(new { success = true, message = message });
+
+        //}
         // Delete Records from Table
+        [HttpPost]
+        public async Task<IActionResult> SaveConsigneeAddress( [FromForm] string consigneeAddress)
+        {
+            try
+            {
+                // =========================================
+                // Deserialize JSON
+                // =========================================
+                if (string.IsNullOrWhiteSpace(consigneeAddress))
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Consignee address data is required."
+                    });
+                }
+                var model =  JsonConvert.DeserializeObject<DeliveryLocationModal>( consigneeAddress);
+                if (model == null)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Invalid consignee address data."
+                    });
+                }
+                // Required Items Validation
+                if (model.Items == null || model.Items.Count == 0)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Please select at least one product."
+                    });
+                }
+                 // User
+                var userId = User.FindFirst("UserId")?.Value;
+                // Create TVP DataTable
+                System.Data.DataTable dt =  new System.Data.DataTable();
+                dt.Columns.Add("ItemDetailsId", typeof(int));
+                dt.Columns.Add("SaleOrderId", typeof(int));
+                dt.Columns.Add("ProductId", typeof(int));
+                dt.Columns.Add("DeliveryQty", typeof(double));
+                dt.Columns.Add("ConsigneeName", typeof(string));
+                dt.Columns.Add("ConsigneeContactNo", typeof(string));
+                dt.Columns.Add("consigneeAddress", typeof(string));
+                dt.Columns.Add("DistrictId", typeof(int));
+                dt.Columns.Add("DeliveredQty", typeof(int));
+
+                // =========================================
+                // Fill TVP
+                // =========================================
+
+                foreach (var item in model.Items)
+                {
+                    // Add Row                  
+                    dt.Rows.Add(
+                        item.ItemDetailsId,
+                        item.SaleOrderId,
+                        item.ProductId,
+                        item.DeliveryQty,
+                        item.ConsigneeName ?? "",
+                        item.ConsigneeContactNo ?? "",
+                        item.consigneeAddress ?? "",
+                        item.DistrictId,
+                        item.DeliveredQty
+                    );
+                }
+                // SQL Connection
+                using SqlConnection con =  new SqlConnection(_connectionString);
+                using SqlCommand cmd = new SqlCommand( "HardwareEnterDeliveryAddress_AcceptUpdate1",  con );
+                cmd.CommandType = CommandType.StoredProcedure;
+                // Main Parameters
+                cmd.Parameters.AddWithValue(  "@OrderDeliveryId",  model.OrderDeliveryId  );
+                cmd.Parameters.AddWithValue(  "@AreaType",  model.AreaType
+                );
+                // TVP
+                SqlParameter tvpParam = cmd.Parameters.AddWithValue( "@TemptblHardwarSaleOrder3",dt);
+                tvpParam.SqlDbType = SqlDbType.Structured;tvpParam.TypeName = "dbo.TemptblHardwarSaleOrder3";
+                // Output Parameter
+                SqlParameter mesParam = new SqlParameter( "@mes", SqlDbType.VarChar, -1 );
+                mesParam.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(mesParam);
+               // Execute
+                await con.OpenAsync();
+                await cmd.ExecuteNonQueryAsync();
+                string message = mesParam.Value?.ToString();
+                // Response
+                return Ok(new
+                {
+                    success = true,
+                    message = string.IsNullOrWhiteSpace(message) ? "Consignee address saved successfully." : message
+                });
+            }
+            catch (SqlException ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Database error while saving consignee address.",
+                    error = ex.Message
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error while saving consignee address.",
+                    error = ex.Message
+                });
+            }
+        }
+
+
         [HttpPost]
         public IActionResult DeleteConsigneeAddress([FromForm] TestFilterData filter)
         {

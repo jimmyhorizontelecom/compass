@@ -397,34 +397,22 @@ async function SubmitRecord() {
     };
     console.log("PlaceOrder:",JSON.stringify(placeOrder)
     );
-    // =========================================
-    // Create FormData
-    // =========================================
     let formData = new FormData();
     // Main JSON
     formData.append("placeOrder",JSON.stringify(placeOrder));
-    // =========================================
     // Attach Department Document
-    // =========================================
     if (deptFile) {
         formData.append("DeptDocument",deptFile);
     }
-    // =========================================
     // Attach Location File
-    // =========================================
     if (locationFile) {
         formData.append("LocationAttachment",locationFile);
     }
-    // =========================================
     // Submit
-    // =========================================
     try {
         let result =await acceptUpdateMultiTableFData("HardwareOrder","SaveOrder",formData);
         console.log("SaveOrder Response:",result);
-        // =====================================
-        // Success
-        // =====================================
-        if (result.success) {
+      if (result.success) {
             MsgBox("Message",result.message ||"Sale Order Saved Successfully.","");
             resetModal();
             $("#myTable1 tbody").empty();
@@ -524,21 +512,6 @@ function bindDatatable(records, tableId) {
     //hideModalLoader();
 }
 
-// View Uploaded pdf file conditions 
-$(document).on('click', '.view-file', function (e) {
-    e.preventDefault(); // Prevent default <a> behavior
-    var fileName = $(this).data('file');
-    var folder = $(this).data('folder');
-    if (!fileName || fileName === 'undefined' || fileName === '') {
-        toastr.error('File not uploaded');
-        return;
-    }
-    // Construct URL
-    var url = `/Attachment/SaleOrder/${folder}/${fileName}`;
-    // Open in new tab
-    window.open(url, '_blank');
-});
-
 // Open Item Description Model
 $(document).on('click', '.itemDescription', function () {
     var row = $(this).closest('tr');
@@ -563,36 +536,27 @@ async function recordItemDesclist(saleOrderId) {
     }
     catch (error) {
         console.error("Error loading records:", error);
-        //hideModalLoader();
+//hideModalLoader();
     }
 }
-
 //Bind get record  in a table Add Location
 function bindDatatableItemDesc(records, tableId) {
-
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().clear().destroy();
     }
-
     var tbody = $(tableId + " tbody");
     tbody.empty();
-
     $.each(records, function (i, value) {
         let SrNo = i + 1;
-
         tbody.append(`<tr
-                        data-saleorderid="${value.SaleOrderId}" 
-                         >
+                        data-saleorderid="${value.SaleOrderId}"  >
                         <td>${SrNo}</td>
-
                         <td>${value.ItemDescription}</td>
                         <td>${value.Quantity}</td>
                         <td>${value.BasePrice.toFixed(2)}</td>
                         <td>${value.GST.toFixed(2)}</td>
                         <td>${value.UnitRate.toFixed(2)}</td>
-                        <td>${value.TotalAmount.toFixed(2)}</td>
-                       
-                       
+                        <td>${value.TotalAmount.toFixed(2)}</td>                       
         `);
     });
 
@@ -606,18 +570,30 @@ function bindDatatableItemDesc(records, tableId) {
 
     //hideModalLoader();
 }
+
+// View Uploaded pdf file conditions 
+$(document).on('click', '.view-file', function (e) {
+    e.preventDefault(); // Prevent default <a> behavior
+    var fileName = $(this).data('file');
+    var folder = $(this).data('folder');
+    if (!fileName || fileName === 'undefined' || fileName === '') {
+        toastr.error('File not uploaded');
+        return;
+    }
+    // Construct URL
+    var url = `/Attachment/SaleOrder/${folder}/${fileName}`;
+    // Open in new tab
+    window.open(url, '_blank');
+});
+
 // Open Add Location Model
 $(document).on('click', '.addLocation', function () {
-
     var row = $(this).closest('tr');
     var saleOrderId = row.data('saleorderid');
     OrderId = saleOrderId;
-
     alert(saleOrderId);
-
     recordAddLocationList(saleOrderId);
     recordAddDeliveryAddressList(saleOrderId);
-
     var myModal = new bootstrap.Modal(document.getElementById('myModalAddLocation'));
     myModal.show();
 });//Get Record for A table 
@@ -629,9 +605,7 @@ async function recordAddLocationList(saleOrderId) {
         FilterId3: 0,
         FilterName1: '',
     };
-
     try {
-
         let records = await getRecords('HardwareOrder', 'getAddLocationList', filterata, '#myModalAddLocation', 'N');
         bindDatatableAddLocation(records, '#myTableAddLocation');
     }
@@ -642,37 +616,25 @@ async function recordAddLocationList(saleOrderId) {
 }
 //Bind get record  in a table item description
 function bindDatatableAddLocation(records, tableId) {
-
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().clear().destroy();
     }
-
     var tbody = $(tableId + " tbody");
     tbody.empty();
-
     $.each(records, function (i, value) {
         let SrNo = i + 1;
-
         tbody.append(`<tr
-                        data-productid="${value.ProductId}"   data-itemdetailsid="${value.ItemDetailsId}" 
-                         >
+                        data-productid="${value.ProductId}"   data-itemdetailsid="${value.ItemDetailsId}"  >
                          <td>${SrNo}</td>
-                         <td><input type="checkbox" class="rowCheckbox"></td>
-                        
-                        
+                         <td><input type="checkbox" class="rowCheckbox"></td>                                             
                         <td>${value.ItemDetailsId}</td>
                         <td>${value.ProductName}</td>
                         <td>${value.OrderQty}</td>
-                        <td>${value.AvailableQuantity}</td>
-                       <td>
-    <input type="text" class="form-control deliveryQuantity" value="${value.DeliveryQuantity}" />
-</td>
-                        
-                       
-                       
+                        <td class="availableQty"> ${value.AvailableQuantity}</td>
+                     <td> <input type="number" class="form-control deliveryQty" min="0" disabled> <span class="error"></span></td>                
         `);
     });
-
+    //<td> <input type="text" class="form-control deliveryQuantity" value="${value.DeliveryQuantity}" /></td>             
     $(tableId).DataTable({
         paging: true,
         searching: true,
@@ -680,43 +642,103 @@ function bindDatatableAddLocation(records, tableId) {
         info: true,
         responsive: true
     });
-    // Select All checkbox
-    $(document).on('change', '#selectAll', function () {
-        $('.rowCheckbox').prop('checked', $(this).prop('checked'));
-    });
-    $(document).on('change', '.rowCheckbox', function () {
-        if (!$(this).prop('checked')) {
-            $('#selectAll').prop('checked', false);
-        } else {
-            // Check if all checkboxes are checked
-            if ($('.rowCheckbox:checked').length === $('.rowCheckbox').length) {
-                $('#selectAll').prop('checked', true);
-            }
-        }
-    });
-
     //hideModalLoader();
+    // $(document).on('click', '.btnModalReset', function () {
+    //     // Clear all input fields inside modal
+    //     $('#myModalAddLocation input').val('');
+    //     $('#myModalAddLocation textarea').val('');
+    //     //$('#myModalAddLocation select').prop('selectedIndex', 0);
+    //     $('#myModalAddLocation').find('select').each(function () {
+
+    //         $(this).val('0').trigger('change');
+
+    //     });
+
+    // });
+    //Reset Input values
     $(document).on('click', '.btnModalReset', function () {
-
-        // Clear all input fields inside modal
-        $('#myTableAddLocation1 input').val('');
-        $('#myTableAddLocation1 textarea').val('');
-        $('#myTableAddLocation1 select').prop('selectedIndex', 0);
-
+        // Only Add Location Form Reset
+        $("#txtConsignee").val("");
+        $("#txtContact").val("");
+        $("#txtAreaConsigneeAddr").val("");
+        // District Select2 reset
+        $("#ddlDistrict").val("0").trigger("change");
+        // Area Type default = Tribal
+        $("#tribal").prop("checked", true);
+        $("#nonTribal").prop("checked", false);
+        // Clear validation
+        $("#myModalAddLocation .error").text("");
+        $("#myModalAddLocation .is-invalid")
+            .removeClass("is-invalid");
     });
 }
-//Get Record for A table 
-async function recordAddDeliveryAddressList(saleOrderId) {
+// Select All checkbox
+$(document).on('change', '#selectAll', function () {
+    let isChecked = $(this).prop('checked');
+    $('.rowCheckbox').prop('checked', isChecked);
+    // Selected rows ka Delivery Qty enable
+    $('.rowCheckbox').each(function () {
+        let $row = $(this).closest('tr');
+        $row.find('.deliveryQty')
+            .prop('disabled', !isChecked);
+        // Unselected hone par value clear
+        if (!isChecked) {
+            $row.find('.deliveryQty').val('');
+        }
+    });
+});
+// Individual checkbox
+$(document).on('change', '.rowCheckbox', function () {
+    let isChecked = $(this).prop('checked');
+    let $row = $(this).closest('tr');
+    // Sirf selected row ka Delivery Qty enable
+    $row.find('.deliveryQty').prop('disabled', !isChecked);
+    // Unselect hone par Delivery Qty clear
+    if (!isChecked) {
+        $row.find('.deliveryQty').val('');
+    }
+    // Select All checkbox update
+    if (!isChecked) {
+        $('#selectAll').prop('checked', false);
+    } else {
+        if (
+            $('.rowCheckbox').length > 0 &&
+            $('.rowCheckbox:checked').length ===
+            $('.rowCheckbox').length
+        ) {
+            $('#selectAll').prop('checked', true);
+        }
+    }
+});
 
+// Delivery Quantity validation
+$(document).on('input', '#myTableAddLocation .deliveryQty', function () {
+    let $input = $(this);
+    let $row = $input.closest('tr');
+    // Checkbox selected hona compulsory
+    if (!$row.find('.rowCheckbox').prop('checked')) {
+        $input.val('');
+        MsgBox('Error', 'Please select the row first.', '' );
+        return;
+    }
+    let deliveryQty = parseFloat($input.val()) || 0;
+    // Same row ki Available Quantity
+    let availableQty = parseFloat( $row.find('.availableQty').text().trim() ) || 0;
+    if (deliveryQty > availableQty) {
+        $input.val(availableQty);
+        MsgBox('Error', `Delivery Quantity cannot be greater than Available Quantity (${availableQty}).`, '');
+    }
+});
+
+//Get Record for A table 
+ async function recordAddDeliveryAddressList(saleOrderId) {
     var filterata = {
         FilterId1: saleOrderId,
         FilterId2: 0,
         FilterId3: 0,
         FilterName1: '',
     };
-
     try {
-
         let records = await getRecords('HardwareOrder', 'getAddDeliveryAddressList', filterata, '#myModalAddLocation', 'N');
         bindDatatableDeliveryAddress(records, '#myTableAddLocation2');
     }
@@ -727,22 +749,16 @@ async function recordAddDeliveryAddressList(saleOrderId) {
 }
 //Bind get record  in a table Add Delivery Address
 function bindDatatableDeliveryAddress(records, tableId) {
-
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().clear().destroy();
     }
-
     var tbody = $(tableId + " tbody");
     tbody.empty();
-
     $.each(records, function (i, value) {
         let SrNo = i + 1;
-
         tbody.append(`<tr
-                        data-orderdeliveryid="${value.OrderDetailsId}" 
-                         >
+                        data-orderdeliveryid="${value.OrderDetailsId}" >
                         <td>${SrNo}</td>
-
                         <td>${value.ProductName}</td>
                         <td>${value.DeliveryQuantity}</td>
                         <td>${value.ConsigneeName}</td>
@@ -750,13 +766,9 @@ function bindDatatableDeliveryAddress(records, tableId) {
                         <td>${value.ConsigneeAddress}</td>
                         <td>${value.AddressType}</td>
                         <td> <button class="btn btn-lg btn-danger deleteBtn">
-    <i class="fa-solid fa-trash"></i>
-</button></td>
-                     
-                       
+                            <i class="fa-solid fa-trash"></i></button></td>                       
         `);
     });
-
     $(tableId).DataTable({
         paging: true,
         searching: true,
@@ -766,182 +778,411 @@ function bindDatatableDeliveryAddress(records, tableId) {
     });
 
 
-
-    // MsgBox on Click event on Delete Icon 
+    // MsgBox on Click event on Delete Icon
     $(document).on('click', '.deleteBtn', async function () {
         var row = $(this).closest('tr');
-
         var orderdeliveryid = row.data('orderdeliveryid');
-
         console.log("Delete Id:", orderdeliveryid);
-
         if (!orderdeliveryid) {
             toastr.error("orderdeliveryid not found");
             return;
         }
-
         var isConfirmed = await DeleteEditBox("Delete Record", "Do you want to delete this record?", "question");
-
         if (isConfirmed) {
             await deletedeliveryidRecord(orderdeliveryid);
         }
-
     });
-
 }
-// Delete Records Function
-async function deletedeliveryidRecord(orderdeliveryid) {
-    alert(orderdeliveryid);
-    try {
-
-        let formData = new FormData();
-
-        formData.append("FilterId1", orderdeliveryid);
-
-
-
-
-
-        let res = await acceptUpdate("HardwareOrder", "DeleteConsigneeAddress", formData);
-
-        if (res.success) {
-            MsgBox('Sale Order', res.message, '');
-            recordAddLocationList(OrderId);
-            recordAddDeliveryAddressList(OrderId);
-
-            //toastr.success(res.message);
-
-            //  recordlist(); // reload table
-
-        } else {
-
-            toastr.error(res.message || "Delete failed");
-
-        }
-
-    } catch (err) {
-
-        console.error("Delete error:", err);
-        toastr.error("Server error while deleting");
-
-    }
-
-}
-
-
 // Submit delivery Addres when Click on btn
 $(".btnModalDeliverySubmit").on("click", function () {
     SubmitConsigneeRecord();
 });
+//async function SubmitConsigneeRecord() {
+//    let isValid = true;
+//    $(".error").text("");
+//    $(".is-invalid").removeClass("is-invalid");
+//    let ConsigneeName = $("#txtConsignee").val();
+//    let ContactNo = $("#txtContact").val();
+//    let ConsigneeAddress = $("#txtAreaConsigneeAddr").val();
+//    //var IsPaymentRequired = $('#IsActive').is(':checkbox') ? 'Y' : 'N';
+//    $(".error").text("");
+//    $(".is-invalid").removeClass("is-invalid");
+//    if (ConsigneeName === "") {
+//        $("#txtConsignee").addClass("is-invalid");
+//        $("#txtConsignee").siblings(".error").text("Consignee Name is required.");
+//        isValid = false;
+//    }
+//    if (ContactNo === "") {
+//        $("#txtContact").addClass("is-invalid");
+//        $("#txtContact").siblings(".error").text("Please Enter Contact No.");
+//        isValid = false;
+//    }
+//    if (ConsigneeAddress === "") {
+//        $("#txtAreaConsigneeAddr").addClass("is-invalid");
+//        $("#txtAreaConsigneeAddr").siblings(".error").text("Please Enter Your Address");
+//        isValid = false;
+//    }
+//    var areaType = $('input[name="areaType"]:checked').val();
+//    var consigneeAddress = {
+//        OrderDeliveryId: '0',
+//        AreaType: areaType,
+//        Items: getSelectedData()
+//    };
+//    // Prepare data
+//    var formData = new FormData();
+//    formData.append("consigneeAddress", JSON.stringify(consigneeAddress));
+//    try {
+//        let res = await acceptUpdateMultiTableFData1(
+//            'HardwareOrder',
+//            'SaveConsigneeAddress',
+//            formData
+//        );
+
+//        if (res.success) {
+//            MsgBox('Message', res.message, '');
+//            recordAddLocationList(OrderId);
+//            recordAddDeliveryAddressList(OrderId);
+//            resetModal();
+//            // $("#myTable1 tbody").empty();
+//        }
+
+//    }
+//    catch (err) {
+//        MsgBox('Message', err, 'Error');
+//    }
+
+//}
+
+// Delete Records Function
+// async function SubmitConsigneeRecord() {
+
+//     let isValid = true;
+
+//     // =========================================
+//     // Clear Previous Validation
+//     // =========================================
+//     $(".error").remove();
+//     $(".is-invalid").removeClass("is-invalid");
+
+//     // =========================================
+//     // Get Values
+//     // =========================================
+//     let ConsigneeName = $("#txtConsignee").val().trim();
+//     let ContactNo = $("#txtContact").val().trim();
+//     let ConsigneeAddress = $("#txtAreaConsigneeAddr").val().trim();
+//     let DistrictId = parseInt($("#ddlDistrict").val()) || 0;
+//     let AreaType = $('input[name="areaType"]:checked').val();
+
+//     // =========================================
+//     // Main Form Validation
+//     // =========================================
+
+//     if (ConsigneeName === "") {
+
+//         showError( "txtConsignee", "Consignee Name is required." );
+//         isValid = false;
+//     }
+
+//     if (ContactNo === "") {
+//         showError( "txtContact", "Please Enter Contact No." );
+//         isValid = false;
+//     }
+
+//     if (ConsigneeAddress === "") {
+//         showError( "txtAreaConsigneeAddr", "Please Enter Your Address." );
+//         isValid = false;
+//     }
+
+//     if (!DistrictId || DistrictId === 0) {
+//         showError( "ddlDistrict", "Please Select District." );
+//         isValid = false;
+//     }
+
+//     if (!AreaType) {
+//          MsgBox("Error", "Please select Area Type.", "" );
+//          isValid = false;
+//     }
+
+//     // Selected Item Validation
+//     let selectedItems = getSelectedData();
+//     console.log("Selected Items:", selectedItems);
+//     if (!selectedItems || selectedItems.length === 0) {
+//         MsgBox( "Error", "Please select at least one item.",  "" );
+//         isValid = false;
+//     }
+//    if (!isValid) {
+//         return;
+//     }
+//     let items = selectedItems.map(function (item) {
+//         return {
+//             ItemDetailsId: parseInt(item.ItemDetailsId) || 0,
+//             SaleOrderId:   parseInt(item.SaleOrderId) || parseInt(OrderId) || 0,
+//             ProductId: parseInt(item.ProductId) || 0,
+//             DeliveryQty: parseFloat(item.DeliveryQty) || 0,
+//             ConsigneeName: ConsigneeName,
+//             ConsigneeContactNo: ContactNo,
+//             consigneeAddress:  ConsigneeAddress,
+//             DistrictId: DistrictId,
+//             DeliveredQty: 0
+//         };
+//     });
+//     if (items.length === 0) {
+//         MsgBox( "Error", "Please select at least one item.", "" );
+//         return;
+//     }
+//     // Prepare Model
+//     let consigneeAddress = {
+//         OrderDeliveryId: 0,
+//         AreaType: AreaType,
+//         Items: items
+//     };
+//     console.log( "Consignee Address:",JSON.stringify(consigneeAddress));
+// // FormData
+//     let formData = new FormData();
+//     formData.append( "consigneeAddress", JSON.stringify(consigneeAddress));
+//     // Submit
+//     try {
+//         let result = await acceptUpdateMultiTableFData( "HardwareOrder", "SaveConsigneeAddress", formData );
+//         console.log("SaveConsigneeAddress Response:",
+//             result
+//         );
+//         // Success
+//         if (result.success) {
+//             MsgBox( "Message", result.message || "Delivery Address Saved Successfully.",  ""
+//             );
+//             // Refresh first table
+//             if (typeof recordAddLocationList === "function") {
+//                 recordAddLocationList(OrderId);
+//             }
+//             // Refresh second table
+//             if (
+//                 typeof recordAddDeliveryAddressList ===
+//                 "function"
+//             ) {
+//                 recordAddDeliveryAddressList(OrderId);
+//             }
+
+//             // Reset modal fields
+//             resetModal();
+
+//         }
+//         else {
+
+//             MsgBox(
+//                 "Error",
+//                 result.message ||
+//                 "Unable to save Delivery Address.",
+//                 ""
+//             );
+//         }
+
+//     }
+//     catch (error) {
+
+//         console.error(
+//             "SaveConsigneeAddress Error:",
+//             error
+//         );
+
+//         let message =
+//             error.responseJSON?.message ||
+//             error.responseJSON?.error ||
+//             error.statusText ||
+//             "Server error while saving Delivery Address.";
+
+//         MsgBox(
+//             "Error",
+//             message,
+//             ""
+//         );
+//     }
+// }
 // to read  each selected row data
 // MUST be separate and clean
-function getSelectedData() {
-
-    var selectedItems = [];
-
-    $('.rowCheckbox:checked').each(function () {
-
-        var row = $(this).closest('tr');
-        var productid = row.data('productid');
-        var itemdetailsid = row.data('itemdetailsid');
-        var deliveryQuantity = row.find('.deliveryQuantity').val();
-
-        var item = {
-            ItemDetailsId: itemdetailsid,
-            SaleOrderId: OrderId, // (you missed using it)
-            ProductId: productid,
-            DeliveryQty: deliveryQuantity,
-            ConsigneeName: $('#txtConsignee').val(),
-            ConsigneeContactNo: $('#txtContact').val(),
-            consigneeAddress: $('#txtAreaConsigneeAddr').val(),
-            DistrictId: $('#ddlDistrict').val(),
-            DeliveredQty: 0,
-        };
-
-        selectedItems.push(item);
-    });
-
-    return selectedItems;
-}
+// function getSelectedData() {
+//     var selectedItems = [];
+//     $('.rowCheckbox:checked').each(function () {
+//         var row = $(this).closest('tr');
+//         var productid = row.data('productid');
+//         var itemdetailsid = row.data('itemdetailsid');
+//         var deliveryQuantity = row.find('.deliveryQuantity').val();
+//         var item = {
+//             ItemDetailsId: itemdetailsid,
+//             SaleOrderId: OrderId,
+//             ProductId: productid,
+//             DeliveryQty: deliveryQuantity,
+//             ConsigneeName: $('#txtConsignee').val(),
+//             ConsigneeContactNo: $('#txtContact').val(),
+//             consigneeAddress: $('#txtAreaConsigneeAddr').val(),
+//             DistrictId: $('#ddlDistrict').val(),
+//             DeliveredQty: 0,
+//         };
+//         selectedItems.push(item);
+//     });
+//     return selectedItems;
+// }
 async function SubmitConsigneeRecord() {
     let isValid = true;
-    $(".error").text("");
-    $(".is-invalid").removeClass("is-invalid");
-    let ConsigneeName = $("#txtConsignee").val();
+    $("#myModalAddLocation .error").remove();
+    $("#myModalAddLocation .is-invalid").removeClass("is-invalid");
 
-    let ContactNo = $("#txtContact").val();
-    let ConsigneeAddress = $("#txtAreaConsigneeAddr").val();
-
-    //var IsPaymentRequired = $('#IsActive').is(':checkbox') ? 'Y' : 'N';
-
-    $(".error").text("");
-    $(".is-invalid").removeClass("is-invalid");
+    let ConsigneeName = $("#txtConsignee").val().trim();
+    let ContactNo = $("#txtContact").val().trim();
+    let ConsigneeAddress = $("#txtAreaConsigneeAddr").val().trim();
+    let DistrictId = parseInt($("#ddlDistrict").val()) || 0;
+    let AreaType = $('input[name="areaType"]:checked').val();
 
     if (ConsigneeName === "") {
-        $("#txtConsignee").addClass("is-invalid");
-        $("#txtConsignee").siblings(".error").text("Consignee Name is required.");
+        showError( "txtConsignee", "Please Enter Consignee Name" );
         isValid = false;
     }
     if (ContactNo === "") {
-        $("#txtContact").addClass("is-invalid");
-        $("#txtContact").siblings(".error").text("Please Enter Contact No.");
+        showError( "txtContact", "Please Enter Contact No." );
+        isValid = false;
+    }
+    else if (!/^[6-9]\d{9}$/.test(ContactNo)) {
+        showError( "txtContact", "Please enter a valid 10 digit mobile number." );
         isValid = false;
     }
     if (ConsigneeAddress === "") {
-        $("#txtAreaConsigneeAddr").addClass("is-invalid");
-        $("#txtAreaConsigneeAddr").siblings(".error").text("Please Enter Your Address");
+        showError( "txtAreaConsigneeAddr", "Please Enter Your Address" );
         isValid = false;
     }
-    var areaType = $('input[name="areaType"]:checked').val();
+    if (!DistrictId || DistrictId === 0) {
+        showError( "ddlDistrict", "Please Select District" );
+        isValid = false;
+    }
+    if (!AreaType) {
+        MsgBox( "Error", "Please select Area Type.",  "" );
+        isValid = false;
+    }
 
-
-    var consigneeAddress = {
-        OrderDeliveryId: '0',
-        AreaType: areaType,
-
-
-
-        Items: getSelectedData()
+    let selectedItems = [];
+    $("#myTableAddLocation tbody tr").each(function () {
+        let row = $(this);
+        // Only selected checkbox rows
+        if (!row.find(".rowCheckbox").is(":checked")) {
+            return;
+        }
+        let deliveryQty = parseFloat(row.find(".deliveryQty").val()) || 0;
+        let selectedData = {
+            ItemDetailsId: parseInt(row.data("itemdetailsid")) || 0,
+            SaleOrderId: parseInt(OrderId) || 0,
+             ProductId: parseInt( row.data("productid")) || 0,
+            DeliveryQty: deliveryQty,
+             ConsigneeName: ConsigneeName,
+             ConsigneeContactNo:  ContactNo,
+             consigneeAddress: ConsigneeAddress,
+            DistrictId: DistrictId,
+            DeliveredQty: deliveryQty,
+        };
+        selectedItems.push(selectedData);
+    });
+    if (selectedItems.length === 0) {
+        MsgBox( "Error",  "Please select at least one item.",  "" );
+        isValid = false;
+    }
+    $("#myTableAddLocation tbody tr").each(function () {
+        let row = $(this);
+        if (!row.find(".rowCheckbox").is(":checked")) {
+            return;
+        }
+        let deliveryQty = parseFloat( row.find(".deliveryQty").val() ) || 0;
+        if (deliveryQty <= 0) {
+            row.find(".deliveryQty") .addClass("is-invalid");
+           row.find(".deliveryQty").after(
+                '<span class="error text-danger">Please Enter Delivery Quantity</span>'
+            );
+            isValid = false;
+        }
+    });
+    if (!isValid) {
+        return;
+    }
+    console.log(  "Consignee Items:",  selectedItems );
+    let consigneeAddress = {
+        OrderDeliveryId:  0,
+        AreaType: AreaType,
+        Items: selectedItems
     };
-    // Prepare data
+    console.log( "Consignee Address:", JSON.stringify(consigneeAddress)
+    );
+    // Prepare FormData
+    let formData = new FormData();
+    formData.append( "consigneeAddress", JSON.stringify(consigneeAddress)
+    );
+     try {
 
-    var formData = new FormData();
-    formData.append("consigneeAddress", JSON.stringify(consigneeAddress));
-
-
+        let result =
+            await acceptUpdateMultiTableFData(
+                "HardwareOrder",
+                "SaveConsigneeAddress",
+                formData
+            );
+        console.log( "SaveConsigneeAddress Response:", result );
+        // Success
+        if (result.success) {
+            MsgBox( "Message", result.message || "Delivery Address Saved Successfully.", "" );
+            // Refresh Available Quantity Table
+            if (
+                typeof recordAddLocationList === "function")
+            {
+                recordAddLocationList(OrderId );
+            }
+            // Refresh Delivery Address Table
+            if (
+                typeof recordAddDeliveryAddressList === "function")
+            {
+                recordAddDeliveryAddressList( OrderId );
+            }
+            // Reset Consignee Form
+            $("#txtConsignee").val("");
+            $("#txtContact").val("");
+            $("#txtAreaConsigneeAddr").val("");
+            // District reset
+            $("#ddlDistrict") .val("0") .trigger("change");
+            // Area Type default
+            $("#tribal").prop( "checked", true );
+            $("#nonTribal").prop( "checked", false );
+            // Select All reset
+            $("#selectAll").prop( "checked", false );
+            // Checkbox + Delivery Qty reset
+            $("#myTableAddLocation tbody .rowCheckbox")  .prop("checked", false);
+            $("#myTableAddLocation tbody .deliveryQty") .val("") .prop("disabled", true);
+        }
+        // Error Response
+        else {
+            MsgBox( "Error", result.message || "Unable to save Delivery Address.", "" );
+        }
+    }
+    catch (error) {
+        console.error( "SaveConsigneeAddress Error:", error );
+        let message =
+            error.responseJSON?.message ||
+            error.responseJSON?.error ||
+            error.statusText ||
+            "Server error while saving Delivery Address.";
+        MsgBox( "Error", message, "" );
+    }
+}
+//Delte records from DeliveryAddressList
+async function deletedeliveryidRecord(orderdeliveryid) {
+    alert(orderdeliveryid);
     try {
-
-        let res = await acceptUpdateMultiTableFData1(
-            'HardwareOrder',
-            'SaveConsigneeAddress',
-            formData
-        );
-
+        let formData = new FormData();
+        formData.append("FilterId1", orderdeliveryid);
+        let res = await acceptUpdate("HardwareOrder", "DeleteConsigneeAddress", formData);
         if (res.success) {
-            MsgBox('Message', res.message, '');
+            MsgBox('Sale Order', res.message, '');
             recordAddLocationList(OrderId);
             recordAddDeliveryAddressList(OrderId);
-            resetModal();
-            // $("#myTable1 tbody").empty();
+            //toastr.success(res.message);
+            //  recordlist(); // reload table
+        } else {
+            toastr.error(res.message || "Delete failed");
         }
-
+    } catch (err) {
+        console.error("Delete error:", err);
+        toastr.error("Server error while deleting");
     }
-    catch (err) {
-        MsgBox('Message', err, 'Error');
-    }
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
