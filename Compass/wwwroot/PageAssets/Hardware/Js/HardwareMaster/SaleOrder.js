@@ -47,8 +47,11 @@ $(document).ready(function () {
         "ddlMainCatg", "ddlProductCatg", "ddlBrand", "ddlItemName", "Model");
 
     bindDataToDdl("HardwareDropdown", "HDistrict_ddl", "myModalAddLocation", "ddlDistrict", " District Name", 0, 0);
-    // Dependent Dropdown on change event
 
+
+    $(document).on('change', '#ddlAgency,#ddlDepartment', function () {
+        recordlist();
+    });
 });
     //Fill data while change on Item name ddl
     $('#ddlItemName').on('change', async function () {
@@ -79,31 +82,21 @@ $(document).ready(function () {
             FilterId3: 0,
             FilterName1: ''
         };
-
         console.log("Filter Data:", filterData);
-
         try {
-
             let records = await getRecords('HardwareOrder', 'GetPriceRecord', filterData, '', 'N');
-
             console.log("API Response:", records);
-
             if (records && records.length > 0) {
-
                 let data = records[0];
                 console.log("First Record:", data);
-
                 $("#Rate").val(Number(data.ProductPrice).toFixed(2));
                 $("#TotalRate").val(Number(data.TotalPrice).toFixed(2));
                 $("#AdminCharge").val(Number(data.HPSEDCCharges).toFixed(2));
                 $("#GST").val(Number(data.Gst).toFixed(2));
                 $("#Total").val(Number(data.Total).toFixed(2));
                 $("#Specification").val(data.Sepcification);
-
             } else {
-
                 console.log("No record found");
-
                 $("#Rate").val('');
                 $("#TotalRate").val('');
                 $("#AdminCharge").val('');
@@ -111,12 +104,9 @@ $(document).ready(function () {
                 $("#Total").val('');
                 $("#Specification").val('');
             }
-
         }
         catch (error) {
-
             console.error("Error loading record:", error);
-
         }
     }
 
@@ -127,7 +117,6 @@ $(document).ready(function () {
         loadRecordById(selectedValue, $(this).val());
         console.log("Selected ID: " + selectedValue);
         // console.log("Selected Item: " + selectedText);
-
     });
 
     let srNo = 1;
@@ -181,19 +170,8 @@ $("#btnAdd").click(function () {
             isValid = false;
         }
         if (!isValid) return; // stop if validation fails
-        var TotalPrice = parseFloat($('#txtPrice').val() || 0) + parseFloat(totalRate || 0);
-        $('#txtPrice').val((TotalPrice).toFixed(2));
-        var TotalAdminCharge = parseFloat($('#txtAdminCharge').val() || 0) + parseFloat(adminCharge || 0);
-        $('#txtAdminCharge').val((TotalAdminCharge).toFixed(2));
-        var TotalGST = parseFloat($('#txtGST').val() || 0) + parseFloat(gst || 0);
-        $('#txtGST').val((TotalGST).toFixed(2));
-
-        var grandTotal = parseFloat(totalRate || 0) + parseFloat(adminCharge || 0) + parseFloat(gst || 0);
-        var TotalGrand = parseFloat($('#txtGTotal').val() || 0) + parseFloat(grandTotal || 0);
-        $('#txtGTotal').val((TotalPrice + TotalAdminCharge + TotalGST).toFixed(2));
-        //alert(brand)
-        var row = `<tr>
-
+     
+       var row = `<tr>
         <td>${srNo}</td>
         <td>
             ${mainCat}
@@ -202,264 +180,287 @@ $("#btnAdd").click(function () {
         <td class="brand">${brand}</td>
         <td class="product">${product}</td>
         <td class="model">${model}</td>
-        <td class="Narration">${specification}</td>
+        <td class="specification">${specification}</td>
         <td class="OrderQty">${qty}</td>
         <td class="UnitPrice">${rate}</td> 
-        td class="Price">${totalRate}</td> 
+        <td class="Price">${totalRate}</td> 
         <td class="AdminCharge">${adminCharge}</td>
         <td class="Gst">${gst}</td>
         <td class="Gtotal">${total}</td>
-        <td>${narration}</td>
+        <td class="Narration">${narration}</td>
         <td>
             <button class="btn btn-danger btn-sm btnRemove">Remove</button>
         </td>
         </tr>`;
         //alert(row);
         $("#myTable1 tbody").append(row);
-        srNo++;
-        // Clear Inputs
-        $(".cleartxt").val('');
-        ReadTable();
-        readAllItems();
-        SubmitRecord();
+    srNo++;
+    // Calculate totals from table
+    calculateSaleOrderTotal();
+
+         //Clear Inputs
+    //$(".cleartxt").val('');
+    $(".cleartxt").each(function () {
+        if ($(this).is("select")) {
+            // Select2 dropdown clear
+            $(this).val(null).trigger("change.select2");
+        } else {
+            // Textbox / textarea etc.
+            $(this).val("");
+        }
+    });
+    //ReadTable();
+//    resetModal();
+        //readAllItems();
+        //SubmitRecord();
 
     });
+function calculateSaleOrderTotal() {
 
-
-    // Remove Row
-    $(document).on("click", ".btnRemove", function () {
-        $(this).closest("tr").remove();
-    });
-
-// read all data of table 
-async function readAllItems() {
-    var saleItems = [];
+    let totalPrice = 0;
+    let totalAdminCharge = 0;
+    let totalGST = 0;
+    let grandTotal = 0;
 
     $("#myTable1 tbody tr").each(function () {
 
-        var row = $(this);
+        let row = $(this);
 
-        var item = {
-            MainCategoryId: row.find("input[name='MainCategoryId']").val(),
-            //BrandId: row.find("input[name='BrandId']").val(),
-            //ProductCategoryId: row.find("input[name='ProductCategoryId']").val(),
-            //ItemId: row.find("input[name='ItemId']").val(),
+        let price = parseFloat(row.find(".Price").text()) || 0;
+        let adminCharge = parseFloat(row.find(".AdminCharge").text()) || 0;
+        let gst = parseFloat(row.find(".Gst").text()) || 0;
+        let total = parseFloat(row.find(".Gtotal").text()) || 0;
 
-            MainCategory: row.find("td:eq(1)").text().trim(),
-            Brand: row.find("td:eq(2)").text().trim(),
-            ProductCategory: row.find("td:eq(3)").text().trim(),
-            ItemName: row.find("td:eq(4)").text().trim(),
-
-            Specification: row.find("td:eq(5)").text().trim(),
-            Quantity: row.find("td:eq(6)").text().trim(),
-            Rate: row.find("td:eq(7)").text().trim(),
-            TotalRate: row.find("td:eq(8)").text().trim(),
-            AdminCharge: row.find("td:eq(9)").text().trim(),
-            GST: row.find("td:eq(10)").text().trim(),
-            Total: row.find("td:eq(11)").text().trim(),
-            Narration: row.find("td:eq(12)").text().trim()
-        };
-
-        saleItems.push(item);
+        totalPrice += price;
+        totalAdminCharge += adminCharge;
+        totalGST += gst;
+        grandTotal += total;
     });
 
-    console.log(saleItems);
-    alert(saleItems[0].MainCategoryId);
-
+    $("#txtPrice").val(totalPrice.toFixed(2));
+    $("#txtAdminCharge").val(totalAdminCharge.toFixed(2));
+    $("#txtGST").val(totalGST.toFixed(2));
+    $("#txtGTotal").val(grandTotal.toFixed(2));
 }
+//Remove data from Tem Table in Add Sale Items
+$(document).on("click", ".btnRemove", function () {
+    $(this).closest("tr").remove();
+    calculateSaleOrderTotal();
+    // Sr.No update
+    $("#myTable1 tbody tr").each(function (index) {
+        $(this).find("td:first").text(index + 1);
+    });
+    srNo = $("#myTable1 tbody tr").length + 1;
+});
 
-// Submit record when Click on btn
+//Get Record for A table 
 $("#btnsubmit").on("click", function () {
     SubmitRecord();
 });
+
 async function SubmitRecord() {
     let isValid = true;
-    let DeptDoct = $("#DeptDocument").get(0);
-    let DeliveryLoct = $("#LocationAttachment").get(0);
-    let files = DeptDoct.files;
-    let files1 = DeliveryLoct.files;
-
-
-
-    $(".error").text("");
+    // =========================================
+    // Clear Previous Validation
+    // =========================================
+    $(".error").remove();
     $(".is-invalid").removeClass("is-invalid");
+    // =========================================
+    // Get Main Form Values
+    // =========================================
     let Department = $("#ddlDept").val();
-
     let BillingAddress = $("#ddlBilling").val();
-    let Reference = $("#txtReference").val();
+    let Reference = $("#txtReference").val().trim();
     let DeptOrderDate = $("#deptOrderDate").val();
     let OrderEntryDate = $("#orderEntryDate").val();
-    var IsPaymentRequired = $('#IsActive').is(':checkbox') ? 'Y' : 'N';
-
-    $(".error").text("");
-    $(".is-invalid").removeClass("is-invalid");
-
-    if (Department === "") {
-        $("#ddlDept").addClass("is-invalid");
-        $("#ddlDept").siblings(".error").text("Department Name is required.");
+    let IsPaymentRequired = $('#IsActive').is(':checked') ? 'Y' : 'N';
+    // =========================================
+    // Main Form Validation
+    // =========================================
+    if (!Department || Department === "0") {
+        showError("ddlDept", "Select Department");
         isValid = false;
     }
-    if (BillingAddress === "") {
-        $("#ddlBilling").addClass("is-invalid");
-        $("#ddlBilling").siblings(".error").text("Billing Address is required.");
+    if (!BillingAddress || BillingAddress === "0") {
+        showError("ddlBilling", "Select Billing Address");
         isValid = false;
     }
     if (Reference === "") {
-        $("#txtReference").addClass("is-invalid");
-        $("#txtReference").siblings(".error").text("Please Enter Reference No.");
+        showError("txtReference", "Please enter Reference No.");
         isValid = false;
     }
     if (DeptOrderDate === "") {
-        $("#deptOrderDate").addClass("is-invalid");
-        $("#deptOrderDate").siblings(".error").text("Select Dept Order Date ");
+        showError("deptOrderDate", "Please enter Order Date");
         isValid = false;
     }
-    //if (OrderEntryDate === "") {
-    //    $("#orderEntryDate").addClass("is-invalid");
-    //    $("#orderEntryDate").siblings(".error").text("Please Enter Order Entry Date");
-    //    isValid = false;
-    //}
+    if (OrderEntryDate === "") {
+        showError("orderEntryDate","Please enter Order Entry Date");
+        isValid = false;
+    }
+    // =========================================
+    // Table Validation
+    // =========================================
+    let itemCount = $("#myTable1 tbody tr").length;
+    if (itemCount === 0) {
+        showError("myTable1 tbody","Please add at least one Sale Item");
+        isValid = false;
+    }
+    // =========================================
+    // File Objects
+    // =========================================
+    let deptFile = $("#DeptDocument")[0]?.files[0];
+    let locationFile =$("#LocationAttachment")[0]?.files[0];
+    // =========================================
+    // Department Document Validation
+    // =========================================
+    let fileSize = 10; // MB
+    if (!deptFile) {
+        showError("DeptDocument","Please select Department Document");
+        isValid = false;
+    }
+    else {
+        let sizeInMB =deptFile.size / (1024 * 1024);
+        if (sizeInMB > fileSize) {
+            showError("DeptDocument","File Size should be <= " + fileSize + " MB");
+            isValid = false;
+        }
+    }
+    // =========================================
+    // Location Attachment Validation
+    // =========================================
+    if (!locationFile) {
+        showError("LocationAttachment","Please select Location Attachment");
+        isValid = false;
+    }
+    else {
+        let sizeInMB = locationFile.size / (1024 * 1024);
+        if (sizeInMB > fileSize) {
+            showError("LocationAttachment","File Size should be <= " + fileSize + " MB");
+            isValid = false;
+        }
+    }
+    // =========================================
+    // Stop Validation
+    // =========================================
+    if (!isValid) {
+        return;
+    }
 
-
-
-    //if (!isValid) return; // stop if validation fails
-    // New code
-    var items = [];
-
-
+    // =========================================
+    // Read Multiple Items
+    // =========================================
+    let items = [];
     $("#myTable1 tbody tr").each(function () {
-
-        var item = {
-            ProductId: $(this).find(".productId").val(),
-            OrderQty: $(this).find(".OrderQty").text(),
-            Price: $(this).find(".UnitPrice").text(),
-            Gst: $(this).find(".Gst").text(),
-            AdminCharge: $(this).find(".AdminCharge").text(),
-            Gtotal: $(this).find(".Gtotal").text(),
-            Narration: $(this).find(".Narration").text()
-        };
-
+        let row = $(this);
+        let item = {
+            ProductId:parseInt(row.find(".productId").val()) || 0,
+            OrderQty:parseFloat(row.find(".OrderQty").text().trim()) || 0,
+            Price:parseFloat(row.find(".UnitPrice").text().trim()) || 0,
+            Gst:parseFloat(row.find(".Gst").text().trim() ) || 0,
+            AdminCharge: parseFloat(row.find(".AdminCharge").text().trim()) || 0,
+            Gtotal: parseFloat(row.find(".Gtotal").text().trim()) || 0,
+            Narration: row.find(".Narration").text().trim()
+       };
         items.push(item);
-
     });
-
-
-
-    var placeOrder = {
-        SaleOrderId: OrderId,
-        SaleOrderNo: '0',
-        SaleOrderNoText: '0',
-        OrderDate: $("#deptOrderDate").val(),
-        DeptId: $("#ddlDept").val(),
-        BillingAddressId: $("#ddlBilling").val(),
-        BillingAddressText: $("#ddlBilling option:selected").text(),
-        LetterReferenceNo: $("#txtReference").val(),
-        DeliveryDate: '2-Apr-2024',
-        Total: $("#txtPrice").val(),
+    // =========================================
+    // Final Item Validation
+    // =========================================
+    if (items.length === 0) {
+        MsgBox("Error","Please add at least one Sale Item.","");
+        return;
+    }
+    console.log("Items:", items);
+    // =========================================
+    // Prepare PlaceOrder Object
+    // =========================================
+    let placeOrder = {
+        SaleOrderId: parseInt(OrderId) || 0,
+        SaleOrderNo:0,
+        SaleOrderNoText:"0",
+        OrderDate:$("#deptOrderDate").val(),
+        DeptId:parseInt($("#ddlDept").val()) || 0,
+        BillingAddressId:parseInt($("#ddlBilling").val()) || 0,
+        BillingAddressText:$("#ddlBilling option:selected").text(),
+        LetterReferenceNo:$("#txtReference").val().trim(),
+        DeliveryDate:"2-Apr-2024",
+        Total:parseFloat($("#txtPrice").val()) || 0,
         Cgst: 0,
         Sgst: 0,
-        Gst: $("#txtGST").val(),
-        AdminCharge: $("#txtAdminCharge").val(),
-        Gtotal: $("#txtGTotal").val(),
+        Gst:parseFloat($("#txtGST").val()) || 0,
+        AdminCharge:parseFloat($("#txtAdminCharge").val()) || 0,
+        Gtotal:parseFloat($("#txtGTotal").val() ) || 0,
         PaymentAmt: 0,
-        Balance: 0,
-        IsPaymentRequired: IsPaymentRequired,
-        //DeliveryAttachement: $("#DeptDocument").val(),
-        //  Attachement: $("#LocationAttachment").val(),
-        // Items: $("#txtCustomer").val(),
-
-
-        Items: items
+        Balance:0,
+        IsPaymentRequired:IsPaymentRequired,
+        Items:items
     };
-    // Prepare data
-    var fileSize = 10
-
-    var isValid1 = fileSizeValidation('DeptDocument', fileSize);
-
-    if (!isValid1) {
-        MsgBox('Message', "File Size should be <=" + fileSize + "MB", '');
-        return;
+    console.log("PlaceOrder:",JSON.stringify(placeOrder)
+    );
+    // =========================================
+    // Create FormData
+    // =========================================
+    let formData = new FormData();
+    // Main JSON
+    formData.append("placeOrder",JSON.stringify(placeOrder));
+    // =========================================
+    // Attach Department Document
+    // =========================================
+    if (deptFile) {
+        formData.append("DeptDocument",deptFile);
     }
-    let allowedExtensions = ["jpg", "jpeg", "pdf", "xlsx"];
-
-
-    //isValid1 = fileExtensionValidation('DeptDocument', allowedExtensions)
-    //if (!isValid1) {
-    //    MsgBox('Message', "File should be only " + allowedExtensions + '.');
-    //    return;
-    //}
-    var newFileName = getNewFileName('DeptDocument', "OrderAttachment")
-
-    var formData = new FormData();
-
-
-
-    //if (files.length > 0) {
-    //    formData.append("File", files[0], newFileName);  // EXACT match
-    //}
-    isValid1 = fileSizeValidation('LocationAttachment', fileSize);
-
-    if (!isValid1) {
-        MsgBox('Message', "File Size should be <=" + fileSize + "MB", '');
-        return;
+    // =========================================
+    // Attach Location File
+    // =========================================
+    if (locationFile) {
+        formData.append("LocationAttachment",locationFile);
     }
-    //let allowedExtensions = ["jpg", "jpeg", "pdf", "xlsx"];
-
-    //isValid1 = fileExtensionValidation('LocationAttachment', allowedExtensions)
-    //if (!isValid1) {
-    //    MsgBox('Message', "File should be only " + allowedExtensions + '.');
-    //    return;
-    //}
-
-    var newFileName1 = getNewFileName('LocationAttachment', "Location")
-
-    //if (files1.length > 0) {
-    //    formData.append("DeptDocument", files1[0], newFileName1);  // EXACT match
-    //}
-
-
-
-    formData.append("placeOrder", JSON.stringify(placeOrder));
-
-    if ($("#DeptDocument")[0].files.length > 0) {
-        formData.append("DeptDocument", $("#DeptDocument")[0].files[0], newFileName);
-    }
-
-    if ($("#LocationAttachment")[0].files.length > 0) {
-        formData.append("LocationAttachment", $("#LocationAttachment")[0].files[0], newFileName1);
-    }
-
-    // formData.append("UploadFolder", "ProductCatg");
-
-
+    // =========================================
+    // Submit
+    // =========================================
     try {
-
-        let res = await acceptUpdateMultiTableFData1(
-            'HardwareOrder',
-            'SaveOrder',
-            formData
-        );
-
-        if (res.success) {
-            MsgBox('Message', res.message, '');
+        let result =await acceptUpdateMultiTableFData("HardwareOrder","SaveOrder",formData);
+        console.log("SaveOrder Response:",result);
+        // =====================================
+        // Success
+        // =====================================
+        if (result.success) {
+            MsgBox("Message",result.message ||"Sale Order Saved Successfully.","");
             resetModal();
             $("#myTable1 tbody").empty();
+            $("#txtPrice").val("0.00");
+            $("#txtAdminCharge").val("0.00");
+            $("#txtGST").val("0.00");
+            $("#txtGTotal").val("0.00");
+            if (typeof srNo !== "undefined") {
+                srNo = 1;
+            }
+            if (
+                typeof recordlist === "function"
+            ) {
+                recordlist();
+            }
         }
-
+        else {
+            MsgBox( "Error",result.message ||"Unable to save Sale Order.","");
+        }
     }
-    catch (err) {
-        MsgBox('Message', err, 'Error');
+    catch (error) {
+        console.error("SaveOrder Error:",error);
+        let message =
+            error.responseJSON?.message ||
+            error.responseJSON?.error ||
+            error.statusText ||"Server error while saving Sale Order.";
+        MsgBox("Error",message,"");
     }
-
 }
 
-//Get Record for A table 
+//Table List Data 
 async function recordlist() {
-
     var filterata = {
         FilterId1: 0,
-        FilterId2: $('#ddlAgency').val(),
-        FilterId3: $('#ddlDepartment').val(),
+        FilterId2: $("#ddlAgency").val() || 0,
+        FilterId3: $('#ddlDepartment').val() || 0,
         FilterName1: '',
     };
 
@@ -475,17 +476,13 @@ async function recordlist() {
 }
 //Bind get record  in a table 
 function bindDatatable(records, tableId) {
-
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().clear().destroy();
     }
-
     var tbody = $(tableId + " tbody");
     tbody.empty();
-
     $.each(records, function (i, value) {
         let SrNo = i + 1;
-
         tbody.append(`<tr
                         data-saleorderid="${value.SaleOrderId}" 
                          >
@@ -495,14 +492,14 @@ function bindDatatable(records, tableId) {
                         <td>${value.OrderDate}</td>
                         <td>${value.DepartmentName}</td>
                         <td>${value.BillingAddress}</td>
-                        <td><button class="btn btn-sm btn-danger itemDescription" data-saleorderid="${value.SaleOrderId}"> <i class="fa fa-eye"></i></button></td>   
+                        <td class="text-center"><button class="btn btn-sm btn-danger itemDescription" data-saleorderid="${value.SaleOrderId}"> <i class="fa fa-eye"></i></button></td>   
                         <td class="text-center">
-    <a href="javascript:void(0);" class="view-file" data-file="${value.DeliveryLocationDoc}" data-folder="DeliveryLocation" title="View DeliveryLocation">
-        <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"></i>
-    </a>
-</td>
-                        <td><button class="btn btn-lg btn-danger addLocation" data-saleorderid="${value.SaleOrderId}">
-                            <i class="fa fa-pencil"></i>
+                             <a href="javascript:void(0);" class="view-file" data-file="${value.DeliveryLocationDoc}" data-folder="DeliveryLocation" title="View DeliveryLocation">
+                             <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"></i>
+                         </a>
+                        </td>
+                        <td class="text-center"><button class="btn btn-sm btn-danger addLocation" data-saleorderid="${value.SaleOrderId}">
+                            <i class="fa fa-pencil" style="font-size:25px;"></i>
                             </button></td>
                          <td>${value.GrandTotalAmt}</td>
                          <td>${value.Balance}</td>
@@ -526,50 +523,41 @@ function bindDatatable(records, tableId) {
 
     //hideModalLoader();
 }
+
 // View Uploaded pdf file conditions 
 $(document).on('click', '.view-file', function (e) {
     e.preventDefault(); // Prevent default <a> behavior
-
     var fileName = $(this).data('file');
     var folder = $(this).data('folder');
-
     if (!fileName || fileName === 'undefined' || fileName === '') {
         toastr.error('File not uploaded');
         return;
     }
-
     // Construct URL
-    //var url = /Attachment/DeptAttendance/${folder}/${fileName};
     var url = `/Attachment/SaleOrder/${folder}/${fileName}`;
-
     // Open in new tab
     window.open(url, '_blank');
 });
+
 // Open Item Description Model
 $(document).on('click', '.itemDescription', function () {
-
     var row = $(this).closest('tr');
     var saleOrderId = row.data('saleorderid');
-
     alert(saleOrderId);
     OrderId = saleOrderId;
-
     recordItemDesclist(saleOrderId);
-
     var myModal = new bootstrap.Modal(document.getElementById('myModalItemDescription'));
     myModal.show();
-});//Get Record for A table 
+});
+//Get Record for A table 
 async function recordItemDesclist(saleOrderId) {
-
     var filterata = {
         FilterId1: saleOrderId,
         FilterId2: 0,
         FilterId3: 0,
         FilterName1: '',
     };
-
     try {
-
         let records = await getRecords('HardwareOrder', 'getItemDescriptionList', filterata, '#myModalItemDescription', 'N');
         bindDatatableItemDesc(records, '#myTableItemDesc');
     }

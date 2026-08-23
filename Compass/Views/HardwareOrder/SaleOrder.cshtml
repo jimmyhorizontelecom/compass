@@ -54,48 +54,33 @@
             <label class="form-label">Department <span class="text-danger">*</span></label>
             <select id="ddlDept" class="form-select search_ddl select2" aria-label=".form-select-sm">
             </select>
-            <span class="error"></span>
+           @*  <span class="error"></span> *@
         </div>
         <div class="col-md-2 ">
             <label class="form-label">Billing Address <span class="text-danger">*</span></label>
             <select id="ddlBilling" class="form-select search_ddl select2" aria-label=".form-select-sm">
             </select>
-            <span class="error"></span>
+           @*  <span class="error"></span> *@
         </div>
         <div class="col-md-2 text-sm-start">
             <label class="form-label-sm mb-0">Reference<span class="text-danger">*</span></label>
-            <input type="text" id="txtReference" class="form-control txtbx mt-0 cleartxt" placeholder="Reference" />
-            <span class="error"></span>
+            <input type="text" id="txtReference" class="form-control txtbx mt-0 " placeholder="Reference" />
+           @*  <span class="error"></span> *@
         </div>
         <div class="col-md-2 text-sm-start">
-            <label for="deptOrderDate" class="form-label fw-semibold">
-                Dept Order Date <span class="text-danger">*</span>
-            </label>
-            <input type="date"
-                   id="deptOrderDate"
-                   class="form-control"
-                   max=""
-                   required />
-            <span class="text-danger small" id="deptDateError"></span>
+            <label for="deptOrderDate" class="form-label fw-semibold">  Dept Order Date <span class="text-danger">*</span> </label>
+            <input type="date"  id="deptOrderDate"   class="form-control"  max="" required />
+           @*  <span class="text-danger small" id="deptDateError"></span> *@
         </div>
         <div class="col-md-2 text-sm-start">
-            <label for="orderEntryDate" class="form-label fw-semibold">
-                Order Entry Date <span class="text-danger">*</span>
-            </label>
-            <input type="date"
-                   id="orderEntryDate"
-                   class="form-control"
-                   readonly />
-            <span class="text-danger small" id="entryDateError"></span>
+            <label for="orderEntryDate" class="form-label fw-semibold"> Order Entry Date <span class="text-danger">*</span></label>
+            <input type="date" id="orderEntryDate" class="form-control" readonly />
+            @* <span class="text-danger small" id="entryDateError"></span> *@
         </div>
         <div class="col-md-2">
             <div class="form-check">
-
-                <label class="form-check-label" for="flexRadioDefault1">
-                    Is Payment Required?
-                </label>
+                <label class="form-check-label" for="flexRadioDefault1"> Is Payment Required? </label>
                 <input class="form-check-input" type="checkbox" name="IsActive" id="IsActive" checked>
-
             </div>
         </div>
 
@@ -108,23 +93,23 @@
             <div class="form-group row mb-0">
                 <div class="col-md-2 text-sm-start">
                     <label class="col-form-label-sm mb-0">Main Category <span class="text-danger">*</span></label>
-                    <select id="ddlMainCatg" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                    <select id="ddlMainCatg" class="form-select search_ddl select2 cleartxt" aria-label=".form-select-sm">
                     </select>
                    @*  <span class="error"></span> *@
                 </div>
                 <div class="col-md-2 text-sm-start">
                     <label class="form-label-sm mb-0">Brand <span class="text-danger">*</span></label>
-                    <select id="ddlBrand" class="form-select search_ddl select2">
+                    <select id="ddlBrand" class="form-select search_ddl select2 cleartxt">
                     </select>
                 </div>
                 <div class="col-md-2 text-sm-start">
                     <label class="form-label-sm mb-0">Product Category <span class="text-danger">*</span></label>
-                    <select id="ddlProductCatg" class="form-select search_ddl select2">
+                    <select id="ddlProductCatg" class="form-select search_ddl select2 cleartxt">
                     </select>
                 </div>
                 <div class="col-md-2 text-sm-start">
                     <label class="form-label-sm mb-0">Item Name With Model <span class="text-danger">*</span></label>
-                    <select id="ddlItemName" class="form-select search_ddl select2">
+                    <select id="ddlItemName" class="form-select search_ddl select2 cleartxt">
                     </select>
                 </div>
                 <div class="col-md-2 text-sm-start">
@@ -303,7 +288,7 @@
     <!--Model with content tab-->
 
     <div class="modal" id="myModalItemDescription">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
 
                 <!-- Modal Header -->

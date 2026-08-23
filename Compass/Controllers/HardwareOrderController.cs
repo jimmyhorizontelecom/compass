@@ -60,16 +60,12 @@ namespace Compass.Controllers
                 // Access as object
                 int id = filter.FilterId1;
                 int qty = filter.FilterId2;
-
                 SortedList parameters = new SortedList();
                 parameters.Add("@ProductId", id);
                 parameters.Add("@Qty", qty);
-
                 var dt = await _cn.FillDataTableAsync("HardwareProductDetailsQty_list", "", parameters);
-
                 if (dt == null || dt.Rows.Count == 0)
                     return Ok(new List<ProductPriceViewModal>());
-
                 var list = dt.AsEnumerable().Select(row => new ProductPriceViewModal
                 {
                     //HSNCode = row["HSNCode"]?.ToString(),
@@ -82,9 +78,7 @@ namespace Compass.Controllers
                     HPSEDCCharges = Convert.ToDecimal(row["HPSEDCCharges"]),
                     GrandTotal = Convert.ToDecimal(row["GrandTotal"]),
                     Total = Convert.ToDecimal(row["Total"]),
-
                 }).ToList();
-
                 return Ok(list);
             }
             catch (Exception ex)
@@ -97,127 +91,614 @@ namespace Compass.Controllers
                 });
             }
         }
-        [HttpPost]
-        // Submit SaleOrder
-        // Store data in one to many relation form
-        public async Task<IActionResult> SaveOrder([FromForm] string placeOrder,
-    IFormFile DeptDocument,
-    IFormFile LocationAttachment)
-        {
-            var model = JsonConvert.DeserializeObject<PlaceOrderModel>(placeOrder);
+        //        [HttpPost]
+        //        // Submit SaleOrder
+        //        // Store data in one to many relation form
+        //        //public async Task<IActionResult> SaveOrder([FromForm] string placeOrder, IFormFile DeptDocument, IFormFile LocationAttachment)
+        //        public async Task<IActionResult> SaveOrder( [FromForm] string placeOrder, IFormFile DeptDocument, IFormFile LocationAttachment)
+        //        {
+        //            var model = JsonConvert.DeserializeObject<PlaceOrderModel>(placeOrder);
+        //            if (model == null)
+        //            {
+        //                return BadRequest(new
+        //                {
+        //                    success = false,
+        //                    message = "Invalid order data."
+        //                });
+        //            }
+        //            // ============================================
+        //            // FILE VALIDATION
+        //            // ============================================
 
-            IFormFile attachmentFile1 = LocationAttachment;
-            IFormFile attachmentFile2 = DeptDocument;
-            string DeliveryAttachement = "";
-            if (attachmentFile1 != null && attachmentFile1.Length > 0)
-            {
-                string folderPath = Path.Combine(
-                    Directory.GetCurrentDirectory(),
-                    "wwwroot/Attachment/SaleOrder/DeliveryLocation"
-                );
+        //            const long maxFileSize = 10 * 1024 * 1024; // 10 MB
 
-                if (!Directory.Exists(folderPath))
-                    Directory.CreateDirectory(folderPath);
+        //            string[] allowedExtensions =
+        //            {
+        //    ".jpg",
+        //    ".jpeg",
+        //    ".png",
+        //    ".pdf",
+        //    ".xlsx"
+        //};
 
-                string extension = Path.GetExtension(attachmentFile1.FileName);
+        //            // Dept Document
+        //            if (DeptDocument == null || DeptDocument.Length == 0)
+        //            {
+        //                return BadRequest(new
+        //                {
+        //                    success = false,
+        //                    message = "Please upload Department Document."
+        //                });
+        //            }
 
-                DeliveryAttachement = $"Location_{DateTime.Now:yyyyMMdd}_{Guid.NewGuid()}{extension}";
+        //            if (DeptDocument.Length > maxFileSize)
+        //            {
+        //                return BadRequest(new
+        //                {
+        //                    success = false,
+        //                    message = "Department Document size should not exceed 10 MB."
+        //                });
+        //            }
 
-                string filePath = Path.Combine(folderPath, DeliveryAttachement);
+        //            string deptExtension =
+        //                Path.GetExtension(DeptDocument.FileName).ToLowerInvariant();
 
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await attachmentFile1.CopyToAsync(stream);
-                }
-            }
-
-            string DeptOrderAttachment = "";
-            if (attachmentFile2 != null && attachmentFile2.Length > 0)
-            {
-                string folderPath = Path.Combine(
-                    Directory.GetCurrentDirectory(),
-                    "wwwroot/Attachment/SaleOrder/OrderAttachment"
-                );
-
-                if (!Directory.Exists(folderPath))
-                    Directory.CreateDirectory(folderPath);
-
-                string extension = Path.GetExtension(attachmentFile2.FileName);
-
-                DeptOrderAttachment = $"DeptOrder_{DateTime.Now:yyyyMMdd}_{Guid.NewGuid()}{extension}";
-
-                string filePath = Path.Combine(folderPath, DeptOrderAttachment);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await attachmentFile2.CopyToAsync(stream);
-                }
-            }
+        //            if (!allowedExtensions.Contains(deptExtension))
+        //            {
+        //                return BadRequest(new
+        //                {
+        //                    success = false,
+        //                    message = "Department Document must be JPG, JPEG, PNG, PDF or XLSX."
+        //                });
+        //            }
 
 
-            if (model == null)
-            {
-                return BadRequest("Model is null");
-            }
+        //            // Location Attachment
+        //            if (LocationAttachment == null || LocationAttachment.Length == 0)
+        //            {
+        //                return BadRequest(new
+        //                {
+        //                    success = false,
+        //                    message = "Please upload Location Attachment."
+        //                });
+        //            }
 
-            var userId = User.FindFirst("UserId")?.Value;
-            using SqlConnection con = new SqlConnection(_connectionString);
-            using SqlCommand cmd = new SqlCommand("HardwareSaleOrder_AcceptUpdate", con);
+        //            if (LocationAttachment.Length > maxFileSize)
+        //            {
+        //                return BadRequest(new
+        //                {
+        //                    success = false,
+        //                    message = "Location Attachment size should not exceed 10 MB."
+        //                });
+        //            }
 
-            cmd.CommandType = CommandType.StoredProcedure;
+        //            string locationExtension =
+        //                Path.GetExtension(LocationAttachment.FileName).ToLowerInvariant();
 
-            cmd.Parameters.AddWithValue("@SaleOrderId", model.SaleOrderId);
-            cmd.Parameters.AddWithValue("@SaleOrderNo", model.SaleOrderNo);
-            cmd.Parameters.AddWithValue("@SaleOrderNoText", model.SaleOrderNoText);
-            cmd.Parameters.AddWithValue("@OrderDate", model.OrderDate);
-            cmd.Parameters.AddWithValue("@DeptId", model.DeptId);
-            cmd.Parameters.AddWithValue("@BillingAddressId", model.BillingAddressId);
-            cmd.Parameters.AddWithValue("@BillingAddressText", model.BillingAddressText);
-            cmd.Parameters.AddWithValue("@LetterReferenceNo", model.LetterReferenceNo);
-            cmd.Parameters.AddWithValue("@DeliveryDate", model.DeliveryDate);
-            cmd.Parameters.AddWithValue("@Total", model.Total);
-            cmd.Parameters.AddWithValue("@Cgst", model.Cgst);
-            cmd.Parameters.AddWithValue("@Sgst", model.Sgst);
-            cmd.Parameters.AddWithValue("@Gst", model.Gst);
-            cmd.Parameters.AddWithValue("@AdminCharge", model.AdminCharge);
-            cmd.Parameters.AddWithValue("@Gtotal", model.Gtotal);
-            cmd.Parameters.AddWithValue("@PaymentAmt", model.PaymentAmt);
-            cmd.Parameters.AddWithValue("@Balance", model.Balance);
-            cmd.Parameters.AddWithValue("@IsPaymentRequired", model.IsPaymentRequired);
-            cmd.Parameters.AddWithValue("@DeliveryAttachement", DeliveryAttachement);
-            cmd.Parameters.AddWithValue("@Attachement", DeptOrderAttachment);
-            cmd.Parameters.AddWithValue("@CreatedBy", userId);
-            // Convert child list to DataTable
-            System.Data.DataTable dt = new System.Data.DataTable();
-            dt.Columns.Add("ProductId", typeof(int));
-            dt.Columns.Add("OrderQty", typeof(double));
-            dt.Columns.Add("Price", typeof(double));
-            dt.Columns.Add("Gst", typeof(double));
-            dt.Columns.Add("AdminCharge", typeof(double));
-            dt.Columns.Add("Gtotal", typeof(double));
-            dt.Columns.Add("Narration", typeof(string));
+        //            if (!allowedExtensions.Contains(locationExtension))
+        //            {
+        //                return BadRequest(new
+        //                {
+        //                    success = false,
+        //                    message = "Location Attachment must be JPG, JPEG, PNG, PDF or XLSX."
+        //                });
+        //            }
 
-            foreach (var item in model.Items)
-            {
-                dt.Rows.Add(item.ProductId, item.OrderQty, item.Price, item.Gst, item.AdminCharge, item.Gtotal, item.Narration);
-            }
+        //            IFormFile attachmentFile1 = LocationAttachment;
+        //            IFormFile attachmentFile2 = DeptDocument;
+        //            string DeliveryAttachement = "";
+        //            if (attachmentFile1 != null && attachmentFile1.Length > 0)
+        //            {
+        //                string folderPath = Path.Combine(
+        //                    Directory.GetCurrentDirectory(),
+        //                    "wwwroot/Attachment/SaleOrder/DeliveryLocation"
+        //                );
+        //                if (!Directory.Exists(folderPath))
+        //                    Directory.CreateDirectory(folderPath);
+        //                string extension = Path.GetExtension(attachmentFile1.FileName);
+        //                DeliveryAttachement = $"Location_{DateTime.Now:yyyyMMdd}_{Guid.NewGuid()}{extension}";
+        //                string filePath = Path.Combine(folderPath, DeliveryAttachement);
+        //                using (var stream = new FileStream(filePath, FileMode.Create))
+        //                {
+        //                    await attachmentFile1.CopyToAsync(stream);
+        //                }
+        //            }
+        //            string DeptOrderAttachment = "";
+        //            if (attachmentFile2 != null && attachmentFile2.Length > 0)
+        //            {
+        //                string folderPath = Path.Combine(
+        //                    Directory.GetCurrentDirectory(),
+        //                    "wwwroot/Attachment/SaleOrder/OrderAttachment"
+        //                );
+        //                if (!Directory.Exists(folderPath))
+        //                    Directory.CreateDirectory(folderPath);
+        //                string extension = Path.GetExtension(attachmentFile2.FileName);
+        //                DeptOrderAttachment = $"DeptOrder_{DateTime.Now:yyyyMMdd}_{Guid.NewGuid()}{extension}";
+        //                string filePath = Path.Combine(folderPath, DeptOrderAttachment);
+        //                using (var stream = new FileStream(filePath, FileMode.Create))
+        //                {
+        //                    await attachmentFile2.CopyToAsync(stream);
+        //                }
+        //            }
+        //            if (model == null)
+        //            {
+        //                return BadRequest("Model is null");
+        //            }
+        //            var userId = User.FindFirst("UserId")?.Value;
+        //            using SqlConnection con = new SqlConnection(_connectionString);
+        //            using SqlCommand cmd = new SqlCommand("HardwareSaleOrder_AcceptUpdate", con);
+        //            cmd.CommandType = CommandType.StoredProcedure;
+        //            cmd.Parameters.AddWithValue("@SaleOrderId", model.SaleOrderId);
+        //            cmd.Parameters.AddWithValue("@SaleOrderNo", model.SaleOrderNo);
+        //            cmd.Parameters.AddWithValue("@SaleOrderNoText", model.SaleOrderNoText);
+        //            cmd.Parameters.AddWithValue("@OrderDate", model.OrderDate);
+        //            cmd.Parameters.AddWithValue("@DeptId", model.DeptId);
+        //            cmd.Parameters.AddWithValue("@BillingAddressId", model.BillingAddressId);
+        //            cmd.Parameters.AddWithValue("@BillingAddressText", model.BillingAddressText);
+        //            cmd.Parameters.AddWithValue("@LetterReferenceNo", model.LetterReferenceNo);
+        //            cmd.Parameters.AddWithValue("@DeliveryDate", model.DeliveryDate);
+        //            cmd.Parameters.AddWithValue("@Total", model.Total);
+        //            cmd.Parameters.AddWithValue("@Cgst", model.Cgst);
+        //            cmd.Parameters.AddWithValue("@Sgst", model.Sgst);
+        //            cmd.Parameters.AddWithValue("@Gst", model.Gst);
+        //            cmd.Parameters.AddWithValue("@AdminCharge", model.AdminCharge);
+        //            cmd.Parameters.AddWithValue("@Gtotal", model.Gtotal);
+        //            cmd.Parameters.AddWithValue("@PaymentAmt", model.PaymentAmt);
+        //            cmd.Parameters.AddWithValue("@Balance", model.Balance);
+        //            cmd.Parameters.AddWithValue("@IsPaymentRequired", model.IsPaymentRequired);
+        //            cmd.Parameters.AddWithValue("@DeliveryAttachement", DeliveryAttachement);
+        //            cmd.Parameters.AddWithValue("@Attachement", DeptOrderAttachment);
+        //            cmd.Parameters.AddWithValue("@CreatedBy", userId);
+        //            // Convert child list to DataTable
+        //            System.Data.DataTable dt = new System.Data.DataTable();
+        //            dt.Columns.Add("ProductId", typeof(int));
+        //            dt.Columns.Add("OrderQty", typeof(double));
+        //            dt.Columns.Add("Price", typeof(double));
+        //            dt.Columns.Add("Gst", typeof(double));
+        //            dt.Columns.Add("AdminCharge", typeof(double));
+        //            dt.Columns.Add("Gtotal", typeof(double));
+        //            dt.Columns.Add("Narration", typeof(string));
+        //            foreach (var item in model.Items)
+        //            {
+        //                dt.Rows.Add(item.ProductId, item.OrderQty, item.Price, item.Gst, item.AdminCharge, item.Gtotal, item.Narration);
+        //            }
 
-            SqlParameter tvpParam = cmd.Parameters.AddWithValue("@tblTempHardwarSaleOrder2", dt);
-            tvpParam.SqlDbType = SqlDbType.Structured;
-            tvpParam.TypeName = "tblTempHardwarSaleOrder123";
-            // ✅ Correct Output Parameter
-            SqlParameter mesParam = new SqlParameter("@mes", SqlDbType.VarChar, -1);
-            mesParam.Direction = ParameterDirection.Output;
-            cmd.Parameters.Add(mesParam);
+        //            SqlParameter tvpParam = cmd.Parameters.AddWithValue("@tblTempHardwarSaleOrder2", dt);
+        //            tvpParam.SqlDbType = SqlDbType.Structured;
+        //            tvpParam.TypeName = "tblTempHardwarSaleOrder123";
+        //            // ✅ Correct Output Parameter
+        //            SqlParameter mesParam = new SqlParameter("@mes", SqlDbType.VarChar, -1);
+        //            mesParam.Direction = ParameterDirection.Output;
+        //            cmd.Parameters.Add(mesParam);
 
-            await con.OpenAsync();
-            await cmd.ExecuteNonQueryAsync();
-            string message = mesParam.Value?.ToString();
-            return Ok(new { success = true, message = message });
+        //            await con.OpenAsync();
+        //            await cmd.ExecuteNonQueryAsync();
+        //            string message = mesParam.Value?.ToString();
+        //            return Ok(new { success = true, message = message });
 
-        }
+        //        }
 
         // get Sale Order List
+        //[HttpPost]
+        //public async Task<IActionResult> SaveOrder([FromBody] PlaceOrderModel model)
+        //{
+        //    try
+        //    {
+        //        // =========================================
+        //        // Model Validation
+        //        // =========================================
+
+        //        if (model == null)
+        //        {
+        //            return BadRequest(new
+        //            {
+        //                success = false,
+        //                message = "Invalid order data."
+        //            });
+        //        }
+
+        //        // =========================================
+        //        // Items Validation
+        //        // =========================================
+
+        //        if (model.Items == null || model.Items.Count == 0)
+        //        {
+        //            return BadRequest(new
+        //            {
+        //                success = false,
+        //                message = "Please add at least one Sale Item."
+        //            });
+        //        }
+
+        //        // =========================================
+        //        // Create DataTable
+        //        // =========================================
+
+        //        System.Data.DataTable dtOrderDetails = new System.Data.DataTable();
+        //        dtOrderDetails.Columns.Add("ProductId", typeof(int));
+        //        dtOrderDetails.Columns.Add("OrderQty",typeof(double));
+        //        dtOrderDetails.Columns.Add("Price",typeof(double));
+        //        dtOrderDetails.Columns.Add("Gst",typeof(double));
+        //        dtOrderDetails.Columns.Add("AdminCharge",typeof(double));
+        //        dtOrderDetails.Columns.Add("Gtotal",typeof(double));
+        //        dtOrderDetails.Columns.Add("Narration",typeof(string));
+
+        //        // =========================================
+        //        // Fill DataTable
+        //        // =========================================
+
+        //        foreach (var item in model.Items)
+        //        {
+        //            dtOrderDetails.Rows.Add(
+        //                item.ProductId,
+        //                item.OrderQty,
+        //                item.Price,
+        //                item.Gst,
+        //                item.AdminCharge,
+        //                item.Gtotal,
+        //                item.Narration ?? ""
+        //            );
+        //        }
+        //        // =========================================
+        //        // User
+        //        // =========================================
+        //        var userId = User.FindFirst("UserId")?.Value;
+        //        //if (string.IsNullOrWhiteSpace(userId))
+        //        //{
+        //        //    return BadRequest(new
+        //        //    {
+        //        //        success = false,
+        //        //        message = "User information not found."
+        //        //    });
+        //        //}
+
+        //        // =========================================
+        //        // SQL Command
+        //        // =========================================
+
+        //        using SqlConnection con = new SqlConnection(_connectionString);
+        //        using SqlCommand cmd = new SqlCommand("HardwareSaleOrder_AcceptUpdate",con);
+        //        cmd.CommandType =CommandType.StoredProcedure;
+
+        //        // =========================================
+        //        // Main Parameters
+        //        // =========================================
+
+        //        cmd.Parameters.AddWithValue("@SaleOrderId",model.SaleOrderId);
+        //        cmd.Parameters.AddWithValue("@SaleOrderNo",model.SaleOrderNo ?? 0);
+        //        cmd.Parameters.AddWithValue("@SaleOrderNoText",model.SaleOrderNoText ?? "");
+        //        cmd.Parameters.AddWithValue("@OrderDate", model.OrderDate);
+        //        cmd.Parameters.AddWithValue("@DeptId",model.DeptId);
+        //        cmd.Parameters.AddWithValue("@BillingAddressId",model.BillingAddressId);
+        //        cmd.Parameters.AddWithValue("@BillingAddressText",model.BillingAddressText ?? "");
+        //        cmd.Parameters.AddWithValue("@LetterReferenceNo",model.LetterReferenceNo ?? "");
+        //        cmd.Parameters.AddWithValue("@DeliveryDate",model.DeliveryDate);
+        //        cmd.Parameters.AddWithValue("@Total",model.Total);
+        //        cmd.Parameters.AddWithValue("@Cgst", model.Cgst);
+        //        cmd.Parameters.AddWithValue( "@Sgst",model.Sgst);
+        //        cmd.Parameters.AddWithValue( "@Gst", model.Gst);
+        //        cmd.Parameters.AddWithValue( "@AdminCharge", model.AdminCharge);
+        //        cmd.Parameters.AddWithValue( "@Gtotal",model.Gtotal);
+        //        cmd.Parameters.AddWithValue( "@PaymentAmt",model.PaymentAmt);
+        //        cmd.Parameters.AddWithValue( "@Balance", model.Balance);
+        //        cmd.Parameters.AddWithValue( "@IsPaymentRequired",model.IsPaymentRequired);
+        //        cmd.Parameters.AddWithValue( "@DeliveryAttachement","");
+        //        cmd.Parameters.AddWithValue( "@Attachement","");
+        //        cmd.Parameters.AddWithValue( "@CreatedBy",userId);
+
+        //        // =========================================
+        //        // TVP
+        //        // =========================================
+
+        //        SqlParameter tvpParam = cmd.Parameters.AddWithValue("@tblTempHardwarSaleOrder2",dtOrderDetails);
+        //        tvpParam.SqlDbType = SqlDbType.Structured;
+        //        tvpParam.TypeName = "tblTempHardwarSaleOrder123";
+
+        //        // =========================================
+        //        // Output Parameter
+        //        // =========================================
+
+        //        SqlParameter mesParam =new SqlParameter("@mes",SqlDbType.VarChar,-1);
+        //        mesParam.Direction = ParameterDirection.Output;
+        //        cmd.Parameters.Add(mesParam);
+
+        //        // =========================================
+        //        // Execute
+        //        // =========================================
+        //        await con.OpenAsync();
+        //        await cmd.ExecuteNonQueryAsync();
+        //        string message = mesParam.Value?.ToString();
+        //        return Ok(new
+        //        {
+        //            success = true,
+        //            message =
+        //                message ??
+        //                "Sale Order Saved Successfully."
+        //        });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, new
+        //        {
+        //            success = false,
+        //            message = "Server error while saving Sale Order.",
+        //            error = ex.Message
+        //        });
+        //    }
+        //}
+
+        [HttpPost]
+        public async Task<IActionResult> SaveOrder([FromForm] string placeOrder,IFormFile DeptDocument,IFormFile LocationAttachment)
+        {
+            try
+            {
+                // =========================================
+                // 1. Check placeOrder
+                // =========================================
+                if (string.IsNullOrWhiteSpace(placeOrder))
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Order data is missing."
+                    });
+                }
+                // =========================================
+                // 2. Deserialize JSON
+                // =========================================
+                PlaceOrderModel model;
+                try
+                {
+                    model = JsonConvert.DeserializeObject<PlaceOrderModel>(placeOrder);
+                }
+                catch
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Invalid order data."
+                    });
+                }
+                if (model == null)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Invalid order data."
+                    });
+                }
+                // =========================================
+                // 3. Required Items
+                // =========================================
+                if (model.Items == null || model.Items.Count == 0)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Please add at least one Sale Item."
+                    });
+                }
+                // =========================================
+                // 4. Required Files
+                // =========================================
+                if (DeptDocument == null || DeptDocument.Length == 0)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Please upload Department Document."
+                    });
+                }
+
+
+                if (LocationAttachment == null || LocationAttachment.Length == 0)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Please upload Location Attachment."
+                    });
+                }
+
+
+                // =========================================
+                // 5. File Validation
+                // =========================================
+
+                const long maxFileSize = 10 * 1024 * 1024;
+                string[] allowedExtensions ={".jpg",".jpeg",".png",".pdf", ".xlsx"};
+                // =========================================
+                // Department Document
+                // =========================================
+                if (DeptDocument.Length > maxFileSize)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message =
+                            "Department Document size should not exceed 10 MB."
+                    });
+                }
+
+                string deptExtension = Path.GetExtension(DeptDocument.FileName).ToLowerInvariant();
+                if (!allowedExtensions.Contains(deptExtension))
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message ="Department Document must be JPG, JPEG, PNG, PDF or XLSX."
+                    });
+                }
+                // =========================================
+                // Location Attachment
+                // =========================================
+                if (LocationAttachment.Length > maxFileSize)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Location Attachment size should not exceed 10 MB."
+                    });
+                }
+
+
+                string locationExtension = Path.GetExtension( LocationAttachment.FileName ).ToLowerInvariant();
+                if (!allowedExtensions.Contains(locationExtension))
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message ="Location Attachment must be JPG, JPEG, PNG, PDF or XLSX."
+                    });
+                }
+                // =========================================
+                // 6. Save Location Attachment
+                // =========================================
+                string DeliveryAttachement = "";
+                if (LocationAttachment != null && LocationAttachment.Length > 0)
+                {
+                    string folderPath = Path.Combine(Directory.GetCurrentDirectory(),
+                            "wwwroot","Attachment","SaleOrder","DeliveryLocation"
+                      );
+                    if (!Directory.Exists(folderPath))
+                    {
+                        Directory.CreateDirectory(folderPath);
+                    }
+                    string extension = Path.GetExtension( LocationAttachment.FileName );
+                    DeliveryAttachement = $"Location_{DateTime.Now:yyyyMMdd}_{Guid.NewGuid()}{extension}";
+                    string filePath = Path.Combine( folderPath,DeliveryAttachement );
+                    using (FileStream stream =new FileStream( filePath, FileMode.Create )
+                    )
+                    {
+                        await LocationAttachment.CopyToAsync(stream);
+                    }
+                }
+                // =========================================
+                // 7. Save Department Attachment
+                // =========================================
+                string DeptOrderAttachment = "";
+                if (DeptDocument != null && DeptDocument.Length > 0)
+                {
+                    string folderPath = Path.Combine(Directory.GetCurrentDirectory(),
+                            "wwwroot", "Attachment","SaleOrder","OrderAttachment"
+                        );
+                    if (!Directory.Exists(folderPath))
+                    {
+                        Directory.CreateDirectory(folderPath);
+                    }
+                    string extension = Path.GetExtension(DeptDocument.FileName);
+                    DeptOrderAttachment = $"DeptOrder_{DateTime.Now:yyyyMMdd}_{Guid.NewGuid()}{extension}";
+                    string filePath =Path.Combine(folderPath,DeptOrderAttachment);
+                    using (
+                        FileStream stream =new FileStream(filePath,FileMode.Create)
+                    )
+                    {
+                        await DeptDocument.CopyToAsync(stream);
+                    }
+                }
+                // =========================================
+                // 8. User
+                // =========================================
+                var userId = User.FindFirst("UserId")?.Value;
+                // =========================================
+                // 9. Create DataTable
+                // =========================================
+                System.Data.DataTable dtOrderDetails = new System.Data.DataTable();
+                dtOrderDetails.Columns.Add("ProductId",typeof(int));
+                dtOrderDetails.Columns.Add("OrderQty",typeof(double));
+                dtOrderDetails.Columns.Add("Price",typeof(double));
+                dtOrderDetails.Columns.Add("Gst",typeof(double));
+                dtOrderDetails.Columns.Add("AdminCharge",typeof(double));
+                dtOrderDetails.Columns.Add("GTotal", typeof(double));
+                dtOrderDetails.Columns.Add("Narration",typeof(string));
+                // =========================================
+                // 10. Fill DataTable
+                // =========================================
+                foreach (var item in model.Items)
+                {
+                    dtOrderDetails.Rows.Add(
+                        item.ProductId,
+                        item.OrderQty,
+                        item.Price,
+                        item.Gst,
+                        item.AdminCharge,
+                        item.Gtotal,
+                        item.Narration ?? ""
+                    );
+                }
+                // =========================================
+                // 11. SQL Connection
+                // =========================================
+                using SqlConnection con = new SqlConnection(_connectionString);
+                using SqlCommand cmd = new SqlCommand("HardwareSaleOrder_AcceptUpdate",con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                // =========================================
+                // 12. Main Parameters
+                // =========================================
+                cmd.Parameters.AddWithValue("@SaleOrderId",model.SaleOrderId);
+                cmd.Parameters.AddWithValue("@SaleOrderNo",model.SaleOrderNo ?? 0);
+                cmd.Parameters.AddWithValue("@SaleOrderNoText",model.SaleOrderNoText ?? "");
+                cmd.Parameters.AddWithValue("@OrderDate",model.OrderDate);
+                cmd.Parameters.AddWithValue("@DeptId",model.DeptId );
+                cmd.Parameters.AddWithValue("@BillingAddressId",model.BillingAddressId);
+                cmd.Parameters.AddWithValue("@BillingAddressText",model.BillingAddressText ?? "");
+                cmd.Parameters.AddWithValue("@LetterReferenceNo",model.LetterReferenceNo ?? "");
+                cmd.Parameters.AddWithValue("@DeliveryDate",model.DeliveryDate);
+                cmd.Parameters.AddWithValue("@Total", model.Total);
+                cmd.Parameters.AddWithValue("@Cgst",  model.Cgst );
+                cmd.Parameters.AddWithValue("@Sgst",model.Sgst );
+                cmd.Parameters.AddWithValue("@Gst",model.Gst);
+                cmd.Parameters.AddWithValue("@AdminCharge",model.AdminCharge);
+                cmd.Parameters.AddWithValue("@Gtotal",model.Gtotal);
+                cmd.Parameters.AddWithValue("@PaymentAmt",model.PaymentAmt);
+                cmd.Parameters.AddWithValue("@Balance",model.Balance);
+                cmd.Parameters.AddWithValue("@IsPaymentRequired",model.IsPaymentRequired);
+                // =========================================
+                // 13. Attachment Parameters
+                // =========================================
+
+                cmd.Parameters.AddWithValue("@DeliveryAttachement",DeliveryAttachement);
+                cmd.Parameters.AddWithValue("@Attachement",DeptOrderAttachment);
+                cmd.Parameters.AddWithValue("@CreatedBy",userId ?? "");
+                // =========================================
+                // 14. TVP
+                // =========================================
+                SqlParameter tvpParam =cmd.Parameters.AddWithValue("@tblTempHardwarSaleOrder2",dtOrderDetails);
+                tvpParam.SqlDbType =SqlDbType.Structured;
+                tvpParam.TypeName = "tblTempHardwarSaleOrder123";
+                // =========================================
+                // 15. Output Message
+                // =========================================
+                SqlParameter mesParam = new SqlParameter("@mes",SqlDbType.VarChar,-1 );
+                mesParam.Direction =ParameterDirection.Output;
+                cmd.Parameters.Add(mesParam);
+                // =========================================
+                // 16. Execute
+                // =========================================
+                await con.OpenAsync();
+                await cmd.ExecuteNonQueryAsync();
+                string message =mesParam.Value?.ToString();
+                // =========================================
+                // 17. Response
+                // =========================================
+                return Ok(new
+                {
+                    success = true,
+                    message =
+                        string.IsNullOrWhiteSpace(message)? "Sale Order Saved Successfully.": message
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message ="Server error while saving Sale Order.",
+                    error = ex.Message
+                });
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> getSaleOrderList([FromQuery] TestFilterData filter)
         {
