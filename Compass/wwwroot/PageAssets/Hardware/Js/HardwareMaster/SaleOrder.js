@@ -1064,17 +1064,16 @@ async function SubmitConsigneeRecord() {
         if (!row.find(".rowCheckbox").is(":checked")) {
             return;
         }
-        let deliveryQty = parseFloat(row.find(".deliveryQty").val()) || 0;
         let selectedData = {
             ItemDetailsId: parseInt(row.data("itemdetailsid")) || 0,
             SaleOrderId: parseInt(OrderId) || 0,
-             ProductId: parseInt( row.data("productid")) || 0,
-            DeliveryQty: deliveryQty,
+            ProductId: parseInt(row.data("productid")) || 0,
+            DeliveryQty: parseFloat(row.find(".deliveryQty").val()) || 0,
              ConsigneeName: ConsigneeName,
              ConsigneeContactNo:  ContactNo,
              consigneeAddress: ConsigneeAddress,
             DistrictId: DistrictId,
-            DeliveredQty: deliveryQty,
+            DeliveredQty: 0,
         };
         selectedItems.push(selectedData);
     });
