@@ -1074,7 +1074,7 @@ async function SubmitConsigneeRecord() {
              ConsigneeContactNo:  ContactNo,
              consigneeAddress: ConsigneeAddress,
             DistrictId: DistrictId,
-            DeliveredQty: deliveryQty,
+            DeliveredQty: 0,
         };
         selectedItems.push(selectedData);
     });
