@@ -1,0 +1,240 @@
+﻿@using System.Security.Claims
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+
+    var roleId = User.FindFirst("RoleId")?.Value;
+    var userId = User.FindFirst("UserId")?.Value;
+    var deptId = User.FindFirst("DeptId")?.Value;
+}
+@{
+    Layout = "~/Views/Shared/_TestLayout.cshtml";
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+}
+<style>
+
+
+    .star-rating i {
+        font-size: 25px;
+        color: #ccc;
+        cursor: pointer;
+    }
+
+        .star-rating i.active {
+            color: gold;
+        }
+
+    .statusGreen {
+        background-color: forestgreen;
+        width: 30px;
+        height: 30px;
+        border-radius: 15px;
+    }
+
+    .statusOrange {
+        background-color: orange;
+        width: 30px;
+        height: 30px;
+        border-radius: 15px;
+    }
+
+    .modal-content {
+        border-radius: 0 !important;
+    }
+
+    .my-modal .modal-content {
+        border: 4px solid red;
+    }
+
+    .large-card-body {
+        min-height: 400px;
+        padding: 20px;
+    }
+
+    #txtTermConditionRemark {
+        resize: vertical;
+        border-radius: 10px;
+        font-size: 15px;
+    }
+
+    .card-header {
+        border-radius: 8px 8px 0 0;
+    }
+
+    .terms-label {
+        margin-bottom: 2px;
+    }
+
+</style>
+<!-- Buttons -->
+<div class="text-center">
+    <h4 class="fw-bold">PI Address</h4>
+</div>
+<div class="card mb-3 p-3">
+    <div class="row align-items-end">
+        <div class="form-group row">
+
+           
+            <div class="col-md-2 fw-bold">
+                <label class="form-label">Department Name<span class="text-danger">*</span></label>
+                <select id="ddlPIDepartment" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                </select>
+                <span class="error"></span>
+            </div>
+
+           
+        </div>
+
+
+
+    </div>
+</div>
+
+
+
+
+<!-- List Div -->
+
+<div id="listDiv" class="card p-6 shadow text-center">
+
+    <div style="width:100%; overflow-x:auto;">
+        <table id="myTablePIAddress" class="table table-sm table-bordered mb-0">
+            <thead class="table-info">
+                <tr>
+                    <th>Sr.No</th>
+                    <th>Department Name</th>
+                    <th>Designation</th>
+                    <th>PI Address</th>
+                    <th>Email</th>
+                    <th>Contact No.</th>
+                    <th>Edit</th>
+
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot class="tfoot bg-primary">
+            </tfoot>
+        </table>
+    </div>
+
+</div>
+@section Modals {
+
+    <!--Modal for Pbg Advance-->
+    <div class="modal fade" id="myModalPIAddress">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header  bg-ld ">
+                    <h4 class="modal-title txt-white" id="myModalLabel3">Edit</h4>
+                    <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body" style="overflow-x:auto;">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-group row mb-0">
+                                <div class="col-md-4 text-sm-start fw-bold">
+                                    <label class="form-label mb-0">
+                                        Department Name <span class="text-danger">*</span>
+                                    </label>
+                                    <select id="ddlPiAddrDeptName" class="form-select search_ddl select2">
+                                    </select>
+                                </div>
+                                <div class="col-md-4 text-sm-start fw-bold">
+                                    <label class="form-label-sm mb-0">Designation<span class="text-danger">*</span></label>
+                                    <input type="text" id="txtPidesignation" class="form-control  txtbx mt-0 cleartxt" placeholder="" />
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 text-sm-start fw-bold">
+                                    <label class="form-label-sm mb-0">
+                                        PI Address Text<span class="text-danger">*</span>
+                                    </label>
+
+                                    <textarea id="txtareaPIAddresstxt"
+                                              class="form-control txtbx mt-0 cleartxt"
+                                              placeholder=""
+                                              rows="3"></textarea>
+
+                                    <span class="error"></span>
+                                </div>
+
+                                <div class="form-group row mb-0">
+                                    <div class="col-md-4 text-sm-start fw-bold">
+                                        <label class="form-label-sm mb-0">Email Address<span class="text-danger">*</span></label>
+                                        <input type="text" id="txtPiEmailId" class="form-control numericOnly txtbx mt-0 cleartxt" placeholder="" />
+                                        <span class="error"></span>
+                                    </div>
+                                    <div class="col-md-4 text-sm-start fw-bold">
+                                        <label class="form-label-sm mb-0">Contact No.<span class="text-danger">*</span></label>
+                                        <input type="text" id="txtPiContactNo" class="form-control numericOnly txtbx mt-0 cleartxt" placeholder="" />
+                                        <span class="error"></span>
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        <button class="btn btnModel btnModelUpdate">Update</button>
+                                    </div>
+                                    <div class="row mt-0">
+                                    </div>
+
+                                    
+                                    
+
+                                </div>
+
+
+                            </div>
+
+                            
+
+
+                        </div>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer  bg-ld ">
+                        <div class="me-auto">
+                            <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
+                        </div>
+                        <div class="flex-grow-1 text-center modelalert text-danger"></div>
+
+                        <button type="button" data-bs-dismiss="modal" class="btn btnModel">Close</button>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+}
+
+
+
+@section Scripts {
+    <script src="~/PageAssets/Hardware/Js/HardwareMaster/PIAddress.js" asp-append-version="true"></script>
+}

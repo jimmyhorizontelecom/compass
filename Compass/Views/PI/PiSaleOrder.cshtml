@@ -1,0 +1,207 @@
+﻿@using System.Security.Claims
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+
+    var roleId = User.FindFirst("RoleId")?.Value;
+    var userId = User.FindFirst("UserId")?.Value;
+    var deptId = User.FindFirst("DeptId")?.Value;
+}
+@{
+    Layout = "~/Views/Shared/_TestLayout.cshtml";
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+}
+<style>
+
+
+    .star-rating i {
+        font-size: 25px;
+        color: #ccc;
+        cursor: pointer;
+    }
+
+        .star-rating i.active {
+            color: gold;
+        }
+
+    .statusGreen {
+        background-color: forestgreen;
+        width: 30px;
+        height: 30px;
+        border-radius: 15px;
+    }
+
+    .statusOrange {
+        background-color: orange;
+        width: 30px;
+        height: 30px;
+        border-radius: 15px;
+    }
+
+    .modal-content {
+        border-radius: 0 !important;
+    }
+
+    .my-modal .modal-content {
+        border: 4px solid red;
+    }
+
+    .large-card-body {
+        min-height: 300px;
+        padding: 20px;
+    }
+
+    #txtTermConditionRemark {
+        resize: vertical;
+        border-radius: 10px;
+        font-size: 15px;
+    }
+
+    .card-header {
+        border-radius: 8px 8px 0 0;
+    }
+
+    .terms-label {
+        margin-bottom: 2px;
+    }
+
+</style>
+<div class="card m-lg-3 p-3 shadow-sm">
+    <div class="card-body">
+        <div class="row">
+
+            <div class="col-md-2 mb-2">
+                <label class="form-label fw-bold mb-0">
+                    Department <span class="text-danger">*</span>
+                </label>
+                <select id="ddlPiSaleDeptName" class="form-select search_ddl select2">
+                </select>
+                <span class="error text-danger"></span>
+            </div>
+
+            <div class="col-md-2 mb-2">
+                <label class="form-label fw-bold mb-0">
+                    PI Ref. No. <span class="text-danger">*</span>
+                </label>
+                <select id="ddlPiSaleRefNo" class="form-select search_ddl select2">
+                </select>
+                <span class="error text-danger"></span>
+            </div>
+
+            <div class="col-md-2 mb-2">
+                <label class="form-label fw-bold mb-0">
+                    Billing Address <span class="text-danger">*</span>
+                </label>
+                <select id="ddlPiSaleBillingAddr" class="form-select search_ddl select2">
+                </select>
+                <span class="error text-danger"></span>
+            </div>
+            <div class="col-md-2 text-sm-start fw-bold">
+                <label class="form-label-sm mb-0">Dept. Order Ref.<span class="text-danger">*</span></label>
+                <input type="text" id="txtPiSaleDeptOrder" class="form-control  txtbx mt-0 cleartxt" placeholder="Consignee Name" />
+                <span class="error"></span>
+            </div>
+            <div class="col-md-2 text-sm-start fw-bold">
+                <label class="form-label-sm mb-0">
+                    Dept. Order Date
+                    <span class="text-danger">*</span>
+                </label>
+                <input type="date" id="txtPiSaleDeptOrderDate" class="form-control txtbx mt-0 cleartxt" />
+                <span class="error"></span>
+            </div>
+            <div class="col-md-2 text-sm-start fw-bold">
+                <label class="form-label-sm mb-0">
+                    Order Entry Date
+                    <span class="text-danger">*</span>
+                </label>
+                <input type="date" id="txtPiSaleEntryDate" class="form-control txtbx mt-0 cleartxt" />
+                <span class="error"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- List Div -->
+
+<div id="PiSalelistDiv" class="card p-3 m-lg-3 padding-10">
+
+    <div style="width:100%; overflow-x:auto;">
+
+        <table id="myTablePISaleOrder" class="table table-bordered border-primary">
+            <thead class="table-info">
+                <tr>
+
+                    <th>Sr.No</th>
+                    <th>Select All<input type="checkbox" id="selectAllPISale"></th>
+                    <th>Product Name</th>
+                    <th>Rate</th>
+                    <th>Admin Charge</th>
+                    <th>Gst</th>
+                    <th>Total</th>
+                    <th>Quantity</th>
+                    <th>Grand Total</th>
+
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+
+        </table>
+        <div class="form-group row">
+            <div class="col-md-2">
+                <div class="mb-2">
+                    <label for="formFileSm" class="form-label fw-bold">Dept.Order Doc.</label>
+                    <input class="form-control form-control-sm" id="PISaleAttchment" type="file">
+                </div>
+
+
+            </div>
+            <div class="col-md-2 text-sm-start fw-bold">
+                <label class="form-label-sm mb-0">Total<span class="text-danger">*</span></label>
+                <input type="text" id="txtPiSaleTotal" readonly class="form-control txtbx mt-0 cleartxt" />
+            </div>
+            <div class="col-md-2 text-sm-start fw-bold">
+                <label class="form-label-sm mb-0">Admin Charge<span class="text-danger">*</span></label>
+                <input type="text" id="txtPiSaleAdmin" readonly class="form-control txtbx mt-0 cleartxt" />
+            </div>
+            <div class="col-md-2 text-sm-start fw-bold">
+                <label class="form-label-sm mb-0">Gst<span class="text-danger">*</span></label>
+                <input type="text" id="txtPiSaleGst" readonly class="form-control txtbx mt-0 cleartxt" />
+            </div>
+            <div class="col-md-2 text-sm-start fw-bold">
+                <label class="form-label-sm mb-0">Grand total<span class="text-danger">*</span></label>
+                <input type="text" id="txtPiSaleGTotal" readonly class="form-control txtbx mt-0 cleartxt" />
+            </div>
+            <!-- Button Row -->
+            <div class="col-md-2 text-end">
+                <button class="btn btnModel btnModelSaleGenerate">Generate Order</button>
+            </div>
+
+            
+
+
+        </div>
+    </div>
+
+</div>
+
+
+
+
+@section Scripts {
+    <script src="~/PageAssets/Hardware/Js/HardwareMaster/PiSaleOrder.js" asp-append-version="true"></script>
+}

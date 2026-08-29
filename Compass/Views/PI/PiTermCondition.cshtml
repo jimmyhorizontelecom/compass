@@ -1,0 +1,208 @@
+﻿@using System.Security.Claims
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+
+    var roleId = User.FindFirst("RoleId")?.Value;
+    var userId = User.FindFirst("UserId")?.Value;
+    var deptId = User.FindFirst("DeptId")?.Value;
+}
+@{
+    Layout = "~/Views/Shared/_TestLayout.cshtml";
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+}
+<style>
+
+   
+    .star-rating i {
+        font-size: 25px;
+        color: #ccc;
+        cursor: pointer;
+    }
+
+        .star-rating i.active {
+            color: gold;
+        }
+
+    .statusGreen {
+        background-color: forestgreen;
+        width: 30px;
+        height: 30px;
+        border-radius: 15px;
+    }
+
+    .statusOrange {
+        background-color: orange;
+        width: 30px;
+        height: 30px;
+        border-radius: 15px;
+    }
+
+    .modal-content {
+        border-radius: 0 !important;
+    }
+
+    .my-modal .modal-content {
+        border: 4px solid red;
+    }
+
+    .large-card-body {
+        min-height: 400px;
+        padding: 20px;
+    }
+
+    #txtTermConditionRemark {
+        resize: vertical;
+        border-radius: 10px;
+        font-size: 15px;
+    }
+
+    .card-header {
+        border-radius: 8px 8px 0 0;
+    }
+
+    .terms-label {
+        margin-bottom: 2px;
+    }
+
+</style>
+<!-- Buttons -->
+<div class="card m-lg-3 padding-10 shadow-sm">
+    <div class="card-body d-flex justify-content-end" style="height:100px; overflow-y:auto;">
+        <button type="button" class="btn btn-danger btnAddCategoryTerm">
+            <i class="fa fa-plus me-2 fs-4"></i>
+            <span class="fw-bold">Add Category Term & Condition</span>
+        </button>
+
+    </div>
+</div>
+
+
+
+
+
+<!-- List Div -->
+
+<div id="listDiv" class="card p-3 m-lg-3 padding-10 shadow ">
+    <h5 class="text-center">Term & Condition</h5>
+    <div style="width:100%; overflow-x:auto;">
+        @*     <table id="myTablePITermCondition" class="table table-striped table-bordered"> *@
+        <table id="myTablePITermCondition" class="table table-bordered ">
+            <thead class="table-info">
+                <tr>
+                    <th>Sr.No</th>
+                    <th>Terms & Condition Name</th>
+                    <th>Terms & Condition Details</th>
+                    <th>Edit</th>
+
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot class="tfoot bg-primary">
+            </tfoot>
+        </table>
+    </div>
+
+</div>
+
+@section Modals {
+
+    <!--Modal for Add Term & Condition-->
+    <div class="modal fade" id="myModalAddTermCondition">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header  bg-ld ">
+                    <h4 class="modal-title txt-white" id="myModalLabel3">Add New Category Terms & Condition</h4>
+                    <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body" style="overflow-x:auto;">
+                    <div class="card-body modal-xl border border-danger border-4">
+                        <!-- Remarks -->
+                        <div class="card shadow-sm border-0 mt-3">
+                            @*   <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">
+                                    <i class="fa-solid fa-file-contract me-2"></i>
+                                    Terms & Conditions
+                                </h5>
+                            </div> *@
+
+                            <div class="card-body">
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold " style="margin-bottom:0px;">
+                                        Terms & Condition Name
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <select id="ddlTermCondition" class="form-select search_ddl select2" style="margin-top:0px;">
+                                    </select>
+                                    @* <select id="ddlmaincategory" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                                        @*   <select id="ddlmaincategory" class="form-select form-select-sm" aria-label=".form-select-sm">
+                                <option value="0" selected> select </option> 
+
+                                    </select> *@
+                                    <span class="error text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">
+                                        Add New Terms & Condition
+                                    </label>
+
+                                    <textarea id="txtTermConditionRemark"
+                                              class="form-control"
+                                              rows="8"
+                                              placeholder="Enter terms and conditions here..."></textarea>
+
+                                    <span class="error text-danger"></span>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer  bg-ld ">
+
+                    <div class="flex-grow-1 text-center modelalert text-danger"></div>
+
+                    <button type="button" class="btn btn-danger  btnModalSubmit">Submit</button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+   
+
+
+
+
+
+
+}
+
+
+@section Scripts {
+    <script src="~/PageAssets/Hardware/Js/HardwareMaster/PiTermCondition.js" asp-append-version="true"></script>
+}
