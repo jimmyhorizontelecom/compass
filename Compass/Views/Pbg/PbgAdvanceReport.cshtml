@@ -1,0 +1,277 @@
+﻿@using System.Security.Claims
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+
+    var roleId = User.FindFirst("RoleId")?.Value;
+    var userId = User.FindFirst("UserId")?.Value;
+    var deptId = User.FindFirst("DeptId")?.Value;
+}
+@{
+    Layout = "~/Views/Shared/_TestLayout.cshtml";
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+}
+<style>
+
+
+    .star-rating i {
+        font-size: 25px;
+        color: #ccc;
+        cursor: pointer;
+    }
+
+        .star-rating i.active {
+            color: gold;
+        }
+
+    .statusGreen {
+        background-color: forestgreen;
+        width: 30px;
+        height: 30px;
+        border-radius: 15px;
+    }
+
+    .statusOrange {
+        background-color: orange;
+        width: 30px;
+        height: 30px;
+        border-radius: 15px;
+    }
+
+    .modal-content {
+        border-radius: 0 !important;
+    }
+
+    .my-modal .modal-content {
+        border: 4px solid red;
+    }
+
+    .large-card-body {
+        min-height: 400px;
+        padding: 20px;
+    }
+
+    #txtTermConditionRemark {
+        resize: vertical;
+        border-radius: 10px;
+        font-size: 15px;
+    }
+
+    .card-header {
+        border-radius: 8px 8px 0 0;
+    }
+
+    .terms-label {
+        margin-bottom: 2px;
+    }
+
+</style>
+<!-- Buttons -->
+<div class="text-center">
+    <h4 class="fw-bold">Pbg Advance</h4>
+</div>
+<div class="card m-lg-3 padding-10 shadow-sm">
+    <div class="card-body d-flex justify-content-end" style="height:100px; overflow-y:auto;">
+        <button type="button"
+                class="btn btn-danger rounded-pill px-3 btnAdd"
+                style="height:40px;width:120px; padding:4px 12px; font-size:14px;">
+            <i class="bi bi-plus-circle-fill me-1"></i> Add
+        </button>
+    </div>
+</div>
+
+
+
+
+
+<!-- List Div -->
+
+<div id="listDiv" class="card p-6 shadow text-center">
+
+    <div style="width:100%; overflow-x:auto;">
+        <table id="myTablePbgAdvance" class="table table-sm table-bordered mb-0">
+            <thead class="table-info">
+                <tr>
+                    <th>Sr.No</th>
+                    <th>Purchase Order No.</th>
+                    <th>Bill for</th>
+                    <th>BG No.</th>
+                    <th>Issue Date</th>
+                    <th>Exp.Date</th>
+                    <th>Claim Date</th>
+                    <th>Pbg Amt</th>
+                    <th>Rest Balance</th>
+                    <th>Remark</th>
+                    <th>Agency Name</th>
+                    <th>Attachment</th>
+                    <th>Action</th>
+
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot class="tfoot bg-primary">
+            </tfoot>
+        </table>
+    </div>
+
+</div>
+
+@section Modals {
+
+    <!--Modal for Pbg Advance-->
+    <div class="modal fade" id="myModalPbgAdvance">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header  bg-ld ">
+                    <h4 class="modal-title txt-white" id="myModalLabel3">Add Pbg Advance</h4>
+                    <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body" style="overflow-x:auto;">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-group row mb-0">
+                                <div class="col-md-4 text-sm-start fw-bold">
+                                    <label class="form-label mb-0">
+                                        Agency Name <span class="text-danger">*</span>
+                                    </label>
+                                    <select id="ddlPbgAgency" class="form-select search_ddl select2">
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4 text-sm-start fw-bold">
+                                    <label for="ddlBillFor" class="form-label mb-0">
+                                        Bill For <span class="text-danger">*</span>
+                                    </label>
+                                    <select id="ddlPbgBillFor" class="form-select form-select-sm">
+                                        <option value="">-- Select Bill For --</option>
+                                        <option value="0">Select</option>
+                                        <option value="M">Miscellaneous</option>
+                                        <option value="S">Specific</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 text-sm-start fw-bold">
+                                    <label id="lblPbgPOrderNo" class="form-label mb-0">
+                                        Purchase Order No. <span class="text-danger">*</span>
+                                    </label>
+                                    <select id="ddlPbgPOrderNo" class="form-select search_ddl select2">
+                                    </select>
+                                </div>
+                                <div class="form-group row mb-0">
+                                    <div class="col-md-4 text-sm-start fw-bold">
+                                        <label class="form-label-sm mb-0">BG No.<span class="text-danger">*</span></label>
+                                        <input type="text" id="txtPbgBGNo" class="form-control numericOnly txtbx mt-0 cleartxt" placeholder="" />
+                                        <span class="error"></span>
+                                    </div>
+                                    <div class="col-md-4 text-sm-start fw-bold">
+                                        <label class="form-label-sm mb-0">PBG Amt<span class="text-danger">*</span></label>
+                                        <input type="text" id="txtPbgAmt" class="form-control numericOnly txtbx mt-0 cleartxt" placeholder="Contact Number" />
+                                        <span class="error"></span>
+                                    </div>
+                                    <div class="col-md-4 text-sm-start fw-bold">
+                                        <label class="form-label-sm mb-0">Rest Amt<span class="text-danger">*</span></label>
+                                        <input type="text" id="txtPbgRestAmt" class="form-control numericOnly txtbx mt-0 cleartxt" placeholder="Contact Number" />
+                                        <span class="error"></span>
+                                    </div>
+
+                                    
+                                    
+                                </div>
+
+                            </div>
+                            <div class="form-group  row mb-0">
+                                <div class="col-md-3 text-sm-start">
+                                    <label for="ClaimDate" class="form-label fw-semibold">
+                                        Claim Date <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="date"
+                                           id="PbgClaimDate"
+                                           class="form-control"
+                                           max=""
+                                           required />
+                                    <span class="text-danger small" id="PbgClaimDate"></span>
+                                </div>
+                                <div class="col-md-3 text-sm-start">
+                                    <label for="IssueDate" class="form-label fw-semibold">
+                                        Issuance Date <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="date"
+                                           id="PbgIssueDate"
+                                           class="form-control"
+                                           max=""
+                                           required />
+                                    <span class="text-danger small" id="PbgIssueDate"></span>
+                                </div>
+                                <div class="col-md-3 text-sm-start fw-bold">
+                                    <label for="ExpiryDate" class="form-label">
+                                        Expiry Date<span class="text-danger">*</span>
+                                    </label>
+                                    <input type="date"
+                                           id="PbgExpiryDate"
+                                           class="form-control"
+                                           max=""
+                                           required />
+                                    <span class="text-danger small" id="PbgExpiryDate"></span>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <div class="mb-3 fw-bold">
+                                        <label for="formFileSm" class="form-label">Pbg Attachment</label>
+                                        <input class="form-control form-control-sm" id="PbgAttachment" type="file">
+                                    </div>
+
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer  bg-ld ">
+
+                        <div class="flex-grow-1 text-center modelalert text-danger"></div>
+                        <button type="button" class="btn btnModel btnModelPbgAdvance">Submit</button>
+
+                     
+                    </div>
+
+
+                </div>
+
+               
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+}
+
+
+@section Scripts {
+    <script src="~/PageAssets/Hardware/Js/HardwareMaster/PbgAdvanceReport.js" asp-append-version="true"></script>
+}
