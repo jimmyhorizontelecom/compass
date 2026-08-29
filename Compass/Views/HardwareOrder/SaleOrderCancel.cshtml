@@ -1,0 +1,126 @@
+﻿@using System.Security.Claims
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+
+    var roleId = User.FindFirst("RoleId")?.Value;
+    var userId = User.FindFirst("UserId")?.Value;
+    var deptId = User.FindFirst("DeptId")?.Value;
+}
+@{
+    Layout = "~/Views/Shared/_TestLayout.cshtml";
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+}
+<style>
+
+
+    .star-rating i {
+        font-size: 25px;
+        color: #ccc;
+        cursor: pointer;
+    }
+
+        .star-rating i.active {
+            color: gold;
+        }
+
+    .statusGreen {
+        background-color: forestgreen;
+        width: 30px;
+        height: 30px;
+        border-radius: 15px;
+    }
+
+    .statusOrange {
+        background-color: orange;
+        width: 30px;
+        height: 30px;
+        border-radius: 15px;
+    }
+
+    .modal-content {
+        border-radius: 0 !important;
+    }
+
+    .my-modal .modal-content {
+        border: 4px solid red;
+    }
+
+    .large-card-body {
+        min-height: 400px;
+        padding: 20px;
+    }
+
+    #txtTermConditionRemark {
+        resize: vertical;
+        border-radius: 10px;
+        font-size: 15px;
+    }
+
+    .card-header {
+        border-radius: 8px 8px 0 0;
+    }
+
+    .terms-label {
+        margin-bottom: 2px;
+    }
+
+</style>
+<!-- Buttons -->
+<div class="text-center">
+    <h4 class="fw-bold">Sale Order Cancel List</h4>
+</div>
+
+
+
+
+
+
+<!-- List Div -->
+
+<div id="listDiv" class="card m-lg-1 shadow-sm text-center">
+
+    <div style="width:100%; overflow-x:auto;">
+        <table id="myTableSaleOrderCancel" class="table table-sm table-bordered mb-0">
+            <thead class="table-info">
+                <tr>
+                    <th>Sr.No</th>
+                    <th>Sale Order <br />Refference No.</th>
+                    <th>Dept.Ref.No.<br />Order Date</th>
+                    <th>Department Name</th>
+                    <th>Billing Address</th>
+                    <th>Dept.Doc.</th>
+                    <th>GrandTotal Amount</th>
+                    <th>Balance</th>
+                    <th>Advance Amt.Received</th>
+                    <th>Remarks</th>
+
+                    
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot class="tfoot bg-primary">
+            </tfoot>
+        </table>
+    </div>
+
+</div>
+
+
+
+@section Scripts {
+    <script src="~/PageAssets/Hardware/Js/HardwareMaster/SaleOrderCancel.js" asp-append-version="true"></script>
+}
