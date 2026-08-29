@@ -1986,6 +1986,9 @@ namespace Compass.Controllers
             return Ok(new { success = true, message = message });
 
         }
+        #endregion
+
+
         #region Create Agency Login
         public IActionResult CreateAgencyLogin()
         {
@@ -2126,6 +2129,8 @@ namespace Compass.Controllers
             return Ok(new { success = true, message = message });
 
         }
+        #endregion
+
         #region Create Department Login
         public IActionResult CreateDepartmentLogin()
         {
@@ -2268,8 +2273,8 @@ namespace Compass.Controllers
 
         }
         #endregion
-        #endregion
-        #endregion
+        
+     
         
         #region Modify Sale Order
         public IActionResult ModifySaleOrder()
