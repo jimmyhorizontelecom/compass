@@ -1,0 +1,166 @@
+﻿@using System.Security.Claims
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+
+    var roleId = User.FindFirst("RoleId")?.Value;
+    var userId = User.FindFirst("UserId")?.Value;
+    var deptId = User.FindFirst("DeptId")?.Value;
+}
+@{
+    Layout = "~/Views/Shared/_TestLayout.cshtml";
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+}
+<style>
+
+
+    .star-rating i {
+        font-size: 25px;
+        color: #ccc;
+        cursor: pointer;
+    }
+
+        .star-rating i.active {
+            color: gold;
+        }
+
+    .statusGreen {
+        background-color: forestgreen;
+        width: 30px;
+        height: 30px;
+        border-radius: 15px;
+    }
+
+    .statusOrange {
+        background-color: orange;
+        width: 30px;
+        height: 30px;
+        border-radius: 15px;
+    }
+
+    .modal-content {
+        border-radius: 0 !important;
+    }
+
+    .my-modal .modal-content {
+        border: 4px solid red;
+    }
+
+    .large-card-body {
+        min-height: 400px;
+        padding: 20px;
+    }
+
+   
+
+    .card-header {
+        border-radius: 8px 8px 0 0;
+    }
+
+    .terms-label {
+        margin-bottom: 2px;
+    }
+
+    .table td,
+    .table th {
+        padding: 0.35rem 0.5rem; /* Reduce row height */
+        vertical-align: middle;
+    }
+
+</style>
+
+<div class="text-center">
+    <h4 class="fw-bold">Modify Sale Order</h4>
+</div>
+<div class="card m-lg-3 padding-10 shadow-sm">
+    <div class="col-md-2 ms-3">
+        <label class="form-label">
+            Sale Order <span class="text-danger">*</span>
+        </label>
+
+        <select id="ddlModifySale"
+                class="form-select search_ddl select2">
+        </select>
+
+        <span class="error"></span>
+    </div>
+</div>
+
+
+<!-- Table Card -->
+<div id="listDiv" class="card p-3 shadow text-center">
+
+    <!-- Scroll only for table -->
+    <div class="table-responsive">
+        <table id="myTableSaleOrderModify"
+               class="table table-sm table-bordered mb-0">
+
+            <thead class="table-info">
+                <tr>
+                    <th>Sr.No</th>
+                    <th>
+                        Select All
+                        <input type="checkbox" id="selectAll">
+                    </th>
+                    <th>Product Category</th>
+                    <th>Model No.</th>
+                    <th>Item Description</th>
+                    <th>Prev. Qty</th>
+                    <th>New Qty.</th>
+                    <th>Price</th>
+                    <th>Total Amt.</th>
+                    <th>Admin Amt.</th>
+                    <th>Gst Amt.</th>
+                    <th>GTotal Amt.</th>
+                </tr>
+            </thead>
+
+            <tbody></tbody>
+
+            <tfoot class="tfoot bg-primary"></tfoot>
+
+        </table>
+    </div>
+
+</div>
+- Outside Scroll -->
+<div class="card m-lg-3 padding-10 shadow-sm">
+    <div class="row align-items-end">
+
+        <div class="col-md-2 ms-3 fw-bold">
+            <label for="AttachDocument" class="form-label">
+                Attach Document
+            </label>
+
+            <input class="form-control form-control-sm"
+                   id="AttachDocument"
+                   type="file">
+        </div>
+
+        <div class="col-md-2 ms-auto text-end">
+            <button type="button"
+                    id="btnSubmit"
+                    class="btn btn-danger btnModifySubmit px-4">
+                Submit
+            </button>
+        </div>
+
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/PageAssets/Hardware/Js/HardwareMaster/ModifySaleOrder.js" asp-append-version="true"></script>
+}

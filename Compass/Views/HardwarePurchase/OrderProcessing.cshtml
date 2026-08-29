@@ -1,0 +1,812 @@
+﻿@using System.Security.Claims
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+
+    var roleId = User.FindFirst("RoleId")?.Value;
+    var userId = User.FindFirst("UserId")?.Value;
+    var deptId = User.FindFirst("DeptId")?.Value;
+}
+@{
+    Layout = "~/Views/Shared/_TestLayout.cshtml";
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+}
+<style>
+    div.dataTables_wrapper div.dataTables_length {
+        float: left !important;
+        margin-right: auto;
+    }
+
+    #ddlDept + .error,
+    label[for="ddlDept"] {
+        font-size: 20px;
+    }
+
+    .star-rating i {
+        font-size: 25px;
+        color: #ccc;
+        cursor: pointer;
+    }
+
+        .star-rating i.active {
+            color: gold;
+        }
+
+    .statusGreen {
+        background-color: forestgreen;
+        width: 30px;
+        height: 30px;
+        border-radius: 15px;
+    }
+
+    .statusOrange {
+        background-color: orange;
+        width: 30px;
+        height: 30px;
+        border-radius: 15px;
+    }
+
+    .modal-content {
+        border-radius: 0 !important;
+    }
+
+    .my-modal .modal-content {
+        border: 4px solid red;
+    }
+
+    .custom-border {
+        border: 2px solid red; /* color change kar sakte ho */
+        border-radius: 8px;
+    }
+
+    .card-body:hover {
+        border: 2px solid green;
+        transition: 0.3s;
+    }
+</style>
+
+
+
+
+
+<!-- List Div -->
+
+<div id="listDiv" class="card p-3 shadow text-center">
+    <h5>Order Processing</h5>
+    <div class="card p-3 shadow text-center">
+        <div class="form-group row">
+            <div class="col-md-2 fw-bold text-sm-start">
+                <label class="col-form-label-sm mb-0">Department Name Filter<span class="text-danger">*</span></label>
+                <select id="ddlDept" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                </select>
+                <span class="error"></span>
+            </div>
+            <div class="col-md-3 fw-bold text-start">
+                <label class="form-label">Delivery Status<span class="text-danger">*</span></label>
+                <select id="ddlDelivery" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                </select>
+                <span class="error"></span>
+            </div>
+            <div class="col-md-3 fw-bold text-start">
+                <label class="form-label">Invoice Status<span class="text-danger">*</span></label>
+                <select id="ddlStatus" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                </select>
+                <span class="error"></span>
+            </div>
+
+        </div>
+    </div>
+    <div style="width:100%; overflow-x:auto;">
+        <table id="myTableOrderProcess" class="table table-striped table-bordered">
+            <thead class="table-info">
+                <tr>
+                    <th>Sr.No</th>
+                    <th>Order No.<br />PO Date</th>
+                    <th>Department Name</th>
+                    <th>Agency Name</th>
+                    <th>Amount</th>
+                    <th>Department Amt.Received</th>
+                    <th>Dept.Order Doc</th>
+                    <th>Add Location</th>
+                    <th>View Detail</th>
+                    <th>HPSEDC Purchase Order</th>
+                    <th>Product Delivery</th>
+                    <th>Verify POD/IR</th>
+                    <th>Agency Invoice</th>
+                    <th>View Agency Invoice</th>
+                    <th>View Agency Payment</th>
+
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot class="tfoot bg-primary">
+            </tfoot>
+        </table>
+    </div>
+
+</div>
+
+@section Modals {
+
+    <!--Modal for Add Location-->
+    <div class="modal" id="myModalAddLocation">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header  bg-ld ">
+                    <h4 class="modal-title txt-white" id="myModalLabel1">Add Product Delivery Location</h4>
+                    <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body" style="overflow-x:auto;">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-group row mb-0">
+                                <div class="col-md-4 text-sm-start">
+                                    <label class="form-label-sm mb-0">Consignee Name<span class="text-danger">*</span></label>
+                                    <input type="text" id="txtConsignee" class="form-control  txtbx mt-0 cleartxt" placeholder="Consignee Name" />
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 text-sm-start">
+                                    <label class="form-label-sm mb-0">Contact Number<span class="text-danger">*</span></label>
+                                    <input type="text" id="txtContact" class="form-control numericOnly txtbx mt-0 cleartxt" placeholder="Contact Number" />
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 text-sm-start">
+                                    <label class="form-label-sm ">District Name<span class="text-danger">*</span></label>
+                                    <select id="ddlDistrict" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group  row mb-0">
+                                <div class="col-md-4 text-sm-start">
+                                    <label for="remark" class="form-label">Consignee Address</label>
+                                    <textarea class="form-control cleartxt" id="txtAreaConsigneeAddr" rows="3" placeholder="EnterConsigneeAddress Here..."></textarea>
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 text-sm-start">
+                                    <label class="fw-bold d-block mb-2">Area Type</label>
+
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="areaType" id="nonTribal" value="N">
+                                        <label class="form-check-label" for="nonTribal">Non-Tribal Areas</label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="areaType" id="tribal" value="T" checked>
+                                        <label class="form-check-label" for="tribal">Tribal Areas</label>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+
+                    <div class="container mt-5">
+                        <h2 class="mb-4"></h2>
+
+                        <table id="myTableAddLocation" class="table table-striped table-bordered">
+                            <thead class="table-info">
+                                <tr>
+
+                                    <th>Sr.No</th>
+
+                                    <th>Select All<input type="checkbox" id="selectAll"></th>
+                                    <th>Item Details Id</th>
+                                    <th>Product Name</th>
+                                    <th>Order Qty.</th>
+                                    <th>Available Quantity</th>
+                                    <th>Delivery Qty.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                            <tfoot class="tfoot bg-primary">
+                            </tfoot>
+                        </table>
+                        <div class="align-content-end">
+                            <button type="button" class="btn btnModel btnModalReset">Reset</button>
+                            <button type="button" class="btn btnModel btnModalDeliverySubmit">Submit</button>
+
+                        </div>
+
+                        <div class="container mt-5">
+                            <h2 class="mb-4"></h2>
+
+                            <table id="myTableAddLocation2" class="table table-striped table-bordered">
+                                <thead class="table-info">
+                                    <tr>
+                                        <th>Sr.No</th>
+                                        <th>Product Name</th>
+                                        <th>Delivery Quantity</th>
+                                        <th>Consignee Name</th>
+                                        <th>Contact No.</th>
+                                        <th>Consignee Address</th>
+                                        <th>Address Type</th>
+                                        <th>Delete Address</th>
+
+
+
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                                <tfoot class="tfoot bg-primary">
+                                </tfoot>
+                            </table>
+                        </div>
+
+
+
+
+                    </div>
+
+                    <!-- Modal footer -->
+                    <!-- Modal footer -->
+                    <div class="modal-footer  bg-ld ">
+                        <div class="me-auto">
+                            <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
+                        </div>
+                        <div class="flex-grow-1 text-center modelalert text-danger"></div>
+                        <button type="button" class="btn btnModel btnModalSubmit">Submit</button>
+                        <button type="button" data-bs-dismiss="modal" class="btn btnModel">OK</button>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Modal for Order Detail-->
+
+    <div class="modal" id="myModalOrderDetail">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header  bg-ld ">
+                    <h4 class="modal-title txt-white" id="myModalLabel1">Order Detail</h4>
+                    <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body" style="overflow-x:auto;">
+
+                    <div class="container mt-5">
+
+
+
+
+                        <div class="container mt-5">
+                            <h2 class="mb-4"></h2>
+
+                            <table id="myTableViewDetails" class="table table-striped table-bordered">
+                                <thead class="table-info">
+                                    <tr>
+                                        <th>Sr.No</th>
+                                        <th>Product Name</th>
+                                        <th>Quantity</th>
+                                        <th>Amount Detail</th>
+                                        <th>Expected Delivery Date</th>
+
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                                <tfoot class="tfoot bg-primary">
+                                </tfoot>
+                            </table>
+                        </div>
+
+
+
+
+                    </div>
+
+                    <!-- Modal footer -->
+                    <!-- Modal footer -->
+                    <div class="modal-footer  bg-ld ">
+                        <div class="me-auto">
+                            <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
+                        </div>
+                        <div class="flex-grow-1 text-center modelalert text-danger"></div>
+                        <button type="button" data-bs-dismiss="modal" class="btn btnModel">OK</button>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--Modal for Product Delivery-->
+    <div class="modal" id="myModalProductDelivery">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header  bg-ld ">
+                    <h4 class="modal-title txt-white" id="myModalLabel1">Product Delivery</h4>
+                    <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="form-group row mt-3">
+                    <div class="row">
+                        <div class="col-6  ps-4">
+                            <button class="btn btnPod btn-primary w-100">POD and IR both or POD only</button>
+                        </div>
+                        <div class="col-6">
+                            <button class="btn btnIr btn-success w-100">IR only</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body" style="overflow-x:auto;">
+                    <div id="PODDiv" class="card">
+                        <div class="card-body border border-5 border-danger">
+                            <div class="form-group row mb-0">
+                                <div class="col-md-4 text-sm-start fw-bold">
+                                    <label class="form-label">Consignee Name And Address <span class="text-danger fw-bold">*</span></label>
+                                    <select id="ddlConsigneeAddr" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                                    </select>
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 text-sm-start fw-bold">
+                                    <label class="form-label-sm mb-0">Contact Number<span class="text-danger">*</span></label>
+                                    <input type="text" id="txtContactPod" class="form-control numericOnly txtbx mt-0 cleartxt" placeholder="Contact Number" />
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 text-sm-start fw-bold">
+                                    <label class="form-label fw-bold">POD Date</label>
+                                    <input type="date" class="form-control pod-date" id="podDate">
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <table id="myTableProductDeliver" class="table table-striped table-bordered">
+                                <thead class="table-info">
+                                    <tr>
+
+                                        <th>Sr.No</th>
+
+                                        <th>Select All<input type="checkbox" id="selectAll"></th>
+                                        <th>Product Name</th>
+                                        <th>Available Qty.</th>
+                                        <th>Deliver Qty.</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                                <tfoot class="tfoot bg-primary">
+                                </tfoot>
+                            </table>
+                            <div class="form-group row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="formFileSm" class="form-label fw-bold">Proof Of Delivery(POD)</label>
+                                        <input class="form-control form-control-sm" id="PODAttachment" type="file">
+                                    </div>
+
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="formFileSm" class="form-label fw-bold">Installation Report(IR)</label>
+                                        <input class="form-control form-control-sm" id="InstallationReport" type="file">
+                                    </div>
+
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="btn btnModel btnModelDeliverySubmit">Submit</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div id="IRDiv" class="card">
+                        <div class="card-body border border-5 border-danger">
+                            <div class="form-group row mb-0">
+                                <div class="col-md-4 text-sm-start fw-bold">
+                                    <label class="form-label">Consignee Name And Address <span class="text-danger fw-bold">*</span></label>
+                                    <select id="ddlIRConsigneeAddr" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                                    </select>
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 text-sm-start fw-bold">
+                                    <label class="form-label-sm mb-0">Contact Number<span class="text-danger">*</span></label>
+                                    <input type="text" id="txtIRContact" class="form-control numericOnly txtbx mt-0 cleartxt" placeholder="Contact Number" />
+                                    <span class="error"></span>
+                                </div>
+
+                            </div>
+                            <table id="myTableProductDeliverIR" class="table table-striped table-bordered">
+                                <thead class="table-info">
+                                    <tr>
+
+                                        <th>Sr.No</th>
+                                        <th>Select All<input type="checkbox" id="selectAllIR"></th>
+                                        <th>Product Name</th>
+                                        <th>Delivered Qty.</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                                <tfoot class="tfoot bg-primary">
+                                </tfoot>
+                            </table>
+                            <div class="form-group row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="formFileSm" class="form-label fw-bold">Installation Report(IR)</label>
+                                        <input class="form-control form-control-sm" id="IRAttachment" type="file">
+                                    </div>
+
+                                    <span class="error"></span>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <button class="btn btnModel btnModelIRSubmit">Submit IR</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body border border-5 border-danger">
+                            <div class="container mt-5">
+                                <table id="myTableProduct" class="table table-striped table-bordered">
+                                    <thead class="table-info">
+                                        <tr>
+                                            <th>Sr.No</th>
+                                            <th>Product Name</th>
+                                            <th>Consignee Name And Address</th>
+                                            <th>Delivery Quantity</th>
+                                            <th>Delivery Date</th>
+                                            <th>Contact No.</th>
+                                            <th>POD</th>
+                                            <th>IR</th>
+                                            <th>Action</th>
+
+
+
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                    <tfoot class="tfoot bg-primary">
+                                    </tfoot>
+                                </table>
+                            </div>
+
+                           
+
+                        </div>
+                    </div>
+
+                    
+
+                   
+                    <!-- Modal footer -->
+                    <div class="modal-footer  bg-ld ">
+                        <div class="me-auto">
+                            <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
+                        </div>
+                        <div class="flex-grow-1 text-center modelalert text-danger"></div>
+
+                        <button type="button" data-bs-dismiss="modal" class="btn btnModel">Close</button>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Modal for verify POD/IR-->
+    <div class="modal" id="myModalVerifyPOD">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header  bg-ld ">
+                    <h4 class="modal-title txt-white" id="myModalLabel1">Verify POD/IR</h4>
+                    <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body" style="overflow-x:auto;">
+
+                    <div class="card">
+                        <div class="card-body border border-5 border-danger">
+                            <div class="container mt-5">
+                                <table id="myTableVerifyPOD" class="table table-striped table-bordered">
+                                    <thead class="table-info">
+                                        <tr>
+                                            <th>Sr.No</th>
+                                            <th>Product Name</th>
+                                            <th>Consignee Name And Address</th>
+                                            <th>Delivery Quantity</th>
+                                            <th>Delivery Date</th>
+                                            <th>Contact No.</th>
+                                            <th>POD</th>
+                                            <th>IR</th>
+                                            <th>Verify POD</th>
+                                            <th>Verify IR</th>
+                                            <th>Actions</th>
+
+
+
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                    <tfoot class="tfoot bg-primary">
+                                    </tfoot>
+                                </table>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer  bg-ld ">
+                        <div class="me-auto">
+                            <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
+                        </div>
+                        <div class="flex-grow-1 text-center modelalert text-danger"></div>
+
+                        <button type="button" data-bs-dismiss="modal" class="btn btnModel">Close</button>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Modal for Agency Invoice-->
+    <div class="modal" id="myModalAgencyInvoice">
+        <div class="modal-dialog" style="max-width: 65%;">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header  bg-ld ">
+                    <h4 class="modal-title txt-white" id="myModalLabel1">Purchase Order Detail</h4>
+                    <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body" style="overflow-x:auto;">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-group row mb-0">
+                                <div class="col-md-4 text-sm-start">
+                                    <label class="form-label-sm mb-0 fw-bold">Agency Name<span class="text-danger">*</span></label>
+                                    <input type="text" id="txtAgencyName" readonly class="form-control  txtbx mt-0 cleartxt" placeholder="Agency Name" />
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 text-sm-start">
+                                    <label class="form-label-sm mb-0 fw-bold">Department Name<span class="text-danger">*</span></label>
+                                    <input type="text" id="txtDeptName" readonly class="form-control numericOnly txtbx mt-0 cleartxt" placeholder="Depart Name" />
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 text-sm-start">
+                                    <label for="remark" class="form-label fw-bold">Billing Address</label>
+                                    <textarea class="form-control cleartxt" id="BillingAddr" rows="3" placeholder="Enter Specification Here"></textarea>
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-0">
+                                <div class="col-md-4 text-sm-start">
+                                    <label class="form-label-sm mb-0 fw-bold">Sale Order No.<span class="text-danger">*</span></label>
+                                    <input type="text" id="txtSaleNo" readonly class="form-control  txtbx mt-0 cleartxt" placeholder="Agency Name" />
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 text-sm-start">
+                                    <label class="form-label-sm mb-0 fw-bold">Order No.<span class="text-danger">*</span></label>
+                                    <input type="text" id="txtOrderNo" readonly class="form-control numericOnly txtbx mt-0 cleartxt" placeholder="Depart Name" />
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 text-sm-start">
+                                    <label class="form-label-sm fw-bold">Bill  From<span class="text-danger">*</span></label>
+                                    <select id="ddlBill" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-0">
+                                <div class="col-md-3 text-sm-start">
+                                    <label class="form-label-sm mb-0 fw-bold">Invoice No.<span class="text-danger">*</span></label>
+                                    <input type="text" id="txtInvoiceNo" class="form-control  txtbx mt-0 cleartxt" placeholder="Agency Name" />
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-3 text-sm-start">
+                                    <label class="form-label fw-bold">Invoice Date</label>
+                                    <input type="date" class="form-control invoice-date" id="InvoiceDate">
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-2 text-sm-start">
+                                    <div class="mb-2">
+                                        <label for="formFileSm" class="form-label fw-bold">Invoice Document</label>
+                                        <input class="form-control form-control-sm" id="InvoiceAttachment" type="file">
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-sm-start">
+                                    <label for="remark" class="form-label fw-bold">Narration</label>
+                                    <textarea class="form-control cleartxt" id="Narration" rows="3" placeholder="Enter Specification Here"></textarea>
+                                    <span class="error"></span>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+
+                    <div class="container mt-5">
+                        <h4 class="mb-2 text-center text-danger">
+                            Please select the appropriate address for the invoice you are uploading.
+                        </h4>
+
+                        <table id="myTableAgencyInvoice" class="table table-striped table-bordered">
+                            <thead class="table-info">
+                                <tr>
+
+                                    <th>Sr.No</th>
+
+                                    <th>Select All<input type="checkbox" id="InvoiceSelectAll"></th>
+                                    <th>Product Name</th>
+                                    <th>Consignee Name & Address</th>
+                                    <th>Delivered Date</th>
+                                    <th>Delivered Qty.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                            <tfoot class="tfoot bg-primary">
+                            </tfoot>
+                        </table>
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btnModel btn-sm btnModalReset me-2">Reset</button>
+                            <button type="button" class="btn btnModel btn-sm btnModalGenerate">Generate Product List</button>
+                        </div>
+
+                        <div class="mb-2 text-center text-danger">
+                            <h4 class="mb-4">Kindly verify the products and amounts, and please enter the HSN codes. </h4>
+
+                            <table id="myTableHSNInvoice" class="table table-striped table-bordered">
+                                <thead class="table-info">
+                                    <tr>
+                                        <th>Sr.No</th>
+                                        <th>Product Name</th>
+                                        <th>Quantity</th>
+                                        <th>HSN Code</th>
+                                        <th>Rate</th>
+                                        <th>GST</th>
+                                        <th>Total</th>
+                                        <th>GTotal</th>
+
+
+
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                                <tfoot class="tfoot bg-primary">
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="card">
+                            <div class="card-body border-3" style="border: 1px solid red;">
+                                <div class="form-group row mb-0">
+                                    <div class="col-md-4 text-sm-start">
+                                        <label class="form-label-sm mb-0 fw-bold">Basic Bill Amount<span class="text-danger">*</span></label>
+                                        <input type="text" id="txtBasicAmt" readonly class="form-control  txtbx mt-0 cleartxt" placeholder="Agency Name" />
+                                        <span class="error"></span>
+                                    </div>
+                                    <div class="col-md-4 text-sm-start">
+                                        <label class="form-label-sm mb-0 fw-bold">IGST<span class="text-danger">*</span></label>
+                                        <input type="text" id="txtIgst" readonly class="form-control numericOnly txtbx mt-0 cleartxt" placeholder="Depart Name" />
+                                        <span class="error"></span>
+                                    </div>
+                                    <div class="col-md-4 text-sm-start">
+                                        <label class="form-label-sm mb-0 fw-bold">CGST<span class="text-danger">*</span></label>
+                                        <input type="text" id="txtCgst" readonly class="form-control numericOnly txtbx mt-0 cleartxt" placeholder="Depart Name" />
+                                        <span class="error"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-0">
+                                    <div class="col-md-4 text-sm-start">
+                                        <label class="form-label-sm mb-0 fw-bold">SGST<span class="text-danger">*</span></label>
+                                        <input type="text" id="txtSgst" readonly class="form-control  txtbx mt-0 cleartxt" placeholder="Agency Name" />
+                                        <span class="error"></span>
+                                    </div>
+                                    <div class="col-md-6 d-flex align-items-end">
+
+                                        <div class="w-75 me-2">
+                                            <label class="form-label-sm mb-0 fw-bold">
+                                                Total Amount<span class="text-danger">*</span>
+                                            </label>
+                                            <input type="text" id="txtTAmount" readonly
+                                                   class="form-control numericOnly txtbx mt-0 cleartxt" />
+                                        </div>
+
+                                        <button class="btn btnModel btnModelInvoiceSubmit">
+                                            Submit
+                                        </button>
+
+                                    </div>
+                                </div>
+
+                                
+
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+                   
+                    <!-- Modal footer -->
+                    <div class="modal-footer  bg-ld ">
+                        <div class="me-auto">
+                            <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
+                        </div>
+                        <div class="flex-grow-1 text-center modelalert text-danger"></div>
+                        @*  <button type="button" class="btn btnModel btnModalSubmit">Submit</button> *@
+                        <button type="button" data-bs-dismiss="modal" class="btn btnModel">Close</button>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+
+
+
+
+
+
+
+
+
+}
+
+
+@section Scripts {
+    <script src="~/PageAssets/Hardware/Js/HardwareMaster/OrderProcessing.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,348 @@
+﻿@using System.Security.Claims
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+
+    var roleId = User.FindFirst("RoleId")?.Value;
+    var userId = User.FindFirst("UserId")?.Value;
+    var deptId = User.FindFirst("DeptId")?.Value;
+}
+@{
+    Layout = "~/Views/Shared/_TestLayout.cshtml";
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+}
+<style>
+    div.dataTables_wrapper div.dataTables_length {
+        float: left !important;
+        margin-right: auto;
+    }
+
+    .star-rating i {
+        font-size: 25px;
+        color: #ccc;
+        cursor: pointer;
+    }
+
+        .star-rating i.active {
+            color: gold;
+        }
+
+    .statusGreen {
+        background-color: forestgreen;
+        width: 30px;
+        height: 30px;
+        border-radius: 15px;
+    }
+
+    .statusOrange {
+        background-color: orange;
+        width: 30px;
+        height: 30px;
+        border-radius: 15px;
+    }
+
+    .modal-content {
+        border-radius: 0 !important;
+    }
+
+    .my-modal .modal-content {
+        border: 4px solid red;
+    }
+</style>
+<h5 style="text-align:center;">PO Cancellation</h5>
+<div class="card mb-3 p-3">
+    <div class="row align-items-end">
+        <div class="form-group row">
+            <div class="col-md-3 fw-bold">
+                <label class="form-label">Department<span class="text-danger">*</span></label>
+                <select id="ddlDept" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                </select>
+                <span class="error"></span>
+            </div>
+            <div class="col-md-3 fw-bold">
+                <label class="form-label">Agency<span class="text-danger">*</span></label>
+                <select id="ddlAgency" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                </select>
+                <span class="error"></span>
+            </div>
+            <div class="col-md-3 fw-bold">
+                <label class="form-label">PO Cancel Status<span class="text-danger">*</span></label>
+                <select id="ddlPOCancel" class="form-select search_ddl select2" aria-label=".form-select-sm">
+                </select>
+                <span class="error"></span>
+            </div>
+
+        </div>
+
+
+
+    </div>
+</div>
+
+
+
+
+<!-- List Div -->
+<div id="listDiv" class="card p-3 shadow text-center">
+    <h5></h5>
+    <div style="width:100%; overflow-x:auto;">
+        <table id="myTablePOCancel" class="table table-striped table-bordered">
+            <thead class="table-info">
+                <tr>
+                    <th>Sr.No</th>
+                    <th>PO No.</th>
+                    <th>PO Date</th>
+                    <th>Sale Order</<br>Reference No.</th>
+                    <th>Department Name</th>
+                    <th>Agency Name</th>
+                    <th>PO Cancel</th>
+
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot class="tfoot bg-primary">
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+
+
+
+@section Modals {
+
+    <!--Modal for Item Description-->
+    <div class="modal" id="myModalitemDescription">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header  bg-ld ">
+                    <h4 class="modal-title txt-white" id="myModalLabel2">Issues Purchase Order</h4>
+                    <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body" style="overflow-x:auto;">
+
+                    <div class="container mt-5">
+                        <h2 class="mb-4"></h2>
+
+                        <table id="myTableItemDesc1" class="table table-striped table-bordered">
+                            <thead class="table-info">
+                                <tr>
+                                    <th>Sr.No</th>
+                                    <th>Item Description</th>
+                                    <th>Quantity</th>
+                                    <th>Base Price</th>
+                                    <th>GST%</th>
+                                    <th>Unit Rate(Inclusive Tax)</th>
+                                    <th>Total Amt(Inclusive Tax)</th>
+
+
+
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                            <tfoot class="tfoot bg-primary">
+                            </tfoot>
+                        </table>
+                    </div>
+
+
+
+
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer  bg-ld ">
+                    <div class="me-auto">
+                        <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
+                    </div>
+                    <div class="flex-grow-1 text-center modelalert text-danger"></div>
+                    @*  <button type="button" class="btn btnModel btnModalSubmit">Submit</button> *@
+                    <button type="button" data-bs-dismiss="modal" class="btn btnModel">OK</button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+   
+
+    <!--Modal for Accept/Reject-->
+    <div class="modal fade" id="myModalVerificationStatus">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header  bg-ld ">
+                    <h4 class="modal-title txt-white" id="myModalLabel3">Accept And Reject</h4>
+                    <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body" style="overflow-x:auto;">
+                    <div class="card-body modal-xl border border-danger border-4">
+                        <!-- Remarks -->
+                        <div class="form-group row">
+                            <div class="d-flex align-items-center">
+                                <div class="col-md-4 text-sm-start">
+
+
+                                    <div class="form-check form-check-inline ms-4">
+                                        <input class="form-check-input" type="radio" name="Accept" id="Accept" value="A">
+                                        <label class="form-check-label" for="Accept">Accept</label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline gap-3">
+                                        <input class="form-check-input" type="radio" name="Reject" id="Reject" value="R" checked>
+                                        <label class="form-check-label" for="Reject">Reject</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class=" col-md-10 ms-2">
+                                <label for="txtareaRemark" class="form-label fw-bold">Remarks</label>
+                                <textarea class="form-control cleartxt" readonly id="txtareaVRemark" rows="2" placeholder=""></textarea>
+                                <span class="error"></span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer  bg-ld ">
+                    <div class="me-auto">
+                        <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
+                    </div>
+                    <div class="flex-grow-1 text-center modelalert text-danger"></div>
+
+                    <button type="button" class="btn btn-danger  btnModalRemarkSubmit">Submit</button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!--Modal for Order Detail-->
+    <div class="modal" id="myModalOrderDetail">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header  bg-ld ">
+                    <h4 class="modal-title txt-white" id="myModalLabel1">Order Detail</h4>
+                    <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body" style="overflow-x:auto;">
+                    <div class="card">
+                        <div class="card-body modal-xl border border-danger border-1">
+                            <div class="form-group row">
+                                <div class="col-md-4 text-sm-start fw-bold">
+                                    <label class="form-label-sm mb-0">Purchase Order No.<span class="text-danger">*</span></label>
+                                    <input type="text" id="txtPONo" readonly class="form-control  txtbx mt-0 cleartxt" placeholder="" />
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 text-sm-start fw-bold">
+                                    <label class="form-label-sm mb-0">PO Date<span class="text-danger">*</span></label>
+                                    <input type="text" id="txtPODate" readonly class="form-control  txtbx mt-0 cleartxt" placeholder="" />
+                                    <span class="error"></span>
+                                </div>
+                                <div class="col-md-4 text-sm-start fw-bold">
+                                    <label class="form-label-sm mb-0">Agency Name<span class="text-danger">*</span></label>
+                                    <input type="text" id="txtAgency" readonly class="form-control  txtbx mt-0 cleartxt" placeholder="" />
+                                    <span class="error"></span>
+                                </div>
+
+                            </div>
+
+
+
+                        </div>
+                    </div>
+
+                    <div class="container mt-5">
+                        <h2 class="mb-4"></h2>
+
+                        <table id="myTableOrderDetail" class="table table-striped table-bordered">
+                            <thead class="table-info">
+                                <tr>
+
+                                    <th>Sr.No</th>
+                                    <th>Select All<input type="checkbox" id="selectAll"></th>
+                                    <th>Order Detail Id</th>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Amount Detail</th>
+                                    <th>Cancel Date&Time</th>
+                                    <th>Cancel Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                            <tfoot class="tfoot bg-primary">
+                            </tfoot>
+                        </table>
+                        <div class="col-md-8">
+                            <label for="txtareaRemark" class="form-label fw-bold">Remarks/Narration</label>
+                            <textarea class="form-control cleartxt" id="txtareaRemark" rows="2" placeholder="Please Enter Remark Here."></textarea>
+                            <span class="error"></span>
+                        </div>
+
+                        
+                    </div>
+
+                   
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer  bg-ld ">
+                        <div class="me-auto">
+                            <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
+                        </div>
+                        <div class="flex-grow-1 text-center modelalert text-danger"></div>
+                        <button type="button" class="btn btnModel btnModalRemarkSubmit">Submit</button>
+                        <button type="button" data-bs-dismiss="modal" class="btn btnModel">OK</button>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+}
+
+
+@section Scripts {
+    <script src="~/PageAssets/Hardware/Js/HardwareMaster/POCancel.js" asp-append-version="true"></script>
+}
