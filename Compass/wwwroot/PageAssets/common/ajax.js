@@ -44,3 +44,24 @@ function acceptUpdateMultiTableFData(controllerName, methodName, fromData) {
         contentType: false    // 🔥 required for FormData
     });
 }
+
+function acceptUpdateMultiTableFData1(controller, action, formData) {
+
+    return new Promise(function (resolve, reject) {
+
+        $.ajax({
+            url: "/" + controller + "/" + action,
+            type: "POST",
+            data: formData,
+            contentType: false,   // IMPORTANT for file upload
+            processData: false,   // IMPORTANT for FormData
+            success: function (response) {
+                resolve(response);
+            },
+            error: function (xhr) {
+                reject(xhr.responseText);
+            }
+        });
+
+    });
+}

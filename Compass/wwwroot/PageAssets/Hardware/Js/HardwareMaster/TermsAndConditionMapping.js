@@ -7,14 +7,14 @@ $(document).ready(function () {
     bindDataToDdl("HardwareDropdown", "HProduct_ddl", "myModalMappingTermsCondition", "ddlPrdCategoryMap", " Product Category", 0, 0);
     resetModal();
     TermsMappingConditionList();
-    $('#myTableMappingTermsCondition').DataTable({
-        "paging": true,
-        "searching": true,
-        "lengthMenu": [[5, 10, 25, 50], [5, 10, 25, 50]],
-        "language": {
-            "search": "Search"
-        }
-    });
+    // $('#myTableMappingTermsCondition').DataTable({
+    //     "paging": true,
+    //     "searching": true,
+    //     "lengthMenu": [[5, 10, 25, 50], [5, 10, 25, 50]],
+    //     "language": {
+    //         "search": "Search"
+    //     }
+    // });
 
 });
 
@@ -88,14 +88,14 @@ $(document).on('click', '.btnMapTermsCondition', function () {
     var myModal = new bootstrap.Modal(document.getElementById('myModalMappingTermsCondition'));
     myModal.show();
 });
-$('#myTableTermsAndMapping').DataTable({
-    "paging": true,
-    "searching": true,
-    "lengthMenu": [[5, 10, 25, 50], [5, 10, 25, 50]],
-    "language": {
-        "search": "Search"
-    }
-});
+// $('#myTableTermsAndMapping').DataTable({
+//     "paging": true,
+//     "searching": true,
+//     "lengthMenu": [[5, 10, 25, 50], [5, 10, 25, 50]],
+//     "language": {
+//         "search": "Search"
+//     }
+// });
 //Get Record for A table 
 async function TermsConditionMappList() {
 
@@ -137,7 +137,7 @@ function bindDatatableMapTermsConditionList(records, tableId) {
                         <td><input type="checkbox" class="rowCheckbox"></td>
                          <td>${value.CategoryName}</td>
                         <td>${value.ConditionName}</td>
-                        
+                       
                
             </tr>
         `);
