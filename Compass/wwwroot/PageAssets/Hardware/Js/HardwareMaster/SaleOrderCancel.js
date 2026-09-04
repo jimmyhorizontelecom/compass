@@ -4,14 +4,14 @@ $(document).ready(function () {
 
     resetModal();
     SaleOrderCancelList();
-    $('#myTableSaleOrderCancel').DataTable({
-        "paging": true,
-        "searching": true,
-        "lengthMenu": [[5, 10, 25, 50], [5, 10, 25, 50]],
-        "language": {
-            "search": "Search"
-        }
-    });
+    // $('#myTableSaleOrderCancel').DataTable({
+    //     "paging": true,
+    //     "searching": true,
+    //     "lengthMenu": [[5, 10, 25, 50], [5, 10, 25, 50]],
+    //     "language": {
+    //         "search": "Search"
+    //     }
+    // });
 
 });
 

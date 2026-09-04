@@ -42,13 +42,7 @@
         border-radius: 15px;
     }
 </style>
-
-
-
-
-
 <!-- List Div -->
-
 <div id="listDiv" class="card p-3 shadow" style="display:none;">
     <h5>My Orders</h5>
     <table id="myTable" class="table table-striped table-bordered">
@@ -68,10 +62,6 @@
                 <th>Order Query</th>
                 <th>Print Invoice</th>
                 <th>Feedback</th>
-
-                
-
-
             </tr>
         </thead>
         <tbody>
@@ -83,28 +73,19 @@
 
 @section Modals {
     <!--Modal for delivery address-->
-
     <div class="modal" id="myModalDeliveryAdd">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
-
                 <!-- Modal Header -->
                 <div class="modal-header  bg-ld ">
                     <h4 class="modal-title txt-white" id="myModalLabel1"> Delivery Address</h4>
                     <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
                 </div>
-
                 <!-- Modal body -->
                 <div class="modal-body" style="overflow-x:auto;">
-
                     <div class="container mt-5">
-
-                       
-
-                        
                         <div class="container mt-5">
                             <h2 class="mb-4"></h2>
-
                             <table id="myTableAddLocation2" class="table table-striped table-bordered">
                                 <thead class="table-info">
                                     <tr>
@@ -115,11 +96,6 @@
                                         <th>Contact No.</th>
                                         <th>Consignee Address</th>
                                         <th>Address Type</th>
-
-                                        
-
-
-
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -128,12 +104,7 @@
                                 </tfoot>
                             </table>
                         </div>
-
-
-
-
-                    </div>
-
+                   </div>
                     <!-- Modal footer -->
                     <!-- Modal footer -->
                     <div class="modal-footer  bg-ld ">
@@ -142,10 +113,7 @@
                         </div>
                         <div class="flex-grow-1 text-center modelalert text-danger"></div>
                         <button type="button" data-bs-dismiss="modal" class="btn btnModel">OK</button>
-
                     </div>
-
-
                 </div>
             </div>
         </div>
@@ -154,19 +122,15 @@
     <div class="modal" id="myModalitemDescription">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-
                 <!-- Modal Header -->
                 <div class="modal-header  bg-ld ">
                     <h4 class="modal-title txt-white" id="myModalLabel2">Add Item Description</h4>
                     <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
                 </div>
-
                 <!-- Modal body -->
                 <div class="modal-body" style="overflow-x:auto;">
-
                     <div class="container mt-5">
                         <h2 class="mb-4">Item Description</h2>
-
                         <table id="myTableItemDesc1" class="table table-striped table-bordered">
                             <thead class="table-info">
                                 <tr>
@@ -177,10 +141,6 @@
                                     <th>GST%</th>
                                     <th>Unit Rate(Inclusive Tax)</th>
                                     <th>Total Amt(Inclusive Tax)</th>
-
-
-
-
                                 </tr>
                             </thead>
                             <tbody>
@@ -189,12 +149,7 @@
                             </tfoot>
                         </table>
                     </div>
-
-
-
-
                 </div>
-
                 <!-- Modal footer -->
                 <div class="modal-footer  bg-ld ">
                     <div class="me-auto">
@@ -203,25 +158,20 @@
                     <div class="flex-grow-1 text-center modelalert text-danger"></div>
                     @*  <button type="button" class="btn btnModel btnModalSubmit">Submit</button> *@
                     <button type="button" data-bs-dismiss="modal" class="btn btnModel">OK</button>
-
                 </div>
-
             </div>
         </div>
     </div>
-
     <!--Modal for Payment Details-->
     <div class="modal" id="myModalpayNow">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
-
                 <!-- Modal Header -->
                 <div class="modal-header  bg-ld ">
                     <h4 class="modal-title txt-white" id="myModalLabel1">Payment</h4>
                     <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
                 </div>
-
-                <!-- Modal body -->
+             <!-- Modal body -->
                 <div class="modal-body" style="overflow-x:auto;">
                     <div class="card">
                         <div class="card-body">
@@ -298,7 +248,6 @@
                                     <label for="PaymentDoc" class="form-label mb-0">Payment Doc</label>
                                     <input class="form-control form-control-sm" id="PaymentDoc" type="file">
                                 </div>
-
                                 <div class="col-md-4 text-sm-start fw-bold">
                                     <label for="remark" class="form-label">Remark</label>
                                     <textarea class="form-control cleartxt" id="txtareaRemark" rows="3" placeholder="Remark"></textarea>
@@ -309,19 +258,11 @@
                                         Submit
                                     </button>
                                 </div>
-
-                                
-                                  
                             </div>
-
-
-
                         </div>
                     </div>
-
                     <div class="container mt-5">
                         <h2 class="mb-4"></h2>
-
                         <table id="myTablePaymemt" class="table table-striped table-bordered">
                             <thead class="table-info">
                                 <tr>
@@ -333,10 +274,6 @@
                                     <th>GST TDS</th>
                                     <th>Payment Date</th>
                                     <th>Due Balance</th>
-
-
-
-
                                 </tr>
                             </thead>
                             <tbody>
@@ -344,21 +281,7 @@
                             <tfoot class="tfoot bg-primary">
                             </tfoot>
                         </table>
-
-                       
-                       
-
-                      
-
-
-
                     </div>
-
-                   
-                  
-                   
-
-
                 </div>
             </div>
         </div>
@@ -367,17 +290,14 @@
     <div class="modal" id="myModaltrackingStatus">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-
-                <!-- Modal Header -->
+               <!-- Modal Header -->
                 <div class="modal-header  bg-ld ">
                     <h4 class="modal-title txt-white" id="myModalLabel">Tracking View Status</h4>
                     <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
                 </div>
-
                 <!-- Modal body -->
                 <div class="container mt-5">
                     <h2 class="mb-4"></h2>
-
                     <table id="myTableTrackViewStatus" class="table table-striped table-bordered">
                         <thead class="table-info">
                             <tr>
@@ -385,11 +305,6 @@
                                 <th>Milestone</th>
                                 <th>Status</th>
                                 <th>Current Status</th>
-
-                               
-
-
-
                             </tr>
                         </thead>
                         <tbody>
@@ -406,11 +321,8 @@
                         <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
                     </div>
                     <div class="flex-grow-1 text-center modelalert text-danger"></div>
-
-                    <button type="button" data-bs-dismiss="modal" class="btn btnModel">Close</button>
-
+                   <button type="button" data-bs-dismiss="modal" class="btn btnModel">Close</button>
                 </div>
-
             </div>
         </div>
     </div>
@@ -418,17 +330,14 @@
     <div class="modal" id="myModaldeliveryDate">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-
                 <!-- Modal Header -->
                 <div class="modal-header  bg-ld ">
                     <h4 class="modal-title txt-white" id="myModalLabel5">Expected Delivery Dates</h4>
                     <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
                 </div>
-
-                <!-- Modal body -->
+               <!-- Modal body -->
                 <div class="container mt-5">
                     <h2 class="mb-4"></h2>
-
                     <table id="myTableExpectedDeliveryDate" class="table table-striped table-bordered">
                         <thead class="table-info">
                             <tr>
@@ -436,11 +345,6 @@
                                 <th>Item Name</th>
                                 <th>Supplier Name & Contact No.</th>
                                 <th>Expected Delivery Date</th>
-
-
-
-
-
                             </tr>
                         </thead>
                         <tbody>
@@ -448,20 +352,15 @@
                         <tfoot class="tfoot bg-primary">
                         </tfoot>
                     </table>
-
                 </div>
-
                 <!-- Modal footer -->
                 <div class="modal-footer  bg-ld ">
                     <div class="me-auto">
                         <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
                     </div>
                     <div class="flex-grow-1 text-center modelalert text-danger"></div>
-
                     <button type="button" data-bs-dismiss="modal" class="btn btnModel">Close</button>
-
                 </div>
-
             </div>
         </div>
     </div>
@@ -469,19 +368,15 @@
     <div class="modal" id="myModaldeliveryDetails">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-
                 <!-- Modal Header -->
                 <div class="modal-header  bg-ld ">
                     <h4 class="modal-title txt-white" id="myModalLabel">Delivery Details </h4>
                     <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
                 </div>
-
                 <!-- Modal body -->
                 <div class="modal-body" style="overflow-x:auto;">
-
                     <div class="container mt-5">
                         <h2 class="mb-4"></h2>
-
                         <table id="myTableDeliveryDetails" class="table table-striped table-bordered">
                             <thead class="table-info">
                                 <tr>
@@ -493,10 +388,6 @@
                                     <th>Delivered Date</th>
                                     <th>POD</th>
                                     <th>IR</th>
-
-
-
-
                                 </tr>
                             </thead>
                             <tbody>
@@ -505,12 +396,7 @@
                             </tfoot>
                         </table>
                     </div>
-
-
-
-
                 </div>
-
                 <!-- Modal footer -->
                 <div class="modal-footer  bg-ld ">
                     <div class="me-auto">
@@ -519,9 +405,7 @@
                     <div class="flex-grow-1 text-center modelalert text-danger"></div>
                     @*  <button type="button" class="btn btnModel btnModalSubmit">Submit</button> *@
                     <button type="button" data-bs-dismiss="modal" class="btn btnModel">OK</button>
-
                 </div>
-
             </div>
         </div>
     </div>
@@ -529,13 +413,11 @@
     <div class="modal" id="myModalOrderQuery">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-
                 <!-- Modal Header -->
                 <div class="modal-header  bg-ld ">
                     <h4 class="modal-title txt-white" id="myModalLabel">Add New Query </h4>
                     <button type="button" class="btn-close b-light" data-bs-dismiss="modal"></button>
                 </div>
-
                 <!-- Modal body -->
                 <div class="modal-body" style="overflow-x:auto;">
                     <div class="card">
@@ -552,7 +434,6 @@
                                     </select>
                                     <span class="error"></span>
                                 </div>
-
                             </div>
                             <div class="form-group  row mb-0">
                                 <div class="col-md-8 text-sm-start fw-bold">
@@ -565,27 +446,17 @@
                                         Submit
                                     </button>
                                 </div>
-
                             </div>
-
-                            
-
                         </div>
                     </div>
-
                     <div class="container mt-5">
                         <h2 class="mb-4"></h2>
-
                         <table id="myTableOrderQuery" class="table table-striped table-bordered">
                             <thead class="table-info">
                                 <tr>
                                     <th>Sr.No</th>
                                     <th>Query Type</th>
                                     <th>Query Remark</th>
-
-                                   
-
-
                                 </tr>
                             </thead>
                             <tbody>
@@ -593,33 +464,13 @@
                             <tfoot class="tfoot bg-primary">
                             </tfoot>
                         </table>
-
-
-
-
-
-
-
-
                     </div>
-
-
-
-
-
-
                 </div>
-
-
                 <!-- Modal footer -->
                 <!-- Footer -->
                 <div class="modal-footer bg-ld">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">OK</button>
-
-                </div>
-
-                
-
+                </div>           
             </div>
         </div>
     </div>
@@ -627,18 +478,14 @@
     <div class="modal fade" id="feedbackModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content rounded-3">
-
                 <!-- Header -->
                 <div class="modal-header bg-ld">
                     <h5 class="modal-title">Feedback</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-
                 <!-- Body -->
                 <div class="modal-body text-center">
-
-                    <h6>Rate Your Experience</h6>
-
+                   <h6>Rate Your Experience</h6>
                     <!-- Star Rating -->
                     <div class="star-rating mb-3">
                         <i class="fa fa-star" data-value="1"></i>
@@ -652,20 +499,14 @@
                     <textarea class="form-control" id="feedbackText" placeholder="Write your feedback..."></textarea>
                     <span class="error"></span>
                 </div>
-
                 <!-- Footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-success btnModalFeedbackSubmit" id="btnModalFeedbackSubmit">Submit</button>
                 </div>
-
             </div>
         </div>
     </div>
-
-
-
-
 }
 
 

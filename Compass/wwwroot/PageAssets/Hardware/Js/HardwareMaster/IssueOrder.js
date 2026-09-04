@@ -1,17 +1,11 @@
 ﻿var Id = 0, tabIdNo = 1;
 var OrderId = 0;
-
-
-
 $(document).ready(function () {
-    $(document).ready(function () {
         $('#page-header').text('My Orders');
         var today = new Date().toISOString().split('T')[0];
-
         $("#deptOrderDate").attr("max", today);   // prevent future date
         $("#orderEntryDate").val(today);          // set today date
-
-    });
+    
     $('#myTableOrderIssue').DataTable({
         scrollX: true
     });
@@ -20,20 +14,15 @@ $(document).ready(function () {
     let srNo = 1;
     // parent child ddl 
     console.log('test');
+    bindDataToDdl("HardwareDropdown", "HDepartment_ddl", "", "ddlDepartment", " Department Name Filter", 0, 0);
     bindDataToDdl("HardwareDropdown", "HAgency_ddl", "", "ddlAgency", "Agency Name Filter", 0, 0);
     // bindDataToDdl1("HardwareDropdown", "HDraftNo_ddl", "myModalPurchaseIssue", "ddlDraftAgency" ,"ddlAgencyModal" ," Agency", 14);
 
-    // Agency dropdown
-    bindDataToDdl(
-        "HardwareDropdown",
-        "HAgencyDraft_ddl",
-        "myModalPurchaseIssue",
-        "ddlAgencyModal",
-        "Agency",
-        14,
-        0
-    );
-
+    // Agency dropdown in PurchaseIssue
+   // bindDataToDdl(   "HardwareDropdown",  "HAgencyDraft_ddl", "myModalPurchaseIssue", "ddlAgencyModal", "Agency", 14, 0 );
+    bindDataToDdl("HardwareDropdown", "HAgency_ddl", "myModalPurchaseIssue", "ddlAgencyModal", "Agency", 0, 0);
+    // Agency dropdown in DraftIssue
+    bindDataToDdl("HardwareDropdown", "HAgency_ddl", "myModalDraftIssue", "ddlDraftAgency", " Agency", 0, 0);
     // Draft dropdown depends on Agency
     // bindDataToDdl1(
     //     "HardwareDropdown",
@@ -44,26 +33,16 @@ $(document).ready(function () {
     //     "Draft No.",
     //     14
     // );
-
-
     console.log('test1');
     // bindDataToDdl("HardwareDropdown", "HAgencyDraft_ddl", "myModalPurchaseIssue", "ddlAgencyModal", " Agency", 14, 0);
-    console.log('test2');
-    bindDataToDdl("HardwareDropdown", "HDepartment_ddl", "", "ddlDepartment", " Department Name Filter", 0, 0);
-    bindDataToDdl("HardwareDropdown", "HAgency_ddl", "myModalDraftIssue", "ddlDraftAgency", " Agency", 0, 0);
-
-
-
-
-
-
+    console.log('test2'); 
+   
 
 });
-
-$('#myTableOrderIssue').DataTable({
-    "paging": true,
-    "pageLength": 10
-});
+// $('#myTableOrderIssue').DataTable({
+//     "paging": true,
+//     "pageLength": 10
+// });
 $('#myTablePurchaseIssue').DataTable({
     "paging": true,
     "pageLength": 10
@@ -76,55 +55,34 @@ $('#myTablePurchaseOrderRemarks').DataTable({
     "paging": true,
     "pageLength": 10
 });
-
-
 //Get Record for A table 
 async function recordlist() {
-
-
     var filterata = {
         FilterId1: 0,
         FilterId2: 0,
         FilterId3: 0,
         FilterName1: 'N',
     };
-
     try {
-
         let records = await getRecords('HardwareOrder', 'getIssueOrderList', filterata, '#myTableOrderIssue', 'N');
-
         bindDatatableIssueOrderList(records, '#myTableOrderIssue');
-
     }
     catch (error) {
         console.error("Error loading records:", error);
         //hideModalLoader();
     }
-
 }
-
-
 //Bind get record  in a table Issue Order
 function bindDatatableIssueOrderList(records, tableId) {
-
-
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().destroy();
     }
-
-
     var tbody = $(tableId + " tbody");
     tbody.empty();
-
-
-
     $.each(records, function (i, value) {
         let SrNo = i + 1;
-
-
         tbody.append(`<tr
-                        data-saleorderid="${value.SaleOrderId}" 
-                         >
+                        data-saleorderid="${value.SaleOrderId}"  >
                         <td>${SrNo}</td>
                          <td>${value.SaleOrderNo}+<br>${value.RefferenceNo}</td>
                         <td>${value.PONO}</td>
@@ -132,7 +90,7 @@ function bindDatatableIssueOrderList(records, tableId) {
                         <td>${value.OrderStatus}</td>
                         <td>${value.DepartmentName}</td>
                         <td>${value.BillingAddress}</td>
-                          <td>
+                        <td>
                            <i class="fa fa-eye text-danger fa-2x itemDescription"></i>
                          </td>
                       <td><i class="bi bi-download text-danger fs-1"></i></td>
@@ -142,11 +100,9 @@ function bindDatatableIssueOrderList(records, tableId) {
                          <td><i class="fa fa-print text-danger fa-2x printInvoice"></i></td> 
                         
                          <td class="verify-cell" style="cursor:pointer;">
-    <i class="bi bi-check-lg text-success fs-1"></i>
-    <span class="fw-bold">
-        <i class="bi bi-calendar-check text-success"></i> 13-Apr-2026
-    </span>
-</td>
+                        <i class="bi bi-check-lg text-success fs-1"></i> <span class="fw-bold">
+                        <i class="bi bi-calendar-check text-success"></i> 13-Apr-2026 </span>
+                        </td>
                           <td><button class="btnIssuePurchase btn btn-danger">Issue Purchase</button></td>
                           <td><i class="bi bi-check-square-fill text-success fs-4 me-3 action-verify"></i></td> 
                           <td><button class="btnRemarks btn btn-warning">Remarks</button></td> 
@@ -155,9 +111,6 @@ function bindDatatableIssueOrderList(records, tableId) {
                     </tr>
         `);
     });
-
-
-
     $(tableId).DataTable({
         paging: true,
         searching: true,

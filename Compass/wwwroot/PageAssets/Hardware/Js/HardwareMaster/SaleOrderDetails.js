@@ -9,39 +9,46 @@ $(document).ready(function () {
     $('#myTableSaleOrderDetail').DataTable({
         "paging": true,
         "searching": true,
-        "lengthMenu": [[5, 10, 25, 50], [5, 10, 25, 50]],
+        "lengthMenu": [[5, 10, 25, 50,100], [5, 10, 25, 50,100]],
         "language": {
             "search": "Search"
         }
     });
-    $(document).ready(function () {
-
-        $("#ddlPOStatus").select2({
+         $("#ddlPOStatus").select2({
             width: "100%"
         });
-
-    });
-    $(document).ready(function () {
-
-        $("#ddlDeptAmtStatus").select2({
+    $("#ddlDeptAmtStatus").select2({
+             width: "100%"
+       });
+    $("#ddlSaleInvStatus").select2({
             width: "100%"
-        });
+      });
+    // $(document).ready(function () {
 
-    });
-    $(document).ready(function () {
+    //     $("#ddlPOStatus").select2({
+    //         width: "100%"
+    //     });
 
-        $("#ddlSaleInvStatus").select2({
-            width: "100%"
-        });
+    // });
+    // $(document).ready(function () {
 
-    });
+    //     $("#ddlDeptAmtStatus").select2({
+    //         width: "100%"
+    //     });
+
+    // });
+    // $(document).ready(function () {
+
+    //     $("#ddlSaleInvStatus").select2({
+    //         width: "100%"
+    //     });
+
+   // });
 
 });
 
 //Get Record for A table 
 async function SaleOrderDetailList() {
-
-
     var filterata = {
         FilterId1: $('#ddlSaleDeptName').val(),
         FilterId2: $('#ddlSaleAgencyName').val(),
@@ -51,12 +58,8 @@ async function SaleOrderDetailList() {
         FilterName1: $('#ddlPOStatus').val(),
         FilterName2: $('#ddlDeptAmtStatus').val(),
         FilterName3: $('#ddlSaleInvStatus').val(),
-
     };
-
-
     try {
-
         let records = await getRecords('HardwareOrder', 'getSaleOrderDetailsList', filterata, '#myTableSaleOrderDetail', 'N');
         console.log(records);
         bindDatatableSaleOrderDetailList(records, '#myTableSaleOrderDetail');
@@ -69,12 +72,9 @@ async function SaleOrderDetailList() {
 }
 //Bind get record  in a table 
 function bindDatatableSaleOrderDetailList(records, tableId) {
-
-
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().clear().destroy();
     }
-
     var tbody = $(tableId + " tbody");
     tbody.empty();
     console.log('sdfsdf');
@@ -90,7 +90,6 @@ function bindDatatableSaleOrderDetailList(records, tableId) {
         else {
             InvStatus = '<i class="fa-solid 9 fa-2x  text-danger "></i>Not Executed';
         }
-
         tbody.append(`
         <tr>
             <td>${SrNo}</td>
@@ -110,8 +109,6 @@ function bindDatatableSaleOrderDetailList(records, tableId) {
         </tr>
     `);
     });
-
-
     $(tableId).DataTable({
         paging: true,
         searching: true,
@@ -119,7 +116,6 @@ function bindDatatableSaleOrderDetailList(records, tableId) {
         info: true,
         responsive: true
     });
-
     //hideModalLoader();
 }
 //Create Agency Login 

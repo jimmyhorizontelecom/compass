@@ -30,13 +30,9 @@ $(document).ready(function () {
             "search": "Search"
         }
     });
-
-
-
-
-    showDiv('listDiv');
-
+   showDiv('listDiv');
     recordlist();
+
     bindDataToDdl("HardwareDropdown", "HDepartment_ddl", "", "ddlDeptName", " Department Name", 0, 0);
     bindDataToDdl("HardwareDropdown", "HAgency_ddl", "", "ddlAgency", "Agency Name Filter", 0, 0);
     bindDataToDdl("HardwareDropdown", "HMainCategory_ddl", "", "ddlMainCatg", "Main Category", 0, 0);
@@ -132,18 +128,18 @@ async function getAddressDetail(AddressId) {
 
 // PI codeing
 //Pagination 
-$('#myTablePIGenerate').DataTable({
-    paging: false,
-    searching: false,
-    info: false,
-    responsive: true
-});
-$('#myTableAddCart').DataTable({
-    paging: false,
-    searching: false,
-    info: false,
-    responsive: true
-});
+// $('#myTablePIGenerate').DataTable({
+//     paging: false,
+//     searching: false,
+//     info: false,
+//     responsive: true
+// });
+// $('#myTableAddCart').DataTable({
+//     paging: false,
+//     searching: false,
+//     info: false,
+//     responsive: true
+// });
 function applyPagination() {
     let rows = $("#myTablePIGenerate tbody tr");
     let perPage = 10;
