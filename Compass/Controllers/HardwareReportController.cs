@@ -1,7 +1,9 @@
 ﻿using ClosedXML.Excel;
 //using ExcelDataReader;
 using Compass.Classes;
+using Compass.Models.Hardware;
 using Compass.Models.ManpowerViewModel;
+using Compass.Models.Test;
 using Compass.Report.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +18,6 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using wfms_ddl;
-using Compass.Models.Test;
 
 
 namespace Compass.Controllers
@@ -328,6 +329,64 @@ namespace Compass.Controllers
         }
 
 
+
+
+
+        #endregion
+
+
+
+        #region ProformaInvoice
+        public IActionResult ProformaInvoice()
+        {
+            return View();
+        }
+
+        //public async Task<IActionResult> ProformaInvoiceList([FromQuery] ProformaInvViewFilter filter)
+        //{
+        //    var userId = Convert.ToInt32(User.FindFirst("UserId")?.Value ?? "0");
+        //    SortedList parameters = new SortedList();
+        //    parameters.Add("@PiIdNO", filter.PiIdNO);
+        //    parameters.Add("@CreatedBy", userId);
+        //    var dt = await _cn.FillDataTableAsync("HardwareCartProductWithTermCondition_List", "", parameters);
+        //    if (dt == null || dt.Rows.Count == 0)
+        //    {
+        //        return View(new ProformaInvoiceReportVM()); // send empty object
+        //    }
+        //    var list = CommonNew.ToList<ProformaInvoiceReportVM>(dt);
+        //    return View("ProformaInvoice", list);
+        //    //return View(list.FirstOrDefault()); // ✅ send single record
+        //}
+
+        public async Task<IActionResult> ProformaInvoiceList(
+    [FromQuery] ProformaInvViewFilter filter)
+        {
+            var userId = Convert.ToInt32(
+                User.FindFirst("UserId")?.Value ?? "0");
+
+            SortedList parameters = new SortedList();
+            parameters.Add("@PiIdNO", filter.PiIdNO);
+            parameters.Add("@CreatedBy", userId);
+
+            var dt = await _cn.FillDataTableAsync(
+                "HardwareCartProductWithTermCondition_List",
+                "",
+                parameters);
+
+            //var list = CommonNew.ToList<ProformaInvoiceReportVM>(dt);
+
+            //return View("ProformaInvoice", list);
+            var list = CommonNew.ToList<ProformaInvoiceReportVM>(dt);
+
+            if (list == null || list.Count == 0)
+            {
+                return NotFound("Proforma Invoice data not found.");
+            }
+
+            ViewBag.InvoiceData = list.FirstOrDefault();
+
+            return View("ProformaInvoice", list);
+        }
 
 
         #endregion

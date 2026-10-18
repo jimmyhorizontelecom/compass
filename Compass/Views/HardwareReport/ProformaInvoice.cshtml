@@ -1,0 +1,226 @@
+﻿@using Compass.Report.ViewModels
+@model List<ProformaInvoiceReportVM>
+@{
+    var invoice = ViewBag.InvoiceData as ProformaInvoiceReportVM;
+}
+@{
+    Layout = null;
+}
+@if (invoice == null)
+{
+    <h3>No Data Found</h3>
+    return;
+}
+<html>
+<head>
+    <title>Proforma Invoice</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+            .invoice-box {
+                width: 210mm;
+                margin: auto;
+                background: #fff;
+            }
+            .a4-page {
+                width: 210mm;
+                min-height: 297mm;
+                padding: 5mm;
+                box-sizing: border-box;
+                page-break-after: always;
+                background: white;
+            }
+                .a4-page:last-child {
+                    page-break-after: auto;
+                }
+            .logo {
+                height: 70px;
+            }
+
+            @@media print {
+
+                .no-print {
+                    display: none !important;
+                }
+
+                @@page {
+                    size: A4;
+                    margin: 5mm;
+                }
+
+                .a4-page {
+                    page-break-after: always;
+                }
+
+                tr {
+                    page-break-inside: avoid !important;
+                }
+
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+            }
+    </style>
+</head>
+<body>
+
+    <div class="container mt-3 no-print">
+        <button class="btn btn-primary" onclick="printInvoice()">Print</button>
+        <button class="btn btn-success" onclick="downloadPDF()">Download PDF</button>
+    </div>
+
+    <div class="invoice-box" id="perfomaInvoiceArea">
+        <div class="page-header">
+            <span class="page-number"></span>
+        </div>
+        <!-- HEADER -->
+        @*   <div class="d-flex justify-content-between">
+            <img src="~/assets/images/logo.png" class="logo" />
+            <div class="text-end">
+                <h4>Invoice</h4>
+                <p>
+                    No: <span id="invoiceNo"></span><br>
+                    Date: <span id="invoiceDate"></span>
+                </p>
+            </div>
+        </div> *@
+      
+        <!-- Letter -->
+        <div class="container-fluid">
+            <div style="display:flex">
+                <div style="width:40%">
+                    <h6> HIMACHAL PRADESH STATE ELECTRONICS DEVELOPMENT CORPORATION LIMITED</h6>
+                </div>
+                <div style="width:20%; margin-top:20px; padding:5px">
+                    <img style="width: 125px; " src="~/assets/images/picture1.png" />
+                </div>
+                <div style="width:40%">
+                    <h6>
+                        IT Bhawan, Ground & 1st Floor Beolia Road, Mehli Shimla, H.P. -171013 <br />
+                        Ph. 0177-2623513, 2628473,<br />
+                        GSTIN/UIN: 02AAACH3904P2ZO <br />
+                        PAN No.: AAACH3904P, TIN No.: 02010300179, TAN No.: PTLH10945E
+                        State Name : Himachal Pradesh, Code : 02<br />
+                        E-Mail : hpsedc@hpsedc.in
+                    </h6>
+                </div>
+            </div>
+            <div>
+                <br />
+                <strong><p class="text-center"> PROFORMA INVOICE</p></strong><br />
+            </div>
+             <div style="display:flex">
+                <div style="width:50%"> 
+                    <span><strong>Invoice No. :</strong> @invoice?.PiIdNoText </span>
+                </div>
+                <div style="width:50% ; text-align:right">
+                    <span><strong>Date:</strong> @invoice?.PiDate</span>
+                </div>
+            </div>
+            <div>
+                <br />
+                <div >To </div> <br />
+                <div style="margin-left:100px">
+                    <span>@invoice?.departmentName</span> <br />
+                    <span>@invoice?.AddressText</span>
+                </div>
+                <br />
+                <div>Contact No. :@invoice?.ContactNo </div>
+                <br /><div>Ref. No. : @invoice?.ReferenceNo</div>
+            </div> 
+            <div>
+                <table class="table table-bordered" style="text-align:center; margin-top:10px; border-color:black;">
+                    <thead>
+                        <tr>
+                            <th>Sr. No</th>
+                            <th style="width:400px">Description</th>
+                            <th> Basic Rate</th>
+                            <th>HPSEDC Technical Charge</th>
+                            <th>GST</th>
+                            <th>Rate Per Unit</th>
+                            <th>Qty.</th>
+                            <th>Total Amount</th>
+                        </tr>
+                    </thead>
+                  <tbody>
+    @if (Model != null && Model.Any())
+    {
+        int srNo = 1;
+
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>@srNo</td>
+                <td>@item.Sepcification</td>
+                <td>@item.UnitBasePrice</td>
+                <td>@item.AdminP</td>
+                <td>@item.GstP</td>
+                <td>@item.ProductUnitPrice</td>
+                <td>@item.OrderQty</td>
+                <td>@item.GrandTotal</td>              
+            </tr>
+
+            srNo++;
+        }
+    }
+</tbody>
+                    <tfoot class="tfoot" style="text-align:left;">
+                        <tr>
+                            <td colspan="7"><strong>Rounding (-/+)</strong></td>
+                            <td>@invoice?.RoundOff</td>
+                        </tr>
+                        <tr>
+                            <td colspan="7"><strong>Total</strong></td>                          
+                            <td>@invoice?.GrandTotal</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        <div> 
+            <strong>Terms & Conditions :- </strong>
+        </div>
+        <div> 
+            <strong>Payment :- </strong>
+        </div>
+        <div> 
+            <strong>Support :- </strong>
+                <div>
+                    <table class="table table-bordered" style="text-align:center; margin-top:10px; border-color:black;">
+                        <thead>
+                            <tr>
+                                <th>Sr. No</th>
+                                <th>Name & Model of the proddcut to be deelivered</th>
+                                <th> Qty.</th>
+                                <th>Office/Instituition where delivery is to made</th>
+                                <th>Name of Consignee</th>
+                                <th>Designation of Consignee</th>
+                                <th>Mobile No. of Consignee</th>                             
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+
+                        </tbody>
+                       
+                    </table>
+                </div>
+        </div>
+    <div>
+                <span><strong>Note : </strong>This is System generated Invoice and needs no signature</span>
+            </div>   
+    
+    
+    </div>
+    </div>
+
+    
+</body>
+</html>

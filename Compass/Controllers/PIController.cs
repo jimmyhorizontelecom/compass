@@ -2,6 +2,7 @@
 using Compass.Classes;
 using Compass.Models.Filter;
 using Compass.Models.Hardware;
+using Compass.Models.ManpowerModel;
 using Compass.Models.Test;
 using DocumentFormat.OpenXml.Bibliography;
 //using DocumentFormat.OpenXml.Drawing;
@@ -205,45 +206,80 @@ namespace Compass.Controllers
             }
         }
         // get Submit Record Add Term Type Condition
-        public async Task<IActionResult> SubmitTermsTypeConditionRecord([FromForm] string TermCondition)
+        //public async Task<IActionResult> SubmitTermsTypeConditionRecord([FromForm] string TermCondition)
+        //{
+        //    var model = JsonConvert.DeserializeObject<AddTypeTermsConditionModal>(TermCondition);
+
+        //    if (model == null)
+        //    {
+        //        return BadRequest("Model is null");
+        //    }
+        //    var roleId = User.FindFirst("RoleId")?.Value;
+        //    var userId = User.FindFirst("UserId")?.Value;
+        //    using SqlConnection con = new SqlConnection(_connectionString);
+        //    using SqlCommand cmd = new SqlCommand("HardwareTermType_Save", con);
+
+        //    cmd.CommandType = CommandType.StoredProcedure;
+
+
+        //    cmd.Parameters.AddWithValue("@TrCatgId", model.TrCatgId);
+        //    cmd.Parameters.AddWithValue("@CategoryName", model.CategoryName);
+        //    cmd.Parameters.AddWithValue("@TypeId", model.TypeId);
+        //    cmd.Parameters.AddWithValue("@CreatedBy ", userId);
+
+
+
+
+
+        //    // ✅ Correct Output Parameter
+        //    SqlParameter mesParam = new SqlParameter("@mes", SqlDbType.VarChar, -1);
+        //    mesParam.Direction = ParameterDirection.Output;
+        //    cmd.Parameters.Add(mesParam);
+
+        //    await con.OpenAsync();
+        //    await cmd.ExecuteNonQueryAsync();
+        //    string message = mesParam.Value?.ToString();
+        //    return Ok(new { success = true, message = message });
+
+        //}
+        [HttpPost]
+        public IActionResult SubmitTermsTypeConditionRecord([FromForm] AddTypeTermsConditionModal model)
         {
-            var model = JsonConvert.DeserializeObject<AddTypeTermsConditionModal>(TermCondition);
-
-            if (model == null)
+            try
             {
-                return BadRequest("Model is null");
+
+                SortedList parameters = new SortedList();
+                parameters.Add("@TrCatgId", model.TrCatgId);
+                parameters.Add("@CategoryName", model.CategoryName);
+                parameters.Add("@TypeId", model.TypeId);
+                var userId = User.FindFirst("UserId")?.Value;
+                parameters.Add("@CreatedBy", userId);
+
+                var result = _cn.ExecuteNonQueryWMessage(
+                    "HardwareTermType_Save",
+                    "",
+                    parameters
+                );
+
+                return Ok(new
+                {
+                    success = true,
+                    message = result.ToString()
+                });
             }
-            var roleId = User.FindFirst("RoleId")?.Value;
-            var userId = User.FindFirst("UserId")?.Value;
-            using SqlConnection con = new SqlConnection(_connectionString);
-            using SqlCommand cmd = new SqlCommand("HardwareTermType_Save", con);
-
-            cmd.CommandType = CommandType.StoredProcedure;
-
-
-            cmd.Parameters.AddWithValue("@TrCatgId", model.TrCatgId);
-            cmd.Parameters.AddWithValue("@CategoryName", model.CategoryName);
-            cmd.Parameters.AddWithValue("@TypeId", model.TypeId);
-            cmd.Parameters.AddWithValue("@CreatedBy ", userId);
-
-
-
-
-
-            // ✅ Correct Output Parameter
-            SqlParameter mesParam = new SqlParameter("@mes", SqlDbType.VarChar, -1);
-            mesParam.Direction = ParameterDirection.Output;
-            cmd.Parameters.Add(mesParam);
-
-            await con.OpenAsync();
-            await cmd.ExecuteNonQueryAsync();
-            string message = mesParam.Value?.ToString();
-            return Ok(new { success = true, message = message });
-
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
         }
         #endregion
-     
-        
+
+
         #region Terms & Condition Mapping
         public IActionResult TermsAndConditionMapping()
         {

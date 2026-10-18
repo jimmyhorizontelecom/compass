@@ -164,9 +164,6 @@ namespace Compass.Models.Hardware
 
         public string count { get; set; }
 
-
-
-
     }
     public class SaleOrderListViewModal
     {
@@ -826,6 +823,13 @@ namespace Compass.Models.Hardware
 
 
 
+    }
+
+    public class ProformaInvViewFilter
+    {
+
+        public int PiIdNO { get; set; }
+               
     }
 
 

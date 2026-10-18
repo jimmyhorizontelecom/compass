@@ -1,7 +1,7 @@
 ﻿var TrCatgId = 0;
 
 $(document).ready(function () {
-    bindDataToDdl("HardwareDropdown", "TermCondition_ddl", "", "ddlTermCondition", " Select Terms And Condition ", 0, 0);
+    //bindDataToDdl("HardwareDropdown", "TermCondition_ddl", "", "ddlTermCondition", " Select Terms And Condition ", 0, 0);
     bindDataToDdl("HardwareDropdown", "AddTermTypeCondition_ddl", "", "ddlTermTypeCondition", " Terms And Condition Type ", 0, 0);
     resetModal();
     AddTermTypeConditionList();
@@ -18,16 +18,13 @@ $(document).ready(function () {
 
 //Get Record for A table 
 async function AddTermTypeConditionList() {
-
     var filterata = {
         FilterId1: 0,
         FilterId2: 0,
         FilterId3: 0,
         FilterName1: '',
     };
-
     try {
-
         let records = await getRecords('PI', 'GetRecordTermTypeCondition', filterata, '#myTablePITermCondition', 'N');
         bindDatatableTermTypeConditionList(records, '#myTableAddTermTypeCondition');
     }
@@ -38,30 +35,22 @@ async function AddTermTypeConditionList() {
 }
 //Bind get record  in a table 
 function bindDatatableTermTypeConditionList(records, tableId) {
-
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().clear().destroy();
     }
-
     var tbody = $(tableId + " tbody");
     tbody.empty();
-
     $.each(records, function (i, value) {
         let SrNo = i + 1;
-
         tbody.append(`
             <tr 
-                 data-trid="${value.TrId}"  data-trcatgid="${value.TrCatgId}" 
-                         >
+                 data-trid="${value.TrId}"  data-trcatgid="${value.TrCatgId}"  >
                         <td>${SrNo}</td>
                          <td>${value.TermsAndConditionName}</td>
                         <td>${value.TermsAndConditionType}</td>
-                       
-               
             </tr>
         `);
     });
-
     $(tableId).DataTable({
         paging: true,
         searching: true,
@@ -69,80 +58,72 @@ function bindDatatableTermTypeConditionList(records, tableId) {
         info: true,
         responsive: true
     });
-
     //hideModalLoader();
 }
 
 // Open modal Add Term Type Condition
 $(document).on('click', '.btnAddTermType', function () {
-
     var row = $(this).closest('tr');
     var trcatgid = row.data('');
-
-    
     AddTermTypeConditionList();
-
     var myModal = new bootstrap.Modal(document.getElementById('myModalAddTermTypeCondition'));
     myModal.show();
 });
 // Submit record when Click on btn
-$(".btnModalTypeSubmit").on("click", function () {
-    
+$(".btnModalTypeSubmit").on("click", function () {  
     SubmitAddTermTypeCondition();
 });
 // get Create function when click on Submit 
 async function SubmitAddTermTypeCondition() {
-   
-    let isValid = true;
-
-
-    $(".error").text("");
+     let isValid = true;
+    $(".error").remove();
     $(".is-invalid").removeClass("is-invalid");
-
-   
-    //let TermsConditionName = $("#ddlTermCondition").val();
-   
-
-    $(".error").text("");
-    $(".is-invalid").removeClass("is-invalid");
-
-    //if (TermsConditionName === "") {
+    let TermsConditionName = $("#txtTypeName").val().trim();
+    let TermsConditionType = $("#ddlTermTypeCondition").val();
+    if (TermsConditionName === "") {
+        showError("txtTypeName", "Please Enter Condition");
+        isValid = false;
+    }
+    if (!TermsConditionType || TermsConditionType === "0") {
+        showError("ddlTermTypeCondition", "Select Condition Type");
+        isValid = false;
+    }
+    if (!isValid) return;
+     //if (TermsConditionName === "") {
     //    $("#ddlTermCondition").addClass("is-invalid");
     //    $("#ddlTermCondition").siblings(".error").text("Please Select the ddl from Terms And Condition.");
     //    isValid = false;
     //}
-    
-    var TermCondition = {
-        TrCatgId: TrCatgId,
-        CategoryName: $('#txtTypeName').val(),
-        TypeId: $('#ddlTermTypeCondition').val(),
-       
-    };
+        // var TermCondition = {
+    //     TrCatgId: TrCatgId,
+    //     CategoryName: TermsConditionName,
+    //     TypeId: TermsConditionType,   
+    // };
     var formData = new FormData();
-    formData.append("TermCondition", JSON.stringify(TermCondition));
-
-
+    //formData.append("TermCondition", JSON.stringify(TermCondition));
+    formData.append("TrCatgId", TrCatgId);
+    formData.append("CategoryName", TermsConditionName);
+    formData.append("TypeId", TermsConditionType);
     try {
-
-        let res = await acceptUpdateMultiTableFData1(
+        // let res = await acceptUpdateMultiTableFData1(
+        //     'PI',
+        //     'SubmitTermsTypeConditionRecord',
+        //     formData
+        // );
+        let res = await acceptUpdate(
             'PI',
             'SubmitTermsTypeConditionRecord',
             formData
         );
-
         if (res.success) {
             MsgBox('Message', res.message, '');
             AddTermTypeConditionList();
             resetModal();
             $('.modelalert').text(res.message);
-            closeModal('myModalAddTermTypeCondition');
-           
+            closeModal('myModalAddTermTypeCondition');          
         }
-
     }
     catch (err) {
         MsgBox('Message', err, 'Error');
     }
-
-
 }

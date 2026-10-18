@@ -8,12 +8,9 @@ function showDiv(divId) {
     document.getElementById(divId).style.display = "block";
 }
 function showDiv(divId) {
-
     $("#newSaleDiv, #listDiv").hide();
     $("#" + divId).show();
-
     $("button").removeClass("active");
-
     if (divId === "newSaleDiv") {
         $(".btn-primary").addClass("active");
     } else {
@@ -32,7 +29,6 @@ $(document).ready(function () {
     });
    showDiv('listDiv');
     recordlist();
-
     bindDataToDdl("HardwareDropdown", "HDepartment_ddl", "", "ddlDeptName", " Department Name", 0, 0);
     bindDataToDdl("HardwareDropdown", "HAgency_ddl", "", "ddlAgency", "Agency Name Filter", 0, 0);
     bindDataToDdl("HardwareDropdown", "HMainCategory_ddl", "", "ddlMainCatg", "Main Category", 0, 0);
@@ -50,36 +46,26 @@ $(document).ready(function () {
     bindDataToDdl("HardwareDropdown", "HDepartment_ddl", "", "ddlDeptNamePI", " Department Name ", 0, 0);
     bindDependentDataToDdl("HardwareDropdown", "PIAddressCart_ddl", "",// ❗ no modal
         "ddlDeptName", "ddlPIAddr", "Select Billing Address",);
-
-
-
-
-
-
 });
 // to get Record list into table list as per ddl value
 $('#ddlMainCatg').on('change', function () {
     let search = $('#customSearch').val();
     recordlist(1, search);
-
 });
 // to get Record list into table list as per ddl value
 $('#ddlPrdCatg').on('change', function () {
     let search = $('#customSearch').val();
     recordlist(1, search);
-
 });
 // to get Record list into table list as per ddl value
 $('#ddlBrand').on('change', function () {
     let search = $('#customSearch').val();
-    recordlist(1, search);
-
+   recordlist(1, search);
 });
 // to get Record list into table list as per ddl value
 $('#ddlDeptNamePI').on('change', function () {
     let search = $('#customSearch').val();
     recordPIList(1, search);
-
 });
 // to get Record list into table list as per ddl value
 $('#ddlBillAddr').on('change', function () {
@@ -103,20 +89,15 @@ async function getAddressDetail(AddressId) {
         FilterId3: 0,
         FilterName1: '',
     };
-
     try {
-
         let records = await getRecords('HardwarePurchase', 'getPIAddressDetails', filterata, '', 'N');
-
         if (records && records.length > 0) {
-
             let data = records[0];
             //Id = data.Id;
             $("#txtDesignation").val(data.Designation);
             $("#txtAreaPIAddrText").val(data.PIAddress);
             $("#txtEmailAddr").val(data.EmailId);
             $("#txtContact").val(data.ContactNo);
-
         }
     }
     catch (error) {
@@ -712,14 +693,8 @@ function bindDatatableGeneratePIListTable(records, tableId) {
 
         let SrNo = i + 1;
 
-        var PIConfirm = `
-        <button class="btn btn-danger btnPIConfirm">
-            PI Confirm
-        </button>`;
-        var GeneratePB = `
-        <button class="btn btn-danger btnPBGenerate">
-            Generate PB
-        </button>`;
+        var PIConfirm = `<button class="btn btn-danger btnPIConfirm"> PI Confirm </button>`;
+        var GeneratePB = `<button class="btn btn-danger btnPBGenerate"> Generate PB </button>`;
         var PrintPB = `
     <span class="text-muted">PB Not Generated</span>`;
 
@@ -763,7 +738,11 @@ function bindDatatableGeneratePIListTable(records, tableId) {
             <td>${value.ReferenceNo}</td>
             <td>${value.DepartmentName}</td>
             <td>${value.AddressText}</td>
-            <td><i class="fa fa-print fa-lg" style="color:#8B4513;"></i></td>
+            <td class="text-center">
+             <span data-piidno="${value.PiIdNO}">
+             <a href="javascript:void(0);"  class="view-proforma-invoice" data-piidno="${value.PiIdNO}"  title="View Proforma Invoice">
+              <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"> </i> </a> </span>
+            </td>
             <td>${PIConfirm}</td>
             <td>${GeneratePB}</td>           
             <td>${PrintPB}</td>           
@@ -1306,16 +1285,16 @@ async function SubmitPBGenerate() {
 }
 
 
+//View Proforma Invoice New tab
+$(document).on('click', '.view-proforma-invoice', function (e) {
+    e.preventDefault();
+    var piIdNO = $(this).data('piidno');
+    alert(piIdNO);
+    if (!piIdNO) {
+        toastr.error('Proforma Invoice ID not found');
+        return;
+    }
+    var url = '/HardwareReport/ProformaInvoiceList?PiIdNO=' + encodeURIComponent(piIdNO);
 
-
-
-
-
-
-
-
-
-
-
-
-
+    window.open(url, '_blank');
+});

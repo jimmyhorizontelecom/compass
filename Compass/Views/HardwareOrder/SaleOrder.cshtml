@@ -69,12 +69,14 @@
         </div>
         <div class="col-md-2 text-sm-start">
             <label for="deptOrderDate" class="form-label fw-semibold">  Dept Order Date <span class="text-danger">*</span> </label>
-            <input type="date"  id="deptOrderDate"   class="form-control"  max="" required />
+            <input type="date" id="deptOrderDate" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" >
+          @*   <input type="date"  id="deptOrderDate"   class="form-control"  max="" required /> *@
            @*  <span class="text-danger small" id="deptDateError"></span> *@
         </div>
         <div class="col-md-2 text-sm-start">
             <label for="orderEntryDate" class="form-label fw-semibold"> Order Entry Date <span class="text-danger">*</span></label>
-            <input type="date" id="orderEntryDate" class="form-control" readonly />
+            <input type="date" id="orderEntryDate" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")">
+          @*   <input type="date" id="orderEntryDate" class="form-control" readonly /> *@
             @* <span class="text-danger small" id="entryDateError"></span> *@
         </div>
         <div class="col-md-2">
@@ -201,7 +203,7 @@
     <div class="form-group row">
         <div class="col-md-2">
             <div class="mb-3">
-                <label for="formFileSm" class="form-label">Department Document</label>
+                <label for="formFileSm" class="form-label">Department Document<span class="text-danger">*</span></label>
                 <input class="form-control form-control-sm" id="DeptDocument" type="file">
             </div>
 
@@ -209,7 +211,7 @@
         </div>
         <div class="col-md-2">
             <div class="mb-3">
-                <label for="formFileSm" class="form-label">Department Location Document</label>
+                <label for="formFileSm" class="form-label">Department Location Document<span class="text-danger">*</span></label>
                 <input class="form-control form-control-sm" id="LocationAttachment" type="file">
             </div>
         </div>

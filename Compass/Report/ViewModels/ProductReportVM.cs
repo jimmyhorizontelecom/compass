@@ -7,9 +7,7 @@
         public string IsActive { get; set; }
     }
 
-    
-
-    public class DeptInvoiceReportVM
+        public class DeptInvoiceReportVM
     {
         public int DeptBillId { get; set; }
         public int AgencyBillId { get; set; }
@@ -57,4 +55,25 @@
         public string AcKNo { get; set; }
         public DateTime AckDt { get; set; }
     }
+
+
+    public class ProformaInvoiceReportVM
+    {
+        public int PiIdNO { get; set; }
+        public string PiIdNoText { get; set; }
+        public string PiDate { get; set; }
+        public string departmentName { get; set; }
+        public string AddressText { get; set; }
+        public string ReferenceNo { get; set; }
+        public string ContactNo { get; set; }
+        public string Sepcification { get; set; }
+        public decimal UnitBasePrice { get; set; }
+        public decimal AdminP { get; set; }
+        public decimal GstP { get; set; }
+        public decimal ProductUnitPrice { get; set; }
+        public int OrderQty { get; set; }
+        public decimal GrandTotal { get; set; }
+        public decimal RoundOff { get; set; }
+    }
+
 }
