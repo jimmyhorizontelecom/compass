@@ -43,6 +43,16 @@ namespace Compass.Services
         Task<List<DropdownElement>> GetConsigneeDdlAsync(int Id, string searchTerm);
         // get Billing AddressPI ddl 
         Task<List<DropdownElement>> GetBillingAddressPIDdlAsync(int Id, int ParentId, string searchTerm);
+
+       // Get Draft Agency DDL
+        Task<List<DropdownElement>> GetDraftAgencyDdlAsync(int Id, int MainCatgId, string searchTerm);
+
+        // Get Draft No on Agency DDL
+        Task<List<DropdownElement>> GetDraftNoOnAgencyDdlAsync(int Id, int MainCatgId, string searchTerm);
+
+
+
+
     }
 
 }

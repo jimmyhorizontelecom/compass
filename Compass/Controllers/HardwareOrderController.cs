@@ -1707,7 +1707,64 @@ namespace Compass.Controllers
                 });
             }
         }
-        // get Issue Purchase List
+        //// get Issue Purchase List
+        //[HttpGet]
+        //public async Task<IActionResult> getPurchaseIssueList([FromQuery] TestFilterData filter)
+        //{
+        //    try
+        //    {
+        //        // Access as object
+        //        int id = filter.FilterId1;
+        //        var userId = User.FindFirst("UserId")?.Value;
+        //        var roleId = User.FindFirst("RoleId")?.Value;
+        //        SortedList parameters = new SortedList();
+
+        //        parameters.Add("@SaleOrderId", filter.FilterId1);
+
+
+
+        //        var dt = await _cn.FillDataTableAsync("HardwareSaleOrderDetails_List", "", parameters);
+
+        //        if (dt == null || dt.Rows.Count == 0)
+        //            return Ok(new List<PurchaseIssueViewModal>());
+
+        //        var list = dt.AsEnumerable().Select(row => new PurchaseIssueViewModal
+
+
+        //        {
+
+        //            SaleOrderId = row["SaleOrderId"] == DBNull.Value ? 0 : Convert.ToInt32(row["SaleOrderId"]),
+        //            OrderDetailId = row["OrderDetailsId"] == DBNull.Value ? 0 : Convert.ToInt32(row["OrderDetailsId"]),
+        //            SaleOrder = row["SaleOrderId"] == DBNull.Value ? 'N' : Convert.ToChar(row["SaleOrderId"]),
+        //            RefferenceNo = row["SaleOrderId"]?.ToString(),
+        //            ProductName = row["ProductName"]?.ToString(),
+        //            Quantity = row["Qty"] == DBNull.Value ? 0m : Convert.ToDecimal(row["Qty"]),
+        //            PurchaseOrderNo = row["PurchaseOrderNo"]?.ToString(),
+        //            PurchaseOrderDate = row["PurchaseOrderDate"]?.ToString(),
+        //            Amount = row["ProductPrice"] == DBNull.Value ? 0m : Convert.ToDecimal(row["ProductPrice"]),
+        //            AgencyName = row["AgencyName"]?.ToString(),
+
+
+
+
+
+
+
+        //        }).ToList();
+
+        //        return Ok(list);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, new
+        //        {
+        //            success = false,
+        //            message = "Server error.",
+        //            error = ex.Message
+        //        });
+        //    }
+        //}
+
         [HttpGet]
         public async Task<IActionResult> getPurchaseIssueList([FromQuery] TestFilterData filter)
         {
@@ -1720,10 +1777,12 @@ namespace Compass.Controllers
                 SortedList parameters = new SortedList();
 
                 parameters.Add("@SaleOrderId", filter.FilterId1);
+                parameters.Add("@AgencyId", filter.FilterId2);
+                parameters.Add("@DraftOrderId", filter.FilterId3);
 
 
 
-                var dt = await _cn.FillDataTableAsync("HardwareSaleOrderDetails_List", "", parameters);
+                var dt = await _cn.FillDataTableAsync("HardwareSaleOrderDraftItemDetails_List", "", parameters);
 
                 if (dt == null || dt.Rows.Count == 0)
                     return Ok(new List<PurchaseIssueViewModal>());
@@ -1764,55 +1823,188 @@ namespace Compass.Controllers
                 });
             }
         }
-        // Store data in one to many relation form Purchase Issue Order 
-        public async Task<IActionResult> SubmitPurchaseIssuesOrder([FromForm] string PurchaseOrderIssue)
-        {
-            var model = JsonConvert.DeserializeObject<IssuesOrderModal>(PurchaseOrderIssue);
+        //// Store data in one to many relation form Purchase Issue Order 
+        //public async Task<IActionResult> SubmitPurchaseIssuesOrder([FromForm] string PurchaseOrderIssue)
+        //{
+        //    var model = JsonConvert.DeserializeObject<IssuesOrderModal>(PurchaseOrderIssue);
 
-            if (model == null)
-            {
-                return BadRequest("Model is null");
-            }
+        //    if (model == null)
+        //    {
+        //        return BadRequest("Model is null");
+        //    }
 
-            var userId = User.FindFirst("UserId")?.Value;
-            using SqlConnection con = new SqlConnection(_connectionString);
-            using SqlCommand cmd = new SqlCommand("HardwarePurchaseOrder_Issue2", con);
+        //    var userId = User.FindFirst("UserId")?.Value;
+        //    using SqlConnection con = new SqlConnection(_connectionString);
+        //    using SqlCommand cmd = new SqlCommand("HardwarePurchaseOrder_Issue2", con);
 
-            cmd.CommandType = CommandType.StoredProcedure;
+        //    cmd.CommandType = CommandType.StoredProcedure;
 
-            cmd.Parameters.AddWithValue("@OrderDetailsId ", model.OrderDetailsId);
-            cmd.Parameters.AddWithValue("@AgencyId ", model.AgencyId);
-            cmd.Parameters.AddWithValue("@IsUniquePruchaseOrder ", model.IsUniquePruchaseOrder);
-            cmd.Parameters.AddWithValue("@CreatedBy ", userId);
-            // Convert child list to DataTable
-            System.Data.DataTable dt = new System.Data.DataTable();
-            dt.Columns.Add("OrderDetailsId", typeof(int));
-            dt.Columns.Add("validDateFrom", typeof(string));
-            dt.Columns.Add("validDateTo", typeof(string));
-
-
+        //    cmd.Parameters.AddWithValue("@OrderDetailsId ", model.OrderDetailsId);
+        //    cmd.Parameters.AddWithValue("@AgencyId ", model.AgencyId);
+        //    cmd.Parameters.AddWithValue("@IsUniquePruchaseOrder ", model.IsUniquePruchaseOrder);
+        //    cmd.Parameters.AddWithValue("@CreatedBy ", userId);
+        //    // Convert child list to DataTable
+        //    System.Data.DataTable dt = new System.Data.DataTable();
+        //    dt.Columns.Add("OrderDetailsId", typeof(int));
+        //    dt.Columns.Add("validDateFrom", typeof(string));
+        //    dt.Columns.Add("validDateTo", typeof(string));
 
 
-            foreach (var item in model.Items)
-            {
-                dt.Rows.Add(item.OrderDetailsId, item.validDateFrom, item.validDateTo);
-            }
 
-            SqlParameter tvpParam = cmd.Parameters.AddWithValue("@OrderDetailsIdTable", dt);
-            tvpParam.SqlDbType = SqlDbType.Structured;
-            tvpParam.TypeName = "OrderDetailsIdTable3";
-            // ✅ Correct Output Parameter
-            SqlParameter mesParam = new SqlParameter("@mes", SqlDbType.VarChar, -1);
-            mesParam.Direction = ParameterDirection.Output;
-            cmd.Parameters.Add(mesParam);
 
-            await con.OpenAsync();
-            await cmd.ExecuteNonQueryAsync();
-            string message = mesParam.Value?.ToString();
-            return Ok(new { success = true, message = message });
+        //    foreach (var item in model.Items)
+        //    {
+        //        dt.Rows.Add(item.OrderDetailsId, item.validDateFrom, item.validDateTo);
+        //    }
 
-        }
+        //    SqlParameter tvpParam = cmd.Parameters.AddWithValue("@OrderDetailsIdTable", dt);
+        //    tvpParam.SqlDbType = SqlDbType.Structured;
+        //    tvpParam.TypeName = "OrderDetailsIdTable3";
+        //    // ✅ Correct Output Parameter
+        //    SqlParameter mesParam = new SqlParameter("@mes", SqlDbType.VarChar, -1);
+        //    mesParam.Direction = ParameterDirection.Output;
+        //    cmd.Parameters.Add(mesParam);
+
+        //    await con.OpenAsync();
+        //    await cmd.ExecuteNonQueryAsync();
+        //    string message = mesParam.Value?.ToString();
+        //    return Ok(new { success = true, message = message });
+
+        //}
+
+
+
         // get Purchase Order List
+
+        // Submit Draft Purchase Order Issue
+        [HttpPost]
+        public async Task<IActionResult> AddorEdit_SubmitIssuePurchase(
+            [FromForm] string DraftOrder)
+        {
+            try
+            {
+                // 1. Check received data
+                if (string.IsNullOrWhiteSpace(DraftOrder))
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Draft order data is required."
+                    });
+                }
+
+                // 2. JSON ko model mein convert karein
+                var model =
+                    JsonConvert.DeserializeObject<IssuePurchaseSubmitModel>(
+                        DraftOrder
+                    );
+
+                if (model == null ||
+                    model.OrderDetailsIds == null ||
+                    model.OrderDetailsIds.Count == 0)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Please select at least one item."
+                    });
+                }
+
+                // 3. Agency validation
+                if (model.AgencyId <= 0)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Please select Agency."
+                    });
+                }
+
+                // 4. Login user
+                var userId = Convert.ToInt32(
+                    User.FindFirst("UserId")?.Value ?? "0"
+                );
+
+                if (userId <= 0)
+                {
+                    return Unauthorized(new
+                    {
+                        success = false,
+                        message = "Login user not found."
+                    });
+                }
+
+                // TVP DATATABLE
+                System.Data.DataTable dt = new System.Data.DataTable();
+                dt.Columns.Add("OrderDetailsId", typeof(int));
+                dt.Columns.Add("validDateFrom", typeof(string));
+                dt.Columns.Add("validDateTo", typeof(string));
+
+                foreach (var id in model.OrderDetailsIds.Distinct())
+                {
+                    if (id > 0)
+                    {
+                        dt.Rows.Add(
+                            id,
+                            DBNull.Value,
+                            DBNull.Value
+                        );
+                    }
+                }
+
+                if (dt.Rows.Count == 0)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Valid OrderDetailsId not found."
+                    });
+                }
+
+                // 6. Database parameters
+                SortedList parameters = new SortedList
+        {
+            { "@OrderDetailsId", dt.Rows[0]["OrderDetailsId"] },
+            { "@AgencyId", model.AgencyId },
+            { "@CreatedBy", userId },
+            { "@IsUniquePruchaseOrder", model.IsUniquePurchaseOrder ?? "N" },
+            { "@OrderDetailsIdTable", dt },
+            { "@DraftId", model.DraftId },
+            { "@Remarks", model.Remarks ?? "" },
+           
+        };
+
+                // 7. Execute stored procedure
+                var result = _cn.ExecuteNonQueryWMessage(
+                    "HardwareDraftPurchaseOrder_Issue",
+                    "",
+                    parameters
+                );
+
+                string message = Convert.ToString(result);
+
+                if (string.IsNullOrWhiteSpace(message) || message.Trim() == ":")
+                {
+                    message = "Purchase order issue request processed.";
+                }
+
+                return Ok(new
+                {
+                    success = true,
+                    message = message
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> getStatusPurchaseOrderList([FromQuery] TestFilterData filter)
         {
@@ -2095,6 +2287,179 @@ namespace Compass.Controllers
             return View();
         }
         #endregion
+
+        #region Draft Order 
+        public IActionResult DraftOrder()
+        {
+            return View();
+        }
+
+        // get Item Description List
+        [HttpGet]
+        public async Task<IActionResult> getDraftItemDescriptionList([FromQuery] TestFilterData filter)
+        
+        {
+            try
+            {
+                // Access as object
+                //int id = filter.FilterId1;
+                //var userId = User.FindFirst("UserId")?.Value;
+                //var roleId = User.FindFirst("RoleId")?.Value;
+                SortedList parameters = new SortedList();
+                parameters.Add("@SaleOrderId", filter.FilterId1);
+                parameters.Add("@AgencyId", filter.FilterId2);
+                parameters.Add("@DraftOrderId", filter.FilterId3);
+                //parameters.Add("@UserRole", userId);            
+                var dt = await _cn.FillDataTableAsync("HardwareSaleOrderDraftItemDetails_List", "", parameters);
+                if (dt == null || dt.Rows.Count == 0)
+                    return Ok(new List<DraftOrderListViewModal>());
+                var list = dt.AsEnumerable().Select(row => new DraftOrderListViewModal
+                {
+
+                    DraftOrderId = row["DraftOrderId"] == DBNull.Value? 0 : Convert.ToInt32(row["DraftOrderId"]),
+                    IsDraftOrder = row["DraftOrderId"] == DBNull.Value ? "N" : "Y",
+                    SaleOrderId = row["SaleOrderId"] == DBNull.Value ? 0 : Convert.ToInt32(row["SaleOrderId"]),
+                    OrderDetailsId = row["OrderDetailsId"] == DBNull.Value? 0 : Convert.ToInt32(row["OrderDetailsId"]),
+                    //SaleRefNo = row["SaleRefNo"] == DBNull.Value? string.Empty : row["SaleRefNo"].ToString(),
+                    ProductName = row["ProductName"] == DBNull.Value? string.Empty : row["ProductName"].ToString(),
+                    Qty = row["Qty"] == DBNull.Value ? 0 : Convert.ToInt32(row["Qty"]),
+                    DraftOrderDate = row["DraftDate"] == DBNull.Value ? DateTime.MinValue : Convert.ToDateTime(row["DraftDate"]),
+                    PONo = row["PurchaseOrderNo"] == DBNull.Value? 0 : Convert.ToInt32(row["PurchaseOrderNo"]),
+                    //PODate = row["PurchaseOrderDate"] == DBNull.Value  ? DateTime.MinValue : Convert.ToDateTime(row["PurchaseOrderDate"]),
+                   // BillAmt = row["BillAmt"] == DBNull.Value  ? 0 : Convert.ToDecimal(row["BillAmt"]),
+                    AgencyName = row["AgencyName"] == DBNull.Value ? string.Empty : row["AgencyName"].ToString(),
+                    AmcValidty = row["validDateTo"] == DBNull.Value ? DateTime.MinValue : Convert.ToDateTime(row["validDateTo"])
+                }).ToList();
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+
+
+
+        //Submit Create Draft Order
+[HttpPost]
+public async Task<IActionResult> AddorEdit_SubmitDraftOrder([FromForm] string DraftOrder)
+        {
+            try
+            {
+                // 1. Check received data
+                if (string.IsNullOrWhiteSpace(DraftOrder)) {
+                    return BadRequest(new { 
+                        success = false, message = "" }
+                    ); }
+                // JSON ko model mein convert karein
+                var model = JsonConvert.DeserializeObject<DraftOrderSubmitModel>(DraftOrder);
+
+                if (model == null ||
+                    model.OrderDetailsIds == null ||
+                    model.OrderDetailsIds.Count == 0)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Please select at least one item."
+                    });
+                }
+
+                // LOGIN USER
+                var userId = Convert.ToInt32(
+                    User.FindFirst("UserId")?.Value ?? "0"
+                );
+
+                if (userId <= 0)
+                {
+                    return Unauthorized(new
+                    {
+                        success = false,
+                        message = "Login user not found."
+                    });
+                }
+
+                // TVP DATATABLE
+                System.Data.DataTable dt = new System.Data.DataTable();
+
+                dt.Columns.Add("OrderDetailsId", typeof(int));
+                dt.Columns.Add("validDateFrom", typeof(string)); 
+                dt.Columns.Add("validDateTo", typeof(string));
+
+                foreach (var id in model.OrderDetailsIds.Distinct())
+                {
+                    if (id > 0)
+                    {
+                        dt.Rows.Add(
+                        id, 
+                        DBNull.Value, 
+                        DBNull.Value
+                            );
+                    }
+                }
+
+                if (dt.Rows.Count == 0)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Valid OrderDetailsId not found."
+                    });
+                }
+
+                // DATABASE PARAMETERS
+                SortedList parameters = new SortedList
+        {
+            { "@OrderDetailsId", dt.Rows[0]["OrderDetailsId"] },
+            { "@AgencyId", model.AgencyId },
+            { "@CreatedBy", userId },
+            { "@IsUniqueDraftOrder", model.IsUniqueDraftOrder ?? "N" },
+            { "@OrderDetailsIdTable", dt }
+        };
+
+                // SAVE TO DATABASE
+                var result = _cn.ExecuteNonQueryWMessage(
+                    "HardwareDraftOrder_create",
+                    "",
+                    parameters
+                );
+
+                string message = Convert.ToString(result);
+
+                if (string.IsNullOrWhiteSpace(message) || message.Trim() == ":")
+                {
+                    message = "Draft order submitted successfully.";
+                }
+
+                return Ok(new
+                {
+                    success = true,
+                    message = message
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
+        }
+
+
+
+
+        #endregion
+
 
     }
 

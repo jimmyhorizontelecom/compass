@@ -1216,31 +1216,19 @@ namespace Compass.Controllers
 
         {
             var model = JsonConvert.DeserializeObject<GenerateProductModel>(ItemDetail);
-
-
-
-
-
-
-
             if (model == null)
             {
                 return BadRequest("Model is null");
             }
-
             var userId = User.FindFirst("UserId")?.Value;
             using SqlConnection con = new SqlConnection(_connectionString);
             using SqlCommand cmd = new SqlCommand("HardwarePurchaseInvProductList", con);
 
             cmd.CommandType = CommandType.StoredProcedure;
-
             cmd.Parameters.AddWithValue("@PurchaseOrderNo", model.PurchaseOrderNo);
-
             // Convert child list to DataTable
             System.Data.DataTable dt = new System.Data.DataTable();
             dt.Columns.Add("OrderDeliveryId", typeof(int));
-
-
             foreach (var item in model.Items)
             {
                 dt.Rows.Add(item.OrderDeliveryId);
@@ -1253,12 +1241,9 @@ namespace Compass.Controllers
             SqlParameter mesParam = new SqlParameter("@mes", SqlDbType.VarChar, -1);
             mesParam.Direction = ParameterDirection.Output;
             cmd.Parameters.Add(mesParam);
-
             await con.OpenAsync();
-
             List<ProductInvViewModal> productList = new List<ProductInvViewModal>();
-
-            using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+           using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
             {
                 while (await reader.ReadAsync())
                 {
@@ -1852,23 +1837,16 @@ namespace Compass.Controllers
                 SortedList parameters = new SortedList();
                 parameters.Add("@PiAddressId", filter.FilterId1);
                 parameters.Add("@DeptId", filter.FilterId2);
-
-
-
                 var dt = await _cn.FillDataTableAsync("HardwareDeparmentPiAddress_List", "", parameters);
-
                 if (dt == null || dt.Rows.Count == 0)
                     return Ok(new List<PIAddressListViewModal>());
-
                 var list = dt.AsEnumerable().Select(row => new PIAddressListViewModal
                 {
                     Designation = row["Designation"]?.ToString(),
                     PIAddress = row["AddressText"]?.ToString(),
                     EmailId = row["EmailId"]?.ToString(),
                     ContactNo = row["ContactNo"]?.ToString(),
-
                 }).ToList();
-
                 return Ok(list);
             }
             catch (Exception ex)
@@ -1881,8 +1859,8 @@ namespace Compass.Controllers
                 });
             }
         }
-        // get PB Generate List
-        public async Task<IActionResult> getGeneratePBList([FromQuery] TestFilterData filter)
+       // get PB Generate List
+       public async Task<IActionResult> getGeneratePBList([FromQuery] TestFilterData filter)
         {
             try
             {
@@ -1893,19 +1871,11 @@ namespace Compass.Controllers
                 SortedList parameters = new SortedList();
                 parameters.Add("@DeptOrderId", filter.FilterId1);
                 parameters.Add("@CreatedBy", userId);
-
-
-
                 var dt = await _cn.FillDataTableAsync("HardwareDepartmentOrderDetails_List", "", parameters);
-
                 if (dt == null || dt.Rows.Count == 0)
                     return Ok(new List<PBGenerateViewModal>());
-
                 var list = dt.AsEnumerable().Select(row => new PBGenerateViewModal
-
-
                 {
-
                     DepartmentName = row["departmentName"]?.ToString(),
                     DeptOrderId = row["DeptOrderId"]?.ToString(),
                     //IsDeptConfirmed = row["IsDeptConfirmed"]?.ToString(),
@@ -1922,13 +1892,7 @@ namespace Compass.Controllers
                     GrandTotal = row["GrandTotal"] == DBNull.Value ? 0m : Convert.ToDecimal(row["GrandTotal"]),
                     Qty = row["OrderQty"] == DBNull.Value ? 0m : Convert.ToDecimal(row["OrderQty"]),
                     TotalAmount = row["GrandTotal"] == DBNull.Value ? 0m : Convert.ToDecimal(row["GrandTotal"]),
-
-
-
-
-
                 }).ToList();
-
                 return Ok(list);
             }
             catch (Exception ex)
@@ -1941,33 +1905,26 @@ namespace Compass.Controllers
                 });
             }
         }
-
-        // get Submit PB Generate 
-        public async Task<IActionResult> SubmitRecordGeneratePB([FromForm] string GeneratePorforma)
+       // get Submit PB Generate 
+       public async Task<IActionResult> SubmitRecordGeneratePB([FromForm] string GeneratePorforma)
         {
             var model = new GeneratePorformaModel();
             string message = "";
             try
             {
                 model = JsonConvert.DeserializeObject<GeneratePorformaModel>(GeneratePorforma);
-
-
-
                 if (model == null)
                 {
                     return BadRequest("Model is null");
                 }
-
                 var userId = User.FindFirst("UserId")?.Value;
                 using SqlConnection con = new SqlConnection(_connectionString);
                 using SqlCommand cmd = new SqlCommand("tblHardwarePiBill_AcceptUpdate", con);
-
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@DeptOrderId", model.DeptOrderId);
                 cmd.Parameters.AddWithValue("@BillGeneratedRemarks", model.BillGeneratedRemarks);
                 cmd.Parameters.AddWithValue("@IsBillGenerated", "Y");
                 cmd.Parameters.AddWithValue("@BillGeneratedBy", userId);
-
                 // ✅ Correct Output Parameter
                 SqlParameter mesParam = new SqlParameter("@mes", SqlDbType.VarChar, -1);
                 mesParam.Direction = ParameterDirection.Output;

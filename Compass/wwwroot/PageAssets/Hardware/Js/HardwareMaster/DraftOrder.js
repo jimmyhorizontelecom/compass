@@ -1,469 +1,159 @@
 ﻿var Id = 0, tabIdNo = 1;
 var OrderId = 0;
-function showDiv(divId) {
-    $("#newSaleDiv, #listDiv").hide();
-    $("#" + divId).show();
-    $("button").removeClass("active");
-    if (divId === "newSaleDiv") {
-        $(".btn-primary").addClass("active");
-    } else {
-        $(".btn-success").addClass("active");
-    }
-}
-
 $(document).ready(function () {
-    
+    alert('Draft Order');
+        $('#page-header').text('My Orders');
         var today = new Date().toISOString().split('T')[0];
         $("#deptOrderDate").attr("max", today);   // prevent future date
         $("#orderEntryDate").val(today);          // set today date
-
-    $('#myTableAddLocation').DataTable({
-        "paging": true,
-        "searching": true,
-        "lengthMenu": [[5, 10, 25, 50], [5, 10, 25, 50]],
-        "language": {
-            "search": "Search"
-        }
+    
+    $('#myTableOrderIssue').DataTable({
+        scrollX: true
     });
-
-    showDiv('listDiv');
+    $("#listDiv").show();
     recordlist();
-    //Filter DDL
+    let srNo = 1;
+    // parent child ddl 
+    console.log('test');
     bindDataToDdl("HardwareDropdown", "HDepartment_ddl", "", "ddlDepartment", " Department Name Filter", 0, 0);
     bindDataToDdl("HardwareDropdown", "HAgency_ddl", "", "ddlAgency", "Agency Name Filter", 0, 0);
-    //Dept DDL
-    bindDataToDdl("HardwareDropdown", "HDepartment_ddl", "", "ddlDept", " Department ", 0, 0);
-    //BillingAdd DDL depend on Dept
-    bindDependentDataToDdl("HardwareDropdown", "BillingAddress_ddl", null,// ❗ no modal
-        "ddlDept", "ddlBilling", "Select Billing Address");
-    //MainCatg DDL
-    bindDataToDdl("HardwareDropdown", "HMainCategory_ddl", "", "ddlMainCatg", " Main Categroy", 0, 0);
-    //Brand DDL
-    bindDataToDdl("HardwareDropdown", "HCompany_ddl", "", "ddlBrand", " Brand ", 0, 0);
-    //Product Category DDL
-    bindDataToDdl("HardwareDropdown", "HProduct_ddl", "", "ddlProductCatg", " Product Category");
-    // ItemName DDL with dependent on Three Parent
-    bindDependentDataToDdlToParent("HardwareDropdown", "HProductNameWithModel_ddl", null,// ❗ no modal
-        "ddlMainCatg", "ddlProductCatg", "ddlBrand", "ddlItemName", "Model");
+    // bindDataToDdl1("HardwareDropdown", "HDraftNo_ddl", "myModalPurchaseIssue", "ddlDraftAgency" ,"ddlAgencyModal" ," Agency", 14);
 
-    bindDataToDdl("HardwareDropdown", "HDistrict_ddl", "myModalAddLocation", "ddlDistrict", " District Name", 0, 0);
+    // Agency dropdown in PurchaseIssue
+   // bindDataToDdl(   "HardwareDropdown",  "HAgencyDraft_ddl", "myModalPurchaseIssue", "ddlAgencyModal", "Agency", 14, 0 );
+    bindDataToDdl("HardwareDropdown", "HAgency_ddl", "myModalPurchaseIssue", "ddlAgencyModal", "Agency", 0, 0);
+    // Agency dropdown in DraftIssue
+    bindDataToDdl("HardwareDropdown", "HAgency_ddl", "myModalDraftIssue", "ddlDraftAgency", " Agency", 0, 0);
+    // Draft dropdown depends on Agency
+    // bindDataToDdl1(
+    //     "HardwareDropdown",
+    //     "HDraftNo_ddl",
+    //     "myModalPurchaseIssue",
+    //     "ddlDraftNo",
+    //     "ddlAgencyModal",
+    //     "Draft No.",
+    //     14
+    // );
+    console.log('test1');
+    // bindDataToDdl("HardwareDropdown", "HAgencyDraft_ddl", "myModalPurchaseIssue", "ddlAgencyModal", " Agency", 14, 0);
+    console.log('test2'); 
+   
 
-
-    $(document).on('change', '#ddlAgency,#ddlDepartment', function () {
-        recordlist();
-    });
 });
-    //Fill data while change on Item name ddl
-    $('#ddlItemName').on('change', async function () {
-
-        var selectedValue = $(this).val();
-        //var selectedText = $('#ddlItemName option:selected').text();
-        var qty = parseInt($("#Qty").val()) || 1;
-        console.log("Selected ID:", selectedValue);
-        console.log("Selected Qty:", qty);
-
-        if (!selectedValue) {
-            console.log("No item selected");
-            return;
-        }
-
-        await loadRecordById(selectedValue, qty);
-    });
-
-    async function loadRecordById(selectedValue, qty) {
-
-        console.log("loadRecordById called");
-        console.log("ProductId:", selectedValue);
-        console.log("Qty:", qty);
-
-        var filterData = {
-            FilterId1: parseInt(selectedValue),
-            FilterId2: parseInt(qty),
-            FilterId3: 0,
-            FilterName1: ''
-        };
-        console.log("Filter Data:", filterData);
-        try {
-            let records = await getRecords('HardwareOrder', 'GetPriceRecord', filterData, '', 'N');
-            console.log("API Response:", records);
-            if (records && records.length > 0) {
-                let data = records[0];
-                console.log("First Record:", data);
-                $("#Rate").val(Number(data.ProductPrice).toFixed(2));
-                $("#TotalRate").val(Number(data.TotalPrice).toFixed(2));
-                $("#AdminCharge").val(Number(data.HPSEDCCharges).toFixed(2));
-                $("#GST").val(Number(data.Gst).toFixed(2));
-                $("#Total").val(Number(data.Total).toFixed(2));
-                $("#Specification").val(data.Sepcification);
-            } else {
-                console.log("No record found");
-                $("#Rate").val('');
-                $("#TotalRate").val('');
-                $("#AdminCharge").val('');
-                $("#GST").val('');
-                $("#Total").val('');
-                $("#Specification").val('');
-            }
-        }
-        catch (error) {
-            console.error("Error loading record:", error);
-        }
-    }
-
-    //Calculation when change on Qty
-    $('#Quantity').on('keyup change', function () {
-        var selectedValue = $('#ddlItemName').val();
-        // var selectedText = $('#ddlItemName option:selected').text();
-        loadRecordById(selectedValue, $(this).val());
-        console.log("Selected ID: " + selectedValue);
-        // console.log("Selected Item: " + selectedText);
-    });
-
-    let srNo = 1;
-$("#btnAdd").click(function () {
-    let isValid = true;
-    $(".error").remove();
-    $(".is-invalid").removeClass("is-invalid");
-        var mainCat = $("#ddlMainCatg option:selected").text();
-        var mainCatId = $("#ddlMainCatg").val();
-        var brand = $("#ddlBrand option:selected").text();
-        var brandId = $("#ddlBrand").val();
-        var product = $("#ddlProductCatg option:selected").text();
-        var productId = $("#ddlProductCatg option:selected").val();
-        var model = $("#ddlItemName option:selected").text();
-        var modelId = $("#ddlItemName").val();
-        var specification = $("#Specification").val();
-        var qty = $("#Quantity").val();
-        var rate = parseFloat($("#Rate").val()).toFixed(2);
-        var totalRate = parseFloat($("#TotalRate").val()).toFixed(2);
-        var adminCharge = parseFloat($("#AdminCharge").val()).toFixed(2);
-        var gst = parseFloat($("#GST").val()).toFixed(2);
-        var total = parseFloat($("#Total").val()).toFixed(2);
-        var narration = $("#Naration").val();
-
-        if (!mainCatId || mainCatId === "0") {
-            showError("ddlMainCatg", "Select Main Category");
-            isValid = false;
-        }
-        if (!brandId || brandId === "0") {
-            showError("ddlBrand", "Select Brand");
-            isValid = false;
-        }
-        if (!productId || productId === "0") {
-            showError("ddlProductCatg", "Select Product Category");
-            isValid = false;
-        }
-        if (!modelId || modelId === "0") {
-            showError("ddlItemName", "Select Item Name");
-            isValid = false;
-        }
-        if (qty === "") {
-            //alert("Please fill required fields");
-            //return;
-            showError("Quantity", "Please Enter Qty");
-            isValid = false;
-        }
-        if (narration === "") {
-            //alert("Please fill required fields");
-            //return;
-            showError("Naration", "Please Enter Narration");
-            isValid = false;
-        }
-        if (!isValid) return; // stop if validation fails
-     
-       var row = `<tr>
-        <td>${srNo}</td>
-        <td>
-            ${mainCat}
-            <input type="hidden" class="productId" value="${productId}">
-        </td>
-        <td class="brand">${brand}</td>
-        <td class="product">${product}</td>
-        <td class="model">${model}</td>
-        <td class="specification">${specification}</td>
-        <td class="OrderQty">${qty}</td>
-        <td class="UnitPrice">${rate}</td> 
-        <td class="Price">${totalRate}</td> 
-        <td class="AdminCharge">${adminCharge}</td>
-        <td class="Gst">${gst}</td>
-        <td class="Gtotal">${total}</td>
-        <td class="Narration">${narration}</td>
-        <td>
-            <button class="btn btn-danger btn-sm btnRemove">Remove</button>
-        </td>
-        </tr>`;
-        //alert(row);
-        $("#myTable1 tbody").append(row);
-    srNo++;
-    // Calculate totals from table
-    calculateSaleOrderTotal();
-
-         //Clear Inputs
-    //$(".cleartxt").val('');
-    $(".cleartxt").each(function () {
-        if ($(this).is("select")) {
-            // Select2 dropdown clear
-            $(this).val(null).trigger("change.select2");
-        } else {
-            // Textbox / textarea etc.
-            $(this).val("");
-        }
-    });
-    //ReadTable();
-//    resetModal();
-        //readAllItems();
-        //SubmitRecord();
-
-    });
-function calculateSaleOrderTotal() {
-
-    let totalPrice = 0;
-    let totalAdminCharge = 0;
-    let totalGST = 0;
-    let grandTotal = 0;
-
-    $("#myTable1 tbody tr").each(function () {
-
-        let row = $(this);
-
-        let price = parseFloat(row.find(".Price").text()) || 0;
-        let adminCharge = parseFloat(row.find(".AdminCharge").text()) || 0;
-        let gst = parseFloat(row.find(".Gst").text()) || 0;
-        let total = parseFloat(row.find(".Gtotal").text()) || 0;
-
-        totalPrice += price;
-        totalAdminCharge += adminCharge;
-        totalGST += gst;
-        grandTotal += total;
-    });
-
-    $("#txtPrice").val(totalPrice.toFixed(2));
-    $("#txtAdminCharge").val(totalAdminCharge.toFixed(2));
-    $("#txtGST").val(totalGST.toFixed(2));
-    $("#txtGTotal").val(grandTotal.toFixed(2));
-}
-//Remove data from Tem Table in Add Sale Items
-$(document).on("click", ".btnRemove", function () {
-    $(this).closest("tr").remove();
-    calculateSaleOrderTotal();
-    // Sr.No update
-    $("#myTable1 tbody tr").each(function (index) {
-        $(this).find("td:first").text(index + 1);
-    });
-    srNo = $("#myTable1 tbody tr").length + 1;
+// $('#myTableOrderIssue').DataTable({
+//     "paging": true,
+//     "pageLength": 10
+// });
+$('#myTablePurchaseIssue').DataTable({
+    "paging": true,
+    "pageLength": 10
 });
-
+$('#myTablePurchaseOrder').DataTable({
+    "paging": true,
+    "pageLength": 10
+});
+$('#myTablePurchaseOrderRemarks').DataTable({
+    "paging": true,
+    "pageLength": 10
+});
 //Get Record for A table 
-$("#btnsubmit").on("click", function () {
-    SubmitRecord();
-});
-
-async function SubmitRecord() {
-    let isValid = true;
-    // =========================================
-    // Clear Previous Validation
-    // =========================================
-    $(".error").remove();
-    $(".is-invalid").removeClass("is-invalid");
-    // =========================================
-    // Get Main Form Values
-    // =========================================
-    let Department = $("#ddlDept").val();
-    let BillingAddress = $("#ddlBilling").val();
-    let Reference = $("#txtReference").val().trim();
-    let DeptOrderDate = $("#deptOrderDate").val();
-    let OrderEntryDate = $("#orderEntryDate").val();
-    let IsPaymentRequired = $('#IsActive').is(':checked') ? 'Y' : 'N';
-    // =========================================
-    // Main Form Validation
-    // =========================================
-    if (!Department || Department === "0") {
-        showError("ddlDept", "Select Department");
-        isValid = false;
-    }
-    if (!BillingAddress || BillingAddress === "0") {
-        showError("ddlBilling", "Select Billing Address");
-        isValid = false;
-    }
-    if (Reference === "") {
-        showError("txtReference", "Please enter Reference No.");
-        isValid = false;
-    }
-    if (DeptOrderDate === "") {
-        showError("deptOrderDate", "Please enter Order Date");
-        isValid = false;
-    }
-    if (OrderEntryDate === "") {
-        showError("orderEntryDate","Please enter Order Entry Date");
-        isValid = false;
-    }
-    // =========================================
-    // Table Validation
-    // =========================================
-    let itemCount = $("#myTable1 tbody tr").length;
-    if (itemCount === 0) {
-        showError("myTable1 tbody","Please add at least one Sale Item");
-        isValid = false;
-    }
-    // =========================================
-    // File Objects
-    // =========================================
-    let deptFile = $("#DeptDocument")[0]?.files[0];
-    let locationFile =$("#LocationAttachment")[0]?.files[0];
-    // =========================================
-    // Department Document Validation
-    // =========================================
-    let fileSize = 10; // MB
-    if (!deptFile) {
-        showError("DeptDocument","Please select Department Document");
-        isValid = false;
-    }
-    else {
-        let sizeInMB =deptFile.size / (1024 * 1024);
-        if (sizeInMB > fileSize) {
-            showError("DeptDocument","File Size should be <= " + fileSize + " MB");
-            isValid = false;
-        }
-    }
-    // =========================================
-    // Location Attachment Validation
-    // =========================================
-    if (!locationFile) {
-        showError("LocationAttachment","Please select Location Attachment");
-        isValid = false;
-    }
-    else {
-        let sizeInMB = locationFile.size / (1024 * 1024);
-        if (sizeInMB > fileSize) {
-            showError("LocationAttachment","File Size should be <= " + fileSize + " MB");
-            isValid = false;
-        }
-    }
-    // =========================================
-    // Stop Validation
-    // =========================================
-    if (!isValid) {
-        return;
-    }
-
-    // =========================================
-    // Read Multiple Items
-    // =========================================
-    let items = [];
-    $("#myTable1 tbody tr").each(function () {
-        let row = $(this);
-        let item = {
-            ProductId:parseInt(row.find(".productId").val()) || 0,
-            OrderQty:parseFloat(row.find(".OrderQty").text().trim()) || 0,
-            Price:parseFloat(row.find(".UnitPrice").text().trim()) || 0,
-            Gst:parseFloat(row.find(".Gst").text().trim() ) || 0,
-            AdminCharge: parseFloat(row.find(".AdminCharge").text().trim()) || 0,
-            Gtotal: parseFloat(row.find(".Gtotal").text().trim()) || 0,
-            Narration: row.find(".Narration").text().trim()
-       };
-        items.push(item);
-    });
-    // =========================================
-    // Final Item Validation
-    // =========================================
-    if (items.length === 0) {
-        MsgBox("Error","Please add at least one Sale Item.","");
-        return;
-    }
-    console.log("Items:", items);
-    // =========================================
-    // Prepare PlaceOrder Object
-    // =========================================
-    let placeOrder = {
-        SaleOrderId: parseInt(OrderId) || 0,
-        SaleOrderNo:0,
-        SaleOrderNoText:"0",
-        OrderDate:$("#deptOrderDate").val(),
-        DeptId:parseInt($("#ddlDept").val()) || 0,
-        BillingAddressId:parseInt($("#ddlBilling").val()) || 0,
-        BillingAddressText:$("#ddlBilling option:selected").text(),
-        LetterReferenceNo:$("#txtReference").val().trim(),
-        DeliveryDate:"2-Apr-2024",
-        Total:parseFloat($("#txtPrice").val()) || 0,
-        Cgst: 0,
-        Sgst: 0,
-        Gst:parseFloat($("#txtGST").val()) || 0,
-        AdminCharge:parseFloat($("#txtAdminCharge").val()) || 0,
-        Gtotal:parseFloat($("#txtGTotal").val() ) || 0,
-        PaymentAmt: 0,
-        Balance:0,
-        IsPaymentRequired:IsPaymentRequired,
-        Items:items
-    };
-    console.log("PlaceOrder:",JSON.stringify(placeOrder)
-    );
-    let formData = new FormData();
-    // Main JSON
-    formData.append("placeOrder",JSON.stringify(placeOrder));
-    // Attach Department Document
-    if (deptFile) {
-        formData.append("DeptDocument",deptFile);
-    }
-    // Attach Location File
-    if (locationFile) {
-        formData.append("LocationAttachment",locationFile);
-    }
-    // Submit
-    try {
-        let result =await acceptUpdateMultiTableFData("HardwareOrder","SaveOrder",formData);
-        console.log("SaveOrder Response:",result);
-      if (result.success) {
-            MsgBox("Message",result.message ||"Sale Order Saved Successfully.","");
-            resetModal();
-            $("#myTable1 tbody").empty();
-            $("#txtPrice").val("0.00");
-            $("#txtAdminCharge").val("0.00");
-            $("#txtGST").val("0.00");
-            $("#txtGTotal").val("0.00");
-            if (typeof srNo !== "undefined") {
-                srNo = 1;
-            }
-            if (
-                typeof recordlist === "function"
-            ) {
-                recordlist();
-            }
-        }
-        else {
-            MsgBox( "Error",result.message ||"Unable to save Sale Order.","");
-        }
-    }
-    catch (error) {
-        console.error("SaveOrder Error:",error);
-        let message =
-            error.responseJSON?.message ||
-            error.responseJSON?.error ||
-            error.statusText ||"Server error while saving Sale Order.";
-        MsgBox("Error",message,"");
-    }
-}
-
-//Table List Data 
 async function recordlist() {
     var filterata = {
         FilterId1: 0,
-        FilterId2: $("#ddlAgency").val() || 0,
-        FilterId3: $('#ddlDepartment').val() || 0,
-        FilterName1: '',
+        FilterId2: 0,
+        FilterId3: 0,
+        FilterName1: 'N',
     };
-
     try {
-
-        let records = await getRecords('HardwareOrder', 'getSaleOrderList', filterata, '#myTable', 'N');
-        bindDatatable(records, '#myTable');
+        let records = await getRecords('HardwareOrder', 'getIssueOrderList', filterata, '#myTableOrderIssue', 'N');
+        bindDatatableIssueOrderList(records, '#myTableOrderIssue');
     }
     catch (error) {
         console.error("Error loading records:", error);
         //hideModalLoader();
     }
 }
-//Bind get record  in a table 
-function bindDatatable(records, tableId) {
+//Bind get record  in a table Issue Order
+function bindDatatableIssueOrderList(records, tableId) {
+    if ($.fn.DataTable.isDataTable(tableId)) {
+        $(tableId).DataTable().destroy();
+    }
+    var tbody = $(tableId + " tbody");
+    tbody.empty();
+    $.each(records, function (i, value) {
+        let SrNo = i + 1;
+        tbody.append(`<tr
+                        data-saleorderid="${value.SaleOrderId}"  >
+                        <td>${SrNo}</td>
+                        <td> <input type="checkbox" class="chkIssueDraft" /></td>
+                         <td>${value.SaleOrderNo}+<br>${value.RefferenceNo}</td>
+                        <td> </td>
+                        <td>${value.PONO}</td>
+                        <td>${value.DeptReffNo}+<br>${value.VerifyDate || ''}</td>
+                        <td>${value.OrderStatus}</td>
+                        <td>${value.DepartmentName} <br> ${value.BillingAddress} </td>
+                        <td> <i class="bi bi-eye text-danger fs-1 align-item-center itemDescription" style="cursor:pointer;"></i> </td>
+                        <td><i class="bi bi-download text-danger fs-1" style="cursor:pointer;"></i></td>
+                        <td>${value.BillAmt.toFixed(2)}</td>
+                         <td>${value.Balance.toFixed(2)}</td>
+                         <td>${value.DeptAmtReceived.toFixed(2)}</td>          
+                         <--PO Document -->
+                        <td> <i class="fa fa-file-text-o text-danger fa-2x"></i></td>
+                        <!-- Create Draft-->
+                         <!-- <td><button class="btnDraftIssue btn btn-danger btn-sm" >Create Draft</button></td>-->
+                       <td> <i class="bi bi-file-earmark-plus text-warning fs-1 btnDraftIssue" title="Create Draft" style="cursor:pointer;"></i></td>
+                        <--Draft Print--> 
+                        <td></td>
+                         <--Verification Status--> 
+                          <td><button class="btnIssuePurchase btn btn-danger">Status</button></td>
+                           <--PO Status--> 
+                          <td><i class="bi bi-check-square-fill text-success fs-4 me-3 action-verify"></i></td> 
+                          <--Remarks-->
+                          <td><button class="btnRemarks btn btn-warning">Remarks</button></td>                                             
+                    </tr>
+        `);
+    });
+    $(tableId).DataTable({
+        paging: true,
+        searching: true,
+        ordering: true,
+        info: true,
+        responsive: true
+    });
+
+    // hideModalLoader();
+}
+// Open Item Description modal
+$(document).on('click', '.itemDescription', function () {
+    var row = $(this).closest('tr');
+    var saleOrderId = row.data('saleorderid');
+    alert(saleOrderId);
+    OrderId = saleOrderId;
+    recordItemDesclist(saleOrderId);
+    var myModal = new bootstrap.Modal(document.getElementById('myModalitemDescription'));
+    myModal.show();
+});
+
+// get Record for a Table
+async function recordItemDesclist(saleOrderId) {
+    var filterata = {
+        FilterId1: saleOrderId,
+        FilterId2: 0,
+        FilterId3: 0,
+        FilterName1: '',
+    };
+    try {
+        let records = await getRecords('HardwareOrder', 'getItemDescriptionList', filterata, '#myModalitemDescription', 'N');
+        bindDatatableItemDesc(records, '#myTableItemDesc1');
+    }
+    catch (error) {
+        console.error("Error loading records:", error);
+        //hideModalLoader();
+    }
+}
+
+//Bind get record  in a table Item description
+function bindDatatableItemDesc(records, tableId) {
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().clear().destroy();
     }
@@ -475,29 +165,12 @@ function bindDatatable(records, tableId) {
                         data-saleorderid="${value.SaleOrderId}" 
                          >
                         <td>${SrNo}</td>
-                        <td>${value.SaleOrder}</td>
-                        <td>${value.PoNo}</td>
-                        <td>${value.OrderDate}</td>
-                        <td>${value.DepartmentName}</td>
-                        <td>${value.BillingAddress}</td>
-                        <td class="text-center"><button class="btn btn-sm btn-danger itemDescription" data-saleorderid="${value.SaleOrderId}"> <i class="fa fa-eye"></i></button></td>   
-                        <td class="text-center">
-                             <a href="javascript:void(0);" class="view-file" data-file="${value.DeliveryLocationDoc}" data-folder="DeliveryLocation" title="View DeliveryLocation">
-                             <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:25px;"></i>
-                         </a>
-                        </td>
-                        <td class="text-center"><button class="btn btn-sm btn-danger addLocation" data-saleorderid="${value.SaleOrderId}">
-                            <i class="fa fa-pencil" style="font-size:25px;"></i>
-                            </button></td>
-                         <td>${value.GrandTotalAmt}</td>
-                         <td>${value.Balance}</td>
-                         <td>${value.DeptReceivedAmt}</td>
-                         <td>${value.PurchaseIssued}</td>
-                         <td>${value.CancelSaleOrder}</td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-primary viewSaleOrder" data-saleorderid="${value.SaleOrderId}"> <i class="fa fa-eye"></i></button>
-                        </td>
-                    </tr>
+                        <td>${value.ItemDescription}</td>
+                        <td>${value.Quantity}</td>
+                        <td>${value.BasePrice.toFixed(2)}</td>
+                        <td>${value.GST.toFixed(2)}</td>
+                        <td>${value.UnitRate.toFixed(2)}</td>
+                        <td>${value.TotalAmount.toFixed(2)}</td>                                           
         `);
     });
 
@@ -511,19 +184,19 @@ function bindDatatable(records, tableId) {
 
     //hideModalLoader();
 }
+// // Open Verification Status modal
+// $(document).on("click", ".verify-cell", function () {
+//     var row = $(this).closest('tr');
+//     var saleOrderId = row.data('saleorderid');
 
-// Open Item Description Model
-$(document).on('click', '.itemDescription', function () {
-    var row = $(this).closest('tr');
-    var saleOrderId = row.data('saleorderid');
-    alert(saleOrderId);
-    OrderId = saleOrderId;
-    recordItemDesclist(saleOrderId);
-    var myModal = new bootstrap.Modal(document.getElementById('myModalItemDescription'));
-    myModal.show();
-});
-//Get Record for A table 
-async function recordItemDesclist(saleOrderId) {
+//     alert(saleOrderId);
+//     recordVerificationStatuslist(saleOrderId);
+//     var myModal = new bootstrap.Modal(document.getElementById('myModalVerificationStatus'));
+//     myModal.show();
+
+// });
+// get Record for a Table
+async function recordVerificationStatuslist(saleOrderId) {
     var filterata = {
         FilterId1: saleOrderId,
         FilterId2: 0,
@@ -531,15 +204,35 @@ async function recordItemDesclist(saleOrderId) {
         FilterName1: '',
     };
     try {
-        let records = await getRecords('HardwareOrder', 'getItemDescriptionList', filterata, '#myModalItemDescription', 'N');
-        bindDatatableItemDesc(records, '#myTableItemDesc');
+        let records = await getRecords('HardwareOrder', 'getVerificationStatusList', filterata, '#myModalVerificationStatus', 'N');
+        bindDatatableVerificationStatus1(records, '#a1');
     }
     catch (error) {
         console.error("Error loading records:", error);
-//hideModalLoader();
+        //hideModalLoader();
     }
 }
-//Bind get record  in a table Add Location
+//Bind get Fill record in list Verification Status
+function bindDatatableVerificationStatus1(records, tableId) {
+    if (records.length > 0) {
+        let value = records[0];
+        let varificationStatus = '';
+        if (value.VerificationStatus == 'V') {
+            varificationStatus = 'Varified';
+        }
+        else if (value.VerificationStatus == 'R') {
+            varificationStatus = 'Rejected';
+        }
+        else {
+            varificationStatus = 'Not Varified';
+        }
+        $('#verityStatus').text(varificationStatus);
+        $('#verityDate').text(value.VerifiedDate);
+        $('#txtareaVRemark').val(value.Remarks);
+    }
+    $('#verityStatus, #verityDate, #txtareaVRemark').prop('readonly', true);
+}
+//Bind get record  in a table Item description
 function bindDatatableItemDesc(records, tableId) {
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().clear().destroy();
@@ -549,14 +242,346 @@ function bindDatatableItemDesc(records, tableId) {
     $.each(records, function (i, value) {
         let SrNo = i + 1;
         tbody.append(`<tr
-                        data-saleorderid="${value.SaleOrderId}"  >
+                        data-saleorderid="${value.SaleOrderId}" 
+                         >
                         <td>${SrNo}</td>
                         <td>${value.ItemDescription}</td>
                         <td>${value.Quantity}</td>
                         <td>${value.BasePrice.toFixed(2)}</td>
                         <td>${value.GST.toFixed(2)}</td>
                         <td>${value.UnitRate.toFixed(2)}</td>
-                        <td>${value.TotalAmount.toFixed(2)}</td>                       
+                        <td>${value.TotalAmount.toFixed(2)}</td>                                           
+        `);
+    });
+
+    $(tableId).DataTable({
+        paging: true,
+        searching: true,
+        ordering: true,
+        info: true,
+        responsive: true
+    });
+
+    //hideModalLoader();
+}
+// Open Purchase Issue Modal
+$(document).on('click', '.btnIssuePurchase', function () {
+    var row = $(this).closest('tr');
+    var saleOrderId = row.data('saleorderid');
+    alert(saleOrderId);
+    OrderId = saleOrderId;
+    recordPurchaseIssueList(saleOrderId);
+    var myModal = new bootstrap.Modal(document.getElementById('myModalPurchaseIssue'));
+    myModal.show();
+});
+//Get Record for A table Purchase Issue
+async function recordPurchaseIssueList(saleOrderId) {
+    var filterata = {
+        FilterId1: saleOrderId,
+        FilterId2: 0,
+        FilterId3: 0,
+        FilterName1: '',
+    };
+    try {
+        let records = await getRecords('HardwareOrder', 'getPurchaseIssueList', filterata, '#myModalPurchaseIssue', 'N');
+        bindDatatablePurchaseIssues(records, '#myTablePurchaseIssue');
+    }
+    catch (error) {
+        console.error("Error loading records:", error);
+        //hideModalLoader();
+    }
+}
+//Bind get record  in a table Purchase Issue
+function bindDatatablePurchaseIssues(records, tableId) {
+    if ($.fn.DataTable.isDataTable(tableId)) {
+        $(tableId).DataTable().clear().destroy();
+    }
+    var tbody = $(tableId + " tbody");
+    tbody.empty();
+    $.each(records, function (i, value) {
+        let SrNo = i + 1;
+        tbody.append(`<tr
+                        data-orderdetailsid="${value.OrderDetailId}" 
+                         >
+                        <td>${SrNo}</td>
+                         <td><input type="checkbox" class="rowCheckbox"></td>
+                        <td>${value.OrderDetailId}</td>
+                        <td>${value.SaleOrder}<br>${value.RefferenceNo}</td>
+                        <td>${value.ProductName}</td>
+                        <td>${value.Quantity}</td>
+                        <td>${value.PurchaseOrderNo}<br>${value.PurchaseOrderDate}</td>
+                        <td>${value.Amount.toFixed(2)}</td>
+                        <td>${value.AgencyName}</td>
+                        </tr>                                           
+        `);
+    });
+
+    $(tableId).DataTable({
+        paging: true,
+        searching: true,
+        ordering: true,
+        info: true,
+        responsive: true
+    });
+
+    // Select All checkbox
+    $(document).on('change', '#selectAll', function () {
+        $('.rowCheckbox').prop('checked', $(this).prop('checked'));
+    });
+    $(document).on('change', '.rowCheckbox', function () {
+        if (!$(this).prop('checked')) {
+            $('#selectAll').prop('checked', false);
+        } else {
+            // Check if all checkboxes are checked
+            if ($('.rowCheckbox:checked').length === $('.rowCheckbox').length) {
+                $('#selectAll').prop('checked', true);
+            }
+        }
+    });
+
+    //hideModalLoader();
+    $(document).on('click', '.btnModalReset', function () {
+        // Clear all input fields inside modal
+        $('#myTableAddLocation1 input').val('');
+        $('#myTableAddLocation1 textarea').val('');
+        $('#myTableAddLocation1 select').prop('selectedIndex', 0);
+
+    });
+}
+// get Record to fill Issue PO
+async function loadRecordById(row) {
+    var filterata = {
+        FilterId1: row.data('saleorderid'),
+        FilterId2: 0,
+        FilterId3: 0,
+        FilterName1: '',
+    };
+    try {
+        let records = await getRecords('HardwareOrder', 'GetPbgAdvanceList', filterata, '#myTablePurchaseIssue', 'N');
+        if (records && records.length > 0) {
+            let data = records[0];
+            // Id = data.Id;
+            var option1 = new Option(data.AgencyName, data.AgencyId, true, true);
+            $("#ddlAgencyModal").append(option1).trigger('change');
+            $("#ddlPbgBillFor").val(data.BillForId);
+            $("#ddlPbgPOrderNo").val(data.Pinvid);
+            var option1 = new Option(data.Pinvid, data.Pinvid, true, true);
+            $("#ddlPbgPOrderNo").append(option1).trigger('change');
+            $("#txtPbgBGNo").val(data.BGNumber);
+            $("#txtPbgAmt").val(data.PBGAmt);
+            if (data.BillForId == 'S') {
+                $('#ddlPbgPOrderNo').next('.select2').show();
+                $('#lblPbgPOrderNo').show();
+            }
+            else {
+                $('#ddlPbgPOrderNo').next('.select2').hide();
+                $('#lblPbgPOrderNo').hide();
+            }
+            console.log(data.ClaimDate);
+            //$('#myModal').modal('show');
+        }
+    }
+    catch (error) {
+        console.error("Error loading record:", error);
+    }
+}
+// Change event of Bill For ddl
+$(document).on('change', '#ddlPbgBillFor', async function () {
+    console.log($(this).val());
+    if ($(this).val() == 'S') {
+
+        $('#ddlPbgPOrderNo').next('.select2-container').show();
+        $('#lblPbgPOrderNo').show();
+    }
+    else {
+        $('#ddlPbgPOrderNo').next('.select2-container').hide();
+        $('#lblPbgPOrderNo').hide();
+    }
+});
+
+// Submit Purchase Issue Order when Click on btn
+$(".btnModalSubmit").on("click", function () {
+    SubmitPurchaseIssueRecord();
+});
+// to read  each selected row data
+// MUST be separate and clean
+function getSelectedData() {
+    var selectedItems = [];
+    $('.rowCheckbox:checked').each(function () {
+        var row = $(this).closest('tr');
+        var OrderDetailsId = row.data('orderdetailsid');
+        var validDateFrom = '';
+        var validDateTo = '';//row.find('.deliveryQuantity').val();
+        var item = {
+            OrderDetailsId: OrderDetailsId,
+            validDateFrom: validDateFrom, // (you missed using it)
+            validDateTo: validDateTo,
+        };
+        selectedItems.push(item);
+    });
+    return selectedItems;
+}
+async function SubmitPurchaseIssueRecord() {
+    let isValid = true;
+    $(".error").text("");
+    $(".is-invalid").removeClass("is-invalid");
+    let Agency = $("#ddlAgencyModal").val();
+    var IsUniquePruchaseOrder = $('#IsActive').is(':checkbox') ? 'Y' : 'N';
+    $(".error").text("");
+    $(".is-invalid").removeClass("is-invalid");
+    if (Agency === "") {
+        $("#ddlAgencyModal").addClass("is-invalid");
+        $("#ddlAgencyModal").siblings(".error").text("Please Select Agency ddl.");
+        isValid = false;
+    }
+    var areaType = $('input[name="areaType"]:checked').val();
+    var PurchaseOrderIssue = {
+        OrderDetailsId: '0',
+        AgencyId: Agency,
+        IsUniquePruchaseOrder: IsUniquePruchaseOrder,
+        Items: getSelectedData()
+    };
+    // Prepare data
+    var formData = new FormData();
+    formData.append("PurchaseOrderIssue", JSON.stringify(PurchaseOrderIssue));
+    try {
+        let res = await acceptUpdateMultiTableFData1(
+            'HardwareOrder',
+            'SubmitPurchaseIssuesOrder',
+            formData
+        );
+        if (res.success) {
+            MsgBox('Message', res.message, '');
+            recordPurchaseIssueList(saleOrderId);
+            resetModal();
+            // $("#myTable1 tbody").empty();
+        }
+    }
+    catch (err) {
+        MsgBox('Message', err, 'Error');
+    }
+}
+// Open Purchase  madal
+$(document).on('click', '.action-verify', function () {
+    var row = $(this).closest('tr');
+    var saleOrderId = row.data('saleorderid');
+    alert(saleOrderId);
+    OrderId = saleOrderId;
+    recordPurchaseOrderList(saleOrderId);
+    var myModal = new bootstrap.Modal(document.getElementById('myModalPurchaseOrder'));
+    myModal.show();
+});
+
+//Get Record for A table Verification Status
+async function recordVerificatioStatusList(saleOrderId) {
+    var filterata = {
+        FilterId1: saleOrderId,
+        FilterId2: 0,
+        FilterId3: 0,
+        FilterName1: '',
+    };
+    try {
+        let records = await getRecords('HardwareOrder', 'getVerificationStatusList', filterata, '#myModalVerificationStatus', 'N');
+        bindDatatableVerificatioStatus(records, '');
+    }
+    catch (error) {
+        console.error("Error loading records:", error);
+        //hideModalLoader();
+    }
+}
+
+//Get Record for A table Purchase Order
+async function recordPurchaseOrderList(saleOrderId) {
+    var filterata = {
+        FilterId1: saleOrderId,
+        FilterId2: 0,
+        FilterId3: 0,
+        FilterName1: '',
+    };
+    try {
+        let records = await getRecords('HardwareOrder', 'getStatusPurchaseOrderList', filterata, '#myModalPurchaseOrder', 'N');
+        bindDatatablePurchaseOrder(records, '#myTablePurchaseOrder');
+    }
+    catch (error) {
+        console.error("Error loading records:", error);
+        //hideModalLoader();
+    }
+}
+//Bind get record  in a table Purchase Order
+function bindDatatablePurchaseOrder(records, tableId) {
+    if ($.fn.DataTable.isDataTable(tableId)) {
+        $(tableId).DataTable().clear().destroy();
+    }
+   var tbody = $(tableId + " tbody");
+    tbody.empty();
+    $.each(records, function (i, value) {
+        let SrNo = i + 1;
+        tbody.append(`<tr
+                        data-orderdeliveryid="${value.OrderDetailsId}" 
+                         >
+                        <td>${SrNo}</td>
+                        <td>${value.PO}<br>${value.PODate}</td>
+                        <td>${value.Agency}</td>
+                        <td>${value.ActionByAgency}</td>
+                        <td>${value.ActionDate}</td>
+                        <td>${value.ActionRemarks}</td>                                                                                  
+        `);
+    });
+
+    $(tableId).DataTable({
+        paging: true,
+        searching: true,
+        ordering: true,
+        info: true,
+        responsive: true
+    });
+}
+// Open Purchase Order Remarks modal
+$(document).on('click', '.btnRemarks', function () {
+    var row = $(this).closest('tr');
+    var saleOrderId = row.data('saleorderid');
+    alert(saleOrderId);
+    OrderId = saleOrderId;
+    recordPurchaseOrderRemarklist(saleOrderId);
+    var myModal = new bootstrap.Modal(document.getElementById('myModalPurchaseOrderRemarks'));
+    myModal.show();
+});
+// get Record for a Table
+async function recordPurchaseOrderRemarklist(saleOrderId) {
+    var filterata = {
+        FilterId1: saleOrderId,
+        FilterId2: 0,
+        FilterId3: 0,
+        FilterName1: '',
+    };
+
+    try {
+        let records = await getRecords('HardwareOrder', 'getPurchaseIssueRemarksList', filterata, '#myModalPurchaseOrderRemarks', 'N');
+        bindDatatableOrderRemarks(records, '#myTablePurchaseOrderRemarks');
+    }
+    catch (error) {
+        console.error("Error loading records:", error);
+        //hideModalLoader();
+    }
+}
+
+//Bind get record  in a table Item description
+function bindDatatableOrderRemarks(records, tableId) {
+    if ($.fn.DataTable.isDataTable(tableId)) {
+        $(tableId).DataTable().clear().destroy();
+    }
+    var tbody = $(tableId + " tbody");
+    tbody.empty();
+    $.each(records, function (i, value) {
+        let SrNo = i + 1;
+        tbody.append(`<tr
+                        data-saleorderid="${value.SaleOrderId}" 
+                         >
+                        <td>${SrNo}</td>
+                        <td>${value.Remarks}</td>
+                        <td>${value.RemarksDoc}</td>
+                        <td>${value.RemarksDate}</td>
+                        <td>${value.RemarksBy}</td>                                                                 
         `);
     });
 
@@ -571,43 +596,102 @@ function bindDatatableItemDesc(records, tableId) {
     //hideModalLoader();
 }
 
-// View Uploaded pdf file conditions 
-$(document).on('click', '.view-file', function (e) {
-    e.preventDefault(); // Prevent default <a> behavior
-    var fileName = $(this).data('file');
-    var folder = $(this).data('folder');
-    if (!fileName || fileName === 'undefined' || fileName === '') {
-        toastr.error('File not uploaded');
+// This function is used to submit remarks data
+
+$(document).on('click', '.btnModalRemarkSubmit', function () {
+    SubmitPurchaseRemarksRecord();
+});
+async function SubmitPurchaseRemarksRecord() {
+    let isValid = true;
+    let RemarkAttachment = $("#RemarkAttachment").get(0);
+    let files = RemarkAttachment.files;
+     $(".error").text("");
+    $(".is-invalid").removeClass("is-invalid");
+    let Remarks = $("#txtareaRemark").val().trim();
+    $(".error").text("");
+    $(".is-invalid").removeClass("is-invalid");
+    if (Remarks === "") {
+        $("#txtareaRemark").addClass("is-invalid");
+        $("#txtareaRemark").siblings(".error").text("Enter Please Remarks Here.");
+        isValid = false;
+    }
+
+    var PORemark = {
+        SaleOrderId: OrderId,
+        RemarkId: '0',
+        RemarksBy: 'UserId',
+        Remarks: $("#txtareaRemark").val()
+    };
+    // Prepare data
+    var fileSize = 10
+
+    var isValid1 = fileSizeValidation('RemarkAttachment', fileSize);
+
+    if (!isValid1) {
+        MsgBox('Message', "File Size should be <=" + fileSize + "MB", '');
         return;
     }
-    // Construct URL
-    var url = `/Attachment/SaleOrder/${folder}/${fileName}`;
-    // Open in new tab
-    window.open(url, '_blank');
-});
+    let allowedExtensions = ["jpg", "jpeg", "pdf", "xlsx"];
 
-// Open Add Location Model
-$(document).on('click', '.addLocation', function () {
+    var newFileName = getNewFileName('RemarkAttachment')
+
+    var formData = new FormData();
+
+    formData.append("PORemark", JSON.stringify(PORemark));
+
+    if ($("#RemarkAttachment")[0].files.length > 0) {
+        formData.append("RemarkAttachment", $("#RemarkAttachment")[0].files[0], newFileName);
+    }
+
+    try {
+
+        let res = await acceptUpdateMultiTableFData1(
+            'HardwareOrder',
+            'SubmitPurchaseOrderRemarks',
+            formData
+        );
+
+        if (res.success) {
+            MsgBox('Message', res.message, '');
+            resetModal();
+            $("#myTable1 tbody").empty();
+
+        }
+
+    }
+    catch (err) {
+        MsgBox('Message', err, 'Error');
+    }
+
+}
+
+// Draft Order Issue Pop Model open
+$(document).on('click', '.btnDraftIssue', function () {
     var row = $(this).closest('tr');
-    var saleOrderId = row.data('saleorderid');
-    OrderId = saleOrderId;
-    alert(saleOrderId);
-    recordAddLocationList(saleOrderId);
-    recordAddDeliveryAddressList(saleOrderId);
-    var myModal = new bootstrap.Modal(document.getElementById('myModalAddLocation'));
-    myModal.show();
-});//Get Record for A table 
-async function recordAddLocationList(saleOrderId) {
-
+    // Checkbox check 
+    var checkbox = row.find('.chkIssueDraft');
+    if (!checkbox.is(':checked')) {
+        alert("Please select the checkbox.");
+        return;
+    }
+    var saleOrderId = row.attr('data-saleorderid');
+     alert(saleOrderId);
+        //recordItemDesclist(saleOrderId);
+        DraftOrderIssueList(saleOrderId);
+        var myModal = new bootstrap.Modal(document.getElementById('myModalDraftIssue'));
+        myModal.show();
+    });
+// Draft Issue get data from Model Created Draft
+async function DraftOrderIssueList(saleOrderId) {
     var filterata = {
-        FilterId1: saleOrderId,
+        FilterId1: saleOrderId,//$('#ddlDraftAgency').val(),
         FilterId2: 0,
         FilterId3: 0,
-        FilterName1: '',
+        //FilterName1: '',
     };
     try {
-        let records = await getRecords('HardwareOrder', 'getAddLocationList', filterata, '#myModalAddLocation', 'N');
-        bindDatatableAddLocation(records, '#myTableAddLocation');
+        let records = await getRecords('HardwareOrder', 'getDraftItemDescriptionList', filterata, '#myTableDraftIssue', 'N');
+        bindDatatableDraftIssue(records, '#myTableDraftIssue');
     }
     catch (error) {
         console.error("Error loading records:", error);
@@ -615,26 +699,49 @@ async function recordAddLocationList(saleOrderId) {
     }
 }
 //Bind get record  in a table item description
-function bindDatatableAddLocation(records, tableId) {
+function bindDatatableDraftIssue(records, tableId) {
     if ($.fn.DataTable.isDataTable(tableId)) {
         $(tableId).DataTable().clear().destroy();
     }
-    var tbody = $(tableId + " tbody");
+    var tbody = $(tableId + ' tbody');
     tbody.empty();
     $.each(records, function (i, value) {
         let SrNo = i + 1;
-        tbody.append(`<tr
-                        data-productid="${value.ProductId}"   data-itemdetailsid="${value.ItemDetailsId}"  >
-                         <td>${SrNo}</td>
-                         <td><input type="checkbox" class="rowCheckbox"></td>                                             
-                        <td>${value.ItemDetailsId}</td>
-                        <td>${value.ProductName}</td>
-                        <td>${value.OrderQty}</td>
-                        <td class="availableQty"> ${value.AvailableQuantity}</td>
-                     <td> <input type="number" class="form-control deliveryQty" min="0" disabled> <span class="error"></span></td>                
+        var isDraftOrder = (value.IsDraftOrder || '').toUpperCase() === 'Y';
+        let draftDate = value.DraftOrderDate
+            ? new Date(value.DraftOrderDate).toLocaleDateString('en-GB')
+            : 'Draft Not Issued';
+        let poDate = value.PODate
+            ? new Date(value.PODate).toLocaleDateString('en-GB')
+            : 'Not Issued';
+        tbody.append(`
+            <tr
+                data-saleorderid="${value.SaleOrderId}"
+                data-orderdetailsid="${value.OrderDetailsId}"
+                data-draftorderid="${value.DraftOrderId}"
+            >
+                <td>${SrNo}</td>
+                
+                <td><input type="checkbox"  class="rowCheckbox"  ${isDraftOrder ? 'checked disabled' : ''} /> </td>
+                <td>${value.OrderDetailsId ?? ''}</td>
+                <td>${value.SaleOrderId ?? ''}</td>
+                <td>${value.ProductName ?? ''}</td>
+                <td>${value.Qty ?? 0}</td>
+                <td>
+                    ${value.DraftOrderNo ?? ''}
+                    <br>${draftDate}
+                </td>
+                <td>
+                    ${value.PONo ?? ''}
+                    <br>${poDate}
+                </td>
+                <td>${Number(value.BillAmt ?? 0).toFixed(2)}</td>
+                <td>${value.AgencyName ?? ''}</td>
+                <td> ${value.AmcValidty ? new Date(value.AmcValidty).toLocaleDateString('en-GB') : ''} </td>
+            </tr>
         `);
     });
-    //<td> <input type="text" class="form-control deliveryQuantity" value="${value.DeliveryQuantity}" /></td>             
+
     $(tableId).DataTable({
         paging: true,
         searching: true,
@@ -642,547 +749,465 @@ function bindDatatableAddLocation(records, tableId) {
         info: true,
         responsive: true
     });
-    //hideModalLoader();
-    // $(document).on('click', '.btnModalReset', function () {
-    //     // Clear all input fields inside modal
-    //     $('#myModalAddLocation input').val('');
-    //     $('#myModalAddLocation textarea').val('');
-    //     //$('#myModalAddLocation select').prop('selectedIndex', 0);
-    //     $('#myModalAddLocation').find('select').each(function () {
-
-    //         $(this).val('0').trigger('change');
-
-    //     });
-
-    // });
-    //Reset Input values
-    $(document).on('click', '.btnModalReset', function () {
-        // Only Add Location Form Reset
-        $("#txtConsignee").val("");
-        $("#txtContact").val("");
-        $("#txtAreaConsigneeAddr").val("");
-        // District Select2 reset
-        $("#ddlDistrict").val("0").trigger("change");
-        // Area Type default = Tribal
-        $("#tribal").prop("checked", true);
-        $("#nonTribal").prop("checked", false);
-        // Clear validation
-        $("#myModalAddLocation .error").text("");
-        $("#myModalAddLocation .is-invalid")
-            .removeClass("is-invalid");
-    });
 }
+
+//Reload table when close Create Draft Modal
+$(document).on('click', '#btnCloseDraftIssue', function () {
+    // Uncheck  checkboxes in Create draft Modal
+    $('#myTableDraftIssue tbody .rowCheckbox').prop('checked', false);
+    $('#selectAllPI').prop('checked', false);
+    //Reload Table
+    recordlist();
+});
+
+//Create Draft Order
+// Select All checkbox
+$(document).on('change', '#selectAllPI', function () {
+    $('#myTableDraftIssue tbody .rowCheckbox:not(:disabled)')
+        .prop('checked', $(this).is(':checked'));
+});
+
+// Individual checkbox change
+$(document).on('change', '#myTableDraftIssue tbody .rowCheckbox', function () {
+
+    var enabledCheckboxes =
+        $('#myTableDraftIssue tbody .rowCheckbox:not(:disabled)');
+
+    var checkedEnabledCheckboxes =
+        $('#myTableDraftIssue tbody .rowCheckbox:not(:disabled):checked');
+
+    $('#selectAllPI').prop(
+        'checked',
+        enabledCheckboxes.length > 0 &&
+        enabledCheckboxes.length === checkedEnabledCheckboxes.length
+    );
+});
+
+// Submit Draft Issue button click
+$(document).on('click', '.btnDraftSubmit', function (e) {
+    e.preventDefault();
+
+    SubmitDraftOrder();
+});
+
+
+// Submit Draft Order
+// async function SubmitDraftOrder() {
+
+//     var selectedOrderDetailsIds = [];
+
+//     var agencyId = $('#ddlDraftAgency').val();
+//     // 2. Agency Validation 
+//     if (!agencyId || agencyId === "0") {
+//         MsgBox('Message', 'Please select Agency.', '');
+//         $('#ddlDraftAgency').focus();
+//         return;
+//     }
+
+//     // Collect selected OrderDetailsId values
+//     $('#myTableDraftIssue tbody .rowCheckbox:checked').each(function () {
+
+//         var row = $(this).closest('tr');
+
+//         var orderDetailsId = parseInt(
+//             row.attr('data-orderdetailsid'),
+//             10
+//         );
+
+//         if (!isNaN(orderDetailsId) && orderDetailsId > 0) {
+//             selectedOrderDetailsIds.push(orderDetailsId);
+//         }
+//     });
+
+//     // Remove duplicate IDs
+//     selectedOrderDetailsIds = [...new Set(selectedOrderDetailsIds)];
+
+//     // Validation
+//     if (selectedOrderDetailsIds.length === 0) {
+//         MsgBox('Message', 'Please select at least one item.',  '' );
+//          return;
+//     }
+
+//     // Prevent duplicate submission
+//     var submitButton = $('.btnDraftSubmit');
+
+//     if (submitButton.prop('disabled')) {
+//         return;
+//     }
+//       submitButton.prop('disabled', true);
+//       try {
+//         var formData = new FormData();
+//         var DraftOrder = {
+//             OrderDetailsIds: selectedOrderDetailsIds,
+//             AgencyId: parseInt($(agencyId)),
+//             IsUniqueDraftOrder: 'N'
+//         };
+//         formData.append( 'DraftOrder', JSON.stringify(DraftOrder));
+//         console.log('DraftOrder Request:', DraftOrder);
+//         var res = await acceptUpdateMultiTableFData1( 'HardwareOrder', 'AddorEdit_SubmitDraftOrder',formData);
+//         console.log('DraftOrder Response:', res);
+//         // Handle JSON response
+//         if (typeof res === 'string') {
+//             try {
+//                 res = JSON.parse(res);
+//             } catch (e) {
+//                 console.error('Invalid server response:', res);
+
+//                 MsgBox('Message', 'Server se valid response nahi mila.', '' );
+//                 return;
+//             }
+//         }
+//         if (res && res.success === true) {
+//             MsgBox(
+//                 'Message',
+//                 res.message || 'Draft order submitted successfully.',
+//                 ''
+//             );
+//             // Reset checkboxes
+//             $('#myTableDraftIssue tbody .rowCheckbox')
+//                 .prop('checked', false);
+//             $('#selectAllPI').prop('checked', false);
+//             // Close modal
+//             var modalElement =  document.getElementById('myModalDraftIssue');
+//             if (modalElement) {
+//                 var modal =
+//                     bootstrap.Modal.getOrCreateInstance(modalElement);
+//                 modal.hide();
+//             }
+//             // Refresh list
+//             if (typeof recordlist === 'function') {
+//                 recordlist();
+//             }
+//         } else {
+//             var errorMessage =
+//                 (res && (res.message || res.error))
+//             MsgBox('Message', errorMessage, '');
+//         }
+//     } catch (err) {
+//         console.error('SubmitDraftOrder Error:', err);
+//        MsgBox( 'Message', err, '' );
+//    } finally {
+//         // Enable button after request completes
+//         submitButton.prop('disabled', false);
+//     }
+// }
+
+// Submit Draft Order
+async function SubmitDraftOrder() {
+
+    // 1. Get Agency ID
+    var agencyId = $('#ddlDraftAgency').val();
+
+    // 2. Agency Validation
+    if (!agencyId || agencyId === "0") {
+        MsgBox('Message', 'Please select Agency.', '');
+        $('#ddlDraftAgency').focus();
+        return;
+    }
+
+    // 3. Collect selected OrderDetailsId values
+    var selectedOrderDetailsIds = [];
+
+    $('#myTableDraftIssue tbody .rowCheckbox:checked').each(function () {
+
+        var row = $(this).closest('tr');
+
+        var orderDetailsId = parseInt(
+            row.attr('data-orderdetailsid'),
+            10
+        );
+
+        if (!isNaN(orderDetailsId) && orderDetailsId > 0) {
+            selectedOrderDetailsIds.push(orderDetailsId);
+        }
+    });
+
+    // 4. Remove duplicate IDs
+    selectedOrderDetailsIds = [...new Set(selectedOrderDetailsIds)];
+
+    console.log('Selected OrderDetailsIds:', selectedOrderDetailsIds);
+    console.log('Selected AgencyId:', agencyId);
+
+    // 5. Item Validation
+    if (selectedOrderDetailsIds.length === 0) {
+        MsgBox('Message', 'Please select at least one item.', '');
+        return;
+    }
+
+    // 6. Prevent duplicate submission
+    var submitButton = $('.btnDraftSubmit');
+
+    if (submitButton.prop('disabled')) {
+        return;
+    }
+
+    submitButton.prop('disabled', true);
+
+    try {
+
+        // 7. Prepare DraftOrder object
+        var DraftOrder = {
+            OrderDetailsIds: selectedOrderDetailsIds,
+            AgencyId: parseInt(agencyId, 10),
+            IsUniqueDraftOrder: 'N'
+        };
+
+        console.log('DraftOrder Request:', DraftOrder);
+
+        // 8. Send FormData
+        var formData = new FormData();
+
+        formData.append(
+            'DraftOrder',
+            JSON.stringify(DraftOrder)
+        );
+
+        var res = await acceptUpdateMultiTableFData1(
+            'HardwareOrder',
+            'AddorEdit_SubmitDraftOrder',
+            formData
+        );
+
+        console.log('DraftOrder Response:', res);
+
+        // 9. Handle JSON response
+        if (typeof res === 'string') {
+            try {
+                res = JSON.parse(res);
+            } catch (e) {
+                console.error('Invalid server response:', res);
+                MsgBox('Message', 'Server se valid response nahi mila.', '');
+                return;
+            }
+        }
+
+        // 10. Success
+        if (res && res.success === true) {
+
+            MsgBox(
+                'Message',
+                res.message || 'Draft order submitted successfully.',
+                ''
+            );
+
+            // Reset checkboxes
+            $('#myTableDraftIssue tbody .rowCheckbox')
+                .prop('checked', false);
+
+            $('#selectAllPI').prop('checked', false);
+
+            // Close modal
+            var modalElement = document.getElementById('myModalDraftIssue');
+
+            if (modalElement) {
+                var modalInstance =
+                    bootstrap.Modal.getOrCreateInstance(modalElement);
+
+                modalInstance.hide();
+            }
+
+            // Refresh list
+            if (typeof recordlist === 'function') {
+                recordlist();
+            }
+
+        } else {
+
+            var errorMessage =
+                res && (res.message || res.error)
+                    ? (res.message || res.error)
+                    : 'Draft order submit nahi ho saka.';
+
+            MsgBox('Message', errorMessage, '');
+        }
+
+    } catch (err) {
+
+        console.error('SubmitDraftOrder Error:', err);
+
+        MsgBox(
+            'Message',
+            err.message || 'Submit karte samay error aaya.',
+            ''
+        );
+
+    } finally {
+
+        // Enable button after request completes
+        submitButton.prop('disabled', false);
+    }
+}
+
+
+
+$(document).on('change', '.newQty', function () {
+
+    let row = $(this).closest('tr');
+    loadRecordById(row);
+
+
+});
+
 // Select All checkbox
 $(document).on('change', '#selectAll', function () {
-    let isChecked = $(this).prop('checked');
-    $('.rowCheckbox').prop('checked', isChecked);
-    // Selected rows ka Delivery Qty enable
-    $('.rowCheckbox').each(function () {
-        let $row = $(this).closest('tr');
-        $row.find('.deliveryQty')
-            .prop('disabled', !isChecked);
-        // Unselected hone par value clear
-        if (!isChecked) {
-            $row.find('.deliveryQty').val('');
-        }
-    });
+
+    $('.rowCheckbox').prop('checked', this.checked);
+
 });
-// Individual checkbox
+
 $(document).on('change', '.rowCheckbox', function () {
-    let isChecked = $(this).prop('checked');
-    let $row = $(this).closest('tr');
-    // Sirf selected row ka Delivery Qty enable
-    $row.find('.deliveryQty').prop('disabled', !isChecked);
-    // Unselect hone par Delivery Qty clear
-    if (!isChecked) {
-        $row.find('.deliveryQty').val('');
+
+    let total = $('.rowCheckbox').length;
+    let checked = $('.rowCheckbox:checked').length;
+
+    // If all rows are checked
+    $('#selectAll').prop('checked', total > 0 && total === checked);
+
+});
+// Select checkbox onchange event
+
+$(document).on("change", ".rowCheckbox", function () {
+
+    let $row = $(this).closest("tr");
+    let $newQty = $row.find("input.newQty");
+
+    if (this.checked) {
+        $newQty.removeAttr("readonly");
+        $newQty.prop("readonly", false);
+        $newQty.focus();
     }
-    // Select All checkbox update
-    if (!isChecked) {
-        $('#selectAll').prop('checked', false);
-    } else {
-        if (
-            $('.rowCheckbox').length > 0 &&
-            $('.rowCheckbox:checked').length ===
-            $('.rowCheckbox').length
-        ) {
-            $('#selectAll').prop('checked', true);
-        }
+    else {
+        $newQty.prop("readonly", true);
     }
+
 });
 
-// Delivery Quantity validation
-$(document).on('input', '#myTableAddLocation .deliveryQty', function () {
-    let $input = $(this);
-    let $row = $input.closest('tr');
-    // Checkbox selected hona compulsory
-    if (!$row.find('.rowCheckbox').prop('checked')) {
-        $input.val('');
-        MsgBox('Error', 'Please select the row first.', '' );
-        return;
-    }
-    let deliveryQty = parseFloat($input.val()) || 0;
-    // Same row ki Available Quantity
-    let availableQty = parseFloat( $row.find('.availableQty').text().trim() ) || 0;
-    if (deliveryQty > availableQty) {
-        $input.val(availableQty);
-        MsgBox('Error', `Delivery Quantity cannot be greater than Available Quantity (${availableQty}).`, '');
-    }
-});
 
-//Get Record for A table 
- async function recordAddDeliveryAddressList(saleOrderId) {
-    var filterata = {
-        FilterId1: saleOrderId,
-        FilterId2: 0,
-        FilterId3: 0,
-        FilterName1: '',
-    };
-    try {
-        let records = await getRecords('HardwareOrder', 'getAddDeliveryAddressList', filterata, '#myModalAddLocation', 'N');
-        bindDatatableDeliveryAddress(records, '#myTableAddLocation2');
-    }
-    catch (error) {
-        console.error("Error loading records:", error);
-        //hideModalLoader();
-    }
-}
-//Bind get record  in a table Add Delivery Address
-function bindDatatableDeliveryAddress(records, tableId) {
-    if ($.fn.DataTable.isDataTable(tableId)) {
-        $(tableId).DataTable().clear().destroy();
-    }
-    var tbody = $(tableId + " tbody");
-    tbody.empty();
-    $.each(records, function (i, value) {
-        let SrNo = i + 1;
-        tbody.append(`<tr
-                        data-orderdeliveryid="${value.OrderDetailsId}" >
-                        <td>${SrNo}</td>
-                        <td>${value.ProductName}</td>
-                        <td>${value.DeliveryQuantity}</td>
-                        <td>${value.ConsigneeName}</td>
-                        <td>${value.ContactNo}</td>
-                        <td>${value.ConsigneeAddress}</td>
-                        <td>${value.AddressType}</td>
-                        <td> <button class="btn btn-lg btn-danger deleteBtn">
-                            <i class="fa-solid fa-trash"></i></button></td>                       
-        `);
-    });
-    $(tableId).DataTable({
-        paging: true,
-        searching: true,
-        ordering: true,
-        info: true,
-        responsive: true
-    });
+// get selected data
+function getSelectedDataDraftIssue() {
 
+    var selectedItems = [];
 
-    // MsgBox on Click event on Delete Icon
-    $(document).on('click', '.deleteBtn', async function () {
+    $('.rowCheckbox:checked').each(function () {
+
         var row = $(this).closest('tr');
-        var orderdeliveryid = row.data('orderdeliveryid');
-        console.log("Delete Id:", orderdeliveryid);
-        if (!orderdeliveryid) {
-            toastr.error("orderdeliveryid not found");
-            return;
-        }
-        var isConfirmed = await DeleteEditBox("Delete Record", "Do you want to delete this record?", "question");
-        if (isConfirmed) {
-            await deletedeliveryidRecord(orderdeliveryid);
-        }
-    });
-}
-// Submit delivery Addres when Click on btn
-$(".btnModalDeliverySubmit").on("click", function () {
-    SubmitConsigneeRecord();
-});
-//async function SubmitConsigneeRecord() {
-//    let isValid = true;
-//    $(".error").text("");
-//    $(".is-invalid").removeClass("is-invalid");
-//    let ConsigneeName = $("#txtConsignee").val();
-//    let ContactNo = $("#txtContact").val();
-//    let ConsigneeAddress = $("#txtAreaConsigneeAddr").val();
-//    //var IsPaymentRequired = $('#IsActive').is(':checkbox') ? 'Y' : 'N';
-//    $(".error").text("");
-//    $(".is-invalid").removeClass("is-invalid");
-//    if (ConsigneeName === "") {
-//        $("#txtConsignee").addClass("is-invalid");
-//        $("#txtConsignee").siblings(".error").text("Consignee Name is required.");
-//        isValid = false;
-//    }
-//    if (ContactNo === "") {
-//        $("#txtContact").addClass("is-invalid");
-//        $("#txtContact").siblings(".error").text("Please Enter Contact No.");
-//        isValid = false;
-//    }
-//    if (ConsigneeAddress === "") {
-//        $("#txtAreaConsigneeAddr").addClass("is-invalid");
-//        $("#txtAreaConsigneeAddr").siblings(".error").text("Please Enter Your Address");
-//        isValid = false;
-//    }
-//    var areaType = $('input[name="areaType"]:checked').val();
-//    var consigneeAddress = {
-//        OrderDeliveryId: '0',
-//        AreaType: areaType,
-//        Items: getSelectedData()
-//    };
-//    // Prepare data
-//    var formData = new FormData();
-//    formData.append("consigneeAddress", JSON.stringify(consigneeAddress));
-//    try {
-//        let res = await acceptUpdateMultiTableFData1(
-//            'HardwareOrder',
-//            'SaveConsigneeAddress',
-//            formData
-//        );
 
-//        if (res.success) {
-//            MsgBox('Message', res.message, '');
-//            recordAddLocationList(OrderId);
-//            recordAddDeliveryAddressList(OrderId);
-//            resetModal();
-//            // $("#myTable1 tbody").empty();
-//        }
+        // var qty = parseInt(row.find('.newQty').val()) || 0;
 
-//    }
-//    catch (err) {
-//        MsgBox('Message', err, 'Error');
-//    }
+        //// Validation
+        //if (qty < 1) {
 
-//}
+        //    row.find('.newQty').addClass('is-invalid').focus();
 
-// Delete Records Function
-// async function SubmitConsigneeRecord() {
+        //    selectedItems = null;
 
-//     let isValid = true;
+        //    return false;
+        //}
+        //else {
 
-//     // =========================================
-//     // Clear Previous Validation
-//     // =========================================
-//     $(".error").remove();
-//     $(".is-invalid").removeClass("is-invalid");
+        //    row.find('.newQty')
+        //        .removeClass('is-invalid');
+        //}
 
-//     // =========================================
-//     // Get Values
-//     // =========================================
-//     let ConsigneeName = $("#txtConsignee").val().trim();
-//     let ContactNo = $("#txtContact").val().trim();
-//     let ConsigneeAddress = $("#txtAreaConsigneeAddr").val().trim();
-//     let DistrictId = parseInt($("#ddlDistrict").val()) || 0;
-//     let AreaType = $('input[name="areaType"]:checked').val();
-
-//     // =========================================
-//     // Main Form Validation
-//     // =========================================
-
-//     if (ConsigneeName === "") {
-
-//         showError( "txtConsignee", "Consignee Name is required." );
-//         isValid = false;
-//     }
-
-//     if (ContactNo === "") {
-//         showError( "txtContact", "Please Enter Contact No." );
-//         isValid = false;
-//     }
-
-//     if (ConsigneeAddress === "") {
-//         showError( "txtAreaConsigneeAddr", "Please Enter Your Address." );
-//         isValid = false;
-//     }
-
-//     if (!DistrictId || DistrictId === 0) {
-//         showError( "ddlDistrict", "Please Select District." );
-//         isValid = false;
-//     }
-
-//     if (!AreaType) {
-//          MsgBox("Error", "Please select Area Type.", "" );
-//          isValid = false;
-//     }
-
-//     // Selected Item Validation
-//     let selectedItems = getSelectedData();
-//     console.log("Selected Items:", selectedItems);
-//     if (!selectedItems || selectedItems.length === 0) {
-//         MsgBox( "Error", "Please select at least one item.",  "" );
-//         isValid = false;
-//     }
-//    if (!isValid) {
-//         return;
-//     }
-//     let items = selectedItems.map(function (item) {
-//         return {
-//             ItemDetailsId: parseInt(item.ItemDetailsId) || 0,
-//             SaleOrderId:   parseInt(item.SaleOrderId) || parseInt(OrderId) || 0,
-//             ProductId: parseInt(item.ProductId) || 0,
-//             DeliveryQty: parseFloat(item.DeliveryQty) || 0,
-//             ConsigneeName: ConsigneeName,
-//             ConsigneeContactNo: ContactNo,
-//             consigneeAddress:  ConsigneeAddress,
-//             DistrictId: DistrictId,
-//             DeliveredQty: 0
-//         };
-//     });
-//     if (items.length === 0) {
-//         MsgBox( "Error", "Please select at least one item.", "" );
-//         return;
-//     }
-//     // Prepare Model
-//     let consigneeAddress = {
-//         OrderDeliveryId: 0,
-//         AreaType: AreaType,
-//         Items: items
-//     };
-//     console.log( "Consignee Address:",JSON.stringify(consigneeAddress));
-// // FormData
-//     let formData = new FormData();
-//     formData.append( "consigneeAddress", JSON.stringify(consigneeAddress));
-//     // Submit
-//     try {
-//         let result = await acceptUpdateMultiTableFData( "HardwareOrder", "SaveConsigneeAddress", formData );
-//         console.log("SaveConsigneeAddress Response:",
-//             result
-//         );
-//         // Success
-//         if (result.success) {
-//             MsgBox( "Message", result.message || "Delivery Address Saved Successfully.",  ""
-//             );
-//             // Refresh first table
-//             if (typeof recordAddLocationList === "function") {
-//                 recordAddLocationList(OrderId);
-//             }
-//             // Refresh second table
-//             if (
-//                 typeof recordAddDeliveryAddressList ===
-//                 "function"
-//             ) {
-//                 recordAddDeliveryAddressList(OrderId);
-//             }
-
-//             // Reset modal fields
-//             resetModal();
-
-//         }
-//         else {
-
-//             MsgBox(
-//                 "Error",
-//                 result.message ||
-//                 "Unable to save Delivery Address.",
-//                 ""
-//             );
-//         }
-
-//     }
-//     catch (error) {
-
-//         console.error(
-//             "SaveConsigneeAddress Error:",
-//             error
-//         );
-
-//         let message =
-//             error.responseJSON?.message ||
-//             error.responseJSON?.error ||
-//             error.statusText ||
-//             "Server error while saving Delivery Address.";
-
-//         MsgBox(
-//             "Error",
-//             message,
-//             ""
-//         );
-//     }
-// }
-// to read  each selected row data
-// MUST be separate and clean
-// function getSelectedData() {
-//     var selectedItems = [];
-//     $('.rowCheckbox:checked').each(function () {
-//         var row = $(this).closest('tr');
-//         var productid = row.data('productid');
-//         var itemdetailsid = row.data('itemdetailsid');
-//         var deliveryQuantity = row.find('.deliveryQuantity').val();
-//         var item = {
-//             ItemDetailsId: itemdetailsid,
-//             SaleOrderId: OrderId,
-//             ProductId: productid,
-//             DeliveryQty: deliveryQuantity,
-//             ConsigneeName: $('#txtConsignee').val(),
-//             ConsigneeContactNo: $('#txtContact').val(),
-//             consigneeAddress: $('#txtAreaConsigneeAddr').val(),
-//             DistrictId: $('#ddlDistrict').val(),
-//             DeliveredQty: 0,
-//         };
-//         selectedItems.push(item);
-//     });
-//     return selectedItems;
-// }
-async function SubmitConsigneeRecord() {
-    let isValid = true;
-    $("#myModalAddLocation .error").remove();
-    $("#myModalAddLocation .is-invalid").removeClass("is-invalid");
-
-    let ConsigneeName = $("#txtConsignee").val().trim();
-    let ContactNo = $("#txtContact").val().trim();
-    let ConsigneeAddress = $("#txtAreaConsigneeAddr").val().trim();
-    let DistrictId = parseInt($("#ddlDistrict").val()) || 0;
-    let AreaType = $('input[name="areaType"]:checked').val();
-
-    if (ConsigneeName === "") {
-        showError( "txtConsignee", "Please Enter Consignee Name" );
-        isValid = false;
-    }
-    if (ContactNo === "") {
-        showError( "txtContact", "Please Enter Contact No." );
-        isValid = false;
-    }
-    else if (!/^[6-9]\d{9}$/.test(ContactNo)) {
-        showError( "txtContact", "Please enter a valid 10 digit mobile number." );
-        isValid = false;
-    }
-    if (ConsigneeAddress === "") {
-        showError( "txtAreaConsigneeAddr", "Please Enter Your Address" );
-        isValid = false;
-    }
-    if (!DistrictId || DistrictId === 0) {
-        showError( "ddlDistrict", "Please Select District" );
-        isValid = false;
-    }
-    if (!AreaType) {
-        MsgBox( "Error", "Please select Area Type.",  "" );
-        isValid = false;
-    }
-
-    let selectedItems = [];
-    $("#myTableAddLocation tbody tr").each(function () {
-        let row = $(this);
-        // Only selected checkbox rows
-        if (!row.find(".rowCheckbox").is(":checked")) {
-            return;
-        }
-        let deliveryQty = parseFloat(row.find(".deliveryQty").val()) || 0;
-        let selectedData = {
-            ItemDetailsId: parseInt(row.data("itemdetailsid")) || 0,
-            SaleOrderId: parseInt(OrderId) || 0,
-             ProductId: parseInt( row.data("productid")) || 0,
-            DeliveryQty: deliveryQty,
-             ConsigneeName: ConsigneeName,
-             ConsigneeContactNo:  ContactNo,
-             consigneeAddress: ConsigneeAddress,
-            DistrictId: DistrictId,
-            DeliveredQty: 0,
+        var item = {
+            OrderDetailsId: row.data('orderdetailsid'),
+            validDateFrom: '2026-04-02',
+            validDateTo: '2026-04-02'
         };
-        selectedItems.push(selectedData);
+        selectedItems.push(item);
     });
+    // Return validation result
+    //if (selectedItems === null) {
+    //    return {
+    //        Status: false,
+    //        Message: "Quantity must be greater than or equal to 1.",
+    //        Data: []
+    //    };
+    //}
+    // Check quantity
     if (selectedItems.length === 0) {
-        MsgBox( "Error",  "Please select at least one item.",  "" );
-        isValid = false;
+        return {
+            Status: false,
+            Message: "Please select at least one valid item.",
+            Data: []
+        };
     }
-    $("#myTableAddLocation tbody tr").each(function () {
-        let row = $(this);
-        if (!row.find(".rowCheckbox").is(":checked")) {
-            return;
-        }
-        let deliveryQty = parseFloat( row.find(".deliveryQty").val() ) || 0;
-        if (deliveryQty <= 0) {
-            row.find(".deliveryQty") .addClass("is-invalid");
-           row.find(".deliveryQty").after(
-                '<span class="error text-danger">Please Enter Delivery Quantity</span>'
-            );
-            isValid = false;
-        }
-    });
-    if (!isValid) {
+
+    // Check file
+    //var fileInput = $("#AttachDocument").get(0);
+
+    //if (!fileInput || fileInput.files.length === 0) {
+    //    return {
+    //        Status: false,
+    //        Message: "Please select a document.",
+    //        Data: []
+    //    };
+    //}
+
+
+
+
+    return {
+        Status: true,
+        Message: "Validation successful.",
+        Data: selectedItems
+    };
+}
+// Submit Sale Modify Order
+async function SubmitDraftIssueorder() {
+
+    var Obj = getSelectedDataDraftIssue();
+    console.log(JSON.stringify(Obj.Data));
+    if (!Obj.Status) {
+        MsgBox('Invalid Message', Obj.Message, '');
         return;
     }
-    console.log(  "Consignee Items:",  selectedItems );
-    let consigneeAddress = {
-        OrderDeliveryId:  0,
-        AreaType: AreaType,
-        Items: selectedItems
-    };
-    console.log( "Consignee Address:", JSON.stringify(consigneeAddress)
-    );
-    // Prepare FormData
-    let formData = new FormData();
-    formData.append( "consigneeAddress", JSON.stringify(consigneeAddress)
-    );
-     try {
+    if (!$('#ddlDraftAgency').val()) {
+        MsgBox('Invalid Message', 'Please Select Agency.', '');
+        return;
+    }
 
-        let result =
-            await acceptUpdateMultiTableFData(
-                "HardwareOrder",
-                "SaveConsigneeAddress",
-                formData
-            );
-        console.log( "SaveConsigneeAddress Response:", result );
-        // Success
-        if (result.success) {
-            MsgBox( "Message", result.message || "Delivery Address Saved Successfully.", "" );
-            // Refresh Available Quantity Table
-            if (
-                typeof recordAddLocationList === "function")
-            {
-                recordAddLocationList(OrderId );
-            }
-            // Refresh Delivery Address Table
-            if (
-                typeof recordAddDeliveryAddressList === "function")
-            {
-                recordAddDeliveryAddressList( OrderId );
-            }
-            // Reset Consignee Form
-            $("#txtConsignee").val("");
-            $("#txtContact").val("");
-            $("#txtAreaConsigneeAddr").val("");
-            // District reset
-            $("#ddlDistrict") .val("0") .trigger("change");
-            // Area Type default
-            $("#tribal").prop( "checked", true );
-            $("#nonTribal").prop( "checked", false );
-            // Select All reset
-            $("#selectAll").prop( "checked", false );
-            // Checkbox + Delivery Qty reset
-            $("#myTableAddLocation tbody .rowCheckbox")  .prop("checked", false);
-            $("#myTableAddLocation tbody .deliveryQty") .val("") .prop("disabled", true);
-        }
-        // Error Response
-        else {
-            MsgBox( "Error", result.message || "Unable to save Delivery Address.", "" );
-        }
-    }
-    catch (error) {
-        console.error( "SaveConsigneeAddress Error:", error );
-        let message =
-            error.responseJSON?.message ||
-            error.responseJSON?.error ||
-            error.statusText ||
-            "Server error while saving Delivery Address.";
-        MsgBox( "Error", message, "" );
-    }
-}
-//Delte records from DeliveryAddressList
-async function deletedeliveryidRecord(orderdeliveryid) {
-    alert(orderdeliveryid);
+
+    var DraftIssue = {
+        OrderDetailsId: 0,//$('#ddlModifySale').val(),
+        AgencyId: $('#ddlDraftAgency').val(),
+        IsUniqueDraftOrder: $('#IsUniqueDraft').is(':checked') ? 'Y' : 'N',
+
+        Items: Obj.Data,
+    };
+
+    var formData = new FormData();
+
+
+    formData.append("DraftIssue", JSON.stringify(DraftIssue));
+
+
     try {
-        let formData = new FormData();
-        formData.append("FilterId1", orderdeliveryid);
-        let res = await acceptUpdate("HardwareOrder", "DeleteConsigneeAddress", formData);
-        if (res.success) {
-            MsgBox('Sale Order', res.message, '');
-            recordAddLocationList(OrderId);
-            recordAddDeliveryAddressList(OrderId);
-            //toastr.success(res.message);
-            //  recordlist(); // reload table
-        } else {
-            toastr.error(res.message || "Delete failed");
+
+        let res = await acceptUpdateMultiTableFData1(
+            'HardwareOrder',
+            'SubmitDraftIssueOrder',
+            formData
+        );
+
+        if (res && res.success) {
+
+            var message = res.message;
+
+            if (!message || message.trim() === "" || message.trim() === ":") {
+                message = "Draft order submitted successfully.";
+            }
+
+            MsgBox("Message", message, "");
+            DraftOrderIssueList();
+            //resetModal();
+            //closeModal('myTableDraftIssue');
+
         }
-    } catch (err) {
-        console.error("Delete error:", err);
-        toastr.error("Server error while deleting");
+
     }
+    catch (err) {
+        MsgBox('Message', err, 'Error');
+    }
+
 }

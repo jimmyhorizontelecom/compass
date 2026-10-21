@@ -453,8 +453,6 @@ namespace Compass.Repositories
                     "",
                     parameters
             );
-
-
             var result = CommonNew.ToList<DropdownElement>(dt);
             return result;
         }
@@ -482,6 +480,61 @@ namespace Compass.Repositories
             return result;
         }
 
+        // Get Draft Agency DDL
+        public async Task<List<DropdownElement>> GetDraftAgencyDdlAsync(
+    int id,
+    int mainCatgId,
+    string searchTerm)
+        {
+            SortedList parameters = new SortedList();
+
+            parameters.Add("@SaleOrderId", id);
+            parameters.Add("@SearchTerm",
+                string.IsNullOrEmpty(searchTerm) ? DBNull.Value : searchTerm);
+
+            var dt = await _cn.FillDataTableAsync(
+                "HardwareDraftAgency_ddlC",
+                "",
+                parameters
+            );
+
+            var result = CommonNew.ToList<DropdownElement>(dt);
+
+            return result;
+        }
+
+        // Get Draft No on Agency DDL
+        public async Task<List<DropdownElement>> GetDraftNoOnAgencyDdlAsync(
+    int id,
+    int mainCatgId,
+    string searchTerm)
+        {
+            SortedList parameters = new SortedList();
+
+            parameters.Add("@SaleOrderId", id);
+            parameters.Add("@AgencyId", mainCatgId);
+            parameters.Add("@SearchTerm",
+                string.IsNullOrEmpty(searchTerm) ? DBNull.Value : searchTerm);
+
+            var dt = await _cn.FillDataTableAsync(
+                "HardwareDraftAgencyNo_DdlC",
+                "",
+                parameters
+            );
+
+            var result = CommonNew.ToList<DropdownElement>(dt);
+
+            return result;
+        }
+
+
+
+
+
+
+
 
     }
+
 }
+

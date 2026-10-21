@@ -20,9 +20,12 @@ $(document).ready(function () {
 
     // Agency dropdown in PurchaseIssue
    // bindDataToDdl(   "HardwareDropdown",  "HAgencyDraft_ddl", "myModalPurchaseIssue", "ddlAgencyModal", "Agency", 14, 0 );
-    bindDataToDdl("HardwareDropdown", "HAgency_ddl", "myModalPurchaseIssue", "ddlAgencyModal", "Agency", 0, 0);
+   // bindDataToDdl("HardwareDropdown", "HAgency_ddl", "myModalPurchaseIssue", "ddlAgencyModal", "Agency", 0, 0);
     // Agency dropdown in DraftIssue
     bindDataToDdl("HardwareDropdown", "HAgency_ddl", "myModalDraftIssue", "ddlDraftAgency", " Agency", 0, 0);
+
+    // // Agency dropdown in DraftIssue
+    // bindDataToDdl("HardwareDropdown", "HDraftAgency_ddlC", "myModalPurchaseIssue", "ddlAgencyModal", " Select",0,0);
     // Draft dropdown depends on Agency
     // bindDataToDdl1(
     //     "HardwareDropdown",
@@ -90,10 +93,8 @@ function bindDatatableIssueOrderList(records, tableId) {
                         <td>${value.OrderStatus}</td>
                         <td>${value.DepartmentName}</td>
                         <td>${value.BillingAddress}</td>
-                        <td>
-                           <i class="fa fa-eye text-danger fa-2x itemDescription"></i>
-                         </td>
-                      <td><i class="bi bi-download text-danger fs-1"></i></td>
+                        <td> <i class="bi bi-eye text-danger fs-1 itemDescription" style="cursor:pointer;"></i> </td>
+                      <td><i class="bi bi-download text-danger fs-1" style="cursor:pointer;"></i></td>
                         <td>${value.BillAmt.toFixed(2)}</td>
                          <td>${value.Balance.toFixed(2)}</td>
                          <td>${value.DeptAmtReceived.toFixed(2)}</td>                         
@@ -291,25 +292,66 @@ function bindDatatableItemDesc(records, tableId) {
 }
 // Open Purchase Issue Modal
 $(document).on('click', '.btnIssuePurchase', function () {
-
     var row = $(this).closest('tr');
     var saleOrderId = row.data('saleorderid');
-
-    alert(saleOrderId);
+    alert("Sale Order ID: " + saleOrderId);
     OrderId = saleOrderId;
 
-    recordPurchaseIssueList(saleOrderId);
+    // Sale Order ke according Agency dropdown 
+    bindDataToDdlWithParent("HardwareDropdown", "HDraftAgency_ddlC", "myModalPurchaseIssue", "ddlAgencyModal", "Select Agency", saleOrderId, 0);
+    // Draft Order No dropdown
+    bindDataToDdlWithParentChild( "HardwareDropdown","HDraftNoOnAgency_ddlC", "myModalPurchaseIssue", "ddlDraftNoModal", "Select Draft Order No.",
+        saleOrderId, "ddlAgencyModal");
+    // Modal open par empty table dikhayein
+    ClearPurchaseIssueTable();
 
+    //recordPurchaseIssueList(saleOrderId);  
     var myModal = new bootstrap.Modal(document.getElementById('myModalPurchaseIssue'));
     myModal.show();
 });
+function ClearPurchaseIssueTable() {
+
+    if ($.fn.DataTable.isDataTable('#myTablePurchaseIssue')) {
+        $('#myTablePurchaseIssue').DataTable().clear().destroy();
+    }
+
+    $('#myTablePurchaseIssue tbody').empty();
+
+    $('#myTablePurchaseIssue').DataTable({
+        paging: true,
+        searching: true,
+        ordering: true,
+        info: true,
+        responsive: true,
+        language: {
+            emptyTable: "No data available in table"
+        }
+    });
+}
+// Agency change hone par table empty rahegi
+$(document).on('change', '#ddlAgencyModal', function () {
+
+    //$('#ddlDraftNoModal').val(null).trigger('change.select2');
+
+    ClearPurchaseIssueTable();
+});
+// Draft Order No select hone par data load hoga
+$(document).on('change', '#ddlDraftNoModal', function () {
+    var agencyId = $('#ddlAgencyModal').val();
+    var draftNoId = $(this).val();
+    if (!agencyId || !draftNoId) {
+        ClearPurchaseIssueTable();
+        return;
+    }
+    recordPurchaseIssueList(OrderId);
+});
+
 //Get Record for A table Purchase Issue
 async function recordPurchaseIssueList(saleOrderId) {
-
     var filterata = {
         FilterId1: saleOrderId,
-        FilterId2: 0,
-        FilterId3: 0,
+        FilterId2: parseInt($('#ddlAgencyModal').val()),
+        FilterId3: parseInt($('#ddlDraftNoModal').val()),
         FilterName1: '',
     };
 
@@ -387,6 +429,180 @@ function bindDatatablePurchaseIssues(records, tableId) {
 
     });
 }
+
+//Submit button click even in Issue Purchase Modal
+$(document).on('click', '.btnModalIssuePurchaseSubmit', function (e) {
+    e.preventDefault();
+
+    SubmitIssuePurchase();
+});
+
+// Submit Draft Purchase Order Issue
+async function SubmitIssuePurchase() {
+
+    // 1. Agency validation
+    var agencyId = $('#ddlAgencyModal').val();
+
+    if (!agencyId || agencyId === "0") {
+        MsgBox('Message', 'Please select Agency.', '');
+        $('#ddlAgencyModal').focus();
+        return;
+    }
+    var draftNo = $('#ddlDraftNoModal').val();
+
+    if (!draftNo || draftNo === "0") {
+        MsgBox('Message', 'Please select Draft No.', '');
+        $('#ddlDraftNoModal').focus();
+        return;
+    }
+
+    var issueRemarks = $("#txtareaPOIssueRemark").val().trim();
+    if (issueRemarks === "") {
+        MsgBox('Message', 'Please fill remarks', '');
+        $('#txtareaPOIssueRemark').focus();
+        return;
+    } 
+
+    // 2. Selected OrderDetailsId collect karein
+    var selectedOrderDetailsIds = [];
+
+    $('#myTablePurchaseIssue  tbody .rowCheckbox:checked').each(function () {
+
+        var row = $(this).closest('tr');
+
+        var orderDetailsId = parseInt(
+            row.attr('data-orderdetailsid'),
+            10
+        );
+
+        if (!isNaN(orderDetailsId) && orderDetailsId > 0) {
+            selectedOrderDetailsIds.push(orderDetailsId);
+        }
+    });
+
+    // 3. Duplicate IDs remove karein
+    selectedOrderDetailsIds = [        ...new Set(selectedOrderDetailsIds)
+    ];
+
+    // 4. Item validation
+    if (selectedOrderDetailsIds.length === 0) {
+        MsgBox('Message', 'Please select at least one item.', '');
+        return;
+    }
+
+    // 5. Prevent duplicate submission
+    var submitButton = $('.btnDraftSubmit');
+
+    if (submitButton.prop('disabled')) {
+        return;
+    }
+
+    submitButton.prop('disabled', true);
+
+    try {
+
+        // 6. Procedure ke according request model
+        var DraftOrder = {
+            OrderDetailsIds: selectedOrderDetailsIds,
+            AgencyId: parseInt(agencyId, 10),
+            IsUniquePurchaseOrder: '',
+            DraftId: parseInt(draftNo),
+            Remarks: issueRemarks,
+        };
+
+        // 7. FormData
+        var formData = new FormData();
+
+        formData.append(
+            'DraftOrder',
+            JSON.stringify(DraftOrder)
+        );
+
+        console.log('DraftOrder Request:', DraftOrder);
+
+        // 8. Existing controller call
+        var res = await acceptUpdateMultiTableFData1(
+            'HardwareOrder',
+            'AddorEdit_SubmitIssuePurchase',
+            formData
+        );
+
+        console.log('DraftOrder Response:', res);
+
+        // 9. Parse response
+        if (typeof res === 'string') {
+            try {
+                res = JSON.parse(res);
+            }
+            catch (e) {
+                console.error('Invalid server response:', res);
+
+                MsgBox(
+                    'Message',  ''
+                );
+
+                return;
+            }
+        }
+
+        // 10. Success / error
+        if (res && res.success === true) {
+
+            MsgBox(
+                'Message',
+                res.message ,
+                ''
+            );
+
+            // Reset checkboxes
+            $('#myTablePurchaseIssue tbody .rowCheckbox')
+                .prop('checked', false);
+
+            $('#selectAll').prop('checked', false);
+
+            // Close modal
+            var modalElement = document.getElementById(
+                'myModalPurchaseIssue'
+            );
+
+            if (modalElement) {
+                bootstrap.Modal
+                    .getOrCreateInstance(modalElement)
+                    .hide();
+            }
+
+            // Refresh list
+            if (typeof recordlist === 'function') {
+                recordlist();
+            }
+
+        } else {
+
+            var errorMessage =
+                res && (res.message || res.error)
+                  MsgBox('Message', errorMessage, '');
+        }
+
+    }
+    catch (err) {
+
+        console.error('SubmitDraftOrder Error:', err);
+
+        MsgBox(
+            'Message',
+            err.message ,
+            ''
+        );
+    }
+    finally {
+
+        submitButton.prop('disabled', false);
+    }
+}
+
+
+
+
 // get Record to fill Issue PO
 async function loadRecordById(row) {
 
@@ -1052,34 +1268,3 @@ async function SubmitDraftIssueorder() {
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

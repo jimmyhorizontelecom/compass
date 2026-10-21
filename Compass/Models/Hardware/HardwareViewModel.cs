@@ -5,6 +5,7 @@ using DocumentFormat.OpenXml.Office2013.Drawing.ChartStyle;
 using DocumentFormat.OpenXml.Presentation;
 using DocumentFormat.OpenXml.Vml;
 using DocumentFormat.OpenXml.Wordprocessing;
+using Microsoft.VisualBasic;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Mail;
@@ -832,6 +833,25 @@ namespace Compass.Models.Hardware
                
     }
 
+
+    //DraftOrderList
+    public class DraftOrderListViewModal
+    {
+        public int DraftOrderId { get; set; }
+        public string IsDraftOrder { get; set; }
+        public int SaleOrderId { get; set; }
+        public int OrderDetailsId { get; set; }
+        public string SaleRefNo { get; set; }
+        public string ProductName { get; set; }
+        public int Qty { get; set; }
+        public int DraftOrderNo { get; set; }
+        public DateTime DraftOrderDate { get; set; }
+        public int PONo { get; set; }
+        public DateTime PODate { get; set; }
+        public decimal BillAmt { get; set; }
+        public string AgencyName { get; set; }
+        public DateTime AmcValidty { get; set; }
+    }
 
 
 

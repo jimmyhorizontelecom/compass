@@ -488,7 +488,27 @@ namespace Compass.Models.Hardware
 
     }
 
+    //Create Draft Order Submit
+    public class DraftOrderSubmitModel
+    {
+        public List<int> OrderDetailsIds { get; set; } = new List<int>();
+        public int AgencyId { get; set; }
+        public string IsUniqueDraftOrder { get; set; } = "N";
+    }
 
+    //Submit Issue Purchase
+    public class IssuePurchaseSubmitModel
+    {
+        public List<int> OrderDetailsIds { get; set; } = new List<int>();
+
+        public int AgencyId { get; set; }
+
+        public string? IsUniquePurchaseOrder { get; set; } = "N";
+
+        public int DraftId { get; set; }
+
+        public string? Remarks { get; set; }
+    }
 
 
 }

@@ -58,12 +58,12 @@
     }
 </style>
 <!-- List Div -->
-<div  id="listDiv" class="container card p-3 shadow text-center" style="display:none;">
-    <h5>Draft Order</h5>
-    <div class="card shadow-lg">
+<div  id="listDiv" class="container card p-3 shadow" style="display:none;">
+    <h5 class="text-center">Draft Order</h5>
+    <div class=" card shadow-sm">
         <!-- Card Body -->
         <div class="card-body">
-            <div class="row g-3">
+            <div class="row">
                 <div class="col-md-2 fw-bold">
                     <label class="form-label">Department Name Filter<span class="text-danger">*</span></label>
                     <select id="ddlDepartment" class="form-select search_ddl select2"></select>
@@ -72,21 +72,53 @@
                     <label class="form-label">Agency Name Filter<span class="text-danger">*</span></label>
                     <select id="ddlAgency" class="form-select search_ddl select2"></select>
                 </div>
-                <div class="col-md-2 fw-bold">
-                    <label class="form-label">Verification Status<span class="text-danger">*</span></label>
-                    <select id="ddlVerification" class="form-select search_ddl select2"></select>
-                </div>
+                
                 <div class="col-md-2 fw-bold">
                     <label class="form-label">PO Status<span class="text-danger">*</span></label>
-                    <select id="ddlPOStatus" class="form-select search_ddl select2"></select>
+                    <select id="ddlPOStatus" class="form-select">
+                    <option value="selected">All</option>
+                    <option value="Y">PO Issued</option>
+                    <option value="P">PO Partial</option> 
+                    <option value="N">PO Pending</option>
+                    </select>
                 </div>
                 <div class="col-md-2 fw-bold">
                     <label class="form-label">Dept. Amt Status<span class="text-danger">*</span></label>
-                    <select id="ddlAmtStatus" class="form-select search_ddl select2"></select>
+                    <select id="ddlAmtStatus" class="form-select">
+                        <option value="selected">All</option>
+                        <option value="Y">Received</option>
+                        <option value="N">Not Received</option>
+
+                    </select>
+                </div>
+                <div class="col-md-2 fw-bold">
+                    <label class="form-label">Draft Status<span class="text-danger">*</span></label>
+                    <select id="ddlDraftStatus" class="form-select">
+                        <option value="selected">All</option>
+                        <option value="Y">Draft Issued</option>
+                        <option value="P">Draft Partial</option>
+                        <option value="N">Draft Pending</option>
+                    </select>
+                </div>              
+                <div class="col-md-2 fw-bold">
+                    <label class="form-label">Draft Amt. Range(For Excel Export)<span class="text-danger">*</span></label>
+                    <select id="ddlAmtRange" class="form-select">
+                        <option value="0">Select</option>
+                        <option value="2">0-2,00,000</option>
+                        <option value="10">2,00,001-10,00,000</option>
+                        <option value="11">More than 10,00,001</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="button" class="btn btn-danger w-100" id="btnExport">
+                        <i class="bi bi-file-earmark-excel"></i> Export PO Details
+                    </button>
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
                     <button type="button" class="btn btn-danger w-100" id="btnExport">
-                        <i class="bi bi-file-earmark-excel"></i> Export To Excel
+                        <i class="bi bi-file-earmark-excel"></i> Export Draft Details
                     </button>
                 </div>
             </div>
@@ -97,23 +129,24 @@
             <thead class="table-info">
                 <tr>
                     <th>Sr.No</th>
+                    <th>Select</th>
                     <th>Sale Order<br /> Reference No.</th>
+                    <th>Draft No.</th>
                     <th>PO No.</th>
                     <th>Dept.Reff.No.<br />Order Date</th>
                     <th>Order Status</th>
-                    <th>Department Name</th>
-                    <th>Billing Address</th>
+                    <th>Department Name <br />Billing Address</th>                 
                     <th>Item Description</th>
-                    <th>Delivery Location<br />Doc.</th>
+                    <th>Dept. Order Doc.</th>
                     <th>Bill Amount</th>
                     <th>Balance</th>
-                    <th>Dept.Amt.<br />Received</th>
+                    <th>Dept.Amt. Received</th>
                     <th>PO Document</th>
-                    <th>Verification Status<br />Verify Date</th>
-                    <th>Action</th>
-                    <th>PO Status</th>
-                    <th>Remarks</th>
                     <th>Draft</th>
+                    <th>Draft Print</th>
+                    <th>Verification Status</th>
+                    <th>PO Status</th>
+                    <th>Remarks</th>                  
                </tr>
             </thead>
             <tbody>
@@ -405,7 +438,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-check text-nowrap">
-                                        <input class="form-check-input" type="checkbox"  name="IsActive"  id="IsActive" checked>
+                                        <input class="form-check-input" type="checkbox"  name="IsActive"  id="IsActive" >
                                         <label class="form-check-label bg-warning px-2 rounded" for="IsActive">
                                             Check this Box to generate a single unique Draft No. for selected items.
                                         </label>
@@ -443,7 +476,7 @@
                         </div>
                         <div class="flex-grow-1 text-center modelalert text-danger"></div>
                         <button type="button" class="btn btnModel btnDraftSubmit">Submit</button>
-                        <button type="button" data-bs-dismiss="modal" class="btn btnModel">Close</button>
+                        <button type="button" data-bs-dismiss="modal" class="btn btnModel" id="btnCloseDraftIssue">Close</button>
                     </div>
                 </div>
             </div>

@@ -109,5 +109,18 @@ namespace Compass.Services
             return await _repository.GetBillingAddressDdlAsync(Id, ParentId, searchTerm);
         }
 
+        // Get Draft Agency DDL
+        public async Task<List<DropdownElement>> GetDraftAgencyDdlAsync(int Id,  int MainCatgId, string searchTerm)
+        {
+            return await _repository.GetDraftAgencyDdlAsync(Id, MainCatgId, searchTerm);
+        }
+
+        // Get Draft No on Agency DDL
+        public async Task<List<DropdownElement>> GetDraftNoOnAgencyDdlAsync(int Id, int MainCatgId, string searchTerm)
+        {
+            return await _repository.GetDraftNoOnAgencyDdlAsync(Id, MainCatgId, searchTerm);
+        }
+
+
     }
 }

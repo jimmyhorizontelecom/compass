@@ -177,7 +177,33 @@ namespace Compass.Controllers
             return Ok(result);
         }
 
+     
+        // Get Draft Agency DDL
+        [HttpGet]
+        public async Task<IActionResult> HDraftAgency_ddlC(
+          int id = 0,
+         int mainCatgId = 0,
+             string searchTerm = "")
+        {
+           
+            var result = await _service.GetDraftAgencyDdlAsync(id, mainCatgId, searchTerm);
+            return Ok(result);
+        }
+
+        // Get Draft Agency DDL
+        [HttpGet]
+        public async Task<IActionResult> HDraftNoOnAgency_ddlC(
+          int id = 0,
+         int mainCatgId = 0,
+             string searchTerm = "")
+        {
+
+            var result = await _service.GetDraftNoOnAgencyDdlAsync(id, mainCatgId, searchTerm);
+            return Ok(result);
+        }
+
+
+
     }
-
-
 }
+

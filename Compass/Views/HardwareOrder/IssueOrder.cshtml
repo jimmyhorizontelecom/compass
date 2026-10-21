@@ -226,17 +226,17 @@
                     <div class="card">
                         <div class="card-body modal-xl border border-danger border-1">
                             <div class="form-group row">
-                                <div class="col-md-4 fw-bold">
+                                <div class="col-md-3 fw-bold">
                                     <label class="form-label">Agency<span class="text-danger">*</span></label>
                                     <select id="ddlAgencyModal" class="form-select search_ddl select2"></select>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-check">
-                                        <label class="form-check-label" for="flexRadioDefault1">
-                                            Check Box to create a single PO for selected Items
-                                        </label>
-                                        <input class="form-check-input" type="checkbox" name="IsActive" id="IsActive" checked>
-                                    </div>
+                                <div class="col-md-3 fw-bold">
+                                    <label class="form-label">Draft No.<span class="text-danger">*</span></label>
+                                    <select id="ddlDraftNoModal" class="form-select search_ddl select2"></select>
+                                </div>
+                                <div class="col fw-bold">
+                                    <label class="form-label">PO Issued Remarks<span class="text-danger">*</span></label>
+                                    <textarea class="form-control cleartxt" id="txtareaPOIssueRemark" rows="2" placeholder="Enter remarks"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -269,7 +269,7 @@
                             <img src="~/images/ajax-loader.gif" id="ModalProgress" style="display:none;" />
                         </div>
                         <div class="flex-grow-1 text-center modelalert text-danger"></div>
-                        <button type="button" class="btn btnModel btnModalSubmit">Submit</button>
+                        <button type="button" class="btn btnModel btnModalIssuePurchaseSubmit">Submit</button>
                         <button type="button" data-bs-dismiss="modal" class="btn btnModel">Close</button>
                     </div>
                 </div>

@@ -1240,3 +1240,144 @@ function clearValidation(container = document) {
 $(document).on("hidden.bs.modal", ".modal", function () {
     clearValidation(this);
 });
+
+// Common Dropdown With Parent ID
+function bindDataToDdlWithParent(
+    controllerName,
+    methodName,
+    modalId,
+    dropDownId,
+    message,
+    parentId,
+    mainCatgId = 0
+) {
+    var dropDownById = $('#' + dropDownId);
+
+    // Existing Select2 instance destroy karein
+    if (dropDownById.hasClass('select2-hidden-accessible')) {
+        dropDownById.select2('destroy');
+    }
+
+    // Purana data clear karein
+    dropDownById.empty();
+
+    var options = {
+        placeholder: message,
+        allowClear: true,
+        width: '100%',
+
+        ajax: {
+            url: `/${ controllerName }/${methodName}`,
+type: 'GET',
+    dataType: 'json',
+        delay: 250,
+
+            data: function (params) {
+                return {
+                    id: typeof parentId === 'function'
+                        ? parentId()
+                        : parentId,
+
+                    mainCatgId: mainCatgId,
+
+                    searchTerm: params.term || ''
+                };
+            },
+
+processResults: function (data) {
+    return {
+        results: $.map(data, function (item) {
+            return {
+                id: item.Id,
+                text: item.Text
+            };
+        })
+    };
+}
+        }
+    };
+
+// Modal ke andar dropdown open karne ke liye
+if (modalId) {
+    options.dropdownParent = $('#' + modalId);
+}
+
+dropDownById.select2(options);
+}
+
+// Common DDL with Parent ID and Dependent Dropdown
+function bindDataToDdlWithParentChild(
+    controllerName,
+    methodName,
+    modalId,
+    dropDownId,
+    message,
+    parentId,
+    childDropDownId,
+    mainCatgId = 0
+) {
+    var ddl = $('#' + dropDownId);
+    var parentDdl = $('#' + childDropDownId);
+
+    if (ddl.hasClass('select2-hidden-accessible')) {
+        ddl.select2('destroy');
+    }
+
+    ddl.empty().prop('disabled', true);
+
+    ddl.select2({
+        placeholder: message,
+        allowClear: true,
+        width: '100%',
+        dropdownParent: modalId
+            ? $('#' + modalId)
+            : $(document.body),
+
+        ajax: {
+            url: `/${controllerName}/${methodName}`,
+            type: 'GET',
+            dataType: 'json',
+            delay: 250,
+
+            data: function (params) {
+                return {
+                    id: typeof parentId === 'function'
+                        ? parentId()
+                        : parentId,
+
+                    mainCatgId: parentDdl.val() || 0,
+                    searchTerm: params.term || ''
+                };
+            },
+
+            processResults: function (data) {
+                return {
+                    results: $.map(data, function (item) {
+                        return {
+                            id: item.Id,
+                            text: item.Text
+                        };
+                    })
+                };
+            },
+
+            cache: true
+        }
+    });
+
+    // Parent dropdown change event
+    parentDdl.off('change.parentChildDdl')
+        .on('change.parentChildDdl', function () {
+
+            ddl.val(null).trigger('change.select2');
+
+            var selectedParentId = $(this).val();
+
+            if (!selectedParentId || selectedParentId === '0') {
+                ddl.prop('disabled', true);
+                return;
+            }
+
+            ddl.prop('disabled', false);
+        });
+}
