@@ -2,6 +2,7 @@
 using Compass.Classes;
 using Compass.Models.Filter;
 using Compass.Models.Hardware;
+using Compass.Models.ManpowerModel;
 using Compass.Models.Test;
 using DocumentFormat.OpenXml.Bibliography;
 //using DocumentFormat.OpenXml.Drawing;
@@ -65,8 +66,10 @@ namespace Compass.Controllers
                 parameters.Add("@PurchaseOrderNoId", filter.FilterId1);
                 parameters.Add("@AgencyId", filter.FilterId2);
                 parameters.Add("@DeptId", filter.FilterId3);
-                parameters.Add("@CreatedBy", userId);
-                parameters.Add("@RoleId", roleId);
+                //parameters.Add("@CreatedBy", userId);
+                parameters.Add("@CreatedBy", 12576);
+                parameters.Add("@RoleId", 55);
+                //parameters.Add("@RoleId", roleId);
 
 
                 var dt = await _cn.FillDataTableAsync("HardwarePurchaseOrderAcceptReject_List", "", parameters);
@@ -102,47 +105,86 @@ namespace Compass.Controllers
             }
         }
         // Submit PO Verify
+        //[HttpPost]
+        //public async Task<IActionResult> SubmitPOVerification([FromForm] string POVerify)
+        //{
+        //    var model = JsonConvert.DeserializeObject<POVerifyModal>(POVerify);
+
+        //    if (model == null)
+        //    {
+        //        return BadRequest("Model is null");
+        //    }
+        //    var roleId = User.FindFirst("RoleId")?.Value;
+        //    var userId = User.FindFirst("UserId")?.Value;
+        //    using SqlConnection con = new SqlConnection(_connectionString);
+        //    using SqlCommand cmd = new SqlCommand("HardwarePurchaseOrder_AcceptReject1", con);
+
+        //    cmd.CommandType = CommandType.StoredProcedure;
+
+        //    cmd.Parameters.AddWithValue("@SaleOrderId", model.SaleOrderId);
+        //    cmd.Parameters.AddWithValue("@OrderDetailsId", model.OrderDetailsId);
+        //    cmd.Parameters.AddWithValue("@PurchaseOrderId", model.PurchaseOrderId);
+        //    cmd.Parameters.AddWithValue("@IsOrderAccept", model.IsOrderAccept);
+        //    cmd.Parameters.AddWithValue("@Remarks", model.Remarks);
+
+        //    cmd.Parameters.AddWithValue("@CreatedBy ", userId);
+
+
+
+
+
+        //    // ✅ Correct Output Parameter
+        //    SqlParameter mesParam = new SqlParameter("@mes", SqlDbType.VarChar, -1);
+        //    mesParam.Direction = ParameterDirection.Output;
+        //    cmd.Parameters.Add(mesParam);
+
+        //    await con.OpenAsync();
+        //    await cmd.ExecuteNonQueryAsync();
+        //    string message = mesParam.Value?.ToString();
+        //    return Ok(new { success = true, message = message });
+
+        //}
+
+
+        // Submit data 
         [HttpPost]
-        public async Task<IActionResult> SubmitPOVerification([FromForm] string POVerify)
+        public IActionResult SubmitPOAcceptReject(POVerifyModal model)
         {
-            var model = JsonConvert.DeserializeObject<POVerifyModal>(POVerify);
-
-            if (model == null)
+            try
             {
-                return BadRequest("Model is null");
+                var roleId = User.FindFirst("RoleId")?.Value;
+                var userId = User.FindFirst("UserId")?.Value;
+
+                SortedList parameters = new SortedList();
+                parameters.Add("@SaleOrderId", model.SaleOrderId);
+                parameters.Add("@OrderDetailsId", model.OrderDetailsId);
+                parameters.Add("@PurchaseOrderId", model.PurchaseOrderId);
+                parameters.Add("@IsOrderAccept", model.IsOrderAccept);
+                parameters.Add("@Remarks", model.Remarks);
+                           
+                parameters.Add("@CreatedBy", userId);
+
+                var result = _cn.ExecuteNonQueryWMessage( "HardwarePurchaseOrder_AcceptReject",  "", parameters );
+
+                return Ok(new
+                {
+                    success = true,
+                    message = result.ToString()
+                });
             }
-            var roleId = User.FindFirst("RoleId")?.Value;
-            var userId = User.FindFirst("UserId")?.Value;
-            using SqlConnection con = new SqlConnection(_connectionString);
-            using SqlCommand cmd = new SqlCommand("HardwarePurchaseOrder_AcceptReject1", con);
-
-            cmd.CommandType = CommandType.StoredProcedure;
-
-            cmd.Parameters.AddWithValue("@SaleOrderId", model.SaleOrderId);
-            cmd.Parameters.AddWithValue("@OrderDetailsId", model.OrderDetailsId);
-            cmd.Parameters.AddWithValue("@PurchaseOrderId", model.PurchaseOrderId);
-            cmd.Parameters.AddWithValue("@IsOrderAccept", model.IsOrderAccept);
-            cmd.Parameters.AddWithValue("@Remarks", model.Remarks);
-
-            cmd.Parameters.AddWithValue("@CreatedBy ", userId);
-
-
-
-
-
-            // ✅ Correct Output Parameter
-            SqlParameter mesParam = new SqlParameter("@mes", SqlDbType.VarChar, -1);
-            mesParam.Direction = ParameterDirection.Output;
-            cmd.Parameters.Add(mesParam);
-
-            await con.OpenAsync();
-            await cmd.ExecuteNonQueryAsync();
-            string message = mesParam.Value?.ToString();
-            return Ok(new { success = true, message = message });
-
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Server error.",
+                    error = ex.Message
+                });
+            }
         }
+
         #endregion
-      
+
         #region PO Cancel
         public IActionResult POCancel()
         {
@@ -326,8 +368,10 @@ namespace Compass.Controllers
                 parameters.Add("@PurchaseOrderNoId", filter.FilterId1);
                 parameters.Add("@AgencyId", filter.FilterId2);
                 parameters.Add("@DeptId", filter.FilterId3);
-                parameters.Add("@CreatedBy", userId);
-                parameters.Add("@RoleId", roleId);
+                // parameters.Add("@CreatedBy", userId);
+                // parameters.Add("@RoleId", roleId);
+                parameters.Add("@CreatedBy", 12576);
+                parameters.Add("@RoleId", 55);
 
 
                 var dt = await _cn.FillDataTableAsync("HardwarePurchaseOrder_List1", "", parameters);

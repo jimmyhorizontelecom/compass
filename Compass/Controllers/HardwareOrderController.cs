@@ -1769,7 +1769,7 @@ namespace Compass.Controllers
         public async Task<IActionResult> getPurchaseIssueList([FromQuery] TestFilterData filter)
         {
             try
-            {
+                {
                 // Access as object
                 int id = filter.FilterId1;
                 var userId = User.FindFirst("UserId")?.Value;

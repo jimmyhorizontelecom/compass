@@ -94,15 +94,40 @@ function bindDatatableOrderProcessingList(records, tableId) {
                         <td>${value.AgencyName}</td>
                         <td>${value.Amount.toFixed(2)}</td>
                         <td>${value.DepartmentAmtReceived.toFixed(2)}</td>
-                        <td> <i class="bi bi-file-earmark-text text-danger fs-3"></i></td>
-                        <td><i class="fa fa-map-marker-alt text-danger fa-2x deliveryAdd"</i></td> 
-                       <td><i class="fa fa-eye text-danger fa-2x ViewDetails"></i></td> 
-                         <td><i class="fa fa-print text-success fa-2x printInvoice"></i></td>
-                         <td><i class="bi bi-truck addLocation fs-1 text-danger"></i></i></td>
-                         <td><i class="bi bi-file-earmark-check fs-1 verifyIcon" style="cursor:pointer;"></i></td>
-                         <td><button class="btn btn-danger btnInvoice">AgencyInvoice</button></td>
-                         <td><i class="bi bi-clipboard-data fs-3 text-danger"></i></td>
-                         <td><i class="fa fa-eye text-danger fa-2x AgencyPayment"></i></td>
+                        <!--View dept Doc.-->
+                        <td style="text-align: center; vertical-align: middle;"> 
+                        <i class="bi bi-file-earmark-arrow-down fs-2 text-danger fs-2" title="View Document" style="display: inline-block; cursor: pointer; transition: transform 0.2s ease;"
+                            onmouseover="this.style.transform='scale(1.3)';"  onmouseout="this.style.transform='scale(1)';"></i></td>
+                        <!--Add Delivery Location-->
+                        <td style="text-align: center; vertical-align: middle;">
+                        <i class="bi bi-geo-alt-fill text-danger fs-2 deliveryAdd" title="Add Location" style="display: inline-block; cursor: pointer; transition: transform 0.2s ease;"
+                            onmouseover="this.style.transform='scale(1.3)';"  onmouseout="this.style.transform='scale(1)';"></i></td> 
+                        <!--View Details-->
+                        <td style="text-align: center; vertical-align: middle;">
+                       <i class="bi bi-eye-fill text-danger fs-2 ViewDetails" title="View Details" style="display: inline-block; cursor: pointer; transition: transform 0.2s ease;"
+                            onmouseover="this.style.transform='scale(1.3)';"  onmouseout="this.style.transform='scale(1)';"></i></td> 
+                         <!--HPSEDC Print-->
+                            <td style="text-align: center; vertical-align: middle;">
+                         <i class="bi bi-printer-fill text-danger fs-2 printInvoice" title="Print" style="display: inline-block; cursor: pointer; transition: transform 0.2s ease;"
+                            onmouseover="this.style.transform='scale(1.3)';"  onmouseout="this.style.transform='scale(1)';"></i></td>
+                            <!--Product Delivery-->
+                         <td style="text-align: center; vertical-align: middle;">
+                         <i class="bi bi-truck addLocation fs-2 text-danger" title="Product Delivery" style="display: inline-block; cursor: pointer; transition: transform 0.2s ease;"
+                            onmouseover="this.style.transform='scale(1.3)';"  onmouseout="this.style.transform='scale(1)';"></i></i></td>
+                         <!--Verify POD IR-->
+                            <td style="text-align: center; vertical-align: middle;">
+                         <i class="bi bi-file-earmark-check fs-2 verifyIcon" title="POD/IR Verify" style="display: inline-block; cursor: pointer; transition: transform 0.2s ease;"
+                            onmouseover="this.style.transform='scale(1.3)';"  onmouseout="this.style.transform='scale(1)';"></i></td>
+                         <td style="text-align: center; vertical-align: middle;">
+                         <button class="btn btn-danger btn-sm btnInvoice" style="display: inline-block; cursor: pointer; transition: transform 0.2s ease;"
+                            onmouseover="this.style.transform='scale(1.1)';"  onmouseout="this.style.transform='scale(1)';">AgencyInvoice</button></td>
+                         <td style="text-align: center; vertical-align: middle;">
+                         <i class="bi bi-clipboard-data fs-2 text-danger" title="Agency Invoice" style="display: inline-block; cursor: pointer; transition: transform 0.2s ease;"
+                            onmouseover="this.style.transform='scale(1.3)';"  onmouseout="this.style.transform='scale(1)';"></i></td>
+                        <!--View Agency Payment-->
+                            <td style="text-align: center; vertical-align: middle;">
+                         <i class="bi bi-eye-fill text-danger fs-2 AgencyPayment" title="View Agency Payment" style="display: inline-block; cursor: pointer; transition: transform 0.2s ease;"
+                            onmouseover="this.style.transform='scale(1.3)';"  onmouseout="this.style.transform='scale(1)';"></i></td>
                          
                           
                     </tr>
